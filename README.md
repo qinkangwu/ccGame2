@@ -1,2 +1,2 @@
-# 2048 
+# ccGames 
 # npm i && npm run dev
