@@ -29,22 +29,34 @@ export class PlayScene extends Phaser.Scene {
         xPos : [100, 200, 300, 400, 600, 700, 800, 900]
       });
       this.addTextHandle();
-      // this.input.on('pointerdown',(...args)=>{
-        
-      // })
+      this.addTouchHandle();
     }
+
+    private addTouchHandle () : void {
+      this.input.on('gameobjectdown',(...args)=>{
+        console.log(args[1].getData('index'));
+      })
+    }
+
 
     private addTextHandle() : void {
         //添加文本逻辑操作
-        let arr = ['/ p /', '/ b /' , '/ t /' , '/ d /' , '/ i /' , '/ o /' , '/ a /' , '/ u /' ];
-        let xArr = [100, 200, 300, 400, 600, 700, 800, 900];
+        let arr : Array<string> = ['/ p /', '/ b /' , '/ t /' , '/ d /' , '/ i /' , '/ o /' , '/ a /' , '/ u /' ];
+        let xArr : Array<number> = [100, 200, 300, 400, 600, 700, 800, 900];
         for ( let i = 0 ; i < arr.length ; i ++){
           this.addText(arr[i],i,xArr[i] ,window.innerHeight - 200 , {
             fontSize : 40,
             font: 'bold 40px Arial',
             fill : '#fff',
             bold : true
-          })
+          });
+
+
+          //添加event区域
+          let zoneObj : Phaser.GameObjects.Zone = this.add.zone(xArr[i] - 50, window.innerHeight - 250, 100, 100);
+          zoneObj.setData('index',i);
+          zoneObj.depth = 100;
+          zoneObj.setInteractive();
         }
       
     }
@@ -64,6 +76,7 @@ export class PlayScene extends Phaser.Scene {
 
         this.cir.fillStyle(i < 4 && 0x00A0A8 || 0xFF5969);
         this.cir.fillCircle(xPos[i],window.innerHeight - 200,width);
+
       }
     }
 

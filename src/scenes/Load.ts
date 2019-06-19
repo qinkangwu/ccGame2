@@ -2,7 +2,7 @@ export class LoadScene extends Phaser.Scene {
   private centerText : Phaser.GameObjects.Text; //文本内容
   private DefaultLoadSeconds : number = 33; //每秒增加百分之多少
   private process : number = 0; //进度
-  private timer : number ;  //定时器id
+  private timer  : Phaser.Time.TimerEvent  ;  //定时器id
   private imgLoadDone : boolean = false;  //图片是否加载完毕
   private dataLoadDone : boolean = true;   //数据是否加载完毕
 
@@ -43,6 +43,8 @@ export class LoadScene extends Phaser.Scene {
   create(): void {
     this.loadHandle();
 
+    
+
   }
 
   update(time: number): void {
@@ -51,23 +53,28 @@ export class LoadScene extends Phaser.Scene {
 
   private loadHandle () : void {
     //模拟资源加载
-    this.timer = setInterval(()=>{
-      if(this.process >= 99){
-        this.centerText.setText('99%');
-        if(this.imgLoadDone && this.dataLoadDone){
-          this.centerText.setText('100%');
-          // this.tweens.add({
-          //   targets : this.centerText,
-          //   duration : 500,
-          //   alpha : 0
-          // })
-          this.scene.start('PlayScene');
-          clearInterval(this.timer);
+     this.timer = this.time.addEvent({
+      delay: 1000 / this.DefaultLoadSeconds,                // ms
+      callback: ()=>{
+        if(this.process >= 99){
+          this.centerText.setText('99%');
+          if(this.imgLoadDone && this.dataLoadDone){
+            this.centerText.setText('100%');
+            // this.tweens.add({
+            //   targets : this.centerText,
+            //   duration : 500,
+            //   alpha : 0
+            // })
+            this.scene.start('PlayScene');
+          }
+          return;
         }
-        return;
-      }
-      this.centerText.setText(++this.process + '%');
-    },1000 / this.DefaultLoadSeconds)
+        this.centerText.setText(++this.process + '%');
+      },
+      //args: [],
+      callbackScope: this,
+      loop: true
+    });
   }
 
 };
