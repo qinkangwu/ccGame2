@@ -1,92 +1,140 @@
-import { cirConfigInterface } from '../interface';
-
 export class PlayScene extends Phaser.Scene {
-    private leftIcon1 : Phaser.GameObjects.Image;
-    private rightIcon2 : Phaser.GameObjects.Image;
-    private cir : Phaser.GameObjects.Graphics;
-    private textArr : Array<Phaser.GameObjects.Text> = [];
-
+    private ccData : object = {};   //音标数据
+    private redSprite : Phaser.GameObjects.Sprite ;  //红气泡
+    private blueSprite : Phaser.GameObjects.Sprite ; //蓝气泡
+    private keySpritesArr : Array<Phaser.GameObjects.Sprite> = []; //键盘集合
+    private textsArr : Array<Phaser.GameObjects.Text> = []; //文字集合 
+    private imgsArr : Array<Phaser.GameObjects.Image> = []; //彩键集合
+    private dragX : number = 0;
+    private clickTimer : number = 0;
     constructor() {
       super({
         key: "PlayScene"
       });
     }
   
-    init(/*params: any*/): void {
-
+    init(data): void {
+      //音标数据绑定
+      this.ccData = data && data || {};
+      console.log(data);
     }
   
     preload(): void {
       
     }
+    
   
     create(): void {
-      this.cameras.main.setBackgroundColor('#18457E');
-      this.drawTopHandle();
-      this.drawCirHandle({
-        len : 8,
-        width : 48,
-        xPos : [100, 200, 300, 400, 600, 700, 800, 900]
-      });
-      this.addTextHandle();
-      this.addTouchHandle();
+      //初始化渲染
+      this.add.tileSprite(0,0,1024,552,'backgroundImg').setOrigin(0);
+      this.drawBottomKeys();
+      this.drawTopWord();
+      this.createAnims();
     }
 
-    private addTouchHandle () : void {
-      this.input.on('gameobjectdown',(...args)=>{
-        console.log(args[1].getData('index'));
-      })
-    }
-
-
-    private addTextHandle() : void {
-        //添加文本逻辑操作
-        let arr : Array<string> = ['/ p /', '/ b /' , '/ t /' , '/ d /' , '/ i /' , '/ o /' , '/ a /' , '/ u /' ];
-        let xArr : Array<number> = [100, 200, 300, 400, 600, 700, 800, 900];
-        for ( let i = 0 ; i < arr.length ; i ++){
-          this.addText(arr[i],i,xArr[i] ,window.innerHeight - 200 , {
-            fontSize : 40,
-            font: 'bold 40px Arial',
-            fill : '#fff',
-            bold : true
-          });
-
-
-          //添加event区域
-          let zoneObj : Phaser.GameObjects.Zone = this.add.zone(xArr[i] - 50, window.innerHeight - 250, 100, 100);
-          zoneObj.setData('index',i);
-          zoneObj.depth = 100;
-          zoneObj.setInteractive();
-        }
-      
-    }
-
-    private addText(text:string , index : number , x : number , y : number , style : object) : void {
-      //添加文本到场景
-      this.textArr[index] = this.add.text(x,y,text,style).setOrigin(.5,.5);
-    }
-
-    private drawCirHandle (cirConfig : cirConfigInterface,) : void {
-      //画圆
-      let { len  , width , xPos } = cirConfig;
-      this.cir = this.add.graphics();
-      for(let i = 0 ; i < len ; i++){
-        this.cir.fillStyle(0x000000,.3);
-        this.cir.fillCircle(xPos[i] + 5 , window.innerHeight - 195 , width);
-
-        this.cir.fillStyle(i < 4 && 0x00A0A8 || 0xFF5969);
-        this.cir.fillCircle(xPos[i],window.innerHeight - 200,width);
-
-      }
-    }
-
-    private drawTopHandle () : void{
-      //右上角左上角元素
-      this.leftIcon1 = this.add.image(0,0,'icon1').setOrigin(0).setScale(.2);
-      this.rightIcon2 = this.add.image(window.innerWidth - (this.leftIcon1.width * .2) , 0,'icon1').setOrigin(0).setScale(.2);
-    }
   
     update(time: number): void {
       
+    }
+
+    private dragStartHandle (...args) : void{
+      //拖拽开始
+      //@ts-ignore
+      this.scene.dragX = args[0].worldX;
+    }
+
+    private dragMoveHandle (...args) : void {
+      //拖拽中
+      //@ts-ignore
+      let x : number = args[0].worldX - this.scene.dragX;
+      //@ts-ignore
+      this.scene.dragX = args[0].worldX;
+      //@ts-ignore
+      this.scene.keySpritesArr.map((r : Phaser.GameObjects.Sprite,i : number)=>{
+        r.x += x;
+      });
+      //@ts-ignore
+      this.scene.textsArr.map((r : Phaser.GameObjects.Text,i : number)=>{
+        r.x += x;
+      })
+
+      //@ts-ignore
+      this.scene.imgsArr.map((r : Phaser.GameObjects.Image,i : number)=>{
+        r.x += x;
+      })
+    }
+
+    private dragEndHandle (...args) : void {
+      //拖拽结束
+      
+    }
+
+    private pointerDownHandle (...args) : void{
+      //@ts-ignore
+      this.scene.clickTimer = Date.now();
+    }
+    private pointeUpHandle (...args) : void{
+      //@ts-ignore
+      if(Date.now() - this.scene.clickTimer < 200){
+        //判断为点击不是拖拽
+        //@ts-ignore
+        this.anims.play('redAnims',false);
+      }
+    }
+
+    private createAnims () : void {
+      //创建动画
+      this.anims.create({
+        key : 'redAnims',
+        frames : this.anims.generateFrameNumbers('keys',{start : 0 , end : 1}),
+        frameRate : 5,
+        repeat : 0,
+        yoyo : true
+      });
+
+      this.anims.create({
+        key : 'blueAnims',
+        frames : this.anims.generateFrameNumbers('keys',{start: 2 , end : 3}),
+        frameRate : 5,
+        repeat : 0,
+        yoyo : true
+      })
+    }
+
+    private drawBottomKeys() : void{
+      //渲染键盘
+      for ( let i = 0 ; i < 10 ; i ++){
+        //渲染白键
+        let sprite : Phaser.GameObjects.Sprite = this.add.sprite(i === 0 && 15 || i * 115 + 15,313,'keys',0).setOrigin(0).setInteractive({
+          draggable : true
+        });
+        //渲染音标字符
+        let text : Phaser.GameObjects.Text = this.add.text(sprite.x + 26,457,'/ a /',{
+          fontSize : 40,
+          font: 'bold 40px Arial',
+          fill : '#D25F5F',
+          bold : true
+        });
+        this.keySpritesArr.push(sprite);
+        this.textsArr.push(text);
+        sprite.on('dragstart',this.dragStartHandle.bind(sprite));
+        sprite.on('drag',this.dragMoveHandle.bind(sprite));
+        sprite.on('dragend',this.dragEndHandle.bind(sprite));
+        sprite.on('pointerdown',this.pointerDownHandle.bind(sprite));
+        sprite.on('pointerup',this.pointeUpHandle.bind(sprite));
+        if(i % 3 === 2){
+          //间隔渲染彩键
+          continue;
+        }
+        //渲染彩键
+        let img : Phaser.GameObjects.Image = this.add.image( sprite.x + 110,352,'icons','ImgPiano01.png').setDepth(100);
+        this.imgsArr.push(img);
+      }
+    }
+
+    private drawTopWord () : void {
+      //渲染音标word气泡
+      this.redSprite = this.add.sprite(193,74,'icons','bg_word_red.png').setOrigin(0);
+      this.blueSprite = this.add.sprite(565,74,'icons','bg_word_blue.png').setOrigin(0);
     }
   };

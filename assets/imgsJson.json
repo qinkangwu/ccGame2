@@ -1,0 +1,188 @@
+{
+	"textures": [
+		{
+			"image": "imgsJson.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 880,
+				"h": 158
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "bg_word_blue.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 267,
+						"h": 156
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 267,
+						"h": 156
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 267,
+						"h": 156
+					}
+				},
+				{
+					"filename": "bg_word_red.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 267,
+						"h": 156
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 267,
+						"h": 156
+					},
+					"frame": {
+						"x": 270,
+						"y": 1,
+						"w": 267,
+						"h": 156
+					}
+				},
+				{
+					"filename": "ImgPiano01.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 55,
+						"h": 118
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 55,
+						"h": 118
+					},
+					"frame": {
+						"x": 539,
+						"y": 1,
+						"w": 55,
+						"h": 118
+					}
+				},
+				{
+					"filename": "ImgPiano02.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 55,
+						"h": 118
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 55,
+						"h": 118
+					},
+					"frame": {
+						"x": 596,
+						"y": 1,
+						"w": 55,
+						"h": 118
+					}
+				},
+				{
+					"filename": "ImgPiano03.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 55,
+						"h": 118
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 55,
+						"h": 118
+					},
+					"frame": {
+						"x": 653,
+						"y": 1,
+						"w": 55,
+						"h": 118
+					}
+				},
+				{
+					"filename": "ImgPiano04.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 55,
+						"h": 118
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 55,
+						"h": 118
+					},
+					"frame": {
+						"x": 710,
+						"y": 1,
+						"w": 55,
+						"h": 118
+					}
+				},
+				{
+					"filename": "ImgPiano05.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 55,
+						"h": 118
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 55,
+						"h": 118
+					},
+					"frame": {
+						"x": 767,
+						"y": 1,
+						"w": 55,
+						"h": 118
+					}
+				},
+				{
+					"filename": "ImgPiano06.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 55,
+						"h": 118
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 55,
+						"h": 118
+					},
+					"frame": {
+						"x": 824,
+						"y": 1,
+						"w": 55,
+						"h": 118
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:2c67e5271444aa52bda0985b7d7c2022:e5096df4a1ac9e17841064d78b88c741:92542590d6f80419c8dc07203c6a793b$"
+	}
+}

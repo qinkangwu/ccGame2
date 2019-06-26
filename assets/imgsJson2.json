@@ -1,0 +1,104 @@
+{
+	"textures": [
+		{
+			"image": "imgsJson2.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 112,
+				"h": 924
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "PianoBtnWhite01(1).png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 110,
+						"h": 229
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 110,
+						"h": 229
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 110,
+						"h": 229
+					}
+				},
+				{
+					"filename": "PianoBtnWhite02.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 110,
+						"h": 229
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 110,
+						"h": 229
+					},
+					"frame": {
+						"x": 1,
+						"y": 232,
+						"w": 110,
+						"h": 229
+					}
+				},
+				{
+					"filename": "PianoBtnWhite03(2).png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 110,
+						"h": 229
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 110,
+						"h": 229
+					},
+					"frame": {
+						"x": 1,
+						"y": 463,
+						"w": 110,
+						"h": 229
+					}
+				},
+				{
+					"filename": "PianoBtnWhite04.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 110,
+						"h": 229
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 110,
+						"h": 229
+					},
+					"frame": {
+						"x": 1,
+						"y": 694,
+						"w": 110,
+						"h": 229
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:adff094b7603fa2894b54faaca044223:433a1502e710b77961e549b6462d28db:af878b0f1d3d0d0112a7db1a7014d9b4$"
+	}
+}

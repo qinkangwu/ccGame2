@@ -30,7 +30,9 @@ export class LoadScene extends Phaser.Scene {
 
   preload(): void {
     this.cameras.main.setBackgroundColor('#000'); //设置背景颜色
-    this.load.image('icon1','assets/icon1.png');
+    this.load.image('backgroundImg','assets/PianoPageBg.png'); 
+    this.load.multiatlas('icons','assets/imgsJson.json','assets');
+    this.load.spritesheet('keys','assets/imgsJson2.png',{frameWidth : 110 , frameHeight : 229});
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;
@@ -42,9 +44,6 @@ export class LoadScene extends Phaser.Scene {
 
   create(): void {
     this.loadHandle();
-
-    
-
   }
 
   update(time: number): void {
@@ -65,7 +64,7 @@ export class LoadScene extends Phaser.Scene {
             //   duration : 500,
             //   alpha : 0
             // })
-            this.scene.start('PlayScene');
+            this.scene.start('PlayScene',{a : ['/a/','/a/','/a/','/a/','/a/','/a/'] , b : ['/a/','/a/','/a/','/a/','/a/','/a/']});
           }
           return;
         }
