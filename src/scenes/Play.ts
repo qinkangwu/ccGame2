@@ -102,8 +102,9 @@ export class PlayScene extends Phaser.Scene {
     }
 
     private drawBottomKeys() : void{
+      let dataArr = [1,1,1,1,1,1,1,1,1,1];
       //渲染键盘
-      for ( let i = 0 ; i < 10 ; i ++){
+      for ( let i = 0 ; i < dataArr.length ; i ++){
         //渲染白键
         let sprite : Phaser.GameObjects.Sprite = this.add.sprite(i === 0 && 15 || i * 115 + 15,313,'keys',0).setOrigin(0).setInteractive({
           draggable : true
@@ -122,7 +123,7 @@ export class PlayScene extends Phaser.Scene {
         sprite.on('dragend',this.dragEndHandle.bind(sprite));
         sprite.on('pointerdown',this.pointerDownHandle.bind(sprite));
         sprite.on('pointerup',this.pointeUpHandle.bind(sprite));
-        if(i % 3 === 2){
+        if(i % 3 === 2 || ( i % 3 === 0 && i === (dataArr.length - 1))){
           //间隔渲染彩键
           continue;
         }
