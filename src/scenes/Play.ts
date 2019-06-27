@@ -7,6 +7,7 @@ export class PlayScene extends Phaser.Scene {
     private imgsArr : Array<Phaser.GameObjects.Image> = []; //彩键集合
     private redText : Phaser.GameObjects.Text ; //元音音标字符
     private blueText : Phaser.GameObjects.Text ; // 辅音音标字符
+    private leftSpriteX : number; //第一个键盘的x值
     private dragX : number = 0;
     private clickTimer : number = 0;
     private show : Array<boolean> = [false,false];
@@ -19,7 +20,6 @@ export class PlayScene extends Phaser.Scene {
     init(data): void {
       //音标数据绑定
       this.ccData = data && data || {};
-      console.log(data);
     }
   
     preload(): void {
@@ -29,7 +29,7 @@ export class PlayScene extends Phaser.Scene {
   
     create(): void {
       //初始化渲染
-      this.add.tileSprite(0,0,1024,552,'backgroundImg').setOrigin(0);
+      this.add.tileSprite(0,0,window.innerWidth,552,'backgroundImg').setOrigin(0);
       this.drawBottomKeys();
       this.drawTopWord();
       this.createAnims();
@@ -38,6 +38,12 @@ export class PlayScene extends Phaser.Scene {
   
     update(time: number): void {
       
+    }
+
+    private playMusic (sourceKey : string) : void {
+      //播放音频
+      let mp3 : Phaser.Sound.BaseSound = this.sound.add(sourceKey);
+      mp3.play();
     }
 
     private dragStartHandle (...args) : void{
@@ -76,8 +82,17 @@ export class PlayScene extends Phaser.Scene {
       //鼠标按下事件
       //@ts-ignore
       this.anims.play('redAnims',false);
+
+      //@ts-ignore
+      this.scene.playMusic('audioMp3');
+
+      //@ts-ignore
+      this.scene.setWords('red','/ a /');
+
+      //@ts-ignore
       if(this.scene.show.some((r,i)=> !r)){
         //如果都已经显示出来就不必再调用此函数
+        //@ts-ignore
         this.scene.showWordsHandle('red');
       }
     }
@@ -108,11 +123,14 @@ export class PlayScene extends Phaser.Scene {
       //渲染键盘
       let dataArr = [1,1,1,1,1,1,1,1];
       let imgKey = 0;
+      let leftDistance = (window.innerWidth - (110 * dataArr.length + 5 * (dataArr.length - 1 ))) / 2 ;
+      console.log(leftDistance);
       for ( let i = 0 ; i < dataArr.length ; i ++){
         //渲染白键
-        let sprite : Phaser.GameObjects.Sprite = this.add.sprite(i === 0 && 15 || i * 115 + 15,313,'keys',0).setOrigin(0).setInteractive({
+        let sprite : Phaser.GameObjects.Sprite = this.add.sprite(i === 0 && leftDistance || this.leftSpriteX + 115,313,'keys',0).setOrigin(0).setInteractive({
           draggable : true
         });
+        this.leftSpriteX = sprite.x;
         sprite.setData('index',i); //记住是按的哪个键盘，可以拿到相应的音标
         //渲染音标字符
         let text : Phaser.GameObjects.Text = this.add.text(sprite.x + 26,457,'/ a /',{
@@ -160,17 +178,25 @@ export class PlayScene extends Phaser.Scene {
       })
     }
 
+    private setWords (flag : string, text : string) : void {
+        if(flag === 'red'){
+          this.redText.setText(text);
+        }else{
+          this.blueText.setText(text);
+        }
+    } 
+
     private drawTopWord () : void {
       //渲染音标word气泡
       this.redSprite = this.add.sprite(193,74,'icons','bg_word_red.png').setOrigin(0).setAlpha(0).setScale(0);
       this.blueSprite = this.add.sprite(565,74,'icons','bg_word_blue.png').setOrigin(0).setAlpha(0).setScale(0);
 
-      this.redText = this.add.text(this.redSprite.x + 85,124,'/ a /',{
+      this.redText = this.add.text(this.redSprite.x + 85,124,'',{
           font: 'bold 53px Arial',
           fill : '#fff',
       }).setAlpha(0);
 
-      this. blueText = this.add.text(this.blueSprite.x + 85,124,'/ a /',{
+      this. blueText = this.add.text(this.blueSprite.x + 85,124,'',{
         font: 'bold 53px Arial',
         fill : '#fff',
       }).setAlpha(0);

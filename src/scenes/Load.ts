@@ -33,6 +33,7 @@ export class LoadScene extends Phaser.Scene {
     this.load.image('backgroundImg','assets/PianoPageBg.png'); 
     this.load.multiatlas('icons','assets/imgsJson.json','assets');
     this.load.spritesheet('keys','assets/imgsJson2.png',{frameWidth : 110 , frameHeight : 229});
+    this.load.audio('audioMp3','https://labs.phaser.io/assets/audio/tech/bass.mp3')
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;
@@ -64,7 +65,7 @@ export class LoadScene extends Phaser.Scene {
             //   duration : 500,
             //   alpha : 0
             // })
-            this.scene.start('PlayScene',{a : ['/a/','/a/','/a/','/a/','/a/','/a/'] , b : ['/a/','/a/','/a/','/a/','/a/','/a/']});
+            this.scene.start('PlayScene');
           }
           return;
         }
