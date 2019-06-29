@@ -7,7 +7,7 @@
   "scripts": {
     "start": "webpack",
     "dev": "webpack",
-    "deploy": "webpack --config webpack.production.config.js"
+    "deploy": "webpack --config webpack.production.config.js && ./node_modules/.bin/fuzhi assets build/assets"
   },
   "license": "MIT",
   "devDependencies": {
@@ -20,6 +20,7 @@
     "babel-loader": "8.0.0-beta.2",
     "browser-sync": "^2.18.13",
     "browser-sync-webpack-plugin": "^1.2.0",
+    "fuzhi": "^1.0.0",
     "html-webpack-plugin": "^2.30.1",
     "raw-loader": "^0.5.1",
     "typescript": "^2.7.2",

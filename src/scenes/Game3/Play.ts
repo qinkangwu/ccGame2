@@ -123,8 +123,7 @@ export class PlayScene extends Phaser.Scene {
       //渲染键盘
       let dataArr = [1,1,1,1,1,1,1,1];
       let imgKey = 0;
-      let leftDistance = (window.innerWidth - (110 * dataArr.length + 5 * (dataArr.length - 1 ))) / 2 ;
-      console.log(leftDistance);
+      let leftDistance = (window.innerWidth - (110 * dataArr.length + 5 * (dataArr.length - 1 ))) / 2 ; //计算如果要居中，第一个键盘的x值
       for ( let i = 0 ; i < dataArr.length ; i ++){
         //渲染白键
         let sprite : Phaser.GameObjects.Sprite = this.add.sprite(i === 0 && leftDistance || this.leftSpriteX + 115,313,'keys',0).setOrigin(0).setInteractive({
@@ -179,6 +178,7 @@ export class PlayScene extends Phaser.Scene {
     }
 
     private setWords (flag : string, text : string) : void {
+        //设置字符
         if(flag === 'red'){
           this.redText.setText(text);
         }else{
