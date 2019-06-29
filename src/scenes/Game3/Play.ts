@@ -11,6 +11,7 @@ export class PlayScene extends Phaser.Scene {
     private dragX : number = 0;
     private clickTimer : number = 0;
     private show : Array<boolean> = [false,false];
+    private middle : number = 4 ; //元音辅音分割数
     constructor() {
       super({
         key: "PlayScene"
@@ -81,19 +82,22 @@ export class PlayScene extends Phaser.Scene {
     private pointerDownHandle (...args) : void{
       //鼠标按下事件
       //@ts-ignore
-      this.anims.play('redAnims',false);
+      let index = this.getData('index');
 
       //@ts-ignore
-      this.scene.playMusic('audioMp3');
+      index < this.scene.middle ? this.anims.play('redAnims',false) : this.anims.play('blueAnims',false);
 
       //@ts-ignore
-      this.scene.setWords('red','/ a /');
+      //this.scene.playMusic('audioMp3');
+
+      //@ts-ignore
+      index < this.scene.middle ? this.scene.setWords('red','/ a /') : this.scene.setWords('blue','/ a /');
 
       //@ts-ignore
       if(this.scene.show.some((r,i)=> !r)){
         //如果都已经显示出来就不必再调用此函数
         //@ts-ignore
-        this.scene.showWordsHandle('red');
+        index < this.scene.middle ? this.scene.showWordsHandle('red') : this.scene.showWordsHandle('blue');
       }
     }
     private pointeUpHandle (...args) : void{
@@ -135,7 +139,7 @@ export class PlayScene extends Phaser.Scene {
         let text : Phaser.GameObjects.Text = this.add.text(sprite.x + 26,457,'/ a /',{
           fontSize : 40,
           font: 'bold 40px Arial',
-          fill : '#D25F5F',
+          fill : i < this.middle && '#D25F5F' || '#65A5EF',
           bold : true
         });
         this.keySpritesArr.push(sprite);
@@ -179,11 +183,22 @@ export class PlayScene extends Phaser.Scene {
 
     private setWords (flag : string, text : string) : void {
         //设置字符
+        let lock : boolean = true;
         if(flag === 'red'){
+          this.redText.alpha === 1 && (lock = false);
           this.redText.setText(text);
+          this.redText.alpha === 1 && this.redText.setAlpha(0);
         }else{
+          this.blueText.alpha === 1 && (lock = false);
           this.blueText.setText(text);
-        }
+          this.blueText.alpha === 1 && this.blueText.setAlpha(0);
+        };
+        !lock && this.tweens.add({
+          targets : flag === 'red' && this.redText || this.blueText,
+          alpha : 1,
+          ease : 'Sine.easeInOut',
+          duration : 1000,
+        })
     } 
 
     private drawTopWord () : void {

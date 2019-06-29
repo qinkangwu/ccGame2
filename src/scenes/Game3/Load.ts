@@ -29,10 +29,9 @@ export class LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.cameras.main.setBackgroundColor('#000'); //设置背景颜色
     this.load.image('backgroundImg','assets/PianoPageBg.png'); 
     this.load.multiatlas('icons','assets/imgsJson.json','assets');
-    this.load.spritesheet('keys','assets/imgsJson2.png',{frameWidth : 110 , frameHeight : 229});
+    this.load.spritesheet('keys','assets/imgsJson2.png',{frameWidth : 110 , frameHeight : 229 , margin: 1, spacing: 2});
     this.load.audio('audioMp3','https://labs.phaser.io/assets/audio/tech/bass.mp3')
     this.load.on('complete',()=>{
       //资源加载完成的回调
