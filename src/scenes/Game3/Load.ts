@@ -26,6 +26,7 @@ export class LoadScene extends Phaser.Scene {
       //           blur: 8
       // }
     }).setOrigin(.5,.5);
+
   }
 
   preload(): void {

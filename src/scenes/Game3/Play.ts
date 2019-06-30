@@ -12,6 +12,9 @@ export class PlayScene extends Phaser.Scene {
     private clickTimer : number = 0;
     private show : Array<boolean> = [false,false];
     private middle : number = 4 ; //元音辅音分割数
+    private tweensAnims : Phaser.Tweens.Tween ;
+    private particles : Phaser.GameObjects.Particles.ParticleEmitterManager ; // 粒子控制器
+    private emitters  : object = {};  //粒子发射器
     constructor() {
       super({
         key: "PlayScene"
@@ -34,11 +37,29 @@ export class PlayScene extends Phaser.Scene {
       this.drawBottomKeys();
       this.drawTopWord();
       this.createAnims();
+      this.createEmitter();
     }
 
   
     update(time: number): void {
       
+    }
+
+    private createEmitter () : void {
+      //创建粒子效果发射器
+      this.particles = this.add.particles('icons');
+      for(let i = 0 ; i < 2 ; i ++){
+        this.emitters[i === 0 && 'red' || 'blue'] = this.particles.createEmitter({
+          frame : 'boom.png',
+          lifespan : 1000,
+          speed : { min: 300, max: 400},
+          alpha : {start: 0.7, end: 0 },
+          scale: { start: 0.7, end: 0 },
+          rotate: { start: 0, end: 360, ease: 'Power2' },
+          blendMode: 'ADD',
+          on : false
+        })
+      }
     }
 
     private playMusic (sourceKey : string) : void {
@@ -79,6 +100,14 @@ export class PlayScene extends Phaser.Scene {
       
     }
 
+    private boom (key : string) : void {
+      //触发效果
+      let emitter : Phaser.GameObjects.Particles.ParticleEmitter = this.emitters[key];
+      emitter.explode(40,
+        key === 'red' && (this.redSprite.x + this.redSprite.width / 2) || (this.blueSprite.x + this.blueSprite.width / 2), 
+        key === 'red' && (this.redSprite.y + this.redSprite.height / 2 ) || (this.blueSprite.y + this.blueSprite.height / 2));
+    }
+
     private pointerDownHandle (...args) : void{
       //鼠标按下事件
       //@ts-ignore
@@ -93,12 +122,16 @@ export class PlayScene extends Phaser.Scene {
       //@ts-ignore
       index < this.scene.middle ? this.scene.setWords('red','/ a /') : this.scene.setWords('blue','/ a /');
 
+       //@ts-ignore
+       index < this.scene.middle ? (this.scene.show[1] && this.scene.boom('red')) : (this.scene.show[0] && this.scene.boom('blue'));
+
       //@ts-ignore
       if(this.scene.show.some((r,i)=> !r)){
         //如果都已经显示出来就不必再调用此函数
         //@ts-ignore
-        index < this.scene.middle ? this.scene.showWordsHandle('red') : this.scene.showWordsHandle('blue');
+        index < this.scene.middle ? (!this.scene.show[1] && this.scene.showWordsHandle('red')) : (!this.scene.show[0] && this.scene.showWordsHandle('blue'));
       }
+
     }
     private pointeUpHandle (...args) : void{
       //@ts-ignore
@@ -136,7 +169,7 @@ export class PlayScene extends Phaser.Scene {
         this.leftSpriteX = sprite.x;
         sprite.setData('index',i); //记住是按的哪个键盘，可以拿到相应的音标
         //渲染音标字符
-        let text : Phaser.GameObjects.Text = this.add.text(sprite.x + 26,457,'/ a /',{
+        let text : Phaser.GameObjects.Text = this.add.text(sprite.x + 16,457,'/ a /',{
           fontSize : 40,
           font: 'bold 40px Arial',
           fill : i < this.middle && '#D25F5F' || '#65A5EF',
@@ -183,22 +216,12 @@ export class PlayScene extends Phaser.Scene {
 
     private setWords (flag : string, text : string) : void {
         //设置字符
-        let lock : boolean = true;
         if(flag === 'red'){
-          this.redText.alpha === 1 && (lock = false);
           this.redText.setText(text);
-          this.redText.alpha === 1 && this.redText.setAlpha(0);
         }else{
-          this.blueText.alpha === 1 && (lock = false);
           this.blueText.setText(text);
-          this.blueText.alpha === 1 && this.blueText.setAlpha(0);
         };
-        !lock && this.tweens.add({
-          targets : flag === 'red' && this.redText || this.blueText,
-          alpha : 1,
-          ease : 'Sine.easeInOut',
-          duration : 1000,
-        })
+
     } 
 
     private drawTopWord () : void {

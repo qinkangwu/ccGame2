@@ -4,8 +4,8 @@
 			"image": "imgsJson.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 880,
-				"h": 158
+				"w": 326,
+				"h": 436
 			},
 			"scale": 1,
 			"frames": [
@@ -45,8 +45,8 @@
 						"h": 156
 					},
 					"frame": {
-						"x": 270,
-						"y": 1,
+						"x": 1,
+						"y": 159,
 						"w": 267,
 						"h": 156
 					}
@@ -66,7 +66,7 @@
 						"h": 118
 					},
 					"frame": {
-						"x": 539,
+						"x": 270,
 						"y": 1,
 						"w": 55,
 						"h": 118
@@ -87,8 +87,8 @@
 						"h": 118
 					},
 					"frame": {
-						"x": 596,
-						"y": 1,
+						"x": 270,
+						"y": 121,
 						"w": 55,
 						"h": 118
 					}
@@ -108,8 +108,8 @@
 						"h": 118
 					},
 					"frame": {
-						"x": 653,
-						"y": 1,
+						"x": 270,
+						"y": 241,
 						"w": 55,
 						"h": 118
 					}
@@ -129,8 +129,8 @@
 						"h": 118
 					},
 					"frame": {
-						"x": 710,
-						"y": 1,
+						"x": 1,
+						"y": 317,
 						"w": 55,
 						"h": 118
 					}
@@ -150,8 +150,8 @@
 						"h": 118
 					},
 					"frame": {
-						"x": 767,
-						"y": 1,
+						"x": 58,
+						"y": 317,
 						"w": 55,
 						"h": 118
 					}
@@ -171,10 +171,31 @@
 						"h": 118
 					},
 					"frame": {
-						"x": 824,
-						"y": 1,
+						"x": 115,
+						"y": 317,
 						"w": 55,
 						"h": 118
+					}
+				},
+				{
+					"filename": "boom.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 30,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 30,
+						"h": 30
+					},
+					"frame": {
+						"x": 172,
+						"y": 317,
+						"w": 30,
+						"h": 30
 					}
 				}
 			]
@@ -183,6 +204,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:2c67e5271444aa52bda0985b7d7c2022:e5096df4a1ac9e17841064d78b88c741:92542590d6f80419c8dc07203c6a793b$"
+		"smartupdate": "$TexturePacker:SmartUpdate:16886163eee985c7909bd08a539149ce:9732145e449df145a5c1e4e18b83a13d:92542590d6f80419c8dc07203c6a793b$"
 	}
 }

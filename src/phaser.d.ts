@@ -2381,7 +2381,7 @@ declare type ParticleEmitterConfig = {
     /**
      * Sets {@link Phaser.GameObjects.Particles.ParticleEmitter#frames}.
      */
-    frames?: number | number[] | string | string[] | Phaser.Textures.Frame | Phaser.Textures.Frame[] | ParticleEmitterFrameConfig;
+    frame?: number | number[] | string | string[] | Phaser.Textures.Frame | Phaser.Textures.Frame[] | ParticleEmitterFrameConfig;
 };
 
 declare type ParticleEmitterFrameConfig = {
