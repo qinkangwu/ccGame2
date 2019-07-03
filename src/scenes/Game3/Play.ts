@@ -9,10 +9,8 @@ export class PlayScene extends Phaser.Scene {
     private blueText : Phaser.GameObjects.Text ; // 辅音音标字符
     private leftSpriteX : number; //第一个键盘的x值
     private dragX : number = 0;
-    private clickTimer : number = 0;
     private show : Array<boolean> = [false,false];
     private middle : number = 4 ; //元音辅音分割数
-    private tweensAnims : Phaser.Tweens.Tween ;
     private particles : Phaser.GameObjects.Particles.ParticleEmitterManager ; // 粒子控制器
     private emitters  : object = {};  //粒子发射器
     constructor() {
@@ -195,7 +193,6 @@ export class PlayScene extends Phaser.Scene {
 
     private showWordsHandle (flag : string) : void {
       //先是音标字符
-      this.show[flag === 'red' && 1 || 0 ] = true;
       this.tweens.add({
         targets : flag === 'red' && this.redSprite || this.blueSprite,
         scaleX : 1,
@@ -209,6 +206,9 @@ export class PlayScene extends Phaser.Scene {
             alpha : 1,
             ease : 'Sine.easeInOut',
             duration : 1000,
+            onComplete : ()=>{
+              this.show[flag === 'red' && 1 || 0 ] = true;
+            }
           })
         }
       })
