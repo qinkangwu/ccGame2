@@ -1,3 +1,6 @@
+import apiPath from '../../lib/apiPath';
+import {get , makeParams} from '../../lib/http';
+
 export class LoadScene extends Phaser.Scene {
   private centerText : Phaser.GameObjects.Text; //文本内容
   private DefaultLoadSeconds : number = 33; //每秒增加百分之多少
@@ -27,6 +30,8 @@ export class LoadScene extends Phaser.Scene {
       // }
     }).setOrigin(.5,.5);
 
+    this.getData();
+
   }
 
   preload(): void {
@@ -49,6 +54,15 @@ export class LoadScene extends Phaser.Scene {
 
   update(time: number): void {
       //console.log(this.load.progress);
+  }
+
+  private getParams () : object {
+    
+    return {}
+  }
+
+  private getData () : void {
+
   }
 
   private loadHandle () : void {
