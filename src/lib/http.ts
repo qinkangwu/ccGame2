@@ -29,7 +29,7 @@ let _fetch = (url : string, options : object) : Promise<Response> => {
 }
 
 // json解析出错，保留原始数据 {_res: res}
-let jsonParse = (res : object) : Promise<Response>  => {
+let jsonParse = (res : object)  => {
   //@ts-ignore  
   return res.text().then((resText) => {
     let jsonRes : object, failRes : object, resError : boolean = false;
@@ -50,7 +50,10 @@ let jsonParse = (res : object) : Promise<Response>  => {
 // get 请求，默认 json 解析，制定 text 返回 字符串，其他格式返回 原始数据
 export function get(url, type = 'json') {
   let _res : Promise<Response> = _fetch(url, {
-    method: 'GET'
+    method: 'GET',
+    headers : {
+      'Access-Control-Allow-Origin' : '*'
+    }
   });
   if (type == 'json')
     return _res.then(jsonParse);

@@ -57,12 +57,21 @@ export class LoadScene extends Phaser.Scene {
   }
 
   private getParams () : object {
-    
-    return {}
+    //把hash的参数转换成对象
+    let hash : string = window.location.hash;
+    let bookIdMatch : RegExpMatchArray = hash.match(/bookId=(.+)&/);
+    let unitIdMatch : RegExpMatchArray = hash.match(/unitId=(.+)/);
+    let bookId : string = bookIdMatch && bookIdMatch[1];
+    let unitId : string = unitIdMatch && unitIdMatch[1];
+    return {bookId , unitId};
   }
 
   private getData () : void {
-
+    //获取数据
+    let params = this.getParams();
+    get(apiPath.getUnitDetail + '?' + makeParams(params)).then((res)=>{
+      console.log(res);
+    })
   }
 
   private loadHandle () : void {
