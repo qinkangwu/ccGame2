@@ -1,5 +1,6 @@
 import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
+import { game3BookIdParams, game3DataInterface } from '../../interface/Game3';
 
 export class LoadScene extends Phaser.Scene {
   private centerText : Phaser.GameObjects.Text; //文本内容
@@ -7,7 +8,8 @@ export class LoadScene extends Phaser.Scene {
   private process : number = 0; //进度
   private timer  : Phaser.Time.TimerEvent  ;  //定时器id
   private imgLoadDone : boolean = false;  //图片是否加载完毕
-  private dataLoadDone : boolean = true;   //数据是否加载完毕
+  private dataLoadDone : boolean = false;   //数据是否加载完毕
+  private curData : Array<game3DataInterface> = [];
 
   constructor() {
     super({
@@ -38,7 +40,6 @@ export class LoadScene extends Phaser.Scene {
     this.load.image('backgroundImg','assets/PianoPageBg.png'); 
     this.load.multiatlas('icons','assets/imgsJson.json','assets');
     this.load.spritesheet('keys','assets/imgsJson2.png',{frameWidth : 110 , frameHeight : 229 , margin: 1, spacing: 2});
-    this.load.audio('audioMp3','https://labs.phaser.io/assets/audio/tech/bass.mp3')
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;
@@ -56,7 +57,7 @@ export class LoadScene extends Phaser.Scene {
       //console.log(this.load.progress);
   }
 
-  private getParams () : object {
+  private getParams () : game3BookIdParams {
     //把hash的参数转换成对象
     let hash : string = window.location.hash;
     let bookIdMatch : RegExpMatchArray = hash.match(/bookId=(.+)&/);
@@ -69,8 +70,11 @@ export class LoadScene extends Phaser.Scene {
   private getData () : void {
     //获取数据
     let params = this.getParams();
-    get(apiPath.getUnitDetail + '?' + makeParams(params)).then((res)=>{
-      console.log(res);
+    params.bookId && get(apiPath.getUnitDetail + '?' + makeParams(params)).then((res)=>{
+      res && res.code === '0000' && (this.curData = res.result);
+      this.dataLoadDone = true;
+    },()=>{
+      this.dataLoadDone = true;
     })
   }
 
@@ -88,7 +92,9 @@ export class LoadScene extends Phaser.Scene {
             //   duration : 500,
             //   alpha : 0
             // })
-            this.scene.start('PlayScene');
+            this.scene.start('PlayScene',{
+              data : this.curData
+            });
           }
           return;
         }

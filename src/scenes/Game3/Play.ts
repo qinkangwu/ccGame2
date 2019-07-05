@@ -1,5 +1,7 @@
+import { game3DataInterface } from '../../interface/Game3';
+
 export class PlayScene extends Phaser.Scene {
-    private ccData : object = {};   //音标数据
+    private ccData : Array<game3DataInterface> = [];   //音标数据
     private redSprite : Phaser.GameObjects.Sprite ;  //红气泡
     private blueSprite : Phaser.GameObjects.Sprite ; //蓝气泡
     private keySpritesArr : Array<Phaser.GameObjects.Sprite> = []; //键盘集合
@@ -10,7 +12,7 @@ export class PlayScene extends Phaser.Scene {
     private leftSpriteX : number; //第一个键盘的x值
     private dragX : number = 0;
     private show : Array<boolean> = [false,false];
-    private middle : number = 4 ; //元音辅音分割数
+    private middle : number = 0 ; //元音辅音分割数
     private particles : Phaser.GameObjects.Particles.ParticleEmitterManager ; // 粒子控制器
     private emitters  : object = {};  //粒子发射器
     constructor() {
@@ -21,26 +23,34 @@ export class PlayScene extends Phaser.Scene {
   
     init(data): void {
       //音标数据绑定
-      this.ccData = data && data || {};
+      this.ccData = data && data.data || {};
     }
   
     preload(): void {
-      
+      //加载音频文件
+      this.loadMusic(this.ccData);
     }
     
   
     create(): void {
       //初始化渲染
-      this.add.tileSprite(0,0,window.innerWidth,552,'backgroundImg').setOrigin(0);
-      this.drawBottomKeys();
-      this.drawTopWord();
-      this.createAnims();
-      this.createEmitter();
+      this.add.tileSprite(0,0,window.innerWidth,552,'backgroundImg').setOrigin(0); //背景
+      this.drawBottomKeys(); //键盘
+      this.drawTopWord(); //音标气泡
+      this.createAnims(); //创建动画
+      this.createEmitter(); //创建粒子发射器
     }
 
   
     update(time: number): void {
       
+    }
+
+    private loadMusic (data : Array<game3DataInterface>) : void {
+      //加载音频
+      data.map((r :game3DataInterface , i : number )=>{
+        this.load.audio('audio'+i,r.audioKey);
+      })
     }
 
     private createEmitter () : void {
@@ -115,10 +125,10 @@ export class PlayScene extends Phaser.Scene {
       index < this.scene.middle ? this.anims.play('redAnims',false) : this.anims.play('blueAnims',false);
 
       //@ts-ignore
-      //this.scene.playMusic('audioMp3');
+      this.scene.playMusic('audio' + index);
 
       //@ts-ignore
-      index < this.scene.middle ? this.scene.setWords('red','/ a /') : this.scene.setWords('blue','/ a /');
+      index < this.scene.middle ? this.scene.setWords('red',this.scene.ccData[index].name) : this.scene.setWords('blue',this.scene.ccData[index].name);
 
        //@ts-ignore
        index < this.scene.middle ? (this.scene.show[1] && this.scene.boom('red')) : (this.scene.show[0] && this.scene.boom('blue'));
@@ -156,9 +166,15 @@ export class PlayScene extends Phaser.Scene {
 
     private drawBottomKeys() : void{
       //渲染键盘
-      let dataArr = [1,1,1,1,1,1,1,1];
-      let imgKey = 0;
-      let leftDistance = (window.innerWidth - (110 * dataArr.length + 5 * (dataArr.length - 1 ))) / 2 ; //计算如果要居中，第一个键盘的x值
+      let dataArr : Array<game3DataInterface> = this.ccData;
+      for(let i = 0 ; i < dataArr.length ; i++){
+        if(dataArr[i].vowelConsonant === '辅音'){
+          this.middle = i;
+          break;
+        }
+      }
+      let imgKey : number = 0;
+      let leftDistance : number = (window.innerWidth - (110 * dataArr.length + 5 * (dataArr.length - 1 ))) / 2 ; //计算如果要居中，第一个键盘的x值
       for ( let i = 0 ; i < dataArr.length ; i ++){
         //渲染白键
         let sprite : Phaser.GameObjects.Sprite = this.add.sprite(i === 0 && leftDistance || this.leftSpriteX + 115,313,'keys',0).setOrigin(0).setInteractive({
@@ -167,7 +183,7 @@ export class PlayScene extends Phaser.Scene {
         this.leftSpriteX = sprite.x;
         sprite.setData('index',i); //记住是按的哪个键盘，可以拿到相应的音标
         //渲染音标字符
-        let text : Phaser.GameObjects.Text = this.add.text(sprite.x + 16,457,'/ a /',{
+        let text : Phaser.GameObjects.Text = this.add.text(sprite.x + 30,457,dataArr[i].name,{
           fontSize : 40,
           font: 'bold 40px Arial',
           fill : i < this.middle && '#D25F5F' || '#65A5EF',
@@ -229,12 +245,12 @@ export class PlayScene extends Phaser.Scene {
       this.redSprite = this.add.sprite(193,74,'icons','bg_word_red.png').setOrigin(0).setAlpha(0).setScale(0);
       this.blueSprite = this.add.sprite(565,74,'icons','bg_word_blue.png').setOrigin(0).setAlpha(0).setScale(0);
 
-      this.redText = this.add.text(this.redSprite.x + 85,124,'',{
+      this.redText = this.add.text(this.redSprite.x + 100,124,'',{
           font: 'bold 53px Arial',
           fill : '#fff',
       }).setAlpha(0);
 
-      this. blueText = this.add.text(this.blueSprite.x + 85,124,'',{
+      this. blueText = this.add.text(this.blueSprite.x + 100 ,124,'',{
         font: 'bold 53px Arial',
         fill : '#fff',
       }).setAlpha(0);
