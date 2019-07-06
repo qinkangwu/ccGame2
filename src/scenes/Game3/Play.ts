@@ -188,7 +188,8 @@ export class PlayScene extends Phaser.Scene {
           font: 'bold 40px Arial',
           fill : i < this.middle && '#D25F5F' || '#65A5EF',
           bold : true
-        });
+        }).setOrigin(0.5,0);
+        text.x = sprite.x +  (sprite.width / 2)
         this.keySpritesArr.push(sprite);
         this.textsArr.push(text);
         // sprite.on('dragstart',this.dragStartHandle.bind(sprite));
@@ -234,8 +235,10 @@ export class PlayScene extends Phaser.Scene {
         //设置字符
         if(flag === 'red'){
           this.redText.setText(text);
+          this.redText.x = this.redSprite.x + (this.redSprite.width / 2 );
         }else{
           this.blueText.setText(text);
+          this.blueText.x = this.blueSprite.x + (this.blueSprite.width / 2 );
         };
 
     } 
@@ -248,12 +251,12 @@ export class PlayScene extends Phaser.Scene {
       this.redText = this.add.text(this.redSprite.x + 100,124,'',{
           font: 'bold 53px Arial',
           fill : '#fff',
-      }).setAlpha(0);
+      }).setAlpha(0).setOrigin(0.5,0);
+
 
       this. blueText = this.add.text(this.blueSprite.x + 100 ,124,'',{
         font: 'bold 53px Arial',
         fill : '#fff',
-      }).setAlpha(0);
-      
+      }).setAlpha(0).setOrigin(0.5,0);
     }
   };
