@@ -34,7 +34,7 @@ export class PlayScene extends Phaser.Scene {
   
     create(): void {
       //初始化渲染
-      this.add.tileSprite(0,0,window.innerWidth,552,'backgroundImg').setOrigin(0); //背景
+      this.add.tileSprite(0,0,window.innerWidth,window.innerHeight,'backgroundImg').setOrigin(0); //背景
       this.drawBottomKeys(); //键盘
       this.drawTopWord(); //音标气泡
       this.createAnims(); //创建动画
