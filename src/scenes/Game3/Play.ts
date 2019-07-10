@@ -1,6 +1,6 @@
 import { game3DataInterface } from '../../interface/Game3';
 
-export class PlayScene extends Phaser.Scene {
+export class Game3PlayScene extends Phaser.Scene {
     private ccData : Array<game3DataInterface> = [];   //音标数据
     private redSprite : Phaser.GameObjects.Sprite ;  //红气泡
     private blueSprite : Phaser.GameObjects.Sprite ; //蓝气泡
@@ -9,7 +9,7 @@ export class PlayScene extends Phaser.Scene {
     private imgsArr : Array<Phaser.GameObjects.Image> = []; //彩键集合
     private redText : Phaser.GameObjects.Text ; //元音音标字符
     private blueText : Phaser.GameObjects.Text ; // 辅音音标字符
-    private leftSpriteX : number; //第一个键盘的x值
+    private leftSpriteX : number = 0; //第一个键盘的x值
     private dragX : number = 0;
     private show : Array<boolean> = [false,false];
     private middle : number = 0 ; //元音辅音分割数
@@ -17,7 +17,7 @@ export class PlayScene extends Phaser.Scene {
     private emitters  : object = {};  //粒子发射器
     constructor() {
       super({
-        key: "PlayScene"
+        key: "Game3PlayScene"
       });
     }
   
@@ -112,8 +112,17 @@ export class PlayScene extends Phaser.Scene {
       //触发效果
       let emitter : Phaser.GameObjects.Particles.ParticleEmitter = this.emitters[key];
       emitter.explode(40,
-        key === 'red' && (this.redSprite.x + this.redSprite.width / 2) || (this.blueSprite.x + this.blueSprite.width / 2), 
-        key === 'red' && (this.redSprite.y + this.redSprite.height / 2 ) || (this.blueSprite.y + this.blueSprite.height / 2));
+        key === 'red' && (this.redSprite.x ) || (this.blueSprite.x), 
+        key === 'red' && (this.redSprite.y ) || (this.blueSprite.y));
+      //抖动效果
+      this.tweens.add({
+        targets : key === 'red' && [this.redSprite , this.redText ] || [this.blueSprite,this.blueText],
+        scaleX : 0.6,
+        scaleY : 0.6,
+        ease: 'Sine.easeInOut',
+        duration: 100,
+        yoyo: true
+      })
     }
 
     private pointerDownHandle (...args) : void{
@@ -175,21 +184,23 @@ export class PlayScene extends Phaser.Scene {
       }
       let imgKey : number = 0;
       let leftDistance : number = (window.innerWidth - (110 * dataArr.length + 5 * (dataArr.length - 1 ))) / 2 ; //计算如果要居中，第一个键盘的x值
+      let itemWidth = (window.innerWidth - (5 * (dataArr.length - 1))) / dataArr.length;
       for ( let i = 0 ; i < dataArr.length ; i ++){
         //渲染白键
-        let sprite : Phaser.GameObjects.Sprite = this.add.sprite(i === 0 && leftDistance || this.leftSpriteX + 115,313,'keys',0).setOrigin(0).setInteractive({
+        let sprite : Phaser.GameObjects.Sprite = this.add.sprite(i === 0 ? 0 : this.leftSpriteX + (itemWidth + 5),window.innerHeight - 240,'keys',0).setOrigin(0).setInteractive({
           draggable : true
         });
+        sprite.scaleX = itemWidth / sprite.width;
         this.leftSpriteX = sprite.x;
         sprite.setData('index',i); //记住是按的哪个键盘，可以拿到相应的音标
         //渲染音标字符
-        let text : Phaser.GameObjects.Text = this.add.text(sprite.x + 30,457,dataArr[i].name,{
+        let text : Phaser.GameObjects.Text = this.add.text(sprite.x + 30,sprite.y + sprite.height - 75,this.setWordsTrim(dataArr[i].name),{
           fontSize : 40,
           font: 'bold 40px Arial',
           fill : i < this.middle && '#D25F5F' || '#65A5EF',
           bold : true
         }).setOrigin(0.5,0);
-        text.x = sprite.x +  (sprite.width / 2)
+        text.x = sprite.x +  ((sprite.width * sprite.scaleX) / 2)
         this.keySpritesArr.push(sprite);
         this.textsArr.push(text);
         // sprite.on('dragstart',this.dragStartHandle.bind(sprite));
@@ -203,7 +214,7 @@ export class PlayScene extends Phaser.Scene {
         }
         //渲染彩键
         imgKey = (imgKey + 1 > 7 ? 1 : imgKey + 1);
-        let img : Phaser.GameObjects.Image = this.add.image( sprite.x + 110,352,'icons',`ImgPiano0${imgKey}.png`).setDepth(100);
+        let img : Phaser.GameObjects.Image = this.add.image( sprite.x + (110 * sprite.scaleX),sprite.y - 11,'icons',`ImgPiano0${imgKey}.png`).setDepth(100).setOrigin(.5,0);
         this.imgsArr.push(img);
       }
     }
@@ -217,46 +228,51 @@ export class PlayScene extends Phaser.Scene {
         alpha : 1,
         ease : 'Sine.easeInOut',
         duration : 1000,
+      })
+
+      this.tweens.add({
+        targets : flag === 'red' && this.redText || this.blueText,
+        alpha : 1,
+        scaleX : 1,
+        scaleY : 1,
+        ease : 'Sine.easeInOut',
+        duration : 1000,
         onComplete : ()=>{
-          this.tweens.add({
-            targets : flag === 'red' && this.redText || this.blueText,
-            alpha : 1,
-            ease : 'Sine.easeInOut',
-            duration : 1000,
-            onComplete : ()=>{
-              this.show[flag === 'red' && 1 || 0 ] = true;
-            }
-          })
+          this.show[flag === 'red' && 1 || 0 ] = true;
         }
       })
+    }
+
+    private setWordsTrim (word : string) : string {
+      let str : string = word.split('').join(' ');
+      return str;
     }
 
     private setWords (flag : string, text : string) : void {
         //设置字符
         if(flag === 'red'){
-          this.redText.setText(text);
-          this.redText.x = this.redSprite.x + (this.redSprite.width / 2 );
+          this.redText.setText(this.setWordsTrim(text));
+          this.redText.x = this.redSprite.x ;
         }else{
-          this.blueText.setText(text);
-          this.blueText.x = this.blueSprite.x + (this.blueSprite.width / 2 );
+          this.blueText.setText(this.setWordsTrim(text));
+          this.blueText.x = this.blueSprite.x ;
         };
 
     } 
 
     private drawTopWord () : void {
       //渲染音标word气泡
-      this.redSprite = this.add.sprite(193,74,'icons','bg_word_red.png').setOrigin(0).setAlpha(0).setScale(0);
-      this.blueSprite = this.add.sprite(565,74,'icons','bg_word_blue.png').setOrigin(0).setAlpha(0).setScale(0);
-
-      this.redText = this.add.text(this.redSprite.x + 100,124,'',{
+      this.redSprite = this.add.sprite(window.innerWidth / 2 - 200,window.innerHeight / 2 - 150,'icons','bg_word_red.png').setOrigin(0.5).setAlpha(0).setScale(0);
+      this.blueSprite = this.add.sprite(window.innerWidth / 2 + 200,window.innerHeight / 2 - 150,'icons','bg_word_blue.png').setOrigin(0.5).setAlpha(0).setScale(0);
+      this.redText = this.add.text(this.redSprite.x,this.redSprite.y,'',{
           font: 'bold 53px Arial',
           fill : '#fff',
-      }).setAlpha(0).setOrigin(0.5,0);
+      }).setAlpha(0).setOrigin(0.5).setScale(0);
 
 
-      this. blueText = this.add.text(this.blueSprite.x + 100 ,124,'',{
+      this. blueText = this.add.text(this.blueSprite.x,this.blueSprite.y,'',{
         font: 'bold 53px Arial',
         fill : '#fff',
-      }).setAlpha(0).setOrigin(0.5,0);
+      }).setAlpha(0).setOrigin(0.5).setScale(0);
     }
   };

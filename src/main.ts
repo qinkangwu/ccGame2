@@ -1,17 +1,23 @@
 import "phaser";
 
-import {LoadScene} from './scenes/Game3/Load';
-import {PlayScene} from './scenes/Game3/Play';
+import {Game3LoadScene} from './scenes/Game3/Load';
+import {Game3PlayScene} from './scenes/Game3/Play';
+
+import { Game4LoadScene } from './scenes/Game4/Load';
+import { Game4PlayScene } from './scenes/Game4/Play';
 
 let path : string = window.location.hash.replace('#/','');
 let sceneArr : Array<object> = [];
 
 switch (path){
    case 'game3' : 
-    sceneArr.push(LoadScene,PlayScene);
+    sceneArr.push(Game3LoadScene,Game3PlayScene);
+    break;
+   case 'game4' : 
+    sceneArr.push(Game4LoadScene,Game4PlayScene);
     break;
    default : 
-    sceneArr.push(LoadScene,PlayScene);
+    sceneArr.push(Game3LoadScene,Game3PlayScene);
     break;
 }
 
