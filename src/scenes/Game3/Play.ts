@@ -15,6 +15,7 @@ export class Game3PlayScene extends Phaser.Scene {
     private middle : number = 0 ; //元音辅音分割数
     private particles : Phaser.GameObjects.Particles.ParticleEmitterManager ; // 粒子控制器
     private emitters  : object = {};  //粒子发射器
+    private timer : number = 0; //判断是拖拽还是点击
     constructor() {
       super({
         key: "Game3PlayScene"
@@ -127,31 +128,33 @@ export class Game3PlayScene extends Phaser.Scene {
 
     private pointerDownHandle (...args) : void{
       //鼠标按下事件
-      //@ts-ignore
-      let index = this.getData('index');
-
-      //@ts-ignore
-      index < this.scene.middle ? this.anims.play('redAnims',false) : this.anims.play('blueAnims',false);
-
-      //@ts-ignore
-      this.scene.playMusic('audio' + index);
-
-      //@ts-ignore
-      index < this.scene.middle ? this.scene.setWords('red',this.scene.ccData[index].name) : this.scene.setWords('blue',this.scene.ccData[index].name);
-
-       //@ts-ignore
-       index < this.scene.middle ? (this.scene.show[1] && this.scene.boom('red')) : (this.scene.show[0] && this.scene.boom('blue'));
-
-      //@ts-ignore
-      if(this.scene.show.some((r,i)=> !r)){
-        //如果都已经显示出来就不必再调用此函数
-        //@ts-ignore
-        index < this.scene.middle ? (!this.scene.show[1] && this.scene.showWordsHandle('red')) : (!this.scene.show[0] && this.scene.showWordsHandle('blue'));
-      }
-
+      this.timer = Date.now();
     }
     private pointeUpHandle (...args) : void{
       //@ts-ignore
+      if(Date.now() - this.timer < 200){
+        //@ts-ignore
+        let index = this.getData('index');
+
+        //@ts-ignore
+        index < this.scene.middle ? this.anims.play('redAnims',false) : this.anims.play('blueAnims',false);
+
+        //@ts-ignore
+        this.scene.playMusic('audio' + index);
+
+        //@ts-ignore
+        index < this.scene.middle ? this.scene.setWords('red',this.scene.ccData[index].name) : this.scene.setWords('blue',this.scene.ccData[index].name);
+
+        //@ts-ignore
+        index < this.scene.middle ? (this.scene.show[1] && this.scene.boom('red')) : (this.scene.show[0] && this.scene.boom('blue'));
+
+        //@ts-ignore
+        if(this.scene.show.some((r,i)=> !r)){
+          //如果都已经显示出来就不必再调用此函数
+          //@ts-ignore
+          index < this.scene.middle ? (!this.scene.show[1] && this.scene.showWordsHandle('red')) : (!this.scene.show[0] && this.scene.showWordsHandle('blue'));
+        }
+      }
     }
 
     private createAnims () : void {
@@ -196,16 +199,16 @@ export class Game3PlayScene extends Phaser.Scene {
         //渲染音标字符
         let text : Phaser.GameObjects.Text = this.add.text(sprite.x + 30,sprite.y + sprite.height - 75,this.setWordsTrim(dataArr[i].name),{
           fontSize : 40,
-          font: 'bold 40px Arial',
+          font: 'bold 45px Arial',
           fill : i < this.middle && '#D25F5F' || '#65A5EF',
           bold : true
         }).setOrigin(0.5,0);
         text.x = sprite.x +  ((sprite.width * sprite.scaleX) / 2)
         this.keySpritesArr.push(sprite);
         this.textsArr.push(text);
-        // sprite.on('dragstart',this.dragStartHandle.bind(sprite));
-        // sprite.on('drag',this.dragMoveHandle.bind(sprite));
-        // sprite.on('dragend',this.dragEndHandle.bind(sprite));
+        sprite.on('dragstart',this.dragStartHandle.bind(sprite));
+        sprite.on('drag',this.dragMoveHandle.bind(sprite));
+        sprite.on('dragend',this.dragEndHandle.bind(sprite));
         sprite.on('pointerdown',this.pointerDownHandle.bind(sprite));
         sprite.on('pointerup',this.pointeUpHandle.bind(sprite));
         if(i % 3 === 2 || ( (i % 3 === 0 || i % 3 === 1) && i === (dataArr.length - 1))){

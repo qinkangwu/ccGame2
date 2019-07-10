@@ -23,6 +23,7 @@ export class Game4PlayScene extends Phaser.Scene {
       this.createBackgroundImage(); //背景图
       this.drawCivaAndWolf(); //渲染civa跟狼
       this.clickHandle(); //绑定点击事件
+      this.createAnims(); //创建动画
     }
 
     private setWords () : void{
@@ -33,16 +34,22 @@ export class Game4PlayScene extends Phaser.Scene {
 
     private clickHandle () : void {
       this.input.on('pointerdown',(...args)=>{
-        console.log(1);
+        this.civa.anims.play('shooting');
       })
     }
 
     private createAnims () : void {
-      
+      this.anims.create({
+        key : 'shooting',
+        frames : this.anims.generateFrameNames('shoot',{start : 0 , end : 3 , zeroPad: 4 , prefix : 'civa' , suffix : '.png' }),
+        frameRate : 10,
+        repeat : 0,
+        yoyo : true
+      })
     }
 
     private drawCivaAndWolf () : void{
-      this.civa = this.add.sprite(0,window.innerHeight - (240 + window.innerHeight * 0.15),'shoot',0).setOrigin(0);
+      this.civa = this.add.sprite(0,window.innerHeight - (240 + window.innerHeight * 0.15),'shoot').setOrigin(0);
       switch(this.words.length){
         case 2 :  
           this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 - 40 , window.innerHeight / 2 - 100 , 'icons' , 'qiqiu_01.png'));
