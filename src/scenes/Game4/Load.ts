@@ -35,9 +35,9 @@ export class Game4LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.image('backgroundImg','assets/PianoPageBg.png'); 
-    this.load.multiatlas('icons','assets/imgsJson.json','assets');
-    this.load.spritesheet('keys','assets/imgsJson2.png',{frameWidth : 110 , frameHeight : 229 , margin: 1, spacing: 2});
+    this.load.image('game4Bgi','assets/Game4/bgi.png'); 
+    this.load.multiatlas('icons','assets/Game4/imgsJson.json','assets/Game4');
+    this.load.multiatlas('shoot','assets/Game4/shoot.json','assets/Game4');
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;
@@ -74,9 +74,7 @@ export class Game4LoadScene extends Phaser.Scene {
             //   duration : 500,
             //   alpha : 0
             // })
-            this.scene.start('PlayScene',{
-              data : this.curData
-            });
+            this.scene.start('Game4PlayScene');
           }
           return;
         }

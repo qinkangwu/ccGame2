@@ -37,7 +37,7 @@ export class Game3LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.image('backgroundImg','assets/Game3/PianoPageBg.png'); 
+    this.load.image('game3Bgi','assets/Game3/PianoPageBg.png'); 
     this.load.multiatlas('icons','assets/Game3/imgsJson.json','assets');
     this.load.spritesheet('keys','assets/Game3/imgsJson2.png',{frameWidth : 110 , frameHeight : 229 , margin: 1, spacing: 2});
     this.load.on('complete',()=>{
