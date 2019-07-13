@@ -65,6 +65,7 @@ export class Game3PlayScene extends Phaser.Scene {
       data.map((r :game3DataInterface , i : number )=>{
         this.load.audio(r.id,r.audioKey);
       })
+      this.load.start(); //preload自动运行，其他地方加载资源必须手动启动，不然加载失效
     }
 
     private createEmitter () : void {
@@ -155,6 +156,8 @@ export class Game3PlayScene extends Phaser.Scene {
         res && res.code === '0000' && (this.ccData = res.result);
         this.drawBottomKeys(isLeft);
         this.animsLayoutHandle(isLeft);
+        this.loadMusic(this.ccData);
+        this.titleObj.setText(this.bookMenu[this.currentBookIndex].name);
       })
     }
 
