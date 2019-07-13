@@ -10,6 +10,7 @@ export class Game3LoadScene extends Phaser.Scene {
   private imgLoadDone : boolean = false;  //图片是否加载完毕
   private dataLoadDone : boolean = false;   //数据是否加载完毕
   private curData : Array<game3DataInterface> = [];
+  private title : string;
 
   constructor() {
     super({
@@ -60,16 +61,20 @@ export class Game3LoadScene extends Phaser.Scene {
   private getParams () : game3BookIdParams {
     //把hash的参数转换成对象
     let hash : string = window.location.hash;
-    let bookIdMatch : RegExpMatchArray = hash.match(/bookId=(.+)&/);
-    let unitIdMatch : RegExpMatchArray = hash.match(/unitId=(.+)/);
+    let bookIdMatch : RegExpMatchArray = hash.match(/bookId=(.+)&u/);
+    let unitIdMatch : RegExpMatchArray = hash.match(/unitId=(.+)&t/);
+    let titleMatch : RegExpMatchArray = hash.match(/title=(.+)/);
     let bookId : string = bookIdMatch && bookIdMatch[1];
     let unitId : string = unitIdMatch && unitIdMatch[1];
-    return {bookId , unitId};
+    let title : string = titleMatch && titleMatch[1];
+    return {bookId , unitId , title};
   }
 
   private getData () : void {
     //获取数据
     let params = this.getParams();
+    params.title && (this.title = decodeURIComponent(params.title));
+    delete params.title;
     params.bookId && get(apiPath.getUnitDetail + '?' + makeParams(params)).then((res)=>{
       res && res.code === '0000' && (this.curData = res.result);
       this.dataLoadDone = true;
@@ -93,7 +98,9 @@ export class Game3LoadScene extends Phaser.Scene {
             //   alpha : 0
             // })
             this.scene.start('Game3PlayScene',{
-              data : this.curData
+              data : this.curData,
+              title : this.title,
+              params : this.getParams()
             });
           }
           return;

@@ -66,9 +66,7 @@ export class Game4PlayScene extends Phaser.Scene {
     }
 
     private createBackgroundImage () :void {
-      let img : Phaser.GameObjects.Image = this.add.image(0,0,'game4Bgi').setOrigin(0);
-      img.scaleX = window.innerWidth / img.width;
-      img.scaleY = window.innerHeight / img.height;
+      let img : Phaser.GameObjects.Image = this.add.image(0,0,'game4Bgi').setOrigin(0).setDisplaySize(window.innerWidth,window.innerHeight);
     }
   
     update(time: number): void {
