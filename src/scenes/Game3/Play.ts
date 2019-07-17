@@ -253,7 +253,10 @@ export class Game3PlayScene extends Phaser.Scene {
         this.redText.alpha = 0;
         this.blueText.alpha = 1;
       }
-
+      //@ts-ignore
+      if(this.boom.lock) return;
+      //@ts-ignore
+      this.boom.lock = true;
       //抖动效果
       this.tweens.add({
         targets : key === 'red' && [this.redSprite , this.redText ] || [this.blueSprite,this.blueText],
@@ -261,7 +264,11 @@ export class Game3PlayScene extends Phaser.Scene {
         scaleY : 0.6,
         ease: 'Sine.easeInOut',
         duration: 100,
-        yoyo: true
+        yoyo: true,
+        onComplete : ()=>{
+          //@ts-ignore
+          this.boom.lock = false;
+        }
       })
     }
 
@@ -283,18 +290,17 @@ export class Game3PlayScene extends Phaser.Scene {
           this.scene.playMusic(this.scene.ccData[index].id);
         }catch(e){
           console.log(e);
+        }finally{
+           //@ts-ignore
+          index < this.scene.middle ? this.scene.setWords('red',this.scene.ccData[index].name) : this.scene.setWords('blue',this.scene.ccData[index].name);
+
+          //@ts-ignore
+          index < this.scene.middle ? this.scene.boom('red') : this.scene.boom('blue');
         }
-
         //@ts-ignore
-        index < this.scene.middle ? this.scene.setWords('red',this.scene.ccData[index].name) : this.scene.setWords('blue',this.scene.ccData[index].name);
-
-        //@ts-ignore
-        index < this.scene.middle ? this.scene.boom('red') : this.scene.boom('blue');
-
-        //@ts-ignore
-        if(this.scene.show.some((r,i)=> !r)){
-          //如果都已经显示出来就不必再调用此函数
-        }
+        // if(this.scene.show.some((r,i)=> !r)){
+        //   //如果都已经显示出来就不必再调用此函数
+        // }
         //@ts-ignore
         //index < this.scene.middle ? (!this.scene.show[1] && this.scene.showWordsHandle('red')) : (!this.scene.show[0] && this.scene.showWordsHandle('blue'));
       }
@@ -330,7 +336,7 @@ export class Game3PlayScene extends Phaser.Scene {
       }
       let imgKey : number = 0;
       let leftDistance : number = (window.innerWidth - (110 * dataArr.length + 5 * (dataArr.length - 1 ))) / 2 ; //计算如果要居中，第一个键盘的x值
-      let itemWidth = (window.innerWidth - (5 * (dataArr.length - 1))) / dataArr.length;
+      let itemWidth : number = (window.innerWidth - (5 * (dataArr.length - 1))) / dataArr.length;
       for ( let i = 0 ; i < dataArr.length ; i ++){
         //渲染白键
         let sprite : Phaser.GameObjects.Sprite = this.add.sprite(i === 0 ? (isLeft && window.innerWidth || -window.innerWidth) : this.leftSpriteX + (itemWidth + 5),window.innerHeight - 240,'keys',0).setOrigin(0).setInteractive({
@@ -346,7 +352,7 @@ export class Game3PlayScene extends Phaser.Scene {
           fill : i < this.middle && '#D25F5F' || '#65A5EF',
           bold : true
         }).setOrigin(0.5,0);
-        text.x = sprite.x +  ((sprite.width * sprite.scaleX) / 2)
+        text.x = sprite.x +  ((sprite.width * sprite.scaleX) / 2);
         this.keySpritesArr.push(sprite);
         this.textsArr.push(text);
         sprite.on('dragstart',this.dragStartHandle.bind(sprite));
@@ -431,6 +437,6 @@ export class Game3PlayScene extends Phaser.Scene {
       this.title &&  (this.titleObj = this.add.text(20,20,this.title,{
         font: 'bold 20px Arial',
         fill : '#fff',
-      }))
+      }));
     }
   };

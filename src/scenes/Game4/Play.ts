@@ -49,11 +49,11 @@ export class Game4PlayScene extends Phaser.Scene {
     }
 
     private drawCivaAndWolf () : void{
-      this.civa = this.add.sprite(0,window.innerHeight - (240 + window.innerHeight * 0.15),'shoot').setOrigin(0);
+      this.civa = this.add.sprite(0,window.innerHeight - (240 + window.innerHeight * 0.15),'shoot','civa0001.png').setOrigin(0);
       switch(this.words.length){
         case 2 :  
           this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 - 40 , window.innerHeight / 2 - 100 , 'icons' , 'qiqiu_01.png'));
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 120 , window.innerHeight / 2 - 100 , 'icons' , 'qiqiu_04.png'));
+          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 120 , window.innerHeight / 2 - 100 , 'icons' , 'qiqiu_02.png'));
           this.add.sprite(window.innerWidth / 2 + 50 , window.innerHeight / 2  + 80,'icons' , 'dahuilang.png');
           break;
         case 3 :

@@ -43,7 +43,7 @@ const config: GameConfig = {
   scene : sceneArr
 };
 
-export class StarfallGame extends Phaser.Game {
+export class ccEnglishGames extends Phaser.Game {
   constructor(config: GameConfig) {
     super(config);
   }
@@ -51,5 +51,5 @@ export class StarfallGame extends Phaser.Game {
 
 window.onload = () => {
   //@ts-ignore
-  window.phaserGame = new StarfallGame(config);
+  window.phaserGame = new ccEnglishGames(config);
 };
