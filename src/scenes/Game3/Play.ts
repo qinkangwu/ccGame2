@@ -348,7 +348,7 @@ export class Game3PlayScene extends Phaser.Scene {
         //渲染音标字符
         let text : Phaser.GameObjects.Text = this.add.text(sprite.x + 30,sprite.y + sprite.height - 75,this.setWordsTrim(dataArr[i].name),{
           fontSize : 40,
-          font: 'bold 45px Arial',
+          font: 'bold 45px Arial Rounded MT',
           fill : i < this.middle && '#D25F5F' || '#65A5EF',
           bold : true
         }).setOrigin(0.5,0);
@@ -423,19 +423,19 @@ export class Game3PlayScene extends Phaser.Scene {
 
     private drawTopWord () : void {
       //渲染音标word气泡
-      this.redSprite = this.add.sprite(window.innerWidth / 2,window.innerHeight / 2 - 150,'icons','bg_word_red.png').setOrigin(0.5).setAlpha(0).setScale(1.3);
-      this.blueSprite = this.add.sprite(window.innerWidth / 2,window.innerHeight / 2 - 150,'icons','bg_word_blue.png').setOrigin(0.5).setAlpha(0).setScale(1.3);
+      this.redSprite = this.add.sprite(window.innerWidth / 2,window.innerHeight / 2 - 150,'icons','bg_word_red.png').setOrigin(0.5).setAlpha(0).setScale(1.4);
+      this.blueSprite = this.add.sprite(window.innerWidth / 2,window.innerHeight / 2 - 150,'icons','bg_word_blue.png').setOrigin(0.5).setAlpha(0).setScale(1.4);
       this.redText = this.add.text(this.redSprite.x,this.redSprite.y,'',{
-          font: 'bold 53px Arial',
+          font: 'bold 65px Arial Rounded MT',
           fill : '#fff',
       }).setAlpha(0).setOrigin(0.5);
       this. blueText = this.add.text(this.blueSprite.x,this.blueSprite.y,'',{
-        font: 'bold 53px Arial',
+        font: 'bold 65px Arial Rounded MT',
         fill : '#fff',
       }).setAlpha(0).setOrigin(0.5);
 
       this.title &&  (this.titleObj = this.add.text(20,20,this.title,{
-        font: 'bold 20px Arial',
+        font: 'bold 20px Arial Rounded MT',
         fill : '#fff',
       }));
     }

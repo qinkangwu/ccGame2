@@ -14,28 +14,28 @@
 					"frame": {
 						"x": 1,
 						"y": 1,
-						"w": 196,
-						"h": 239
+						"w": 263,
+						"h": 263
 					},
 					"rotated": false,
 					"trimmed": false,
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 196,
-						"h": 239
+						"w": 263,
+						"h": 263
 					},
 					"sourceSize": {
-						"w": 196,
-						"h": 239
+						"w": 263,
+						"h": 263
 					}
 				},
 				{
 					"filename": "civa0002.png",
 					"frame": {
-						"x": 199,
+						"x": 266,
 						"y": 1,
-						"w": 228,
+						"w": 263,
 						"h": 263
 					},
 					"rotated": false,
@@ -43,54 +43,75 @@
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 228,
+						"w": 263,
 						"h": 263
 					},
 					"sourceSize": {
-						"w": 228,
+						"w": 263,
 						"h": 263
 					}
 				},
 				{
 					"filename": "civa0003.png",
 					"frame": {
-						"x": 429,
-						"y": 1,
-						"w": 234,
-						"h": 225
+						"x": 1,
+						"y": 266,
+						"w": 263,
+						"h": 263
 					},
 					"rotated": false,
 					"trimmed": false,
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 234,
-						"h": 225
+						"w": 263,
+						"h": 263
 					},
 					"sourceSize": {
-						"w": 234,
-						"h": 225
+						"w": 263,
+						"h": 263
 					}
 				},
 				{
 					"filename": "civa0004.png",
 					"frame": {
-						"x": 665,
-						"y": 1,
-						"w": 215,
-						"h": 238
+						"x": 266,
+						"y": 266,
+						"w": 263,
+						"h": 263
 					},
 					"rotated": false,
 					"trimmed": false,
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 215,
-						"h": 238
+						"w": 263,
+						"h": 263
 					},
 					"sourceSize": {
-						"w": 215,
-						"h": 238
+						"w": 263,
+						"h": 263
+					}
+				},
+				{
+					"filename": "civa0005.png",
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 263,
+						"h": 263
+					},
+					"rotated": false,
+					"trimmed": false,
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 263,
+						"h": 263
+					},
+					"sourceSize": {
+						"w": 263,
+						"h": 263
 					}
 				}
 			]
