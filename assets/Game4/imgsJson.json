@@ -31,9 +31,30 @@
 					}
 				},
 				{
-					"filename": "line01.png",
+					"filename": "jian.png",
 					"frame": {
 						"x": 312,
+						"y": 1,
+						"w": 131,
+						"h": 16
+					},
+					"rotated": false,
+					"trimmed": false,
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 131,
+						"h": 16
+					},
+					"sourceSize": {
+						"w": 131,
+						"h": 16
+					}
+				},
+				{
+					"filename": "line01.png",
+					"frame": {
+						"x": 445,
 						"y": 1,
 						"w": 218,
 						"h": 187
@@ -54,8 +75,8 @@
 				{
 					"filename": "line02.png",
 					"frame": {
-						"x": 532,
-						"y": 1,
+						"x": 312,
+						"y": 190,
 						"w": 47,
 						"h": 172
 					},
@@ -75,8 +96,8 @@
 				{
 					"filename": "line03.png",
 					"frame": {
-						"x": 532,
-						"y": 175,
+						"x": 361,
+						"y": 190,
 						"w": 130,
 						"h": 187
 					},
@@ -96,7 +117,7 @@
 				{
 					"filename": "qiqiu01.png",
 					"frame": {
-						"x": 664,
+						"x": 665,
 						"y": 1,
 						"w": 283,
 						"h": 377
