@@ -31,6 +31,27 @@
 					}
 				},
 				{
+					"filename": "huluobo.png",
+					"frame": {
+						"x": 1,
+						"y": 215,
+						"w": 520,
+						"h": 226
+					},
+					"rotated": false,
+					"trimmed": false,
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 520,
+						"h": 226
+					},
+					"sourceSize": {
+						"w": 520,
+						"h": 226
+					}
+				},
+				{
 					"filename": "jian.png",
 					"frame": {
 						"x": 312,
@@ -75,8 +96,8 @@
 				{
 					"filename": "line02.png",
 					"frame": {
-						"x": 312,
-						"y": 190,
+						"x": 665,
+						"y": 1,
 						"w": 47,
 						"h": 172
 					},
@@ -96,7 +117,7 @@
 				{
 					"filename": "line03.png",
 					"frame": {
-						"x": 361,
+						"x": 523,
 						"y": 190,
 						"w": 130,
 						"h": 187
@@ -117,7 +138,7 @@
 				{
 					"filename": "qiqiu01.png",
 					"frame": {
-						"x": 665,
+						"x": 714,
 						"y": 1,
 						"w": 283,
 						"h": 377
@@ -138,7 +159,7 @@
 				{
 					"filename": "qiqiu02.png",
 					"frame": {
-						"x": 1,
+						"x": 523,
 						"y": 380,
 						"w": 320,
 						"h": 406
@@ -159,8 +180,8 @@
 				{
 					"filename": "qiqiu03.png",
 					"frame": {
-						"x": 323,
-						"y": 380,
+						"x": 999,
+						"y": 1,
 						"w": 295,
 						"h": 380
 					},

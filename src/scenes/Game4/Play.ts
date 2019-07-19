@@ -6,6 +6,8 @@ export class Game4PlayScene extends Phaser.Scene {
     private wolfObj : Phaser.GameObjects.Sprite ;  //大灰狼对象
     private textArr : Array<Phaser.GameObjects.Text> = []; //文字集合
     private arrowObj : Phaser.Physics.Arcade.Sprite ; //箭头obj
+    private wordObj : Phaser.GameObjects.Sprite; //胡萝卜对象
+    private currentWord : Phaser.GameObjects.Text; //当前的单词
     private index : number = -1 ; // 音标索引
     private clickLock : boolean = true; //点击锁
     private shootLock : boolean = true; //射箭锁
@@ -31,9 +33,19 @@ export class Game4PlayScene extends Phaser.Scene {
       this.drawCivaAndWolf(); //渲染civa跟狼
       this.createArrow();  //渲染箭头
       this.clickHandle(); //绑定点击事件
+      this.createWord(); //渲染🥕
       this.createAnims(); //创建动画
       this.drawAnimsHandle(); //初始化动画
       this.createCollide(); //创建碰撞检测
+    }
+
+    private createWord () : void {
+      this.wordObj = this.add.sprite(window.innerWidth / 2 , window.innerHeight /  2 , 'icons', 'huluobo.png').setOrigin(.5).setAlpha(1).setAlpha(0);
+      this.currentWord = this.add.text(this.wordObj.x + 30, this.wordObj.y ,'boot',{
+        font: 'bold 70px Arial Rounded MT',
+        fill : '#fff',
+        bold : true
+      }).setOrigin(.5).setAlpha(0);
     }
 
     private createArrow () : void {
@@ -50,9 +62,37 @@ export class Game4PlayScene extends Phaser.Scene {
       this.shootLock = false;
       this.createArrow();
       this.createCollide();
+      if(this.index === this.ballonSprites.length - 1){
+        this.allBallonIsFinish();
+      }
+    }
+    private showWordHandle () : void {
+      this.tweens.add({
+        targets : [this.currentWord,this.wordObj],
+        alpha : 1,
+        ease: 'Sine.easeInOut',
+        duration : 500,
+      })
+    }
+
+    private allBallonIsFinish () : void {
+      //大灰狼掉入地下
+      this.clickLock = true; 
+      this.shootLock = true;
+      this.tweens.add({
+        targets : this.wolfObj,
+        y : `+=${window.innerHeight}`,
+        ease: 'Sine.easeInOut',
+        duration : 500,
+        onComplete : ()=>{
+          this.wolfObj.destroy();
+          this.showWordHandle();
+        }
+      })
     }
 
     private colideHandle () : void {
+      //碰撞检测
       this.arrowObj.destroy();
       this.ballonSprites[this.index].destroy();
       this.ballonSprites[this.index] = null;
@@ -63,6 +103,7 @@ export class Game4PlayScene extends Phaser.Scene {
     }
 
     private getAngel (px : number,py : number,mx : number,my : number) : number {
+      //两点之间的顺时针夹角
       let x : number = Math.abs(px - mx);
       let y : number = Math.abs(py - my);
       let z : number = Math.sqrt(Math.pow(x,2)+Math.pow(y,2));
@@ -97,11 +138,13 @@ export class Game4PlayScene extends Phaser.Scene {
     }
 
     private setArrowAngle () : void { 
+      //调整箭头角度
       let angleNum : number = this.getAngel(this.civa.x + this.civa.width / 2,this.civa.y + this.civa.height / 2,this.ballonSprites[this.index].x,this.ballonSprites[this.index].y);
       this.arrowObj.setAngle( angleNum + 270); 
     }
 
     private drawAnimsHandle () : void {
+      //起始动画
       this.tweens.add({
         targets : [...this.ballonSprites,...this.lineSprites,...this.textArr,this.wolfObj],
         y : `-=${window.innerHeight}`,
@@ -128,6 +171,7 @@ export class Game4PlayScene extends Phaser.Scene {
     }
 
     private arrowEmitHandle () : void {
+      //射箭
       if(this.clickLock) return;
       let currentItem : Phaser.Physics.Arcade.Sprite = this.ballonSprites[this.index];
       this.arrowObj.setVelocity(currentItem.x + currentItem.width / 2 - 140, -(currentItem.y + currentItem.height / 2));
@@ -177,7 +221,6 @@ export class Game4PlayScene extends Phaser.Scene {
           for(let i = 0 ; i < this.ballonSprites.length ; i ++ ){
             let ballon = this.ballonSprites[i];
             this.textArr.push(this.add.text(ballon.x  , ballon.y , this.words[i] , {
-              fontSize : 40,
               font: 'bold 45px Arial Rounded MT',
               fill : '#fff',
               bold : true
@@ -195,7 +238,6 @@ export class Game4PlayScene extends Phaser.Scene {
           for(let i : number = 0 ; i < this.ballonSprites.length ; i ++ ){
             let ballon = this.ballonSprites[i];
             this.textArr.push(this.add.text(ballon.x  , ballon.y , this.words[i] , {
-              fontSize : 40,
               font: 'bold 45px Arial Rounded MT',
               fill : '#fff',
               bold : true
@@ -215,7 +257,6 @@ export class Game4PlayScene extends Phaser.Scene {
           for(let i : number = 0 ; i < this.ballonSprites.length ; i ++ ){
             let ballon = this.ballonSprites[i];
             this.textArr.push(this.add.text(ballon.x  , ballon.y , this.words[i] , {
-              fontSize : 40,
               font: 'bold 45px Arial Rounded MT',
               fill : '#fff',
               bold : true
@@ -231,8 +272,9 @@ export class Game4PlayScene extends Phaser.Scene {
       let img : Phaser.GameObjects.Image = this.add.image(0,0,'game4Bgi').setOrigin(0).setDisplaySize(window.innerWidth,window.innerHeight);
     }
   
-    update(time: number): void {
+    update(time: number , delta : number): void {
       this.arrowEmitHandle();
+      // console.log((1000/delta).toFixed(3));    FPS
       //this.arrowObj.angle += 0.1;
     }
   };
