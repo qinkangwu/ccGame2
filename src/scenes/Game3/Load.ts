@@ -100,6 +100,7 @@ export class Game3LoadScene extends Phaser.Scene {
             //   duration : 500,
             //   alpha : 0
             // })
+            
             this.scene.start('Game3PlayScene',{
               data : this.curData,
               title : this.title,

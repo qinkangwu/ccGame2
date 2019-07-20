@@ -1,3 +1,6 @@
+import {get} from '../../lib/http';
+import apiPath from '../../lib/apiPath';
+
 export class Game4PlayScene extends Phaser.Scene {
     private civa : Phaser.GameObjects.Sprite ; //civa机器人
     private words : Array<string> = []; //音标数量
@@ -23,6 +26,7 @@ export class Game4PlayScene extends Phaser.Scene {
     }
   
     preload(): void {
+      this.getData(); //获取数据
       this.setWords(); //mock数据
     }
     
@@ -37,6 +41,12 @@ export class Game4PlayScene extends Phaser.Scene {
       this.createAnims(); //创建动画
       this.drawAnimsHandle(); //初始化动画
       this.createCollide(); //创建碰撞检测
+    }
+
+    private getData () : void{
+      get(apiPath.getWordsData).then((res)=>{
+        console.log(res);
+      })
     }
 
     private createWord () : void {
@@ -87,6 +97,9 @@ export class Game4PlayScene extends Phaser.Scene {
         onComplete : ()=>{
           this.wolfObj.destroy();
           this.showWordHandle();
+          this.ballonSprites.length = 0;
+          this.lineSprites.length = 0 ;
+          this.textArr.length = 0 ;
         }
       })
     }
@@ -181,6 +194,13 @@ export class Game4PlayScene extends Phaser.Scene {
     private clickHandle () : void {
       //点击场景触发
       this.input.on('pointerdown',(...args)=>{
+        if(this.wordObj.alpha === 1){
+          this.wordObj.alpha = 0;
+          this.currentWord.alpha = 0;
+          this.civa.destroy();
+          this.drawCivaAndWolf();
+          this.drawAnimsHandle();
+        }
         if(this.shootLock) return;
         this.shootLock = true;
         if(++this.index >= this.words.length){
@@ -274,7 +294,7 @@ export class Game4PlayScene extends Phaser.Scene {
   
     update(time: number , delta : number): void {
       this.arrowEmitHandle();
-      // console.log((1000/delta).toFixed(3));    FPS
+      // console.log((1000/delta).toFixed(3));   
       //this.arrowObj.angle += 0.1;
     }
   };
