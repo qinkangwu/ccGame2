@@ -1,9 +1,11 @@
 import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
+import { game4DataItem , game4PhoneticSymbol , game4WordItem} from '../../interface/Game4';
 
 export class Game4PlayScene extends Phaser.Scene {
+    private ccData : Array<game4DataItem> = [] ; //数据
     private civa : Phaser.GameObjects.Sprite ; //civa机器人
-    private words : Array<string> = []; //音标数量
+    private words : Array<game4WordItem> = []; //音标数量
     private ballonSprites : Array<Phaser.Physics.Arcade.Sprite> = []; //气球集合
     private lineSprites : Array<Phaser.GameObjects.Sprite> = []; //线集合
     private wolfObj : Phaser.GameObjects.Sprite ;  //大灰狼对象
@@ -14,6 +16,7 @@ export class Game4PlayScene extends Phaser.Scene {
     private index : number = -1 ; // 音标索引
     private clickLock : boolean = true; //点击锁
     private shootLock : boolean = true; //射箭锁
+    private ccDataIndex : number = 0 ; //当前单词索引
     constructor() {
       super({
         key: "Game4PlayScene"
@@ -22,11 +25,12 @@ export class Game4PlayScene extends Phaser.Scene {
   
     init(data): void {
       //音标数据绑定
-    //   this.ccData = data && data.data || {};
+      this.ccData = data && data.data || {};
+      this.loadMusic(this.ccData);
     }
   
     preload(): void {
-      this.getData(); //获取数据
+      //this.getData(); //获取数据
       this.setWords(); //mock数据
     }
     
@@ -41,6 +45,17 @@ export class Game4PlayScene extends Phaser.Scene {
       this.createAnims(); //创建动画
       this.drawAnimsHandle(); //初始化动画
       this.createCollide(); //创建碰撞检测
+    }
+
+    private loadMusic (data : Array<game4DataItem>) : void {
+      //加载音频
+      data && data.map((r :game4DataItem , i : number )=>{
+        this.load.audio(r.id,r.audioKey);
+        r.phoneticSymbols && r.phoneticSymbols.map((r2 : game4PhoneticSymbol,i2 : number)=>{
+          this.load.audio(r2.id,r2.audioKey);
+        })
+      })
+      this.load.start(); //preload自动运行，其他地方加载资源必须手动启动，不然加载失效
     }
 
     private getData () : void{
@@ -177,10 +192,65 @@ export class Game4PlayScene extends Phaser.Scene {
       })
     }
 
+    private transDataHandle (data : Array<game4WordItem>) : Array<game4WordItem> {
+      //把超出4个音标的数据合并为4个
+      let len : number = data.length;
+      let diff : number = len - 4;
+      let transData = [] ;
+      if(diff <= 4){
+        //音标小于8
+        for ( let i : number = 0 ; i < 4 ; i ++ ){
+          transData.push(data[i]);
+        }
+        for ( let i : number = diff ; i > 0 ; i -- ){
+          let item : game4WordItem = data[3 + i];
+          transData[4 - i] = {
+            id : transData[4 - i].id + ',' + item.id,
+            name : this.transName(transData[4 - i].name + ',' + item.name),
+            audioKey : transData[4 - i].audioKey + ',' + item.audioKey
+          };
+        }
+      }else{
+        //音标大于8
+      }
+      console.log(transData);
+      return transData;
+    }
+
+    private transName (name : string ) : string {
+      // / b / + / b / = / bb /;
+      let strArr : Array<string> = name.split(',');
+      let str1 : string = strArr[0];
+      let str2 : string = strArr[1];
+      let lastStr : string = '';
+      str1 = str1.replace(/\//g,'').replace(/ /g,'');
+      str2 = str2.replace(/\//g,'').replace(/ /g,'');
+      lastStr = `/${str1}${str2}/`
+      return lastStr;
+    }
+
     private setWords () : void{
       //初始化单词音标
-      this.words = ['/ a /','/ b /','/ c /','/ d /'];
-      this.words.length = 4;
+      this.ccData[this.ccDataIndex].phoneticSymbols.push(
+        this.ccData[this.ccDataIndex].phoneticSymbols[0],
+        this.ccData[this.ccDataIndex].phoneticSymbols[0],
+        this.ccData[this.ccDataIndex].phoneticSymbols[0]
+        )
+      let currentItem : Array<game4PhoneticSymbol> = this.ccData[this.ccDataIndex].phoneticSymbols;
+      this.words = currentItem.length <= 4 && currentItem.map((r:game4PhoneticSymbol , i : number) =>{
+        return {
+          id : r.id,
+          name : r.name,
+          audioKey : r.audioKey
+        }
+      }) || this.transDataHandle(currentItem);
+      console.log(currentItem);
+    }
+
+    private playMusic (sourceKey : string) : void {
+      //播放音频
+      let mp3 : Phaser.Sound.BaseSound = this.sound.add(sourceKey);
+      mp3.play();
     }
 
     private arrowEmitHandle () : void {
@@ -240,7 +310,7 @@ export class Game4PlayScene extends Phaser.Scene {
           this.wolfObj = this.add.sprite(window.innerWidth / 2 + 50 , window.innerHeight / 2  + 100 + window.innerHeight,'icons' , 'dahuilang.png');
           for(let i = 0 ; i < this.ballonSprites.length ; i ++ ){
             let ballon = this.ballonSprites[i];
-            this.textArr.push(this.add.text(ballon.x  , ballon.y , this.words[i] , {
+            this.textArr.push(this.add.text(ballon.x  , ballon.y , this.words[i].name , {
               font: 'bold 45px Arial Rounded MT',
               fill : '#fff',
               bold : true
@@ -251,13 +321,13 @@ export class Game4PlayScene extends Phaser.Scene {
           this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 - 120 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu03.png').setScale(.5).setDepth(100).setAngle(-20).setImmovable());
           this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 20, window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu01.png').setScale(.5).setDepth(100).setImmovable());
           this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 180 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu02.png').setScale(.5).setDepth(100).setImmovable());
+          this.lineSprites.push(this.add.sprite(this.ballonSprites[1].x - 205, this.ballonSprites[1].y,'icons','line01.png').setOrigin(0));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[1].x - 20, this.ballonSprites[1].y,'icons','line02.png').setOrigin(0));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[1].x + 48, this.ballonSprites[1].y,'icons','line03.png').setOrigin(0));
-          this.lineSprites.push(this.add.sprite(this.ballonSprites[1].x - 205, this.ballonSprites[1].y,'icons','line01.png').setOrigin(0));
           this.wolfObj = this.add.sprite(window.innerWidth / 2 + 50 , window.innerHeight / 2  + 100 + window.innerHeight,'icons' , 'dahuilang.png');
           for(let i : number = 0 ; i < this.ballonSprites.length ; i ++ ){
             let ballon = this.ballonSprites[i];
-            this.textArr.push(this.add.text(ballon.x  , ballon.y , this.words[i] , {
+            this.textArr.push(this.add.text(ballon.x  , ballon.y , this.words[i].name , {
               font: 'bold 45px Arial Rounded MT',
               fill : '#fff',
               bold : true
@@ -276,7 +346,7 @@ export class Game4PlayScene extends Phaser.Scene {
           this.wolfObj = this.add.sprite(window.innerWidth / 2 + 50 , window.innerHeight / 2  + 100 + window.innerHeight,'icons' , 'dahuilang.png');
           for(let i : number = 0 ; i < this.ballonSprites.length ; i ++ ){
             let ballon = this.ballonSprites[i];
-            this.textArr.push(this.add.text(ballon.x  , ballon.y , this.words[i] , {
+            this.textArr.push(this.add.text(ballon.x  , ballon.y , this.words[i].name , {
               font: 'bold 45px Arial Rounded MT',
               fill : '#fff',
               bold : true

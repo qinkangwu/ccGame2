@@ -1,13 +1,15 @@
 import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
+import { game4DataItem } from '../../interface/Game4'
 
 export class Game4LoadScene extends Phaser.Scene {
+  private ccData : Array<game4DataItem> = []; //数据
   private centerText : Phaser.GameObjects.Text; //文本内容
   private DefaultLoadSeconds : number = 33; //每秒增加百分之多少
   private process : number = 0; //进度
   private timer  : Phaser.Time.TimerEvent  ;  //定时器id
   private imgLoadDone : boolean = false;  //图片是否加载完毕
-  private dataLoadDone : boolean = true;   //数据是否加载完毕
+  private dataLoadDone : boolean = false;   //数据是否加载完毕
 
   constructor() {
     super({
@@ -30,7 +32,7 @@ export class Game4LoadScene extends Phaser.Scene {
       // }
     }).setOrigin(.5,.5);
 
-    //this.getData();
+    this.getData();
 
   }
 
@@ -57,7 +59,10 @@ export class Game4LoadScene extends Phaser.Scene {
 
   private getData () : void {
     //获取数据
-    
+    get(apiPath.getWordsData).then((res)=>{
+      res && res.code === '0000' && (this.ccData = res.result);
+      res && res.code === '0000' && (this.dataLoadDone = true);
+    })
   }
 
   private loadHandle () : void {
@@ -74,7 +79,9 @@ export class Game4LoadScene extends Phaser.Scene {
             //   duration : 500,
             //   alpha : 0
             // })
-            this.scene.start('Game4PlayScene');
+            this.scene.start('Game4PlayScene',{
+              data : this.ccData
+            });
           }
           return;
         }
