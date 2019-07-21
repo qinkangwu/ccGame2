@@ -65,12 +65,12 @@ export class Game4PlayScene extends Phaser.Scene {
     }
 
     private createWord () : void {
-      this.wordObj = this.add.sprite(window.innerWidth / 2 , window.innerHeight /  2 , 'icons', 'huluobo.png').setOrigin(.5).setAlpha(1).setAlpha(0);
-      this.currentWord = this.add.text(this.wordObj.x + 30, this.wordObj.y ,'boot',{
+      this.wordObj = this.add.sprite(window.innerWidth / 2 , window.innerHeight /  2 + window.innerHeight , 'icons', 'huluobo.png').setOrigin(.5).setAlpha(1);
+      this.currentWord = this.add.text(this.wordObj.x + 30, this.wordObj.y ,this.ccData[this.ccDataIndex].name,{
         font: 'bold 70px Arial Rounded MT',
         fill : '#fff',
         bold : true
-      }).setOrigin(.5).setAlpha(0);
+      }).setOrigin(.5);
     }
 
     private createArrow () : void {
@@ -94,7 +94,7 @@ export class Game4PlayScene extends Phaser.Scene {
     private showWordHandle () : void {
       this.tweens.add({
         targets : [this.currentWord,this.wordObj],
-        alpha : 1,
+        y : `-=${window.innerHeight}`,
         ease: 'Sine.easeInOut',
         duration : 500,
       })
@@ -102,6 +102,12 @@ export class Game4PlayScene extends Phaser.Scene {
 
     private allBallonIsFinish () : void {
       //大灰狼掉入地下
+      this.time.addEvent({
+        delay : 800,
+        callback : ()=>{
+          this.playMusic(this.ccData[this.ccDataIndex].id);
+        }
+      });
       this.clickLock = true; 
       this.shootLock = true;
       this.tweens.add({
@@ -121,6 +127,7 @@ export class Game4PlayScene extends Phaser.Scene {
 
     private colideHandle () : void {
       //碰撞检测
+      this.playMusic(this.words[this.index].id);
       this.arrowObj.destroy();
       this.ballonSprites[this.index].destroy();
       this.ballonSprites[this.index] = null;
@@ -169,6 +176,7 @@ export class Game4PlayScene extends Phaser.Scene {
       //调整箭头角度
       let angleNum : number = this.getAngel(this.civa.x + this.civa.width / 2,this.civa.y + this.civa.height / 2,this.ballonSprites[this.index].x,this.ballonSprites[this.index].y);
       this.arrowObj.setAngle( angleNum + 270); 
+      this.arrowObj.setDepth(200);
     }
 
     private drawAnimsHandle () : void {
@@ -193,27 +201,28 @@ export class Game4PlayScene extends Phaser.Scene {
     }
 
     private transDataHandle (data : Array<game4WordItem>) : Array<game4WordItem> {
-      //把超出4个音标的数据合并为4个
+      //把超出4个音标的数据按顺序合并为4个
       let len : number = data.length;
       let diff : number = len - 4;
       let transData = [] ;
+      let sortArr : Array<number> = [1,1,1,1];
+      let sortIndex : number = 0;
       if(diff <= 4){
         //音标小于8
-        for ( let i : number = 0 ; i < 4 ; i ++ ){
-          transData.push(data[i]);
+        for ( let i = 0 ; i < diff ; i ++){
+          sortArr[sortArr.length - 1 - i]++;
         }
-        for ( let i : number = diff ; i > 0 ; i -- ){
-          let item : game4WordItem = data[3 + i];
-          transData[4 - i] = {
-            id : transData[4 - i].id + ',' + item.id,
-            name : this.transName(transData[4 - i].name + ',' + item.name),
-            audioKey : transData[4 - i].audioKey + ',' + item.audioKey
-          };
-        }
+        sortArr.map((r : number , i : number)=>{
+          r === 1 && (transData.push(data[sortIndex])) || (transData.push({
+            id : data[sortIndex].id + ',' + data[sortIndex + 1].id,
+            name : this.transName(data[sortIndex].name + ',' + data[sortIndex + 1].name),
+            audioKey : data[sortIndex].audioKey + ',' + data[sortIndex + 1].audioKey
+          }))
+          sortIndex += r;
+        })
       }else{
         //音标大于8
       }
-      console.log(transData);
       return transData;
     }
 
@@ -233,9 +242,9 @@ export class Game4PlayScene extends Phaser.Scene {
       //初始化单词音标
       this.ccData[this.ccDataIndex].phoneticSymbols.push(
         this.ccData[this.ccDataIndex].phoneticSymbols[0],
-        this.ccData[this.ccDataIndex].phoneticSymbols[0],
+        this.ccData[this.ccDataIndex].phoneticSymbols[1],
         this.ccData[this.ccDataIndex].phoneticSymbols[0]
-        )
+      )
       let currentItem : Array<game4PhoneticSymbol> = this.ccData[this.ccDataIndex].phoneticSymbols;
       this.words = currentItem.length <= 4 && currentItem.map((r:game4PhoneticSymbol , i : number) =>{
         return {
@@ -244,12 +253,20 @@ export class Game4PlayScene extends Phaser.Scene {
           audioKey : r.audioKey
         }
       }) || this.transDataHandle(currentItem);
-      console.log(currentItem);
     }
 
     private playMusic (sourceKey : string) : void {
       //播放音频
-      let mp3 : Phaser.Sound.BaseSound = this.sound.add(sourceKey);
+      let mp3 : Phaser.Sound.BaseSound = null;
+      if(sourceKey.split(',').length > 1){
+        mp3 = this.sound.add(sourceKey.split(',')[0]);
+        mp3.once('complete',()=>{
+          this.playMusic(sourceKey.split(',')[1]);
+        })
+        mp3.play();
+        return;
+      }
+      mp3 = this.sound.add(sourceKey);
       mp3.play();
     }
 
@@ -257,17 +274,23 @@ export class Game4PlayScene extends Phaser.Scene {
       //射箭
       if(this.clickLock) return;
       let currentItem : Phaser.Physics.Arcade.Sprite = this.ballonSprites[this.index];
-      this.arrowObj.setVelocity(currentItem.x + currentItem.width / 2 - 140, -(currentItem.y + currentItem.height / 2));
+      this.arrowObj.setVelocity(currentItem.x + currentItem.width / 2 - 200, -(currentItem.y + currentItem.height / 2));
       this.arrowObj.alpha = 1;
     }
 
     private clickHandle () : void {
       //点击场景触发
       this.input.on('pointerdown',(...args)=>{
-        if(this.wordObj.alpha === 1){
-          this.wordObj.alpha = 0;
-          this.currentWord.alpha = 0;
+        if(this.wordObj.y < window.innerHeight){
+          this.wordObj.y += window.innerHeight;
+          this.currentWord.y += window.innerHeight;
+          if(++this.ccDataIndex >= this.ccData.length){
+            this.ccDataIndex = 0;
+          }
+          this.index = -1;
           this.civa.destroy();
+          this.setWords();
+          this.createWord();
           this.drawCivaAndWolf();
           this.drawAnimsHandle();
         }

@@ -6,7 +6,13 @@ import {Game3PlayScene} from './scenes/Game3/Play';
 import { Game4LoadScene } from './scenes/Game4/Load';
 import { Game4PlayScene } from './scenes/Game4/Play';
 
-let path : string = window.location.hash.match(/#\/(.+)\?/) && window.location.hash.match(/#\/(.+)\?/).length > 1 && window.location.hash.match(/#\/(.+)\?/)[1] || '';
+let path : string = 
+  window.location.hash.match(/#\/(.+)\?/) && 
+  window.location.hash.match(/#\/(.+)\?/).length > 1 && 
+  window.location.hash.match(/#\/(.+)\?/)[1] || 
+  window.location.hash.match(/#\/(.+)/) && 
+  window.location.hash.match(/#\/(.+)/).length > 1 && 
+  window.location.hash.match(/#\/(.+)/)[1]
 let sceneArr : Array<object> = [];
 switch (path){
    case 'game3' : 
@@ -36,7 +42,7 @@ const config: GameConfig = {
     default: 'arcade',
     arcade: {
         gravity: { y: 0 },
-        //debug: true
+        debug: true
     }
   },
   //transparent : true,
