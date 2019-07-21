@@ -76,8 +76,8 @@ export class Game3LoadScene extends Phaser.Scene {
     params.title && (this.title = decodeURIComponent(params.title));
     delete params.title;
     params.bookId = params.bookId || '476351b78d8111e9b8a3d481d7d1b146';
-    params.unitId = params.unitId || 'bd08ffe0-988411e9b6d5d481d7d1b146';
-    this.title = this.title || '小学-EEC1 Unit4 Part A';
+    params.unitId = params.unitId || '02decbcb988511e9b6d5d481d7d1b146';
+    this.title = this.title || '小学-EEC1 Unit5 Part A';
     params.bookId && get(apiPath.getUnitDetail + '?' + makeParams(params)).then((res)=>{
       res && res.code === '0000' && (this.curData = res.result);
       this.dataLoadDone = true;
