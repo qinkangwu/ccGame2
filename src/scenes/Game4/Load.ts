@@ -38,7 +38,9 @@ export class Game4LoadScene extends Phaser.Scene {
 
   preload(): void {
     this.load.image('game4Bgi','assets/Game4/bgi.png'); 
+    this.load.image('game4WrongImg','assets/Game4/wrong.png'); 
     this.load.multiatlas('icons','assets/Game4/imgsJson.json','assets/Game4');
+    this.load.multiatlas('icons2','assets/Game4/imgsJson2.json','assets/Game4');
     this.load.multiatlas('shoot','assets/Game4/shoot.json','assets/Game4');
     this.load.on('complete',()=>{
       //资源加载完成的回调

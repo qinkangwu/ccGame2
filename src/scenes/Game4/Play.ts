@@ -6,6 +6,7 @@ export class Game4PlayScene extends Phaser.Scene {
     private ccData : Array<game4DataItem> = [] ; //数据
     private civa : Phaser.GameObjects.Sprite ; //civa机器人
     private words : Array<game4WordItem> = []; //音标数量
+    private errorWords : Array<game4WordItem> = []; //混淆音标
     private ballonSprites : Array<Phaser.Physics.Arcade.Sprite> = []; //气球集合
     private lineSprites : Array<Phaser.GameObjects.Sprite> = []; //线集合
     private wolfObj : Phaser.GameObjects.Sprite ;  //大灰狼对象
@@ -17,6 +18,15 @@ export class Game4PlayScene extends Phaser.Scene {
     private clickLock : boolean = true; //点击锁
     private shootLock : boolean = true; //射箭锁
     private ccDataIndex : number = 0 ; //当前单词索引
+    private quiver : Phaser.GameObjects.Sprite ; //箭筒
+    private quiverText : Phaser.GameObjects.Text;  // 箭筒文本
+    private popObj : Phaser.GameObjects.Sprite ; //气泡
+    private popText : Phaser.GameObjects.Text ; //气泡文本
+    private currentClickIndex : number ; //当前点击的气球索引
+    private quiverNum : number ; //箭筒数量
+    private wrongObj : Phaser.GameObjects.Sprite; //错误提示对象
+    // private arrowCirObj : Phaser.GameObjects.Graphics; //箭上的圆圈
+    // private arrowText : Phaser.GameObjects.Text; //箭头上面的文本
     constructor() {
       super({
         key: "Game4PlayScene"
@@ -32,6 +42,7 @@ export class Game4PlayScene extends Phaser.Scene {
     preload(): void {
       //this.getData(); //获取数据
       this.setWords(); //mock数据
+      this.load.audio('bgm','assets/Game4/bgm.mp3');
     }
     
   
@@ -45,6 +56,53 @@ export class Game4PlayScene extends Phaser.Scene {
       this.createAnims(); //创建动画
       this.drawAnimsHandle(); //初始化动画
       this.createCollide(); //创建碰撞检测
+      this.createQuiver(); //创建箭筒跟气泡
+      this.createBgm(); //创建背景音乐
+    }
+
+    private createBgm () : void {
+      let bgm : Phaser.Sound.BaseSound = this.sound.add('bgm');
+      //@ts-ignore
+      bgm.play({
+        loop : true,
+        volume : .3
+      })
+    }
+
+    private setPopAndQuiver () : void {
+      this.quiverText.setText(this.words[this.index + 1 >= this.words.length ? this.words.length - 1 : this.index + 1].name);
+    }
+
+    private createQuiver () : void {
+      //创建气泡跟箭筒
+      this.quiver = this.add.sprite(50,window.innerHeight - 100,'icons2',`jianshi${this.words.length}.png`).setScale(0.7);
+      this.quiverText = this.add.text(this.quiver.x,this.quiver.y + 35,this.words[0].name,{
+        font: 'bold 25px Arial Rounded MT',
+        fill : '#00b1ff',
+      }).setOrigin(.5);
+      this.popObj = this.add.sprite(this.civa.x + 150,this.civa.y - 50,'icons2','talk.png').setScale(.5).setOrigin(.5);
+      this.popText = this.add.text(this.popObj.x,this.popObj.y - 10,this.ccData[this.ccDataIndex].name,{
+        font: 'bold 50px Arial Rounded MT',
+        fill : '#ff5054',
+      }).setOrigin(.5);
+      this.tweens.add({
+        targets : [this.popObj],
+        scaleX : 0.6,
+        scaleY : 0.6,
+        ease: 'Sine.easeInOut',
+        duration : 500,
+        yoyo : true,
+        repeat : 2
+      });
+      this.tweens.add({
+        targets : [this.popText],
+        scaleX : 1.1,
+        scaleY : 1.1,
+        ease: 'Sine.easeInOut',
+        duration : 500,
+        yoyo : true,
+        repeat : 2
+      });
     }
 
     private loadMusic (data : Array<game4DataItem>) : void {
@@ -65,7 +123,8 @@ export class Game4PlayScene extends Phaser.Scene {
     }
 
     private createWord () : void {
-      this.wordObj = this.add.sprite(window.innerWidth / 2 , window.innerHeight /  2 + window.innerHeight , 'icons', 'huluobo.png').setOrigin(.5).setAlpha(1);
+      //创建胡萝卜单词
+      this.wordObj = this.add.sprite(window.innerWidth / 2 , window.innerHeight /  2 + window.innerHeight , 'icons', 'huluobo.png').setOrigin(.5).setAlpha(1).setInteractive();
       this.currentWord = this.add.text(this.wordObj.x + 30, this.wordObj.y ,this.ccData[this.ccDataIndex].name,{
         font: 'bold 70px Arial Rounded MT',
         fill : '#fff',
@@ -74,14 +133,65 @@ export class Game4PlayScene extends Phaser.Scene {
     }
 
     private createArrow () : void {
+      //创建箭矢
       this.arrowObj = this.physics.add.sprite(this.civa.x + this.civa.width / 2,this.civa.y + this.civa.height / 2 + 60,'icons','jian.png').setOrigin(0.5).setAlpha(0);
+      // this.arrowCirObj = this.add.graphics();
+      // this.arrowCirObj.fillStyle(0xffffff, 0.8);
+      // this.arrowCirObj.fillCircle(this.arrowObj.x,this.arrowObj.y,20);
+      // this.arrowCirObj.setDepth(500);
+      // this.arrowText = this.add.text(this.arrowObj.x,this.arrowObj.y,this.words[0].name,{
+      //   font: 'bold 20px Arial Rounded MT',
+      //   fill : '#00b1ff',
+      //   bold : true
+      // }).setOrigin(.5).setDepth(501);
+      // console.log(this.arrowCirObj);
+      // this.arrowObj.depth = 300;
     }
 
     private createCollide () : void {
-      this.physics.add.collider(this.arrowObj,this.ballonSprites,this.collideCb.bind(this));
+      //重叠或碰撞检测
+      //this.physics.add.collider(this.arrowObj,this.ballonSprites,this.collideCb.bind(this));
+      this.physics.add.overlap(this.arrowObj,this.ballonSprites,this.overlapCb.bind(this))
+    }
+
+    private overlapCb (...args) : void {
+      //重叠回调函数
+      let item : Phaser.Physics.Arcade.Sprite = args[1];
+      if(item.getData('index') === this.currentClickIndex){
+        if(this.words[this.index].name === this.errorWords[this.currentClickIndex].name){
+          this.colideHandle();  //碰撞事件触发
+          this.clickLock = true; 
+          this.shootLock = false;
+          this.createArrow();
+          this.createCollide();
+          this.setPopAndQuiver();
+          if(this.index === this.ballonSprites.length - 1){
+            this.allBallonIsFinish();
+          }
+        }else{
+          this.showWrongObjHandle();
+          this.shootLock = false;
+          this.clickLock = true;
+          this.index -- ;
+          this.arrowObj.destroy();
+          this.createArrow();
+          this.createCollide();
+        }
+      }
+    }
+
+    private shuffle = (arr) : [] =>{
+      //Fisher-Yates shuffle 算法 打乱数组顺序
+      for (let i :number = 1; i < arr.length ; i ++) {
+        let random : number = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[random]] = [arr[random], arr[i]];   //es6  交换数组成员位置
+      }
+  
+      return arr;
     }
 
     private collideCb () : void {
+      //碰撞回调函数
       this.colideHandle();  //碰撞事件触发
       this.clickLock = true; 
       this.shootLock = false;
@@ -92,6 +202,7 @@ export class Game4PlayScene extends Phaser.Scene {
       }
     }
     private showWordHandle () : void {
+      //显示胡萝卜
       this.tweens.add({
         targets : [this.currentWord,this.wordObj],
         y : `-=${window.innerHeight}`,
@@ -127,14 +238,15 @@ export class Game4PlayScene extends Phaser.Scene {
 
     private colideHandle () : void {
       //碰撞检测
-      this.playMusic(this.words[this.index].id);
+      this.playMusic(this.errorWords[this.currentClickIndex].id);
       this.arrowObj.destroy();
-      this.ballonSprites[this.index].destroy();
-      this.ballonSprites[this.index] = null;
-      this.lineSprites[this.index].destroy();
-      this.lineSprites[this.index] = null;
-      this.textArr[this.index].destroy();
-      this.textArr[this.index] = null;
+      this.ballonSprites[this.currentClickIndex].destroy();
+      this.ballonSprites[this.currentClickIndex] = null;
+      this.lineSprites[this.currentClickIndex].destroy();
+      this.lineSprites[this.currentClickIndex] = null;
+      this.textArr[this.currentClickIndex].destroy();
+      this.textArr[this.currentClickIndex] = null;
+      this.changeQuiverNums(this.quiverNum - 1); //修改箭筒箭矢数量
     }
 
     private getAngel (px : number,py : number,mx : number,my : number) : number {
@@ -174,7 +286,7 @@ export class Game4PlayScene extends Phaser.Scene {
 
     private setArrowAngle () : void { 
       //调整箭头角度
-      let angleNum : number = this.getAngel(this.civa.x + this.civa.width / 2,this.civa.y + this.civa.height / 2,this.ballonSprites[this.index].x,this.ballonSprites[this.index].y);
+      let angleNum : number = this.getAngel(this.civa.x + this.civa.width / 2,this.civa.y + this.civa.height / 2,this.ballonSprites[this.currentClickIndex].x,this.ballonSprites[this.currentClickIndex].y);
       this.arrowObj.setAngle( angleNum + 270); 
       this.arrowObj.setDepth(200);
     }
@@ -240,11 +352,11 @@ export class Game4PlayScene extends Phaser.Scene {
 
     private setWords () : void{
       //初始化单词音标
-      this.ccData[this.ccDataIndex].phoneticSymbols.push(
-        this.ccData[this.ccDataIndex].phoneticSymbols[0],
-        this.ccData[this.ccDataIndex].phoneticSymbols[1],
-        this.ccData[this.ccDataIndex].phoneticSymbols[0]
-      )
+      // this.ccData[this.ccDataIndex].phoneticSymbols.push(
+      //   this.ccData[this.ccDataIndex].phoneticSymbols[0],
+      //   this.ccData[this.ccDataIndex].phoneticSymbols[1],
+      //   this.ccData[this.ccDataIndex].phoneticSymbols[0]
+      // )
       let currentItem : Array<game4PhoneticSymbol> = this.ccData[this.ccDataIndex].phoneticSymbols;
       this.words = currentItem.length <= 4 && currentItem.map((r:game4PhoneticSymbol , i : number) =>{
         return {
@@ -253,6 +365,8 @@ export class Game4PlayScene extends Phaser.Scene {
           audioKey : r.audioKey
         }
       }) || this.transDataHandle(currentItem);
+      this.quiverNum = this.words.length ; //箭筒箭矢数量初始化
+      this.errorWords = this.shuffle([...this.words]); //打乱原始数据
     }
 
     private playMusic (sourceKey : string) : void {
@@ -273,7 +387,7 @@ export class Game4PlayScene extends Phaser.Scene {
     private arrowEmitHandle () : void {
       //射箭
       if(this.clickLock) return;
-      let currentItem : Phaser.Physics.Arcade.Sprite = this.ballonSprites[this.index];
+      let currentItem : Phaser.Physics.Arcade.Sprite = this.ballonSprites[this.currentClickIndex];
       this.arrowObj.setVelocity(currentItem.x + currentItem.width / 2 - 200, -(currentItem.y + currentItem.height / 2));
       this.arrowObj.alpha = 1;
     }
@@ -281,20 +395,34 @@ export class Game4PlayScene extends Phaser.Scene {
     private clickHandle () : void {
       //点击场景触发
       this.input.on('pointerdown',(...args)=>{
+        if(args[1].length === 0 ) return;
+        this.currentClickIndex = args[1][0].getData('index');
         if(this.wordObj.y < window.innerHeight){
           this.wordObj.y += window.innerHeight;
           this.currentWord.y += window.innerHeight;
           if(++this.ccDataIndex >= this.ccData.length){
             this.ccDataIndex = 0;
           }
+          this.popText.setText(this.ccData[this.ccDataIndex].name);
           this.index = -1;
           this.civa.destroy();
           this.setWords();
           this.createWord();
           this.drawCivaAndWolf();
           this.drawAnimsHandle();
+          this.setPopAndQuiver();
+          this.changeQuiverNums(this.quiverNum);
         }
         if(this.shootLock) return;
+        this.tweens.add({
+          targets : args[1][0],
+          duration : 200,
+          ease: 'Sine.easeInOut',
+          scaleX : 0.52,
+          scaleY : 0.52,
+          yoyo : true,
+          repeat : 1
+        })
         this.shootLock = true;
         if(++this.index >= this.words.length){
           this.index = 0 ;
@@ -310,6 +438,11 @@ export class Game4PlayScene extends Phaser.Scene {
       })
     }
 
+    private changeQuiverNums (index : number) : void{
+      this.quiverNum = index < 1 && 1 || index;
+      this.quiver.setFrame(`jianshi${this.quiverNum}.png`);
+    }
+
     private createAnims () : void {
       //civa射箭动画
       this.anims.create({
@@ -323,17 +456,17 @@ export class Game4PlayScene extends Phaser.Scene {
 
     private drawCivaAndWolf () : void{
       //渲染场景
-      this.civa = this.add.sprite(0,window.innerHeight - (240 + window.innerHeight * 0.15),'shoot','civa0001.png').setOrigin(0);
+      this.civa = this.add.sprite(0,window.innerHeight - (240 + window.innerHeight * 0.15),'shoot','civa0001.png').setOrigin(0).setDepth(100);
       switch(this.words.length){
         case 2 :  
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 - 20 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu01.png').setScale(.5).setDepth(100).setImmovable());
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 140 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu02.png').setScale(.5).setDepth(100).setImmovable());
+          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 - 20 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu01.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',0));
+          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 140 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu02.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',1));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[0].x - 20, this.ballonSprites[0].y,'icons','line02.png').setOrigin(0));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[0].x + 48, this.ballonSprites[0].y,'icons','line03.png').setOrigin(0));
           this.wolfObj = this.add.sprite(window.innerWidth / 2 + 50 , window.innerHeight / 2  + 100 + window.innerHeight,'icons' , 'dahuilang.png');
           for(let i = 0 ; i < this.ballonSprites.length ; i ++ ){
             let ballon = this.ballonSprites[i];
-            this.textArr.push(this.add.text(ballon.x  , ballon.y , this.words[i].name , {
+            this.textArr.push(this.add.text(ballon.x  , ballon.y , this.errorWords[i].name , {
               font: 'bold 45px Arial Rounded MT',
               fill : '#fff',
               bold : true
@@ -341,16 +474,16 @@ export class Game4PlayScene extends Phaser.Scene {
           }
           break;
         case 3 :
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 - 120 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu03.png').setScale(.5).setDepth(100).setAngle(-20).setImmovable());
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 20, window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu01.png').setScale(.5).setDepth(100).setImmovable());
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 180 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu02.png').setScale(.5).setDepth(100).setImmovable());
+          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 - 120 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu03.png').setScale(.5).setDepth(100).setAngle(-20).setImmovable().setInteractive().setData('index',0));
+          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 20, window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu01.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',1));
+          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 180 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu02.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',2));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[1].x - 205, this.ballonSprites[1].y,'icons','line01.png').setOrigin(0));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[1].x - 20, this.ballonSprites[1].y,'icons','line02.png').setOrigin(0));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[1].x + 48, this.ballonSprites[1].y,'icons','line03.png').setOrigin(0));
           this.wolfObj = this.add.sprite(window.innerWidth / 2 + 50 , window.innerHeight / 2  + 100 + window.innerHeight,'icons' , 'dahuilang.png');
           for(let i : number = 0 ; i < this.ballonSprites.length ; i ++ ){
             let ballon = this.ballonSprites[i];
-            this.textArr.push(this.add.text(ballon.x  , ballon.y , this.words[i].name , {
+            this.textArr.push(this.add.text(ballon.x  , ballon.y , this.errorWords[i].name , {
               font: 'bold 45px Arial Rounded MT',
               fill : '#fff',
               bold : true
@@ -358,10 +491,10 @@ export class Game4PlayScene extends Phaser.Scene {
           }
           break;
         case 4 :
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 - 160 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu03.png').setScale(.5).setDepth(100).setAngle(-20).setImmovable());
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 - 30, window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu01.png').setScale(.5).setDepth(100).setImmovable());
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 110 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu02.png').setScale(.5).setDepth(100).setImmovable());
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 250 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu02.png').setScale(.5).setDepth(100).setAngle(20).setImmovable());
+          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 - 160 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu03.png').setScale(.5).setDepth(100).setAngle(-20).setImmovable().setInteractive().setData('index',0));
+          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 - 30, window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu01.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',1));
+          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 110 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu02.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',2));
+          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 250 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu02.png').setScale(.5).setDepth(100).setAngle(20).setImmovable().setInteractive().setData('index',3));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[1].x - 200, this.ballonSprites[1].y,'icons','line01.png').setOrigin(0));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[1].x - 20, this.ballonSprites[1].y,'icons','line02.png').setOrigin(0));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[1].x + 28, this.ballonSprites[1].y,'icons','line03.png').setOrigin(0));
@@ -369,7 +502,7 @@ export class Game4PlayScene extends Phaser.Scene {
           this.wolfObj = this.add.sprite(window.innerWidth / 2 + 50 , window.innerHeight / 2  + 100 + window.innerHeight,'icons' , 'dahuilang.png');
           for(let i : number = 0 ; i < this.ballonSprites.length ; i ++ ){
             let ballon = this.ballonSprites[i];
-            this.textArr.push(this.add.text(ballon.x  , ballon.y , this.words[i].name , {
+            this.textArr.push(this.add.text(ballon.x  , ballon.y , this.errorWords[i].name , {
               font: 'bold 45px Arial Rounded MT',
               fill : '#fff',
               bold : true
@@ -381,8 +514,22 @@ export class Game4PlayScene extends Phaser.Scene {
       }
     }
 
+
+
     private createBackgroundImage () :void {
       let img : Phaser.GameObjects.Image = this.add.image(0,0,'game4Bgi').setOrigin(0).setDisplaySize(window.innerWidth,window.innerHeight);
+      this.wrongObj = this.add.sprite(0,0,'game4WrongImg').setOrigin(0).setDisplaySize(window.innerWidth,window.innerHeight).setDepth(1000).setAlpha(0);
+    }
+
+    private showWrongObjHandle() : void{
+      this.tweens.add({
+        targets : this.wrongObj,
+        alpha : 1,
+        ease: 'Sine.easeInOut',
+        duration : 300,
+        yoyo : true,
+        repeat : 2
+      })
     }
   
     update(time: number , delta : number): void {
