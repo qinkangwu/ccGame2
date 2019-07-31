@@ -42,7 +42,7 @@ export class Game4PlayScene extends Phaser.Scene {
     preload(): void {
       //this.getData(); //获取数据
       this.setWords(); //mock数据
-      this.load.audio('bgm','assets/Game4/bgm.mp3');
+      this.loadBgm(); //加载背景音乐跟音效
     }
     
   
@@ -58,6 +58,12 @@ export class Game4PlayScene extends Phaser.Scene {
       this.createCollide(); //创建碰撞检测
       this.createQuiver(); //创建箭筒跟气泡
       this.createBgm(); //创建背景音乐
+    }
+
+    private loadBgm () : void {
+      this.load.audio('bgm','assets/Game4/bgm.mp3');
+      this.load.audio('shoot','assets/Game4/shoot.mp3');
+      this.load.audio('wrong','assets/Game4/wrong.mp3');
     }
 
     private createBgm () : void {
@@ -170,6 +176,7 @@ export class Game4PlayScene extends Phaser.Scene {
           }
         }else{
           this.showWrongObjHandle();
+          this.playMusic('wrong');
           this.shootLock = false;
           this.clickLock = true;
           this.index -- ;
@@ -180,13 +187,12 @@ export class Game4PlayScene extends Phaser.Scene {
       }
     }
 
-    private shuffle = (arr) : [] =>{
+    private shuffle<T> (arr : T[]) : T[]{
       //Fisher-Yates shuffle 算法 打乱数组顺序
       for (let i :number = 1; i < arr.length ; i ++) {
         let random : number = Math.floor(Math.random() * (i + 1));
         [arr[i], arr[random]] = [arr[random], arr[i]];   //es6  交换数组成员位置
       }
-  
       return arr;
     }
 
@@ -392,10 +398,41 @@ export class Game4PlayScene extends Phaser.Scene {
       this.arrowObj.alpha = 1;
     }
 
+    private base64ToBlob (code : string) : Blob {
+        //将base64解码之后转成blob二进制数据
+        let parts = code.split(';base64,');
+        let contentType = parts[0].split(':')[1];
+        let raw = window.atob(parts[1]);
+        let rawLength = raw.length;
+
+        let uInt8Array = new Uint8Array(rawLength);
+
+        for (let i = 0; i < rawLength; ++i) {
+          uInt8Array[i] = raw.charCodeAt(i);
+        }
+        return new Blob([uInt8Array], {type: contentType});
+    }
+
     private clickHandle () : void {
       //点击场景触发
       this.input.on('pointerdown',(...args)=>{
+        //@ts-ignore
+        // this.game.renderer.snapshotArea(0,0,window.innerWidth,window.innerHeight,(img)=>{
+        //   //下载图像
+        //   let aLink = document.createElement('a');
+        //   let blob = this.base64ToBlob(img.src); //new Blob([content]);
+
+        //   let evt = document.createEvent("HTMLEvents");
+        //   evt.initEvent("click", true, true);//initEvent 不加后两个参数在FF下会报错  事件类型，是否冒泡，是否阻止浏览器的默认行为
+        //   aLink.download = 'aaa.png';
+        //   aLink.href = URL.createObjectURL(blob);
+
+        //   // aLink.dispatchEvent(evt);
+        //   //aLink.click()
+        //   aLink.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, view: window}));
+        // })
         if(args[1].length === 0 ) return;
+        this.playMusic('shoot');
         this.currentClickIndex = args[1][0].getData('index');
         if(this.wordObj.y < window.innerHeight){
           this.wordObj.y += window.innerHeight;

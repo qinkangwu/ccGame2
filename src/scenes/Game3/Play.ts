@@ -405,8 +405,8 @@ export class Game3PlayScene extends Phaser.Scene {
     }
 
     private setWordsTrim (word : string) : string {
-      let str : string = word.split('').join(' ');
-      return str;
+      let str : string = word.match(/\/(.+)\//) && word.match(/\/(.+)\//).length > 1 && word.match(/\/(.+)\//)[1];
+      return `/ ${str} /`;
     }
 
     private setWords (flag : string, text : string) : void {

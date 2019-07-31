@@ -7,12 +7,10 @@ import { Game4LoadScene } from './scenes/Game4/Load';
 import { Game4PlayScene } from './scenes/Game4/Play';
 
 let path : string = 
-  window.location.hash.match(/#\/(.+)\?/) && 
-  window.location.hash.match(/#\/(.+)\?/).length > 1 && 
-  window.location.hash.match(/#\/(.+)\?/)[1] || 
-  window.location.hash.match(/#\/(.+)/) && 
-  window.location.hash.match(/#\/(.+)/).length > 1 && 
-  window.location.hash.match(/#\/(.+)/)[1]
+  window.location.hash.match(/#\/(.+)\??/) && 
+  window.location.hash.match(/#\/(.+)\??/).length > 1 && 
+  window.location.hash.match(/#\/(.+)\??/)[1]
+path && path.indexOf('?') > -1 && (path = path.split('?')[0]);
 let sceneArr : Array<object> = [];
 switch (path){
    case 'game3' : 
