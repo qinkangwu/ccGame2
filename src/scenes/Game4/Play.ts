@@ -58,6 +58,13 @@ export class Game4PlayScene extends Phaser.Scene {
       this.createCollide(); //创建碰撞检测
       this.createQuiver(); //创建箭筒跟气泡
       this.createBgm(); //创建背景音乐
+      // this.createMask() ; //创建遮罩层
+    }
+
+    private createMask () : void {
+      let graphicsObj : Phaser.GameObjects.Graphics = this.add.graphics();
+      graphicsObj.fillStyle(0x000000,.5);
+      graphicsObj.fillRect(0,0,window.innerWidth,window.innerHeight).setDepth(500);
     }
 
     private loadBgm () : void {
@@ -76,15 +83,32 @@ export class Game4PlayScene extends Phaser.Scene {
     }
 
     private setPopAndQuiver () : void {
+      this.quiverText.setScale(0);
       this.quiverText.setText(this.words[this.index + 1 >= this.words.length ? this.words.length - 1 : this.index + 1].name);
+      this.tweens.add({
+        targets : this.quiverText,
+        scaleX : 1.5,
+        scaleY : 1.5,
+        ease: 'Sine.easeInOut',
+        duration : 100,
+        onComplete : ()=>{
+          this.tweens.add({
+            targets : this.quiverText,
+            scaleX : 1,
+            scaleY : 1,
+            ease: 'Sine.easeInOut',
+            duration : 100,
+          })
+        }
+      })
     }
 
     private createQuiver () : void {
       //创建气泡跟箭筒
-      this.quiver = this.add.sprite(50,window.innerHeight - 100,'icons2',`jianshi${this.words.length}.png`).setScale(0.7);
-      this.quiverText = this.add.text(this.quiver.x,this.quiver.y + 35,this.words[0].name,{
-        font: 'bold 25px Arial Rounded MT',
-        fill : '#00b1ff',
+      this.quiver = this.add.sprite(250,window.innerHeight - 100,'icons2',`jianshi${this.words.length}.png`).setScale(0.8);
+      this.quiverText = this.add.text(this.quiver.x,this.quiver.y + 40,this.words[0].name,{
+        font: 'bold 37px Arial Rounded MT',
+        fill : '#017dbd',
       }).setOrigin(.5);
       this.popObj = this.add.sprite(this.civa.x + 150,this.civa.y - 50,'icons2','talk.png').setScale(.5).setOrigin(.5);
       this.popText = this.add.text(this.popObj.x,this.popObj.y - 10,this.ccData[this.ccDataIndex].name,{
