@@ -30,7 +30,7 @@ switch (path){
     break;
 }
 
-const config: GameConfig = {
+const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width : window.innerWidth,
   height : window.innerHeight,
@@ -54,7 +54,7 @@ const config: GameConfig = {
 };
 
 export class ccEnglishGames extends Phaser.Game {
-  constructor(config: GameConfig) {
+  constructor(config: Phaser.Types.Core.GameConfig) {
     super(config);
   }
 }

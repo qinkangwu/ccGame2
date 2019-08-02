@@ -113,7 +113,7 @@ export class Game5PlayScene extends Phaser.Scene {
 
     private clearDrawHandle() : void {
       //清除绘制线条
-      this.lineObj.destroy();
+      this.lineObj && this.lineObj.destroy();
       this.lineObj = null;
       this.clearDrawBtn.alpha = 1;
       this.tweens.add({
