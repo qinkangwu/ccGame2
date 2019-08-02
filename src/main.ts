@@ -6,6 +6,9 @@ import {Game3PlayScene} from './scenes/Game3/Play';
 import { Game4LoadScene } from './scenes/Game4/Load';
 import { Game4PlayScene } from './scenes/Game4/Play';
 
+import { Game5LoadScene } from './scenes/Game5/Load';
+import { Game5PlayScene } from './scenes/Game5/Play';
+
 let path : string = 
   window.location.hash.match(/#\/(.+)\??/) && 
   window.location.hash.match(/#\/(.+)\??/).length > 1 && 
@@ -18,6 +21,9 @@ switch (path){
     break;
    case 'game4' : 
     sceneArr.push(Game4LoadScene,Game4PlayScene);
+    break;
+    case 'game5' : 
+    sceneArr.push(Game5LoadScene,Game5PlayScene);
     break;
    default : 
     sceneArr.push(Game3LoadScene,Game3PlayScene);
