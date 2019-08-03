@@ -5,7 +5,7 @@ import { game4DataItem } from '../../interface/Game4'
 export class Game4LoadScene extends Phaser.Scene {
   private ccData : Array<game4DataItem> = []; //数据
   private centerText : Phaser.GameObjects.Text; //文本内容
-  private DefaultLoadSeconds : number = 33; //每秒增加百分之多少
+  private DefaultLoadSeconds : number = 50; //每秒增加百分之多少
   private process : number = 0; //进度
   private timer  : Phaser.Time.TimerEvent  ;  //定时器id
   private imgLoadDone : boolean = false;  //图片是否加载完毕
@@ -23,13 +23,6 @@ export class Game4LoadScene extends Phaser.Scene {
       fill : '#fff',
       font: 'bold 60px Arial',
       bold : true,
-      // shadow: {
-      //           color: '#fff',
-      //           fill: true,
-      //           offsetX: 2,
-      //           offsetY: 2,
-      //           blur: 8
-      // }
     }).setOrigin(.5,.5);
 
     this.getData();
@@ -76,11 +69,6 @@ export class Game4LoadScene extends Phaser.Scene {
           this.centerText.setText('99%');
           if(this.imgLoadDone && this.dataLoadDone){
             this.centerText.setText('100%');
-            // this.tweens.add({
-            //   targets : this.centerText,
-            //   duration : 500,
-            //   alpha : 0
-            // })
             this.scene.start('Game4PlayScene',{
               data : this.ccData
             });

@@ -3,7 +3,7 @@ import {get , makeParams} from '../../lib/http';
 
 export class Game5LoadScene extends Phaser.Scene {
   private centerText : Phaser.GameObjects.Text; //文本内容
-  private DefaultLoadSeconds : number = 50; //每秒增加百分之多少
+  private DefaultLoadSeconds : number = 33; //每秒增加百分之多少
   private process : number = 0; //进度
   private timer  : Phaser.Time.TimerEvent  ;  //定时器id
   private imgLoadDone : boolean = false;  //图片是否加载完毕
@@ -21,6 +21,13 @@ export class Game5LoadScene extends Phaser.Scene {
       fill : '#fff',
       font: 'bold 60px Arial',
       bold : true,
+      // shadow: {
+      //           color: '#fff',
+      //           fill: true,
+      //           offsetX: 2,
+      //           offsetY: 2,
+      //           blur: 8
+      // }
     }).setOrigin(.5,.5);
 
     // this.getData();
@@ -28,13 +35,11 @@ export class Game5LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.image('game5Bgi','assets/Game5/bg.png'); 
-    this.load.image('mask','assets/Game5/mask.png');
-    this.load.image('sketch','assets/Game5/huaban.png');
-    this.load.image('civa','assets/Game5/civa.png');
-    this.load.image('line','assets/Game5/line.png');
-    this.load.image('pen','assets/Game5/pen.png');
-    this.load.multiatlas('icons','assets/Game5/imgsJson.json','assets/Game5');
+    this.load.image('game4Bgi','assets/Game4/bgi.png'); 
+    this.load.image('game4WrongImg','assets/Game4/wrong.png'); 
+    this.load.multiatlas('icons','assets/Game4/imgsJson.json','assets/Game4');
+    this.load.multiatlas('icons2','assets/Game4/imgsJson2.json','assets/Game4');
+    this.load.multiatlas('shoot','assets/Game4/shoot.json','assets/Game4');
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;
@@ -65,6 +70,11 @@ export class Game5LoadScene extends Phaser.Scene {
           this.centerText.setText('99%');
           if(this.imgLoadDone && this.dataLoadDone){
             this.centerText.setText('100%');
+            // this.tweens.add({
+            //   targets : this.centerText,
+            //   duration : 500,
+            //   alpha : 0
+            // })
             this.scene.start('Game5PlayScene');
           }
           return;
