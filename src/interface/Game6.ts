@@ -20,3 +20,9 @@ export interface game6WordItem {
     name : string ;
     audioKey : string;
 }
+
+/* 资源 */
+export interface game6asset{
+    id:string;
+    src:string;
+}
