@@ -23,6 +23,14 @@ export interface game6WordItem {
 
 /* 资源 */
 export interface game6asset{
-    id:string;
-    src:string;
+    key:string;
+    url:string;
+}
+
+/* 自定义的简洁矩形*/
+export interface Rectangular{
+    x:number;
+    y:number;
+    width:number;
+    height:number;
 }

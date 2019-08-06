@@ -8,7 +8,7 @@ if(is_dir($path)){
   foreach($files as $v){
     $tmp=explode('.',$v);
     if($tmp[0]){
-    $out_str.='{"src":"assets/Game6/'.$v.'","id":"'.$tmp[0].'"},';}
+    $out_str.='{"url":"assets/Game6/'.$v.'","key":"'.$tmp[0].'"},';}
     //$out_str.='"images/xulie/'.$v.'",'.'';}
     //$out_str.= "images/mainView/'.$v.'";
   }
