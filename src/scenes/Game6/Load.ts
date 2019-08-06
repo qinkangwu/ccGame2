@@ -22,6 +22,7 @@ export class Game6LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
+    this.load.audio('bgm','assets/Game6/bgm.mp3');
     this.assets.forEach((v)=>{
       this.load.image(v.key,v.url);
     })
