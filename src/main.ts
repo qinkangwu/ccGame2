@@ -39,6 +39,9 @@ const config: Phaser.Types.Core.GameConfig = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH
   },
+  dom : {
+    createContainer : true
+  },
   physics: {
     default: 'arcade',
     arcade: {

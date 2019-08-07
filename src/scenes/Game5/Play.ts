@@ -4,6 +4,8 @@ import apiPath from '../../lib/apiPath';
 export class Game5PlayScene extends Phaser.Scene {
     private backToListBtn : Phaser.GameObjects.Image ; //返回列表按钮
     private clearDrawBtn : Phaser.GameObjects.Image; //清除按钮
+    private submitBtn : Phaser.GameObjects.Image ; //提交按钮
+    private musicBtn : Phaser.GameObjects.Image ; //音乐播放按钮
     private sketch : Phaser.GameObjects.Image ; //画板
     private civa : Phaser.GameObjects.Sprite ; //civa
     private wordsObj : Phaser.GameObjects.Text; //单词板
@@ -12,9 +14,10 @@ export class Game5PlayScene extends Phaser.Scene {
     private penObj : Phaser.GameObjects.Sprite; //画笔
     private area : Phaser.GameObjects.RenderTexture; //绘制区域
     private timer : number ; //定时器id
-    private moveToX : number ; //当前move的x
-    private moveToY : number ; //当前move的y
-    private lineObj : Phaser.GameObjects.Graphics ; //画的单词
+    private bgm : Phaser.Sound.BaseSound ; //背景音乐
+    private bgmAnims : Phaser.Tweens.Tween; //背景音乐旋转动画
+    private bgmFlag : boolean = true ; //音乐开关
+    private guijiObj : Phaser.Textures.Frame; //笔迹图片
     constructor() {
       super({
         key: "Game5PlayScene"
@@ -25,6 +28,7 @@ export class Game5PlayScene extends Phaser.Scene {
     }
   
     preload(): void {
+      this.load.audio('bgm','assets/Game5/bgm.mp3');
     }
     
   
@@ -34,6 +38,17 @@ export class Game5PlayScene extends Phaser.Scene {
       this.createSketch(); //创建画板
       this.createCiva() ; //创建civa
       this.createMask(); //展示遮罩
+      this.createBgm(); //播放背景音乐
+      // this.createDom(); //渲染html
+    }
+
+    private createBgm () : void{
+      this.bgm = this.sound.add('bgm');
+      //@ts-ignore
+      this.bgm.play({
+        loop : true,
+        volume : .3
+      })
     }
 
     private wordsAnims () : void {
@@ -43,6 +58,32 @@ export class Game5PlayScene extends Phaser.Scene {
         y : `+=${window.innerHeight}`,
         ease: 'Sine.easeInOut',
         duration : 500,
+      })
+    }
+
+    private createDom () : void {
+      let elem : Phaser.GameObjects.DOMElement = this.add.dom(window.innerWidth / 2 ,window.innerHeight / 2).createFromCache('htmlDemo');
+      elem.setOrigin(.5);
+      elem.setDepth(1000);
+    }
+
+    private submitHandle () : void {
+      //提交操作
+      this.area.clear();
+      this.clearDrawHandle(false);
+      this.tweens.add({
+        targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
+        duration : 500,
+        y : `-=${window.innerHeight}`,
+        ease : 'Sine.easeInOut',
+        onComplete : ()=>{
+          this.tweens.add({
+            targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
+            duration : 500,
+            y : `+=${window.innerHeight}`,
+            ease : 'Sine.easeInOut',
+          })
+        }
       })
     }
     
@@ -63,47 +104,48 @@ export class Game5PlayScene extends Phaser.Scene {
     private createSketch () : void {
       //创建画板
       this.sketch = this.add.image(window.innerWidth - 347,window.innerHeight / 2,'sketch').setOrigin(.5).setDisplaySize(529,552);
-      this.add.image(this.sketch.x,this.sketch.y + 211,'icons','btn_tijiao.png').setOrigin(.5);
+      this.submitBtn = this.add.image(this.sketch.x,this.sketch.y + 211,'icons','btn_tijiao.png').setOrigin(.5).setInteractive();
       this.add.image(this.sketch.x,this.sketch.y,'line').setOrigin(.5).setDisplaySize(317,247);
-      this.penObj = this.add.sprite(this.sketch.x,this.sketch.y,'pen').setOrigin(0).setDepth(1001).setAlpha(0);
-      this.area = this.add.renderTexture(this.sketch.x - this.sketch.width / 2 + 70,this.sketch.y - 150,400,300).setOrigin(0).setInteractive();
+      this.penObj = this.add.sprite(this.sketch.x,this.sketch.y,'pen').setOrigin(0).setDepth(900).setAlpha(0);
+      this.area = this.add.renderTexture(this.sketch.x - this.sketch.width / 2 + 70,this.sketch.y - 150,400,300).setOrigin(0).setInteractive().setDepth(899);
+      this.guijiObj = this.textures.getFrame('guiji');
+      this.guijiObj.width = 10;
+      this.guijiObj.height = 10;
+      this.add.text(this.sketch.x,this.sketch.y,'A a',{
+        font: '200px sxdc',
+        fill : '#F98E56'
+      }).setOrigin(.5).setAlpha(.1);
     }
 
     private initEmitHandle () : void {
+      //绑定事件
       this.area.on('pointerdown',this.pointerHandle.bind(this,'down'));
       this.area.on('pointermove',this.pointerHandle.bind(this,'move'));
       this.area.on('pointerup',this.pointerEndHandle.bind(this,'end'));
       this.backToListBtn.on('pointerdown',this.backToListHandle.bind(this));
       this.clearDrawBtn.on('pointerdown',this.clearDrawHandle.bind(this));
+      this.submitBtn.on('pointerdown',this.submitHandle.bind(this));
+      this.musicBtn.on('pointerdown',this.switchMusic.bind(this,this.bgmFlag));
     }
 
-    private pointerHandle(...args) : void {
+    private pointerHandle(handle : string , pointer : Phaser.Input.Pointer) : void {
       //绘制
-      if(!args[1]) return;
+      if(!pointer) return;
       clearTimeout(this.timer);
-      let handle : string = args[0];
-      let pointerObj : Phaser.Input.Pointer = args[1];
-      handle === 'down' && (this.moveToX = pointerObj.x);
-      handle === 'down' && (this.moveToY = pointerObj.y);
-      this.penObj.setAlpha(1).setX(pointerObj.x - 30).setY(pointerObj.y);
-      this.drawHandle(pointerObj.x,pointerObj.y); //绘制 
+      this.penObj.setAlpha(1).setX(pointer.x - 30).setY(pointer.y);
+      this.drawHandle(pointer,handle); //绘制 
       this.timer = setTimeout(()=>{
         this.penObj.setAlpha(0);
       },500)
     }
 
-    private drawHandle (x : number , y : number) : void {
+    private drawHandle (pointerObj : Phaser.Input.Pointer, handle : string) : void {
       //书写中
-      this.lineObj = this.lineObj || this.add.graphics();
-      this.lineObj.setDepth(1000);
-      this.lineObj.lineStyle(7, 0x8557B9, 1.0);
-      this.lineObj.beginPath();
-      this.lineObj.moveTo(this.moveToX, this.moveToY);
-      this.lineObj.lineTo(x, y);
-      this.moveToX = x;
-      this.moveToY = y;
-      this.lineObj.closePath();
-      this.lineObj.strokePath();
+      let pointers : any[] = pointerObj.getInterpolatedPosition(40);
+      handle === 'move' && pointers.forEach((p)=>{
+        this.area.draw(this.guijiObj,p.x - this.area.x - 5,p.y - this.area.y - 5,1);
+      });
+      handle === 'down' && this.area.draw(this.guijiObj,pointerObj.x - this.area.x - 5,pointerObj.y - this.area.y - 5,1);
     }
 
     private backToListHandle() : void {
@@ -111,11 +153,10 @@ export class Game5PlayScene extends Phaser.Scene {
       window.location.href = window.location.origin;
     }
 
-    private clearDrawHandle() : void {
+    private clearDrawHandle(clickBtn : boolean = true) : void {
       //清除绘制线条
-      this.lineObj && this.lineObj.destroy();
-      this.lineObj = null;
-      this.clearDrawBtn.alpha = 1;
+      this.area.clear();
+      clickBtn && (this.clearDrawBtn.alpha = 1);
       this.tweens.add({
         targets : this.clearDrawBtn,
         delay : 3000,
@@ -125,7 +166,7 @@ export class Game5PlayScene extends Phaser.Scene {
       })
     }
 
-    private pointerEndHandle(...args) : void {
+    private pointerEndHandle() : void {
       //@ts-ignore
       this.penObj.alpha = 0;
     }
@@ -135,7 +176,27 @@ export class Game5PlayScene extends Phaser.Scene {
       this.backToListBtn = this.add.image(25,25,'icons','btn_exit.png').setOrigin(0).setAlpha(.6).setDisplaySize(60,60).setInteractive();
       this.clearDrawBtn = this.add.image(25,window.innerHeight - 175,'icons','btn_shangyibu.png').setOrigin(0).setAlpha(.6).setDisplaySize(60,60).setInteractive();
       this.add.image(25,window.innerHeight - 85,'icons','btn_play.png').setOrigin(0).setAlpha(.6).setDisplaySize(60,60).setInteractive();
-      this.add.image(window.innerWidth - 85,25,'icons','btn_music.png').setOrigin(0).setAlpha(.6).setDisplaySize(60,60).setInteractive();
+      this.musicBtn = this.add.image(window.innerWidth - 60,55,'icons','btn_music.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive();
+      this.bgmAnims = this.tweens.add({
+        targets : this.musicBtn,
+        duration : 2000,
+        repeat : -1,
+        angle : 360,
+      })
+    }
+
+    private switchMusic () : void {
+      this.bgmFlag = !this.bgmFlag;
+      this.bgmFlag && this.bgmAnims.resume() || this.bgmAnims.pause();
+      this.bgmFlag && this.bgm.resume() || this.bgm.pause();
+      this.musicBtn.alpha = 1;
+      this.tweens.add({
+        targets : this.musicBtn,
+        delay : 3000,
+        alpha : .6,
+        ease: 'Sine.easeInOut',
+        duration : 500
+      })
     }
 
     private createMask () : void {
