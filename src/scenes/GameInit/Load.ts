@@ -1,7 +1,8 @@
 import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
+import 'phaser';
 
-export class Game5LoadScene extends Phaser.Scene {
+export default class Game5LoadScene extends Phaser.Scene {
   private centerText : Phaser.GameObjects.Text; //文本内容
   private DefaultLoadSeconds : number = 33; //每秒增加百分之多少
   private process : number = 0; //进度

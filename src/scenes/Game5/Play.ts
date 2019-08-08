@@ -1,8 +1,9 @@
+import 'phaser';
 import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import { game5DataItem } from "../../interface/Game5";
 
-export class Game5PlayScene extends Phaser.Scene {
+export default class Game5PlayScene extends Phaser.Scene {
     private ccData : game5DataItem[] ; //数据
     private backToListBtn : Phaser.GameObjects.Image ; //返回列表按钮
     private clearDrawBtn : Phaser.GameObjects.Image; //清除按钮

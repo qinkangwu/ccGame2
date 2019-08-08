@@ -1,3 +1,4 @@
+import 'phaser';
 import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import {game6DataItem,Rectangular} from '../../interface/Game6';
@@ -27,7 +28,7 @@ var coordTranslate:Function = function (_x:number,_y:number):void{
     this.setScale(xRatio);
  }
 
-export class Game6PlayScene extends Phaser.Scene {
+export default class Game6PlayScene extends Phaser.Scene {
     private bgm:Phaser.Sound.BaseSound; //背景音乐
 
     private bg:Phaser.GameObjects.Image; //背景图片 

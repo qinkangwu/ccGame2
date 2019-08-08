@@ -1,8 +1,9 @@
+import 'phaser';
 import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
 import { game4DataItem } from '../../interface/Game4'
 
-export class Game4LoadScene extends Phaser.Scene {
+export default class Game4LoadScene extends Phaser.Scene {
   private ccData : Array<game4DataItem> = []; //数据
   private centerText : Phaser.GameObjects.Text; //文本内容
   private DefaultLoadSeconds : number = 50; //每秒增加百分之多少

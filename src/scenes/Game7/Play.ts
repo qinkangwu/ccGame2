@@ -1,10 +1,11 @@
+import 'phaser';
 import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 
-export default class Game5PlayScene extends Phaser.Scene {
+export default class Game7PlayScene extends Phaser.Scene {
     constructor() {
       super({
-        key: "Game5PlayScene"
+        key: "Game7PlayScene"
       });
     }
   

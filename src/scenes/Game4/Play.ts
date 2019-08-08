@@ -1,8 +1,9 @@
+import 'phaser';
 import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import { game4DataItem , game4PhoneticSymbol , game4WordItem} from '../../interface/Game4';
 
-export class Game4PlayScene extends Phaser.Scene {
+export default class Game4PlayScene extends Phaser.Scene {
     private ccData : Array<game4DataItem> = [] ; //数据
     private civa : Phaser.GameObjects.Sprite ; //civa机器人
     private words : Array<game4WordItem> = []; //音标数量

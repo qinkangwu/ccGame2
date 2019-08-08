@@ -3,10 +3,16 @@
 		"target": "es5",
 		"module": "commonjs",
 		"sourceMap": true,
-		"allowSyntheticDefaultImports": true
+		"allowSyntheticDefaultImports": true,
+		"lib" : [
+			"dom",
+			"es2015",
+			"scripthost"
+		]
 	},
 	
 	"files": [
+		"node_modules/phaser/types/phaser.d.ts",
 		"src/main.ts"
 	]
 }

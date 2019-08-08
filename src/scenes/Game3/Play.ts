@@ -1,8 +1,9 @@
+import 'phaser';
 import { game3DataInterface, game3BookMenus } from '../../interface/Game3';
 import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
 
-export class Game3PlayScene extends Phaser.Scene {
+export default class Game3PlayScene extends Phaser.Scene {
     private ccData : Array<game3DataInterface> = [];   //音标数据
     private redSprite : Phaser.GameObjects.Sprite ;  //红气泡
     private blueSprite : Phaser.GameObjects.Sprite ; //蓝气泡
