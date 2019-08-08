@@ -38,8 +38,7 @@ export class Game5PlayScene extends Phaser.Scene {
     }
   
     preload(): void {
-      this.load.audio('bgm','assets/Game5/bgm.mp3');
-      this.load.audio('error','assets/Game5/error.mp3');
+      
     }
     
   
@@ -266,6 +265,7 @@ export class Game5PlayScene extends Phaser.Scene {
         targets : obj,
         scaleX : 1.2,
         scaleY : 1.2,
+        alpha : 1,
         duration : 200,
         ease : 'Sine.easeInOut',
         onComplete : ()=>{

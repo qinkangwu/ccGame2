@@ -68,9 +68,7 @@ export class Game4PlayScene extends Phaser.Scene {
     }
 
     private loadBgm () : void {
-      this.load.audio('bgm','assets/Game4/bgm.mp3');
-      this.load.audio('shoot','assets/Game4/shoot.mp3');
-      this.load.audio('wrong','assets/Game4/wrong.mp3');
+      
     }
 
     private createBgm () : void {

@@ -41,6 +41,8 @@ export class Game5LoadScene extends Phaser.Scene {
     this.load.image('guiji','assets/Game5/guiji.png');
     this.load.image('tips','assets/Game5/tips.png');
     this.load.image('particles','assets/Game5/particles.png');
+    this.load.audio('bgm','assets/Game5/bgm.mp3');
+    this.load.audio('error','assets/Game5/error.mp3');
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;

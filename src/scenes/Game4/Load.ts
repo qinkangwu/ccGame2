@@ -35,6 +35,9 @@ export class Game4LoadScene extends Phaser.Scene {
     this.load.multiatlas('icons','assets/Game4/imgsJson.json','assets/Game4');
     this.load.multiatlas('icons2','assets/Game4/imgsJson2.json','assets/Game4');
     this.load.multiatlas('shoot','assets/Game4/shoot.json','assets/Game4');
+    this.load.audio('bgm','assets/Game4/bgm.mp3');
+    this.load.audio('shoot','assets/Game4/shoot.mp3');
+    this.load.audio('wrong','assets/Game4/wrong.mp3');
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;
