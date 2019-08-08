@@ -1,13 +1,15 @@
 import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
+import { game5DataItem } from '../../interface/Game5';
 
 export class Game5LoadScene extends Phaser.Scene {
+  private ccData : game5DataItem[]; //数据
   private centerText : Phaser.GameObjects.Text; //文本内容
   private DefaultLoadSeconds : number = 50; //每秒增加百分之多少
   private process : number = 0; //进度
   private timer  : Phaser.Time.TimerEvent  ;  //定时器id
   private imgLoadDone : boolean = false;  //图片是否加载完毕
-  private dataLoadDone : boolean = true;   //数据是否加载完毕
+  private dataLoadDone : boolean = false;   //数据是否加载完毕
 
   constructor() {
     super({
@@ -23,7 +25,7 @@ export class Game5LoadScene extends Phaser.Scene {
       bold : true,
     }).setOrigin(.5,.5);
 
-    // this.getData();
+    this.getData();
 
   }
 
@@ -37,6 +39,8 @@ export class Game5LoadScene extends Phaser.Scene {
     this.load.multiatlas('icons','assets/Game5/imgsJson.json','assets/Game5');
     this.load.html('htmlDemo','assets/Game5/demo.html');
     this.load.image('guiji','assets/Game5/guiji.png');
+    this.load.image('tips','assets/Game5/tips.png');
+    this.load.image('particles','assets/Game5/particles.png');
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;
@@ -56,6 +60,10 @@ export class Game5LoadScene extends Phaser.Scene {
 
   private getData () : void {
     //获取数据
+    get(apiPath.getDrawingBoardData).then((res)=>{
+      res && res.code === '0000' && (this.ccData = res.result);
+      this.dataLoadDone = true;
+    })
   }
 
   private loadHandle () : void {
@@ -67,7 +75,9 @@ export class Game5LoadScene extends Phaser.Scene {
           this.centerText.setText('99%');
           if(this.imgLoadDone && this.dataLoadDone){
             this.centerText.setText('100%');
-            this.scene.start('Game5PlayScene');
+            this.scene.start('Game5PlayScene',{
+              data : this.ccData
+            });
           }
           return;
         }
