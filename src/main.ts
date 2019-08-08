@@ -1,3 +1,4 @@
+import "phaser";
 let path: string =
   window.location.hash.match(/#\/(.+)\??/) &&
   window.location.hash.match(/#\/(.+)\??/).length > 1 &&
