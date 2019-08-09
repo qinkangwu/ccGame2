@@ -258,24 +258,22 @@ export default class Game6PlayScene extends Phaser.Scene {
     collider = this.physics.add.overlap(collisoins,hitObject,hitFuc,null,this);
 
     function hitFuc(...args){
+      // let ani = that.tweens.add({
+      //   targets:args[0],
+      //   duration:100,
+      //   scale
+      // } as Phaser.Types.Tweens.TweenBuilderConfig);
+     
       args[0].alpha = 0; 
-      //args[0].destroy();
       args[0].parentContainer.list[1].alpha = 0;
       <Phaser.Physics.Arcade.Image>args[0].disableBody(true,true);
       hits+=1;
+      if(hits===that.balls.list.length-1){
        args[0].off("drag", onLeftRightDrag);
        args[0].off("dragend", onLeftRightDragEnd);
-      if(hits===that.balls.list.length-1){
         that.balls.removeAll();
         that.arrows.destroy();
         collider.destroy();
-        // that.balls.list.forEach(v=>{
-        //   v.destroy();
-        //   (<Phaser.GameObjects.Container>v).list.forEach(_v=>{
-        //     _v.destroy();
-        //   });
-        // });
-        //that.physics.world.removeCollider();
       }
     }
   }
