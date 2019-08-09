@@ -51,6 +51,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   private balls: Phaser.GameObjects.Container; //药品序列
   private nullballs: Phaser.GameObjects.Container; //空圆序列
   private arrows: Phaser.GameObjects.Container; //箭头序列
+  private cloudWord: Phaser.GameObjects.Container; //单词容器
   //private speaker:Phaser.Sound.BaseSound; //音标播放
   //private btns:Phaser.GameObjects.Container; 
 
@@ -122,9 +123,11 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.balls = new Phaser.GameObjects.Container(this);
     this.nullballs = new Phaser.GameObjects.Container(this);
     this.arrows = new Phaser.GameObjects.Container(this);
+    this.cloudWord = new Phaser.GameObjects.Container(this);
     this.add.existing(this.balls);
     this.add.existing(this.nullballs);
     this.add.existing(this.arrows);
+    this.add.existing(this.cloudWord);
   }
 
   /* 创建药瓶 */
@@ -143,7 +146,6 @@ export default class Game6PlayScene extends Phaser.Scene {
       ballImg.setData("arrowIndex",i);
       let ballText = new Phaser.GameObjects.Text(this, 1024 * 0.5 + 10, 410, v.name, { align: "center", fontSize: "45px" }).setOrigin(0.5);
       let ball = new Phaser.GameObjects.Container(this, 0, 0, [ballImg, ballText]);
-      ball.setData("name",this.phoneticData[index].name);
       this.balls.add(ball);
     });
     this.createUpArrow();
@@ -202,6 +204,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     function clearArrows() {
       that.tweens.killAll();
+     // (that.arrows.list[0] as Phaser.GameObjects.Image).alpha = 0;
       that.arrows.removeAll();
     }
 
@@ -258,12 +261,6 @@ export default class Game6PlayScene extends Phaser.Scene {
     collider = this.physics.add.overlap(collisoins,hitObject,hitFuc,null,this);
 
     function hitFuc(...args){
-      // let ani = that.tweens.add({
-      //   targets:args[0],
-      //   duration:100,
-      //   scale
-      // } as Phaser.Types.Tweens.TweenBuilderConfig);
-     
       args[0].alpha = 0; 
       args[0].parentContainer.list[1].alpha = 0;
       <Phaser.Physics.Arcade.Image>args[0].disableBody(true,true);
@@ -272,10 +269,35 @@ export default class Game6PlayScene extends Phaser.Scene {
        args[0].off("drag", onLeftRightDrag);
        args[0].off("dragend", onLeftRightDragEnd);
         that.balls.removeAll();
-        that.arrows.destroy();
+        that.arrows.removeAll();
         collider.destroy();
+        that.createCloudWord();
       }
     }
+  }
+
+  /**
+   * 创建云朵与单词
+   */
+  private createCloudWord():void{
+      let cloud = new Phaser.GameObjects.Image(this,242,0,"img_cloud").setOrigin(0);
+      cloud.displayWidth = 521;
+      cloud.displayHeight= 338;
+      let word = new Phaser.GameObjects.Text(this,1024*0.5,150,`${this.phoneticData[index].name}`,{
+        align:"center",
+        color:"rgb(178,90,176)",
+        fontFamily:"ArialRoundedMTBold",
+        fontSize:"120px"
+      } as Phaser.Types.GameObjects.Text.TextSyle).setOrigin(0.5);
+      this.cloudWord.add([cloud,word]);
+  }
+
+  /**
+   * 销毁所有的药品
+   */
+  private destroyBalls():void{
+    this.balls.destroy();
+    this.arrows.removeAll();
   }
 
   /**
@@ -299,9 +321,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   private createLeftRightArrow(): void {
     let arrowLeft = new Phaser.GameObjects.Image(this, 567 + 128 * 0.5 + 100, 65 + 168 * 0.5 - 10, "tips_arrow_left").setOrigin(0.5).setAlpha(1);   //在右边
     let arrowRight = new Phaser.GameObjects.Image(this, 331 + 128 * 0.5 - 100, 65 + 168 * 0.5 - 10, "tips_arrow_right").setOrigin(0.5).setAlpha(1);    //在左边
-
     this.arrows.add([arrowLeft, arrowRight]);
-
     this.tweens.add((<Phaser.Types.Tweens.TweenBuilderConfig>{
       targets: [arrowLeft, arrowRight],
       x: 1024 * 0.5,
