@@ -115,6 +115,7 @@ export default class Game5PlayScene extends Phaser.Scene {
     private submitHandle () : void {
       //提交操作
       if(!this.isDraw) return this.playMusic('error');
+      this.playMusic('successMp3');
       this.tipsAnims();
       this.area.clear();
       this.isDraw = false;
@@ -183,7 +184,7 @@ export default class Game5PlayScene extends Phaser.Scene {
         font: '20px Arial Rounded MT',
         fill : '#D5D2EF',
       }).setOrigin(.5);
-      this.playVideo = this.add.sprite(this.civa.x + 220,this.civa.y + 170,'icons','btn_vedio／02.png').setOrigin(.5).setDisplaySize(35,35);
+      this.playVideo = this.add.sprite(this.civa.x + 220,this.civa.y + 170,'icons','btn_vedio／02.png').setOrigin(.5).setDisplaySize(35,35).setData('isBtn',true).setData('_s',true).setData('playVideo',true).setInteractive();
     }
 
     private createSketch () : void {
@@ -212,9 +213,49 @@ export default class Game5PlayScene extends Phaser.Scene {
       this.submitBtn.on('pointerdown',this.submitHandle.bind(this));
       this.musicBtn.on('pointerdown',this.switchMusic.bind(this,this.bgmFlag));
       this.playBtn.on('pointerdown',this.playAudioHandle.bind(this));
+      this.playVideo.on('pointerdown',this.playVideoHandle.bind(this));
       this.input.on('pointerdown',this.globalClickHandle.bind(this));
       this.input.on('gameobjectover',this.gameOverHandle.bind(this));
       this.input.on('gameobjectout',this.gameOutHandle.bind(this));
+    }
+
+    private offHandle () : void {
+      //取消事件
+      this.area.off('pointerdown');
+      this.area.off('pointermove');
+      this.area.off('pointerup');
+    }
+
+    private onHandle () : void {
+      this.area.on('pointerdown',this.pointerHandle.bind(this,'down'));
+      this.area.on('pointermove',this.pointerHandle.bind(this,'move'));
+      this.area.on('pointerup',this.pointerEndHandle.bind(this,'end'));
+    }
+
+    private playVideoHandle () : void {
+      this.offHandle();
+      let vid : string = this.ccData[this.dataIndex].videoId;
+      let vBox : Element = document.querySelector('#vBox');
+      let masker : Element = document.querySelector('#masker');
+      let closeBtn : Element = document.querySelector('#closeBtn');
+      //@ts-ignore
+      closeBtn.onclick = this.clearVideoFrameHandle.bind(this);
+      let iframe : HTMLIFrameElement;
+      try{  
+        //@ts-ignore
+        iframe= document.createElement('<iframe name="video"></iframe>');  
+       }catch(e){ 
+        iframe = document.createElement('iframe');  
+        iframe.name = 'video';  
+      }
+      iframe.src = `assets/video.html?vid=${vid}`;
+      iframe.width = window.innerWidth * 0.5859 + '';
+      iframe.height = window.innerHeight * 0.5434 + '';
+      //@ts-ignore
+      vBox.style.display = 'block';
+      //@ts-ignore
+      masker.style.display = 'block';
+      vBox.append(iframe);
     }
 
     private gameOutHandle (...args) : void {
@@ -258,10 +299,15 @@ export default class Game5PlayScene extends Phaser.Scene {
     private globalClickHandle (...args) : void {
       //点击按钮缩放
       let obj : object = args[1][0];
+      //@ts-ignore
+      // if(!obj || !obj.getData('playVideo')){
+      //   this.clearVideoFrameHandle();  //隐藏视频
+      // }
       if(!obj) return;
       //@ts-ignore
       let isBtn : boolean = obj.getData('isBtn');
       if(!isBtn) return;
+      this.playMusic('clickMp3');
       this.tweens.add({
         targets : obj,
         scaleX : 1.2,
@@ -280,6 +326,17 @@ export default class Game5PlayScene extends Phaser.Scene {
         }
       })
 
+    }
+
+    private clearVideoFrameHandle () : void {
+      this.onHandle();
+      let vBox : Element = document.querySelector('#vBox');
+      let masker : Element = document.querySelector('#masker');
+      //@ts-ignore
+      masker.style.display = 'none';
+      vBox.innerHTML = '';
+      //@ts-ignore
+      vBox.style.display = 'none';
     }
 
     private playAudioHandle () : void {

@@ -29,6 +29,10 @@ export default class Game7LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
+    this.load.image('game7Bgi','assets/Game7/bgi.png');
+    this.load.image('machine','assets/Game7/machine.png');
+    this.load.multiatlas('icons','assets/Game7/imgsJson.json','assets/Game7');
+    this.load.multiatlas('icons2','assets/Game7/imgsJson2.json','assets/Game7');
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;
@@ -59,7 +63,7 @@ export default class Game7LoadScene extends Phaser.Scene {
           this.centerText.setText('99%');
           if(this.imgLoadDone && this.dataLoadDone){
             this.centerText.setText('100%');
-            this.scene.start('Game5PlayScene');
+            this.scene.start('Game7PlayScene');
           }
           return;
         }
