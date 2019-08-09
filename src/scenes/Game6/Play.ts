@@ -177,7 +177,7 @@ export default class Game6PlayScene extends Phaser.Scene {
             ball.list[0].off("drag",ballImgOnDrag);
             (<Phaser.GameObjects.Image>ball.list[0]).setPosition(nullball.x + 71.5*0.5+40,nullball.y + 71.5*0.5+25);
             (<Phaser.GameObjects.Text>ball.list[1]).setPosition(nullball.x + 71.5*0.5+35,nullball.y + 71.5*0.5+35);
-            nullball.disableBody(true,true);
+            nullball.destroy();  //直接销毁空球体
             speaker.play();
             collider.destroy();
             if(ballIndex===0){
@@ -202,6 +202,7 @@ export default class Game6PlayScene extends Phaser.Scene {
           that.tweens.killAll();
           that.arrows.removeAll(); 
         }
+
 
     }
 
