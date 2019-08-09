@@ -54,6 +54,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   private nullballs: Phaser.GameObjects.Container; //空圆序列
   private arrows: Phaser.GameObjects.Container; //箭头序列
   private cloudWord: Phaser.GameObjects.Container; //单词容器
+  private voiceBtns: Phaser.GameObjects.Container; //语音按钮组
   //private speaker:Phaser.Sound.BaseSound; //音标播放
   //private btns:Phaser.GameObjects.Container; 
 
@@ -126,10 +127,12 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.nullballs = new Phaser.GameObjects.Container(this);
     this.arrows = new Phaser.GameObjects.Container(this);
     this.cloudWord = new Phaser.GameObjects.Container(this);
+    this.voiceBtns = new Phaser.GameObjects.Container(this);
     this.add.existing(this.balls);
     this.add.existing(this.nullballs);
     this.add.existing(this.arrows);
     this.add.existing(this.cloudWord);
+    this.add.existing(this.voiceBtns);
   }
 
   /* 创建药瓶 */
@@ -295,6 +298,14 @@ export default class Game6PlayScene extends Phaser.Scene {
       } as Phaser.Types.GameObjects.Text.TextSyle).setOrigin(0.5);
       this.cloudWord.add([cloud,word]);
   }
+
+  /**
+   * 创建语音按钮组
+   */
+
+   private createVoiceBtns():void{
+     /** work init 创建音频按钮组，并设置钩子*/
+   }
 
   /**
    * 箭头再现
