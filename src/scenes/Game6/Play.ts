@@ -7,7 +7,7 @@ const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
 const W = 1024;
 const H = 552;
-var index: number = 0; //题目的指针，默认为0
+var index: number; //题目的指针，默认为0
 
 
 /**
@@ -60,8 +60,9 @@ export default class Game6PlayScene extends Phaser.Scene {
     });
   }
 
-  init(res: { data: any[] }) {
+  init(res: { data: any[],index:number }) {
     this.resize();
+    index = res.index;
     this.phoneticData = res.data.map(function (v) {
       delete v.uselessPhoneticSymbols;
       return v;
@@ -85,7 +86,6 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   update(time: number, delta: number): void {
-
   }
 
   /**
@@ -132,7 +132,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     /**
      * 测试接口
      */
-    index = 6;
+    //index = 6;
     let ballImgTexures: Array<string> = ["img_ballgreen", "img_ballpurple", "img_ballyellow"];
     let phoneticSymbols = this.phoneticData[index].phoneticSymbols.reverse();
     let ballIndex = phoneticSymbols.length - 1;
@@ -257,15 +257,25 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     collider = this.physics.add.overlap(collisoins,hitObject,hitFuc,null,this);
 
-    function hitFuc(...arg){
-      arg[0].alpha = 0; 
-      arg[0].parentContainer.list[1].alpha = 0;
-      <Phaser.Physics.Arcade.Image>arg[0].disableBody(true,true);
+    function hitFuc(...args){
+      args[0].alpha = 0; 
+      //args[0].destroy();
+      args[0].parentContainer.list[1].alpha = 0;
+      <Phaser.Physics.Arcade.Image>args[0].disableBody(true,true);
       hits+=1;
+       args[0].off("drag", onLeftRightDrag);
+       args[0].off("dragend", onLeftRightDragEnd);
       if(hits===that.balls.list.length-1){
-        collider.destroy();
         that.balls.removeAll();
-        that.arrows.removeAll();
+        that.arrows.destroy();
+        collider.destroy();
+        // that.balls.list.forEach(v=>{
+        //   v.destroy();
+        //   (<Phaser.GameObjects.Container>v).list.forEach(_v=>{
+        //     _v.destroy();
+        //   });
+        // });
+        //that.physics.world.removeCollider();
       }
     }
   }
@@ -346,7 +356,6 @@ export default class Game6PlayScene extends Phaser.Scene {
   private exitGame(): void {
     console.log("Game Over");
   }
-
 
   /* 关闭或播放音乐 */
   private onOffSound(this: any) {

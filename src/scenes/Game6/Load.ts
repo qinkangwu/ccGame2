@@ -46,7 +46,8 @@ export default class Game6LoadScene extends Phaser.Scene {
       res&&res.code==='0000'&&(this.ccData = res.result);
     }).then(()=>{
       this.scene.start('Game6PlayScene',{
-        data : this.ccData
+        data : this.ccData,
+        index:0
       });
     })
   }
