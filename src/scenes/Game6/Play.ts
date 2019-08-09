@@ -9,6 +9,8 @@ const W = 1024;
 const H = 552;
 var index: number; //题目的指针，默认为0
 
+var arrowUpObj:any=null;
+var arrowUpAni:any=null;
 
 /**
  * 坐标根据画布进行重排
@@ -203,9 +205,10 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function clearArrows() {
-      that.tweens.killAll();
+      //that.tweens.killAll();
      // (that.arrows.list[0] as Phaser.GameObjects.Image).alpha = 0;
-      that.arrows.removeAll();
+      arrowUpAni.stop(); //暂停动画
+      that.arrows.removeAll();  
     }
 
 
@@ -272,6 +275,7 @@ export default class Game6PlayScene extends Phaser.Scene {
         that.arrows.removeAll();
         collider.destroy();
         that.createCloudWord();
+        that.arrowAgainShow();
       }
     }
   }
@@ -293,6 +297,15 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   /**
+   * 箭头再现
+   */
+  private arrowAgainShow():void{
+    this.arrows.add(arrowUpObj);
+    //(arrowUpAni as Phaser.Tweens.Tween).duration = 2000;
+    (arrowUpAni as Phaser.Tweens.Tween).play();
+  }
+
+  /**
    * 销毁所有的药品
    */
   private destroyBalls():void{
@@ -305,12 +318,13 @@ export default class Game6PlayScene extends Phaser.Scene {
    */
   private createUpArrow(): void {
     let arrowUp = new Phaser.GameObjects.Image(this, 1024 * 0.5 + 5, 386, "tips_arrow_up").setOrigin(0.5).setAlpha(0);
+    arrowUpObj = arrowUp;
     this.arrows.add(arrowUp);
-    this.tweens.add((<Phaser.Types.Tweens.TweenBuilderConfig>{
+    arrowUpAni = this.tweens.add((<Phaser.Types.Tweens.TweenBuilderConfig>{
       targets: arrowUp,
       y: 386 - 20,
       alpha: 1,
-      duration: 500,
+      duration: 1000,
       repeat: -1
     }))
   }
