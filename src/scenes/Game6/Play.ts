@@ -311,6 +311,8 @@ export default class Game6PlayScene extends Phaser.Scene {
     let backplayBtn = new Phaser.GameObjects.Image(this, 632, 442, "btn_last_1").setOrigin(0);
     let originalBtn = new Phaser.GameObjects.Image(this, 332, 442, "btn_last_2").setOrigin(0);
 
+    backplayBtn.alpha = 0.5;
+
     let cir = new Phaser.GameObjects.Graphics(this);
     cir.fillStyle(0xffffff, 1);
     let radius = 110 * 0.5 - 4;
@@ -325,6 +327,10 @@ export default class Game6PlayScene extends Phaser.Scene {
     luyinBtn.setInteractive();
     luyinBtn.on("pointerdown", recordStart);
 
+    backplayBtn.setInteractive(); 
+    backplayBtn.setData("haveRecord","no");
+    backplayBtn.on("pointerdown",backplayFuc);
+
     let cirAni = this.tweens.add((<Phaser.Types.Tweens.TweenBuilderConfig>{
       targets: radian,
       value: 2 * Math.PI,
@@ -333,6 +339,15 @@ export default class Game6PlayScene extends Phaser.Scene {
       onUpdate: aniPlay,
       onComplete: recordEndFuc
     }))
+
+    function backplayFuc(){
+      let haveRecord = backplayBtn.getData("haveRecord");
+      if(haveRecord==="no"){
+          return false;
+      }else{
+        console.log("回放录音");
+      }
+    }
 
     function aniPlay() {
       let dx = ox + radius * Math.cos(radian.value);
@@ -343,6 +358,8 @@ export default class Game6PlayScene extends Phaser.Scene {
     function recordEndFuc() {
       resetStart();
       luyinBtn.on("pointerdown", recordStart);
+      backplayBtn.setData("haveRecord","yes");
+      backplayBtn.alpha = 1;
     }
 
     function resetStart() {
@@ -355,6 +372,8 @@ export default class Game6PlayScene extends Phaser.Scene {
     function recordStart() {
       luyinBtn.off("pointerdown", recordStart);
       luyinBtn.setTexture("btn_luyin_progress");
+      backplayBtn.setData("haveRecord","no");
+      backplayBtn.alpha = 0.5;
       cirAni.play();
     }
 
