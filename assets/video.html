@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ccVideo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta http-equiv="cleartype" content="on">
+    <meta name="format-detection" content="telephone=no">
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width:100%;
+            height:100%;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content"></div>
+    <script type="text/javascript">
+        var script = window.document.createElement("script"); 
+        var vid = window.location.search.substr(1).split('=')[1];
+        script.src = `https://p.bokecc.com/player?vid=${vid}&siteid=325165FBF55C3838&autoStart=false&width=${window.innerWidth}&height=${window.innerHeight}&playerid=230969ab-b63c-4779-87c7-0a49a285f8e5&playertype=2`; 
+        document.body.append(script);
+    </script>
+</body>
+<script>
+    // function on_CCH5player_ready(obj) {
+    //     console.log('CCH5player_ready', obj);
+    // }
+
+    // function on_CCH5player_play() {
+    //     console.log('CCH5player_play');
+    // }
+
+    // function on_CCH5player_pause() {
+    //     console.log('CCH5player_pause');
+    // }
+
+    // function on_CCH5player_ended() {
+    //     console.log('CCH5player_ended');
+    // }
+</script>

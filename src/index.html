@@ -28,10 +28,49 @@
             top:0;
             font-family: 'sxdc';
         }
+        #vBox{
+            width:58.59%;
+            height:54.34%;
+            background:#000;
+            border-radius:50px;
+            position: absolute;
+            left:50%;
+            top:50%;
+            transform: translate(-50%,-50%);
+            z-index: 10001;
+            display: none;
+            overflow: hidden;
+        }
+        #masker{
+            width:100%;
+            height:100%;
+            position: absolute;
+            z-index: 10000;
+            left:0;
+            top:0;
+            background:rgba(0,0,0,.5);
+            overflow: hidden;
+            display: none;
+        }
+        #closeBtn{
+            width:2.44%;
+            height:4.52%;
+            position: absolute;
+            left:50%;
+            top:50%;
+            background:url('assets/Game5/close.png');
+            background-size:100% 100%;
+            transform: translate(1285%,-650%);
+        }
     </style>
 </head>
 
 <body>
+    <script type="text/javascript" src="assets/libJs/recorder.wav.min.js"></script>
     <div id="content"></div>
     <span id="font">a</span>
+    <div id="vBox"></div>
+    <div id="masker">
+        <div id="closeBtn"></div>
+    </div>
 </body>

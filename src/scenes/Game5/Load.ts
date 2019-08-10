@@ -38,12 +38,14 @@ export default class Game5LoadScene extends Phaser.Scene {
     this.load.image('line','assets/Game5/line.png');
     this.load.image('pen','assets/Game5/pen.png');
     this.load.multiatlas('icons','assets/Game5/imgsJson.json','assets/Game5');
-    this.load.html('htmlDemo','assets/Game5/demo.html');
+    // this.load.html('htmlDemo','assets/Game5/demo.html');
     this.load.image('guiji','assets/Game5/guiji.png');
     this.load.image('tips','assets/Game5/tips.png');
     this.load.image('particles','assets/Game5/particles.png');
     this.load.audio('bgm','assets/Game5/bgm.mp3');
     this.load.audio('error','assets/Game5/error.mp3');
+    this.load.audio('successMp3','assets/Game5/success.mp3');
+    this.load.audio('clickMp3','assets/Game5/click.mp3');
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;
