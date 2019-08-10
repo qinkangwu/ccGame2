@@ -53,6 +53,10 @@ module.exports = {
             port: process.env.PORT || 3000,
             server: {
                 baseDir: ['./', './build']
+            },
+            https: {
+                key: "./ssl/server.key",
+                cert: "./ssl/server.crt"
             }
         })
     ],

@@ -1,12 +1,12 @@
-export interface game6DataItem{
+export class Game6DataItem{
     audioKey : string ;
     id : string ;
     name : string ;
-    phoneticSymbols : Array<game6PhoneticSymbol>
+    phoneticSymbols : Array<Game6PhoneticSymbol>
 }
 
 /* 音标组件 */
-export interface game6PhoneticSymbol {
+export class Game6PhoneticSymbol {
     audioKey : string ;
     id : string ;
     name : string ;
