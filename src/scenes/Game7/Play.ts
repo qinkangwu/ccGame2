@@ -18,7 +18,9 @@ export default class Game7PlayScene extends Phaser.Scene {
     private bgmAnims : Phaser.Tweens.Tween; //背景音乐旋转动画
     private bgmFlag : boolean = true ; //音乐开关
     private bgm : Phaser.Sound.BaseSound ; //背景音乐
+    private recordEndBtn : Phaser.GameObjects.Image; //录音结束按钮
     private wordsArr : string[] = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']; //基础单词随机组合数组
+    private rec ; //录音对象
     constructor() {
       super({
         key: "Game7PlayScene"
@@ -89,14 +91,29 @@ export default class Game7PlayScene extends Phaser.Scene {
       this.playBtn = this.add.image(window.innerWidth / 2 - (55 * scaleX + 65 + (30 * scaleX)), window.innerHeight - 50 - (30 * scaleY) , 'icons2' , 'btn_last2.png')
         .setDisplaySize(60 * scaleX , 60 * scaleY)
         .setOrigin(.5)
-        .setAlpha(0);
+        .setAlpha(0)
+        .setInteractive()
+        .setData('isBtn',true)
+        .setData('_s',true);
       this.recordStartBtn = this.add.image(window.innerWidth / 2, window.innerHeight - (55 * scaleY + 25) , 'icons2' , 'btn_luyin2.png')
         .setDisplaySize(110 * scaleX , 110 * scaleY)
-        .setAlpha(0);
+        .setAlpha(0)
+        .setInteractive()
+        .setData('isBtn',true)
+        .setData('_s',true);
+      this.recordEndBtn = this.add.image(window.innerWidth / 2, window.innerHeight - (55 * scaleY + 25) , 'icons2' , 'btn_luyin.png')
+        .setDisplaySize(110 * scaleX , 110 * scaleY)
+        .setAlpha(0)
+        .setInteractive()
+        .setData('isBtn',true)
+        .setData('_s',true);
       this.playRecordBtn = this.add.image(window.innerWidth / 2 + (55 * scaleX + 65 + (30 * scaleX)) , window.innerHeight - 50 - (30 * scaleY) , 'icons2' , 'btn_last.png')
         .setDisplaySize(60 * scaleX , 60 * scaleY)
         .setOrigin(.5)
-        .setAlpha(0);
+        .setAlpha(0)
+        .setInteractive()
+        .setData('isBtn',true)
+        .setData('_s',true);
       this.bgmAnims = this.tweens.add({
         targets : this.musicBtn,
         duration : 2000,
@@ -108,6 +125,12 @@ export default class Game7PlayScene extends Phaser.Scene {
     private handleClick () : void {
       //点击摇杆
       this.handle.play('begin');
+      this.tweens.add({
+        targets : [this.playBtn,this.recordStartBtn,this.playRecordBtn],
+        alpha : 1,
+        duration : 500,
+        ease : 'Sine.easeInOut',
+      })
     }
 
     private handleAnims () : void {
@@ -129,6 +152,37 @@ export default class Game7PlayScene extends Phaser.Scene {
       this.input.on('gameobjectout',this.gameOutHandle.bind(this));
       this.musicBtn.on('pointerdown',this.switchMusic.bind(this,this.bgmFlag));
       this.backToListBtn.on('pointerdown',this.backToListHandle.bind(this));
+      this.recordStartBtn.on('pointerdown',this.recordStartHandle.bind(this));
+      this.recordEndBtn.on('pointerdown',this.recordEndHandle.bind(this));
+    }
+
+    private recordEndHandle() : void {
+      //录音结束
+      this.recordEndBtn.alpha = 0;
+      this.recordStartBtn.alpha = 1;
+      this.rec && this.rec.stop((blob,duration)=>{
+        this.rec.close();
+        let files : File = new File([blob],'aaa.wav',{
+          type : blob.type
+        })
+
+        
+      },(msg)=>{
+        console.log('录音失败' + msg);
+      })
+    }
+
+    private recordStartHandle() : void {
+      //录音开始
+      //@ts-ignore
+      this.rec = this.rec || window.Recorder({
+        type : 'wav'
+      });
+      this.rec.open(()=>{
+        this.recordEndBtn.alpha = 1;
+        this.recordStartBtn.alpha = 0;
+        this.rec.start();
+      })
     }
 
     private backToListHandle() : void {
