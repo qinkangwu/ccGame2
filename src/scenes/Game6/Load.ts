@@ -42,7 +42,11 @@ export default class Game6LoadScene extends Phaser.Scene {
   }
 
   private getData(){
-    get(apiPath.getWordsData).then((res)=>{
+    /**
+     * 正式状态
+     */
+    //get(apiPath.getWordsData).then((res)=>{
+    get("assets/Game6/getSugarGourdWordByBookUnitId.json").then((res)=>{
       res&&res.code==='0000'&&(this.ccData = res.result);
     }).then(()=>{
       this.scene.start('Game6PlayScene',{
