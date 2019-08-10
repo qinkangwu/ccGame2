@@ -334,7 +334,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     let cirAni = this.tweens.add((<Phaser.Types.Tweens.TweenBuilderConfig>{
       targets: radian,
       value: 2 * Math.PI,
-      duration: 15000,
+      duration: 5000,
       paused: true,
       onUpdate: aniPlay,
       onComplete: recordEndFuc
