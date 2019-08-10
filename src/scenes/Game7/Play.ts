@@ -4,6 +4,7 @@ import apiPath from '../../lib/apiPath';
 
 const scaleX : number = window.innerWidth / 1024;
 const scaleY : number = window.innerHeight / 552;
+const timerMoveSecons = 3000; //进度多少毫秒走完
 
 export default class Game7PlayScene extends Phaser.Scene {
     private machine : Phaser.GameObjects.Image ; //机器主体
@@ -21,6 +22,9 @@ export default class Game7PlayScene extends Phaser.Scene {
     private recordEndBtn : Phaser.GameObjects.Image; //录音结束按钮
     private wordsArr : string[] = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']; //基础单词随机组合数组
     private rec ; //录音对象
+    private recordGraphics : Phaser.GameObjects.Graphics ; //停止录音进度条绘制对象
+    private timerNum : number = 360; //进度条角度
+    private timerObj : Phaser.Time.TimerEvent; //定时器
     constructor() {
       super({
         key: "Game7PlayScene"
@@ -60,8 +64,13 @@ export default class Game7PlayScene extends Phaser.Scene {
       });
     }
 
-    private render (data : []) : void {
+    private renderAnims (data : []) : void {
       //渲染摇摇机
+      
+    }
+
+    private renderSuccess (data : string[]) : void {
+      //渲染正确的结果
       
     }
     
@@ -101,7 +110,7 @@ export default class Game7PlayScene extends Phaser.Scene {
         .setInteractive()
         .setData('isBtn',true)
         .setData('_s',true);
-      this.recordEndBtn = this.add.image(window.innerWidth / 2, window.innerHeight - (55 * scaleY + 25) , 'icons2' , 'btn_luyin.png')
+      this.recordEndBtn = this.add.image(window.innerWidth / 2, window.innerHeight - (55 * scaleY + 25) , 'recordIcon')
         .setDisplaySize(110 * scaleX , 110 * scaleY)
         .setAlpha(0)
         .setInteractive()
@@ -120,6 +129,26 @@ export default class Game7PlayScene extends Phaser.Scene {
         repeat : -1,
         angle : 360,
       })
+    }
+
+    private drawArc () : void {
+      //绘制进度条
+      this.clearArc();
+      this.recordGraphics = this.add.graphics();
+      this.recordGraphics.depth = 100;
+      this.recordGraphics.lineStyle(9,0xffffff,1);
+      this.recordGraphics.beginPath();
+      this.recordGraphics.arc(this.recordEndBtn.x,this.recordEndBtn.y,52,Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(this.timerNum -- ),false);
+      this.recordGraphics.strokePath();
+    }
+
+    private clearArc () : void {
+      this.recordGraphics && this.recordGraphics.clear();
+      this.recordGraphics && this.recordGraphics.destroy();
+      this.recordGraphics = null;
+      if(this.timerNum <= 0 ){
+        this.recordEndHandle();
+      }
     }
 
     private handleClick () : void {
@@ -159,9 +188,15 @@ export default class Game7PlayScene extends Phaser.Scene {
     private recordEndHandle() : void {
       //录音结束
       this.recordEndBtn.alpha = 0;
+      this.recordEndBtn.depth = -1;
       this.recordStartBtn.alpha = 1;
+      this.recordStartBtn.depth = 1;
       this.rec && this.rec.stop((blob,duration)=>{
         this.rec.close();
+        this.timerObj && this.timerObj.remove();
+        this.timerObj && this.timerObj.destroy();
+        this.timerNum = 360;
+        this.clearArc();
         let files : File = new File([blob],'aaa.wav',{
           type : blob.type
         })
@@ -180,7 +215,16 @@ export default class Game7PlayScene extends Phaser.Scene {
       });
       this.rec.open(()=>{
         this.recordEndBtn.alpha = 1;
+        this.recordEndBtn.depth = 1;
         this.recordStartBtn.alpha = 0;
+        this.recordStartBtn.depth = -1;
+        this.drawArc();
+        this.timerObj && this.timerObj.remove();
+        this.timerObj = this.time.addEvent({
+          delay : timerMoveSecons / 360,
+          callback : this.drawArc.bind(this),
+          repeat : 359,
+        })
         this.rec.start();
       })
     }
