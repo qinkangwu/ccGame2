@@ -311,7 +311,6 @@ export default class Game6PlayScene extends Phaser.Scene {
       sampleRate: 16000
     });
 
-
     let cir = new Phaser.GameObjects.Graphics(this);
     cir.fillStyle(0xffffff, 1);
     let radius = 110 * 0.5 - 4;
