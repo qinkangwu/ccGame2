@@ -55,7 +55,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   private arrows: Phaser.GameObjects.Container; //箭头序列
   private cloudWord: Phaser.GameObjects.Container; //单词容器
   private voiceBtns: Phaser.GameObjects.Container; //语音按钮组
-  //private speaker:Phaser.Sound.BaseSound; //音标播放
+  private wordSpeaker:Phaser.Sound.BaseSound;   //单词播放器
   //private btns:Phaser.GameObjects.Container; 
 
   constructor() {
@@ -74,16 +74,15 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.phoneticData.forEach(v => {
-      this.load.audio(v.name, v.audioKey);
-      v.phoneticSymbols.forEach(_v => {
+    let currentPhoneticData = this.phoneticData[index];
+    this.load.audio(currentPhoneticData.name, currentPhoneticData.audioKey);
+      currentPhoneticData.phoneticSymbols.forEach(_v => {
         this.load.audio(_v.name, _v.audioKey);
       })
-    })
   }
 
   create(): void {
-    this.createBGM();
+    this.createAudio();
     this.createStaticScene();
     this.createDynamicScene();
     this.gameStart();
@@ -92,12 +91,6 @@ export default class Game6PlayScene extends Phaser.Scene {
   update(time: number, delta: number): void {
   }
 
-  /**
-   * 创建音标播放器
-   */
-  private createSpeaker(): void {
-    //this.speaker = new Phaser.Sound.BaseSound();
-  }
 
   /**
    * 重置画布尺寸与定位
@@ -304,9 +297,9 @@ export default class Game6PlayScene extends Phaser.Scene {
   /**
    * 创建语音按钮组
    */
-
   private createVoiceBtns(): void {
-    /** work init 创建音频按钮组，并设置钩子*/
+    let that = this;
+
     let luyinBtn = new Phaser.GameObjects.Sprite(this, 457 + 110 * 0.5, 417 + 110 * 0.5, "btn_luyin");
     let backplayBtn = new Phaser.GameObjects.Image(this, 632, 442, "btn_last_1").setOrigin(0);
     let originalBtn = new Phaser.GameObjects.Image(this, 332, 442, "btn_last_2").setOrigin(0);
@@ -330,6 +323,13 @@ export default class Game6PlayScene extends Phaser.Scene {
     backplayBtn.setInteractive(); 
     backplayBtn.setData("haveRecord","no");
     backplayBtn.on("pointerdown",backplayFuc);
+
+    originalBtn.setInteractive();
+    originalBtn.on("pointerdown",playOriginal);
+
+    function playOriginal(){
+       that.wordSpeaker.play();
+    }
 
     let cirAni = this.tweens.add((<Phaser.Types.Tweens.TweenBuilderConfig>{
       targets: radian,
@@ -433,9 +433,8 @@ export default class Game6PlayScene extends Phaser.Scene {
 
   }
 
-
   /* 创建背景音乐 ，并设置为自动播放*/
-  private createBGM(): void {
+  private createAudio(): void {
     this.bgm = this.sound.add('bgm');
     this.bgm.addMarker({
       name: "start",
@@ -446,6 +445,9 @@ export default class Game6PlayScene extends Phaser.Scene {
       volume: 0.3
     }
     this.bgm.play("start", config);
+
+    let audioKey = this.phoneticData[index].name;
+    this.wordSpeaker = this.sound.add(audioKey);
   }
 
   /* 搭建静态场景 */
