@@ -10,7 +10,7 @@ var index: number; //题目的指针，默认为0
 var arrowUpObj: any = null;
 var arrowUpAni: any = null;
 
-declare var Recorder:any; //声音录音
+declare var Recorder: any; //声音录音
 
 /**
  * 坐标根据画布进行重排
@@ -55,7 +55,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   private arrows: Phaser.GameObjects.Container; //箭头序列
   private cloudWord: Phaser.GameObjects.Container; //单词容器
   private voiceBtns: Phaser.GameObjects.Container; //语音按钮组
-  private wordSpeaker:Phaser.Sound.BaseSound;   //单词播放器
+  private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
   //private btns:Phaser.GameObjects.Container; 
 
   constructor() {
@@ -76,9 +76,9 @@ export default class Game6PlayScene extends Phaser.Scene {
   preload(): void {
     let currentPhoneticData = this.phoneticData[index];
     this.load.audio(currentPhoneticData.name, currentPhoneticData.audioKey);
-      currentPhoneticData.phoneticSymbols.forEach(_v => {
-        this.load.audio(_v.name, _v.audioKey);
-      })
+    currentPhoneticData.phoneticSymbols.forEach(_v => {
+      this.load.audio(_v.name, _v.audioKey);
+    })
   }
 
   create(): void {
@@ -301,14 +301,14 @@ export default class Game6PlayScene extends Phaser.Scene {
     let that = this;
 
     let luyinBtn = new Phaser.GameObjects.Sprite(this, 457 + 110 * 0.5, 417 + 110 * 0.5, "btn_luyin");
-    let backplayBtn = new Phaser.GameObjects.Image(this, 632+60*0.5, 442+60*0.5, "btn_last_1").setOrigin(0.5);
-    let originalBtn = new Phaser.GameObjects.Image(this, 332+60*0.5, 442+60*0.5, "btn_last_2").setOrigin(0.5);
+    let backplayBtn = new Phaser.GameObjects.Image(this, 632 + 60 * 0.5, 442 + 60 * 0.5, "btn_last_1").setOrigin(0.5).setAlpha(0.7);
+    let originalBtn = new Phaser.GameObjects.Image(this, 332 + 60 * 0.5, 442 + 60 * 0.5, "btn_last_2").setOrigin(0.5).setAlpha(0.7);
 
-    let userRecoder:HTMLAudioElement = new Audio();
+    let userRecoder: HTMLAudioElement = new Audio();
     let rec = Recorder({
-      type:"wav",
-      bitRate:16,
-      sampleRate:16000
+      type: "wav",
+      bitRate: 16,
+      sampleRate: 16000
     });
 
 
@@ -326,38 +326,37 @@ export default class Game6PlayScene extends Phaser.Scene {
     luyinBtn.setInteractive();
     luyinBtn.on("pointerdown", recordReady);
 
-    backplayBtn.setInteractive(); 
-    backplayBtn.setData("haveRecord","no");
-    backplayBtn.setData("isPlay","no");
+    backplayBtn.setInteractive();
+    backplayBtn.setData("haveRecord", "no");
 
-    backplayBtn.on("pointerdown",function (){
+    backplayBtn.on("pointerdown",backplayBtnDown);
+    backplayBtn.on("pointerup",backplayBtnUp);
+
+    function backplayBtnDown(){
       let haveRecord = backplayBtn.getData("haveRecord");
-      let isPlay = backplayBtn.getData("isPlay");
-      if(haveRecord==="no"){
-          return false;
+      if (haveRecord === "no") {
+        return false;
       }
-      if(isPlay==="yes"){
-          return false;
-      }
-      that.bgm.pause();
-      setTimeout(()=>{
-      that.bgm.play();
-      backplayBtn.setData("isPlay","no");
-      },3000)
-      alphaScaleMin.call(this);  
+      alphaScaleMax.call(this);
       userRecoder.play();
-      backplayBtn.setData("isPlay","yes");
-    });
+    }
 
-    backplayBtn.on("pointerup",function (){
-      alphaScaleMax.call(this); 
-    });
+    function backplayBtnUp(){
+      alphaScaleMin.call(this);
+    }
+
 
     originalBtn.setInteractive();
-    originalBtn.on("pointerdown",playOriginal);
+    originalBtn.on("pointerdown",originalBtnDown);
+    originalBtn.on("pointerup",originalBtnUp);
 
-    function playOriginal(){
-       that.wordSpeaker.play();
+    function originalBtnDown(){
+      alphaScaleMax.call(this);
+    }
+
+    function originalBtnUp(){
+      alphaScaleMin.call(this);
+      that.wordSpeaker.play();
     }
 
     let cirAni = this.tweens.add((<Phaser.Types.Tweens.TweenBuilderConfig>{
@@ -365,24 +364,24 @@ export default class Game6PlayScene extends Phaser.Scene {
       value: 2 * Math.PI,
       duration: 3000,   //录音时间3秒钟
       paused: true,
-      onStart:recordStartFuc,
+      onStart: recordStartFuc,
       onUpdate: aniPlay,
       onComplete: recordEndFuc
     }))
 
-    function recordStartFuc(){
+    function recordStartFuc() {
       rec.start();
     }
 
-    function alphaScaleMax(){
-      alphaScaleFuc(this,1,1,1);
+    function alphaScaleMax() {
+      alphaScaleFuc(this, 1.2, 1.2, 1);
     }
 
-    function alphaScaleMin(){
-      alphaScaleFuc(this,0.8,0.8,0.7);
+    function alphaScaleMin() {
+      alphaScaleFuc(this, 1, 1, 0.7);
     }
 
-    function alphaScaleFuc(obj,_scaleX:number,_scaleY:number,_alpha:number){
+    function alphaScaleFuc(obj, _scaleX: number, _scaleY: number, _alpha: number) {
       obj.scaleX = _scaleX;
       obj.scaleY = _scaleY;
       obj.alpha = _alpha;
@@ -397,12 +396,13 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     function recordEndFuc() {
       resetStart();
-      that.bgm.play(null,{volume:0.3} as Phaser.Types.Sound.SoundConfig);
+      //that.bgm.play(null, { volume: 0.1 } as Phaser.Types.Sound.SoundConfig);
+      that.bgm.resume();
       luyinBtn.on("pointerdown", recordReady);
-      backplayBtn.setData("haveRecord","yes");
-      rec.stop((blob:string)=>{
-          rec.close();
-          userRecoder.src = URL.createObjectURL(blob); 
+      backplayBtn.setData("haveRecord", "yes");
+      rec.stop((blob: string) => {
+        rec.close();
+        userRecoder.src = URL.createObjectURL(blob);
       });
     }
 
@@ -414,18 +414,18 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function recordReady() {
-      rec.open(()=>{
-      that.bgm.pause();
-      luyinBtn.off("pointerdown", recordReady);
-      luyinBtn.setTexture("btn_luyin_progress");
-      backplayBtn.setData("haveRecord","no");
-      cirAni.play();
-      },(errMsg,isUserNotAllow)=>{
-        if(isUserNotAllow){
+      rec.open(() => {
+        that.bgm.pause();
+        luyinBtn.off("pointerdown", recordReady);
+        luyinBtn.setTexture("btn_luyin_progress");
+        backplayBtn.setData("haveRecord", "no");
+        cirAni.play();
+      }, (errMsg, isUserNotAllow) => {
+        if (isUserNotAllow) {
           alert("您拒绝赋予本应用录音的权限");
           return false;
         }
-        if(errMsg){
+        if (errMsg) {
           console.log(errMsg);
         }
       });
@@ -496,7 +496,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     } as Phaser.Types.Sound.SoundMarker);
     let config: Phaser.Types.Sound.SoundConfig = {
       loop: true,
-      volume: 0.3
+      volume: 0.2
     }
     this.bgm.play("start", config);
 
