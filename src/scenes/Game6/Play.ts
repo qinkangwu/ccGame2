@@ -1,6 +1,4 @@
 import 'phaser';
-import { get } from '../../lib/http';
-import apiPath from '../../lib/apiPath';
 import { Game6DataItem } from '../../interface/Game6';
 
 const WIDTH = window.innerWidth;
@@ -11,6 +9,8 @@ var index: number; //题目的指针，默认为0
 
 var arrowUpObj: any = null;
 var arrowUpAni: any = null;
+
+declare var Recorder:any; //声音录音
 
 /**
  * 坐标根据画布进行重排
@@ -301,10 +301,16 @@ export default class Game6PlayScene extends Phaser.Scene {
     let that = this;
 
     let luyinBtn = new Phaser.GameObjects.Sprite(this, 457 + 110 * 0.5, 417 + 110 * 0.5, "btn_luyin");
-    let backplayBtn = new Phaser.GameObjects.Image(this, 632, 442, "btn_last_1").setOrigin(0);
-    let originalBtn = new Phaser.GameObjects.Image(this, 332, 442, "btn_last_2").setOrigin(0);
+    let backplayBtn = new Phaser.GameObjects.Image(this, 632+60*0.5, 442+60*0.5, "btn_last_1").setOrigin(0.5);
+    let originalBtn = new Phaser.GameObjects.Image(this, 332+60*0.5, 442+60*0.5, "btn_last_2").setOrigin(0.5);
 
-    backplayBtn.alpha = 0.5;
+    let userRecoder:HTMLAudioElement = new Audio();
+    let rec = Recorder({
+      type:"wav",
+      bitRate:16,
+      sampleRate:16000
+    });
+
 
     let cir = new Phaser.GameObjects.Graphics(this);
     cir.fillStyle(0xffffff, 1);
@@ -318,11 +324,34 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.voiceBtns.add([luyinBtn, backplayBtn, originalBtn, cir]);
 
     luyinBtn.setInteractive();
-    luyinBtn.on("pointerdown", recordStart);
+    luyinBtn.on("pointerdown", recordReady);
 
     backplayBtn.setInteractive(); 
     backplayBtn.setData("haveRecord","no");
-    backplayBtn.on("pointerdown",backplayFuc);
+    backplayBtn.setData("isPlay","no");
+
+    backplayBtn.on("pointerdown",function (){
+      let haveRecord = backplayBtn.getData("haveRecord");
+      let isPlay = backplayBtn.getData("isPlay");
+      if(haveRecord==="no"){
+          return false;
+      }
+      if(isPlay==="yes"){
+          return false;
+      }
+      that.bgm.pause();
+      setTimeout(()=>{
+      that.bgm.play();
+      backplayBtn.setData("isPlay","no");
+      },3000)
+      alphaScaleMin.call(this);  
+      userRecoder.play();
+      backplayBtn.setData("isPlay","yes");
+    });
+
+    backplayBtn.on("pointerup",function (){
+      alphaScaleMax.call(this); 
+    });
 
     originalBtn.setInteractive();
     originalBtn.on("pointerdown",playOriginal);
@@ -334,20 +363,31 @@ export default class Game6PlayScene extends Phaser.Scene {
     let cirAni = this.tweens.add((<Phaser.Types.Tweens.TweenBuilderConfig>{
       targets: radian,
       value: 2 * Math.PI,
-      duration: 5000,
+      duration: 3000,   //录音时间3秒钟
       paused: true,
+      onStart:recordStartFuc,
       onUpdate: aniPlay,
       onComplete: recordEndFuc
     }))
 
-    function backplayFuc(){
-      let haveRecord = backplayBtn.getData("haveRecord");
-      if(haveRecord==="no"){
-          return false;
-      }else{
-        console.log("回放录音");
-      }
+    function recordStartFuc(){
+      rec.start();
     }
+
+    function alphaScaleMax(){
+      alphaScaleFuc(this,1,1,1);
+    }
+
+    function alphaScaleMin(){
+      alphaScaleFuc(this,0.8,0.8,0.7);
+    }
+
+    function alphaScaleFuc(obj,_scaleX:number,_scaleY:number,_alpha:number){
+      obj.scaleX = _scaleX;
+      obj.scaleY = _scaleY;
+      obj.alpha = _alpha;
+    }
+
 
     function aniPlay() {
       let dx = ox + radius * Math.cos(radian.value);
@@ -357,9 +397,13 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     function recordEndFuc() {
       resetStart();
-      luyinBtn.on("pointerdown", recordStart);
+      that.bgm.play(null,{volume:0.3} as Phaser.Types.Sound.SoundConfig);
+      luyinBtn.on("pointerdown", recordReady);
       backplayBtn.setData("haveRecord","yes");
-      backplayBtn.alpha = 1;
+      rec.stop((blob:string)=>{
+          rec.close();
+          userRecoder.src = URL.createObjectURL(blob); 
+      });
     }
 
     function resetStart() {
@@ -369,12 +413,22 @@ export default class Game6PlayScene extends Phaser.Scene {
       cir.fillStyle(0xffffff, 1);
     }
 
-    function recordStart() {
-      luyinBtn.off("pointerdown", recordStart);
+    function recordReady() {
+      rec.open(()=>{
+      that.bgm.pause();
+      luyinBtn.off("pointerdown", recordReady);
       luyinBtn.setTexture("btn_luyin_progress");
       backplayBtn.setData("haveRecord","no");
-      backplayBtn.alpha = 0.5;
       cirAni.play();
+      },(errMsg,isUserNotAllow)=>{
+        if(isUserNotAllow){
+          alert("您拒绝赋予本应用录音的权限");
+          return false;
+        }
+        if(errMsg){
+          console.log(errMsg);
+        }
+      });
     }
 
   }
