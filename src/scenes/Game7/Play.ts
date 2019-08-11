@@ -23,8 +23,16 @@ export default class Game7PlayScene extends Phaser.Scene {
     private wordsArr : string[] = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']; //基础单词随机组合数组
     private rec ; //录音对象
     private recordGraphics : Phaser.GameObjects.Graphics ; //停止录音进度条绘制对象
-    private timerNum : number = 360; //进度条角度
-    private timerObj : Phaser.Time.TimerEvent; //定时器
+    private timerNum : object = {
+      d : 360
+    }; //进度条角度
+    private timerObj : Phaser.Tweens.Tween; //定时器
+    private resultArr : any[] = [] ; //结果的集合
+    private word1 : Phaser.GameObjects.Text; //游玩过程当中随机1号
+    private word2 : Phaser.GameObjects.Text; //游玩过程当中随机1号
+    private word3 : Phaser.GameObjects.Text; //游玩过程当中随机1号
+    private renderingTimerObj : Phaser.Time.TimerEvent; //过程timer
+    private recordBlob : Blob ; //录音二进制数据
     constructor() {
       super({
         key: "Game7PlayScene"
@@ -64,16 +72,135 @@ export default class Game7PlayScene extends Phaser.Scene {
       });
     }
 
-    private renderAnims (data : []) : void {
-      //渲染摇摇机
-      
+    private renderAnims () : void {
+      //开启摇摇乐
+      this.renderingTimerObj && this.renderingTimerObj.remove();
+      this.renderingTimerObj && this.renderingTimerObj.destroy();
+      this.renderingTimerObj && (this.renderingTimerObj = null);
+      this.renderingTimerObj = this.time.addEvent({
+        loop : true,
+        callback : ()=>{
+          this.rendering();
+        }
+      });
+      //@ts-ignore
+      !this.renderAnims.clearTimer && this.resultArr.map((r,i)=>{
+        r.destroy();
+      });
+      //@ts-ignore
+      !this.renderAnims.clearTimer && (this.renderAnims.clearTimer = this.time.addEvent({
+        delay : 2000,
+        callback : ()=>{
+          this.renderSuccess(['h','i']); //结束
+        }
+      }))
+    }
+
+    private rendering () : void{
+      //渲染摇摇乐
+      let word1 : string = Phaser.Utils.Array.GetRandom(this.wordsArr),
+          word2 : string = Phaser.Utils.Array.GetRandom(this.wordsArr),
+          word3 : string = Phaser.Utils.Array.GetRandom(this.wordsArr);
+      //@ts-ignore
+      this.word1 && this.word1 !== 'lock' &&  this.word1.destroy();
+      //@ts-ignore
+      this.word2 && this.word2 !== 'lock' && this.word2.destroy();
+      //@ts-ignore
+      this.word3 && this.word3 !== 'lock' && this.word3.destroy();
+      //@ts-ignore
+      this.word1 !== 'lock' && (this.word1 = this.add.text(this.machine.x - 31 - (95 * scaleX),this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),word1,{
+        font: 'Bold 80px Arial Rounded MT',
+        fill : '#C5684C',
+      }).setOrigin(.5));
+      //@ts-ignore
+      this.word2 !== 'lock' && (this.word2 = this.add.text(this.machine.x,this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),word2,{
+        font: 'Bold 80px Arial Rounded MT',
+        fill : '#C5684C',
+      }).setOrigin(.5));
+      //@ts-ignore
+      this.word3 !== 'lock' && (this.word3 = this.add.text(this.machine.x + 31 + (95 * scaleX),this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),word3,{
+        font: 'Bold 80px Arial Rounded MT',
+        fill : '#C5684C',
+      }).setOrigin(.5));
     }
 
     private renderSuccess (data : string[]) : void {
-      //渲染正确的结果
-      
+      //渲染结果
+      //@ts-ignore
+      this.word1 && this.word1 !== 'lock' && this.word1.destroy();
+      //@ts-ignore
+      this.word1 = 'lock';
+      this.resultArr.push(
+        data[0] 
+          && 
+        this.add.text(this.machine.x - 31 - (95 * scaleX),this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),data[0],{
+          font: 'Bold 80px Arial Rounded MT',
+          fill : '#C5684C',
+        }).setOrigin(.5) 
+          || 
+        this.add.image(this.machine.x - 31 - (95 * scaleX),this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),'icons2','civa_gold2.png')
+          .setDisplaySize(95 * scaleX,95 * scaleY)
+          .setOrigin(.5)
+      );
+      this.time.addEvent({
+        delay : 1000,
+        callback : ()=>{
+          //@ts-ignore
+          this.word2 && this.word2 !== 'lock' && this.word2.destroy();
+          //@ts-ignore
+          this.word2 = 'lock';
+          this.resultArr.push(
+            data[1] 
+              &&  
+            this.add.text(this.machine.x,this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),data[1],{
+              font: 'Bold 80px Arial Rounded MT',
+              fill : '#C5684C',
+            }).setOrigin(.5)
+              ||
+            this.add.image(this.machine.x,this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),'icons2','civa_gold2.png')
+              .setDisplaySize(95 * scaleX,95 * scaleY)
+              .setOrigin(.5));            
+        }
+      });
+      this.time.addEvent({
+        delay : 2000,
+        callback : ()=>{
+          //@ts-ignore
+          this.word3 && this.word3 !== 'lock' && this.word3.destroy();
+          //@ts-ignore
+          this.word3 = 'lock';
+          this.resultArr.push(
+            data[2] 
+            &&
+            this.add.text(this.machine.x + 31 + (95 * scaleX),this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),data[2],{
+              font: 'Bold 80px Arial Rounded MT',
+              fill : '#C5684C',
+            }).setOrigin(.5)
+            ||
+            this.add.image(this.machine.x + 31 + (95 * scaleX),this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),'icons2','civa_gold2.png')
+              .setDisplaySize(95 * scaleX,95 * scaleY)
+              .setOrigin(.5));
+            this.renderEndHandle();
+        }
+      })
     }
-    
+
+    private renderEndHandle () : void {
+      this.renderingTimerObj && this.renderingTimerObj.remove();
+      this.renderingTimerObj && this.renderingTimerObj.destroy();
+      this.renderingTimerObj && (this.renderingTimerObj = null);
+      //@ts-ignore
+      this.renderAnims.clearTimer = null;
+      this.word1 = null;
+      this.word2 = null;
+      this.word3 = null;
+      this.tweens.add({
+        targets : [this.playBtn,this.recordStartBtn,this.playRecordBtn],
+        alpha : 1,
+        duration : 500,
+        ease : 'Sine.easeInOut',
+      })
+    }
 
     private createBtn () : void {
       //创建按钮
@@ -138,7 +265,8 @@ export default class Game7PlayScene extends Phaser.Scene {
       this.recordGraphics.depth = 100;
       this.recordGraphics.lineStyle(9,0xffffff,1);
       this.recordGraphics.beginPath();
-      this.recordGraphics.arc(this.recordEndBtn.x,this.recordEndBtn.y,52,Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(this.timerNum -- ),false);
+      //@ts-ignore
+      this.recordGraphics.arc(this.recordEndBtn.x,this.recordEndBtn.y,52,Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(this.timerNum.d -- ),false);
       this.recordGraphics.strokePath();
     }
 
@@ -146,7 +274,8 @@ export default class Game7PlayScene extends Phaser.Scene {
       this.recordGraphics && this.recordGraphics.clear();
       this.recordGraphics && this.recordGraphics.destroy();
       this.recordGraphics = null;
-      if(this.timerNum <= 0 ){
+      //@ts-ignore
+      if(this.timerNum.d <= 0 ){
         this.recordEndHandle();
       }
     }
@@ -154,9 +283,10 @@ export default class Game7PlayScene extends Phaser.Scene {
     private handleClick () : void {
       //点击摇杆
       this.handle.play('begin');
+      this.renderAnims();
       this.tweens.add({
         targets : [this.playBtn,this.recordStartBtn,this.playRecordBtn],
-        alpha : 1,
+        alpha : 0,
         duration : 500,
         ease : 'Sine.easeInOut',
       })
@@ -183,6 +313,13 @@ export default class Game7PlayScene extends Phaser.Scene {
       this.backToListBtn.on('pointerdown',this.backToListHandle.bind(this));
       this.recordStartBtn.on('pointerdown',this.recordStartHandle.bind(this));
       this.recordEndBtn.on('pointerdown',this.recordEndHandle.bind(this));
+      this.playRecordBtn.on('pointerdown',this.playRecord.bind(this));
+    }
+
+    private playRecord () : void {
+      const audio = document.createElement("audio");
+      audio.src = URL.createObjectURL(this.recordBlob);
+      audio.play();
     }
 
     private recordEndHandle() : void {
@@ -192,10 +329,11 @@ export default class Game7PlayScene extends Phaser.Scene {
       this.recordStartBtn.alpha = 1;
       this.recordStartBtn.depth = 1;
       this.rec && this.rec.stop((blob,duration)=>{
+        this.recordBlob = blob; //保存blob 用于播放
         this.rec.close();
-        this.timerObj && this.timerObj.remove();
-        this.timerObj && this.timerObj.destroy();
-        this.timerNum = 360;
+        this.timerObj && this.timerObj.stop();
+        //@ts-ignore
+        this.timerNum.d = 360;
         this.clearArc();
         let files : File = new File([blob],'aaa.wav',{
           type : blob.type
@@ -220,10 +358,11 @@ export default class Game7PlayScene extends Phaser.Scene {
         this.recordStartBtn.depth = -1;
         this.drawArc();
         this.timerObj && this.timerObj.remove();
-        this.timerObj = this.time.addEvent({
-          delay : timerMoveSecons / 360,
-          callback : this.drawArc.bind(this),
-          repeat : 359,
+        this.timerObj = this.tweens.add({
+          targets : this.timerNum,
+          d : 0,
+          duration : 3000,
+          onUpdate : this.drawArc.bind(this)
         })
         this.rec.start();
       })
