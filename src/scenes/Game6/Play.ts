@@ -257,6 +257,11 @@ export default class Game6PlayScene extends Phaser.Scene {
     }, 1000);
 
     function onLeftRightDragStart(){
+      that.status = "一个左或右拖拽开始";
+      this.setData("ox",this.x);
+      this.setData("oy",this.y);
+      this.parentContainer.list[1].setData("ox",this.parentContainer.list[1].x);
+      this.parentContainer.list[1].setData("oy",this.parentContainer.list[1].y);
       that.arrowLRHide();  //隐藏箭头
     }
 
@@ -270,6 +275,13 @@ export default class Game6PlayScene extends Phaser.Scene {
         if (hits === 1 && that.balls.list.length > 2) {
           that.arrows.list[arrowIndex].destroy();
         }
+      }
+      if(that.status === "一个左或右拖拽开始"){
+         (<Phaser.GameObjects.Image>this).setPosition(this.getData("ox"), this.getData("oy"));
+         (<Phaser.GameObjects.Text>this.parentContainer.list[1]).setPosition(
+          this.parentContainer.list[1].getData("ox"),
+          this.parentContainer.list[1].getData("oy")
+          ); 
       }
       if(that.status !== "一轮左右拖拽结束"){
          that.arrowLRShow();
@@ -482,7 +494,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   /**
-   * 
+   * 箭头再次隐藏
    */
   private arrowAgainHide(): void {
     this.arrows.remove(arrowUpObj);
