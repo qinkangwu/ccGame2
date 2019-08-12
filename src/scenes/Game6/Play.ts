@@ -263,7 +263,6 @@ export default class Game6PlayScene extends Phaser.Scene {
       if(that.status !== "一轮左右拖拽结束"){
          that.arrowLRShow();
       }
-     
     }
 
     function onLeftRightDrag(pointer, dragX, dragY): void {
