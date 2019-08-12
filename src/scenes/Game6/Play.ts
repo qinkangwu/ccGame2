@@ -179,22 +179,33 @@ export default class Game6PlayScene extends Phaser.Scene {
       (<Phaser.GameObjects.Text>ball.list[1]).setPosition(dragX, dragY);
     }
 
+    that.arrowAgainShow();
+
     function ballOnDragStart(){
+        that.status="一轮上下拖拽开始";
         that.arrowAgainHide();
     }
 
     function ballOnDragEnd(){
+      console.log(that.status);
         if(that.status==="一轮上下拖拽结束"){
             return false;
         }
         that.arrowAgainShow();
+         if(that.status!=="一个上下拖拽结束"){
+          (<Phaser.GameObjects.Image>ball.list[0]).setPosition(1024 * 0.5 + 10, 410);
+          (<Phaser.GameObjects.Text>ball.list[1]).setPosition(1024 * 0.5 + 10, 410); 
+        }
     }
 
     let collider = this.physics.add.overlap(ball.list[0], nullball, overlapHandler, null, this);
 
 
     function overlapHandler() {
+      that.status = "一个上下拖拽结束";
       ball.list[0].off("drag", ballImgOnDrag);
+      ball.list[0].off("dragstart", ballOnDragStart);
+      ball.list[0].off("dragend", ballOnDragEnd);
       (<Phaser.GameObjects.Image>ball.list[0]).setPosition(nullball.x + 71.5 * 0.5 + 40, nullball.y + 71.5 * 0.5 + 25);
       (<Phaser.GameObjects.Text>ball.list[1]).setPosition(nullball.x + 71.5 * 0.5 + 35, nullball.y + 71.5 * 0.5 + 35);
       nullball.destroy();  //直接销毁空球体
