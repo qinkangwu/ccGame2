@@ -9,6 +9,9 @@ var index: number; //题目的指针，默认为0
 
 var arrowUpObj: any = null;
 var arrowUpAni: any = null;
+var arrowLRAni: any = null;
+var arrowLObj:any = null;
+var arrowRObj:any = null;
 
 declare var Recorder: any; //声音录音
 
@@ -43,6 +46,8 @@ var scaleWidthTranslate: Function = function (_width: number) {
 }
 
 export default class Game6PlayScene extends Phaser.Scene {
+  private status:string;//存放过程的状态
+
   private bgm: Phaser.Sound.BaseSound; //背景音乐
   private phoneticData: Game6DataItem[] = []; //音标数据
   private bg: Phaser.GameObjects.Image; //背景图片 
@@ -166,10 +171,23 @@ export default class Game6PlayScene extends Phaser.Scene {
       speaker.destroy();  //播放一次就销毁
     })
     ball.list[0].setInteractive({ pixelPerfect: true, alphaTolerance: 120, draggable: true });
-    ball.list[0].on("drag", ballImgOnDrag);
+    ball.list[0].on("drag",ballImgOnDrag);
+    ball.list[0].on("dragstart",ballOnDragStart);
+    ball.list[0].on("dragend",ballOnDragEnd);
     function ballImgOnDrag(pointer, dragX, dragY): void {
       (<Phaser.GameObjects.Image>ball.list[0]).setPosition(dragX, dragY);
       (<Phaser.GameObjects.Text>ball.list[1]).setPosition(dragX, dragY);
+    }
+
+    function ballOnDragStart(){
+        that.arrowAgainHide();
+    }
+
+    function ballOnDragEnd(){
+        if(that.status==="一轮上下拖拽结束"){
+            return false;
+        }
+        that.arrowAgainShow();
     }
 
     let collider = this.physics.add.overlap(ball.list[0], nullball, overlapHandler, null, this);
@@ -186,6 +204,7 @@ export default class Game6PlayScene extends Phaser.Scene {
         /**
          * 一轮拖拽结束
          */
+        that.status = "一轮上下拖拽结束";
         clearArrows();
         that.createLeftRightArrow();
         that.ballLeftRightDrag();
@@ -201,8 +220,6 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function clearArrows() {
-      //that.tweens.killAll();
-      // (that.arrows.list[0] as Phaser.GameObjects.Image).alpha = 0;
       arrowUpAni.stop(); //暂停动画
       that.arrows.removeAll();
     }
@@ -221,22 +238,32 @@ export default class Game6PlayScene extends Phaser.Scene {
     setTimeout(() => {
       this.balls.list.forEach((v, i) => {
         if (i !== 1) {
+          (<Phaser.GameObjects.Container>v).list[0].on("dragstart", onLeftRightDragStart);
           (<Phaser.GameObjects.Container>v).list[0].on("drag", onLeftRightDrag);
-          //(<Phaser.GameObjects.Container>v).list[0].on("dragstart", onLeftRightDragStart);
           (<Phaser.GameObjects.Container>v).list[0].on("dragend", onLeftRightDragEnd);
         }
       })
     }, 1000);
 
+    function onLeftRightDragStart(){
+      that.arrowLRHide();  //隐藏箭头
+    }
+
     /**
      * 在3个药品的情况下,检查并清除多余的箭头
      */
     function onLeftRightDragEnd() {
-      let arrowIndex: number = this.getData("arrowIndex");
-      arrowIndex = arrowIndex === 2 ? 1 : arrowIndex;
-      if (hits === 1 && that.balls.list.length > 2) {
-        that.arrows.list[arrowIndex].destroy();
+      if(that.status === "一轮左或右拖拽结束"){
+        let arrowIndex: number = this.getData("arrowIndex");
+        arrowIndex = arrowIndex === 2 ? 1 : arrowIndex;
+        if (hits === 1 && that.balls.list.length > 2) {
+          that.arrows.list[arrowIndex].destroy();
+        }
       }
+      if(that.status !== "一轮左右拖拽结束"){
+         that.arrowLRShow();
+      }
+     
     }
 
     function onLeftRightDrag(pointer, dragX, dragY): void {
@@ -264,7 +291,9 @@ export default class Game6PlayScene extends Phaser.Scene {
       args[0].parentContainer.list[1].alpha = 0;
       <Phaser.Physics.Arcade.Image>args[0].disableBody(true, true);
       hits += 1;
+      that.status = "一轮左或右拖拽结束";
       if (hits === that.balls.list.length - 1) {
+        that.status = "一轮左右拖拽结束";
         args[0].off("drag", onLeftRightDrag);
         args[0].off("dragend", onLeftRightDragEnd);
         that.balls.removeAll();
@@ -443,6 +472,15 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   /**
+   * 
+   */
+  private arrowAgainHide(): void {
+    this.arrows.remove(arrowUpObj);
+    //(arrowUpAni as Phaser.Tweens.Tween).duration = 2000;
+    (arrowUpAni as Phaser.Tweens.Tween).stop();
+  } 
+
+  /**
    * 销毁所有的药品
    */
   private destroyBalls(): void {
@@ -470,11 +508,11 @@ export default class Game6PlayScene extends Phaser.Scene {
    * 创建左右循环的箭头及动画
    */
   private createLeftRightArrow(): void {
-    let arrowLeft = new Phaser.GameObjects.Image(this, 567 + 128 * 0.5 + 100, 65 + 168 * 0.5 - 10, "tips_arrow_left").setOrigin(0.5).setAlpha(1);   //在右边
-    let arrowRight = new Phaser.GameObjects.Image(this, 331 + 128 * 0.5 - 100, 65 + 168 * 0.5 - 10, "tips_arrow_right").setOrigin(0.5).setAlpha(1);    //在左边
-    this.arrows.add([arrowLeft, arrowRight]);
-    this.tweens.add((<Phaser.Types.Tweens.TweenBuilderConfig>{
-      targets: [arrowLeft, arrowRight],
+    arrowLObj = new Phaser.GameObjects.Image(this, 567 + 128 * 0.5 + 100, 65 + 168 * 0.5 - 10, "tips_arrow_left").setOrigin(0.5).setAlpha(1);   //在右边
+    arrowRObj = new Phaser.GameObjects.Image(this, 331 + 128 * 0.5 - 100, 65 + 168 * 0.5 - 10, "tips_arrow_right").setOrigin(0.5).setAlpha(1);    //在左边
+    this.arrows.add([arrowLObj, arrowRObj]);
+    arrowLRAni = this.tweens.add((<Phaser.Types.Tweens.TweenBuilderConfig>{
+      targets: [arrowLObj, arrowRObj],
       x: 1024 * 0.5,
       alpha: 0,
       duration: 800,
@@ -482,9 +520,24 @@ export default class Game6PlayScene extends Phaser.Scene {
     }))
 
     if (this.balls.list.length < 3) {
-      arrowLeft.alpha = 0;
+      arrowLObj.alpha = 0;
     }
+  }
 
+  /**
+   * 显示左右箭头
+   */
+  private arrowLRShow(){
+      arrowLRAni.play();
+  }
+
+  /**
+   * 隐藏左右箭头
+   */
+  private arrowLRHide(){
+      arrowLRAni.stop();
+      arrowRObj.alpha = 0;
+      arrowLObj.alpha = 0;
   }
 
   /* 创建背景音乐 ，并设置为自动播放*/
