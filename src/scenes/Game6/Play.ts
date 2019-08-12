@@ -183,6 +183,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     function ballOnDragStart(){
         that.status="一轮上下拖拽开始";
+        that.scaleMaxAni(this);
         that.arrowAgainHide();
     }
 
@@ -258,6 +259,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     function onLeftRightDragStart(){
       that.status = "一个左或右拖拽开始";
+      that.scaleMaxAni(this);
       this.setData("ox",this.x);
       this.setData("oy",this.y);
       this.parentContainer.list[1].setData("ox",this.parentContainer.list[1].x);
@@ -545,6 +547,22 @@ export default class Game6PlayScene extends Phaser.Scene {
       arrowLObj.alpha = 0;
     }
   }
+
+  /**
+   * 放大且Q弹的动效
+   */
+  private scaleMaxAni(obj):void{
+    let ani:Phaser.Tweens.Tween = this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+      targets:obj,
+      scale:1.2,
+      duration:100,
+      yoyo:true ,
+      onComplete:function (){
+        ani.remove();
+      }
+    })
+  }
+
 
   /**
    * 显示左右箭头
