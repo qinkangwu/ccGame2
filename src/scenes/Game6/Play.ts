@@ -302,6 +302,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       setMirror.call(this,dragX,dragY);
     }
 
+    /* 镜像制作 */
     function setMirror(dragX,dragY):boolean | void{
       if(that.status === "一轮左右拖拽结束"){
           return false;
@@ -346,6 +347,7 @@ export default class Game6PlayScene extends Phaser.Scene {
         that.status = "一轮左右拖拽结束";
         args[0].off("drag", onLeftRightDrag);
         args[0].off("dragend", onLeftRightDragEnd);
+        that.wordSpeaker.play();
         that.balls.removeAll();
         that.arrows.removeAll();
         collider.destroy();
