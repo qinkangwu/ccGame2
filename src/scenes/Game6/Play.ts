@@ -247,6 +247,11 @@ export default class Game6PlayScene extends Phaser.Scene {
     var hits = 0;
 
     this.balls.list = this.balls.list.reverse(); //反向排序
+    (this.balls.list[0] as Phaser.GameObjects.Container).list[0].setData("listIndex",0);
+    (this.balls.list[1] as Phaser.GameObjects.Container).list[0].setData("listIndex",1);
+    if(this.balls.list.length>2){
+      (this.balls.list[2] as Phaser.GameObjects.Container).list[0].setData("listIndex",2);
+    }
     setTimeout(() => {
       this.balls.list.forEach((v, i) => {
         if (i !== 1) {
@@ -279,20 +284,40 @@ export default class Game6PlayScene extends Phaser.Scene {
         }
       }
       if(that.status === "一个左或右拖拽开始"){
-         (<Phaser.GameObjects.Image>this).setPosition(this.getData("ox"), this.getData("oy"));
-         (<Phaser.GameObjects.Text>this.parentContainer.list[1]).setPosition(
-          this.parentContainer.list[1].getData("ox"),
-          this.parentContainer.list[1].getData("oy")
-          ); 
+        /**在非镜像的情况下运行 */
+        //  (<Phaser.GameObjects.Image>this).setPosition(this.getData("ox"), this.getData("oy"));
+        //  (<Phaser.GameObjects.Text>this.parentContainer.list[1]).setPosition(
+        //   this.parentContainer.list[1].getData("ox"),
+        //   this.parentContainer.list[1].getData("oy")
+        //   ); 
       }
       if(that.status !== "一轮左右拖拽结束"){
          that.arrowLRShow();
       }
     }
 
-    function onLeftRightDrag(pointer, dragX, dragY): void {
+    function onLeftRightDrag(pointer, dragX,dragY): void {
       (<Phaser.GameObjects.Image>this).setPosition(dragX, dragY);
       (<Phaser.GameObjects.Text>this.parentContainer.list[1]).setPosition(dragX, dragY);
+      setMirror.call(this,dragX,dragY);
+    }
+
+    function setMirror(dragX,dragY):boolean | void{
+      if(that.status === "一轮左右拖拽结束"){
+          return false;
+      }
+      // @ts-ignore
+      let x = that.balls.list[1].list[0].x + (that.balls.list[1].list[0].x - dragX);
+      // @ts-ignore
+      let y = that.balls.list[1].list[0].y + (that.balls.list[1].list[0].y - dragY);
+      // @ts-ignore
+      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[0].x = x;
+      // @ts-ignore
+      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[1].x = x;
+      // @ts-ignore
+      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[0].y = y;
+      // @ts-ignore
+      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[1].y = y;
     }
 
     let collider: Phaser.Physics.Arcade.Collider;   //声明一个碰撞器
