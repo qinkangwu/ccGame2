@@ -312,13 +312,9 @@ export default class Game6PlayScene extends Phaser.Scene {
       // @ts-ignore
       let y = that.balls.list[1].list[0].y + (that.balls.list[1].list[0].y - dragY);
       // @ts-ignore
-      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[0].x = x;
+      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[0].setPosition(x,y);
       // @ts-ignore
-      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[1].x = x;
-      // @ts-ignore
-      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[0].y = y;
-      // @ts-ignore
-      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[1].y = y;
+      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[1].setPosition(x,y);
     }
 
     let collider: Phaser.Physics.Arcade.Collider;   //声明一个碰撞器
