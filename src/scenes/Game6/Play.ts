@@ -325,7 +325,6 @@ export default class Game6PlayScene extends Phaser.Scene {
         collider.destroy();
         that.createCloudWord();
         that.createVoiceBtns();
-        that.arrowAgainShow();
       }
     }
   }
