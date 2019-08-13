@@ -3,5 +3,5 @@ export default {
     getBookMenu : 'http://121.40.140.54:8188/book/bookUnitList/2',
     getWordsData : 'http://121.40.140.54:8188/game/getSugarGourdWordByBookUnitId?bookId=476351b78d8111e9b8a3d481d7d1b146&unitId=02decbcb988511e9b6d5d481d7d1b146',
     getDrawingBoardData : 'http://121.40.140.54:8188/game/getDrawingBoardByBookUnitId?bookId=62e346de8d8118e9b8a3d481d7d1b1rrr&unitId=eec17898988511e9b6d5d481d7d1b141',
-    postAudio:"https://127.0.0.1:4011/postAudio"
+    postAudio:"https://www.jonnypeng.com:4012/postAudio"
 }
