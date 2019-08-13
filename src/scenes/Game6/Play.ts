@@ -1,7 +1,7 @@
 import 'phaser';
 import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
-import {post} from '../../lib/http';
+import { post } from '../../lib/http';
 import Axios from 'axios';
 
 const WIDTH = window.innerWidth;
@@ -13,8 +13,8 @@ var index: number; //题目的指针，默认为0
 var arrowUpObj: any = null;
 var arrowUpAni: any = null;
 var arrowLRAni: any = null;
-var arrowLObj:any = null;
-var arrowRObj:any = null;
+var arrowLObj: any = null;
+var arrowRObj: any = null;
 
 declare var Recorder: any; //声音录音
 
@@ -49,7 +49,7 @@ var scaleWidthTranslate: Function = function (_width: number) {
 }
 
 export default class Game6PlayScene extends Phaser.Scene {
-  private status:string;//存放过程的状态
+  private status: string;//存放过程的状态
 
   private bgm: Phaser.Sound.BaseSound; //背景音乐
   private phoneticData: Game6DataItem[] = []; //音标数据
@@ -174,9 +174,9 @@ export default class Game6PlayScene extends Phaser.Scene {
       speaker.destroy();  //播放一次就销毁
     })
     ball.list[0].setInteractive({ pixelPerfect: true, alphaTolerance: 120, draggable: true });
-    ball.list[0].on("drag",ballImgOnDrag);
-    ball.list[0].on("dragstart",ballOnDragStart);
-    ball.list[0].on("dragend",ballOnDragEnd);
+    ball.list[0].on("drag", ballImgOnDrag);
+    ball.list[0].on("dragstart", ballOnDragStart);
+    ball.list[0].on("dragend", ballOnDragEnd);
     function ballImgOnDrag(pointer, dragX, dragY): void {
       (<Phaser.GameObjects.Image>ball.list[0]).setPosition(dragX, dragY);
       (<Phaser.GameObjects.Text>ball.list[1]).setPosition(dragX, dragY);
@@ -184,22 +184,22 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     that.arrowAgainShow();
 
-    function ballOnDragStart(){
-        that.status="一轮上下拖拽开始";
-        that.scaleMaxAni(this);
-        that.arrowAgainHide();
+    function ballOnDragStart() {
+      that.status = "一轮上下拖拽开始";
+      that.scaleMaxAni(this);
+      that.arrowAgainHide();
     }
 
-    function ballOnDragEnd(){
+    function ballOnDragEnd() {
       console.log(that.status);
-        if(that.status==="一轮上下拖拽结束"){
-            return false;
-        }
-        that.arrowAgainShow();
-         if(that.status!=="一个上下拖拽结束"){
-          (<Phaser.GameObjects.Image>ball.list[0]).setPosition(1024 * 0.5 + 10, 410);
-          (<Phaser.GameObjects.Text>ball.list[1]).setPosition(1024 * 0.5 + 10, 410); 
-        }
+      if (that.status === "一轮上下拖拽结束") {
+        return false;
+      }
+      that.arrowAgainShow();
+      if (that.status !== "一个上下拖拽结束") {
+        (<Phaser.GameObjects.Image>ball.list[0]).setPosition(1024 * 0.5 + 10, 410);
+        (<Phaser.GameObjects.Text>ball.list[1]).setPosition(1024 * 0.5 + 10, 410);
+      }
     }
 
     let collider = this.physics.add.overlap(ball.list[0], nullball, overlapHandler, null, this);
@@ -250,10 +250,10 @@ export default class Game6PlayScene extends Phaser.Scene {
     var hits = 0;
 
     this.balls.list = this.balls.list.reverse(); //反向排序
-    (this.balls.list[0] as Phaser.GameObjects.Container).list[0].setData("listIndex",0);
-    (this.balls.list[1] as Phaser.GameObjects.Container).list[0].setData("listIndex",1);
-    if(this.balls.list.length>2){
-      (this.balls.list[2] as Phaser.GameObjects.Container).list[0].setData("listIndex",2);
+    (this.balls.list[0] as Phaser.GameObjects.Container).list[0].setData("listIndex", 0);
+    (this.balls.list[1] as Phaser.GameObjects.Container).list[0].setData("listIndex", 1);
+    if (this.balls.list.length > 2) {
+      (this.balls.list[2] as Phaser.GameObjects.Container).list[0].setData("listIndex", 2);
     }
     setTimeout(() => {
       this.balls.list.forEach((v, i) => {
@@ -265,13 +265,13 @@ export default class Game6PlayScene extends Phaser.Scene {
       })
     }, 1000);
 
-    function onLeftRightDragStart(){
+    function onLeftRightDragStart() {
       that.status = "一个左或右拖拽开始";
       that.scaleMaxAni(this);
-      this.setData("ox",this.x);
-      this.setData("oy",this.y);
-      this.parentContainer.list[1].setData("ox",this.parentContainer.list[1].x);
-      this.parentContainer.list[1].setData("oy",this.parentContainer.list[1].y);
+      this.setData("ox", this.x);
+      this.setData("oy", this.y);
+      this.parentContainer.list[1].setData("ox", this.parentContainer.list[1].x);
+      this.parentContainer.list[1].setData("oy", this.parentContainer.list[1].y);
       that.arrowLRHide();  //隐藏箭头
     }
 
@@ -279,14 +279,14 @@ export default class Game6PlayScene extends Phaser.Scene {
      * 在3个药品的情况下,检查并清除多余的箭头
      */
     function onLeftRightDragEnd() {
-      if(that.status === "一轮左或右拖拽结束"){
+      if (that.status === "一轮左或右拖拽结束") {
         let arrowIndex: number = this.getData("arrowIndex");
         arrowIndex = arrowIndex === 2 ? 1 : arrowIndex;
         if (hits === 1 && that.balls.list.length > 2) {
           that.arrows.list[arrowIndex].destroy();
         }
       }
-      if(that.status === "一个左或右拖拽开始"){
+      if (that.status === "一个左或右拖拽开始") {
         /**在非镜像的情况下运行 */
         //  (<Phaser.GameObjects.Image>this).setPosition(this.getData("ox"), this.getData("oy"));
         //  (<Phaser.GameObjects.Text>this.parentContainer.list[1]).setPosition(
@@ -294,30 +294,30 @@ export default class Game6PlayScene extends Phaser.Scene {
         //   this.parentContainer.list[1].getData("oy")
         //   ); 
       }
-      if(that.status !== "一轮左右拖拽结束"){
-         that.arrowLRShow();
+      if (that.status !== "一轮左右拖拽结束") {
+        that.arrowLRShow();
       }
     }
 
-    function onLeftRightDrag(pointer, dragX,dragY): void {
+    function onLeftRightDrag(pointer, dragX, dragY): void {
       (<Phaser.GameObjects.Image>this).setPosition(dragX, dragY);
       (<Phaser.GameObjects.Text>this.parentContainer.list[1]).setPosition(dragX, dragY);
-      setMirror.call(this,dragX,dragY);
+      setMirror.call(this, dragX, dragY);
     }
 
     /* 镜像制作 */
-    function setMirror(dragX,dragY):boolean | void{
-      if(that.status === "一轮左右拖拽结束"){
-          return false;
+    function setMirror(dragX, dragY): boolean | void {
+      if (that.status === "一轮左右拖拽结束") {
+        return false;
       }
       // @ts-ignore
       let x = that.balls.list[1].list[0].x + (that.balls.list[1].list[0].x - dragX);
       // @ts-ignore
       let y = that.balls.list[1].list[0].y + (that.balls.list[1].list[0].y - dragY);
       // @ts-ignore
-      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[0].setPosition(x,y);
+      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[0].setPosition(x, y);
       // @ts-ignore
-      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[1].setPosition(x,y);
+      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[1].setPosition(x, y);
     }
 
     let collider: Phaser.Physics.Arcade.Collider;   //声明一个碰撞器
@@ -361,7 +361,7 @@ export default class Game6PlayScene extends Phaser.Scene {
    */
   private createCloudWord(): void {
     let that = this;
-    let cloud = new Phaser.GameObjects.Image(this, 242+521*0.5, 0+338*0.5,"img_cloud").setOrigin(0.5);
+    let cloud = new Phaser.GameObjects.Image(this, 242 + 521 * 0.5, 0 + 338 * 0.5, "img_cloud").setOrigin(0.5);
     cloud.displayWidth = 521;
     cloud.displayHeight = 338;
     let word = new Phaser.GameObjects.Text(this, 1024 * 0.5, 150, `${this.phoneticData[index].name}`, {
@@ -375,7 +375,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.scaleMaxAni(word);
 
     cloud.setInteractive();
-    cloud.on("pointerdown",()=>{
+    cloud.on("pointerdown", () => {
       that.wordSpeaker.play();
       that.scaleMaxAni(word);
     });
@@ -416,10 +416,10 @@ export default class Game6PlayScene extends Phaser.Scene {
     backplayBtn.setInteractive();
     backplayBtn.setData("haveRecord", "no");
 
-    backplayBtn.on("pointerdown",backplayBtnDown);
-    backplayBtn.on("pointerup",backplayBtnUp);
+    backplayBtn.on("pointerdown", backplayBtnDown);
+    backplayBtn.on("pointerup", backplayBtnUp);
 
-    function backplayBtnDown(){
+    function backplayBtnDown() {
       let haveRecord = backplayBtn.getData("haveRecord");
       if (haveRecord === "no") {
         return false;
@@ -428,20 +428,21 @@ export default class Game6PlayScene extends Phaser.Scene {
       userRecoder.play();
     }
 
-    function backplayBtnUp(){
+    function backplayBtnUp() {
       alphaScaleMin.call(this);
     }
 
 
     originalBtn.setInteractive();
-    originalBtn.on("pointerdown",originalBtnDown);
-    originalBtn.on("pointerup",originalBtnUp);
+    originalBtn.on("pointerdown", originalBtnDown);
+    originalBtn.on("pointerup", originalBtnUp);
 
-    function originalBtnDown(){
+    function originalBtnDown() {
+      console.log(that.status);
       alphaScaleMax.call(this);
     }
 
-    function originalBtnUp(){
+    function originalBtnUp() {
       alphaScaleMin.call(this);
       that.wordSpeaker.play();
     }
@@ -457,6 +458,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     }))
 
     function recordStartFuc() {
+      that.status = "正在录制中";
       rec.start();
     }
 
@@ -486,16 +488,35 @@ export default class Game6PlayScene extends Phaser.Scene {
       that.bgm.resume();
       luyinBtn.on("pointerdown", recordReady);
       backplayBtn.setData("haveRecord", "yes");
+      that.status = "录音结束，数据正在上传中";
       rec.stop((blob: string) => {
         rec.close();
         userRecoder.src = URL.createObjectURL(blob);
+        userRecoder.play();
         var form = new FormData();
-        form.append("audio",blob)
-        Axios.post(apiPath.postAudio,form).then(res=>{
-          console.log(res.data.result);
-          /** work init 需要制作正确与错误的回调，记得需要加缓载动画*/
+        form.append("audio", blob)
+        Axios.post(apiPath.postAudio, form).then(res => {
+          let correctAnswer = that.phoneticData[index].name;
+          let result = res.data.result;
+          checkoutResult(correctAnswer, result);
         })
       });
+    }
+
+    function checkoutResult(correctAnswer, result) {
+      if (correctAnswer === result) {
+        that.status = "正确";
+        that.nextLevel();
+      } else {
+        if (that.status === "再来一次") {
+          that.status = "没有机会";
+          alert("没有机会");
+          that.nextLevel();
+          return false;
+        }
+        that.status = "再来一次";
+        alert("再来一次");
+      }
     }
 
     function resetStart() {
@@ -506,6 +527,20 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function recordReady() {
+      console.log(that.status);
+      if(that.status === "正在录制中"){
+        return false; 
+      }
+      if(that.status === "没有机会"){
+        return false; 
+      }
+      if(that.status === "录音结束，数据正在上传中"){
+        return false; 
+      }
+      if(that.status === "没有机会"){
+        return false; 
+      }
+      /**解决录音阻挡的问题 */
       rec.open(() => {
         that.bgm.pause();
         luyinBtn.off("pointerdown", recordReady);
@@ -525,6 +560,19 @@ export default class Game6PlayScene extends Phaser.Scene {
 
   }
 
+  private nextLevel(): void {
+    this.bgm.destroy();
+    this.balls.destroy();
+    this.nullballs.destroy();
+    this.arrows.destroy();
+    this.wordSpeaker.destroy();
+    index += 1;
+    this.scene.start('Game6PlayScene', {
+      data: this.phoneticData,
+      index: index
+    });
+  }
+
   /**
    * 箭头再现
    */
@@ -541,7 +589,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.arrows.remove(arrowUpObj);
     //(arrowUpAni as Phaser.Tweens.Tween).duration = 2000;
     (arrowUpAni as Phaser.Tweens.Tween).stop();
-  } 
+  }
 
   /**
    * 销毁所有的药品
@@ -590,13 +638,13 @@ export default class Game6PlayScene extends Phaser.Scene {
   /**
    * 放大且Q弹的动效
    */
-  private scaleMaxAni(obj):void{
-    let ani:Phaser.Tweens.Tween = this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-      targets:obj,
-      scale:1.2,
-      duration:100,
-      yoyo:true ,
-      onComplete:function (){
+  private scaleMaxAni(obj): void {
+    let ani: Phaser.Tweens.Tween = this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+      targets: obj,
+      scale: 1.2,
+      duration: 100,
+      yoyo: true,
+      onComplete: function () {
         ani.remove();
       }
     })
@@ -606,17 +654,17 @@ export default class Game6PlayScene extends Phaser.Scene {
   /**
    * 显示左右箭头
    */
-  private arrowLRShow(){
-      arrowLRAni.play();
+  private arrowLRShow() {
+    arrowLRAni.play();
   }
 
   /**
    * 隐藏左右箭头
    */
-  private arrowLRHide(){
-      arrowLRAni.stop();
-      arrowRObj.alpha = 0;
-      arrowLObj.alpha = 0;
+  private arrowLRHide() {
+    arrowLRAni.stop();
+    arrowRObj.alpha = 0;
+    arrowLObj.alpha = 0;
   }
 
   /* 创建背景音乐 ，并设置为自动播放*/
