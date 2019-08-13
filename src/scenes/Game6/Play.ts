@@ -361,6 +361,7 @@ export default class Game6PlayScene extends Phaser.Scene {
    * 创建云朵与单词
    */
   private createCloudWord(): void {
+    let that = this;
     let cloud = new Phaser.GameObjects.Image(this, 242+521*0.5, 0+338*0.5,"img_cloud").setOrigin(0.5);
     cloud.displayWidth = 521;
     cloud.displayHeight = 338;
@@ -373,6 +374,12 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.cloudWord.add([cloud, word]);
     this.scaleMaxAni(cloud);
     this.scaleMaxAni(word);
+
+    cloud.setInteractive();
+    cloud.on("pointerdown",()=>{
+      that.wordSpeaker.play();
+      that.scaleMaxAni(word);
+    });
   }
 
   /**
