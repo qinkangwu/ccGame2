@@ -1,5 +1,7 @@
 import 'phaser';
 import { Game6DataItem } from '../../interface/Game6';
+import apiPath from '../../lib/apiPath';
+import {post} from '../../lib/http';
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
@@ -480,13 +482,18 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     function recordEndFuc() {
       resetStart();
-      //that.bgm.play(null, { volume: 0.1 } as Phaser.Types.Sound.SoundConfig);
       that.bgm.resume();
       luyinBtn.on("pointerdown", recordReady);
       backplayBtn.setData("haveRecord", "yes");
       rec.stop((blob: string) => {
+        console.log(blob);
         rec.close();
         userRecoder.src = URL.createObjectURL(blob);
+        /**init work 更新ajax的方式*/
+        post(apiPath.postAudio,{data:blob})
+        .then(res=>{
+          console.log(res);
+        })
       });
     }
 
