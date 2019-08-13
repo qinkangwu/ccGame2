@@ -540,7 +540,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       if(that.status === "没有机会"){
         return false; 
       }
-      /**解决录音阻挡的问题 */
+      /** wordk init 解决录音阻挡的问题 */
       rec.open(() => {
         that.bgm.pause();
         luyinBtn.off("pointerdown", recordReady);
