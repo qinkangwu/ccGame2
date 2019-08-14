@@ -2,7 +2,6 @@ import 'phaser';
 import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
-import Axios from 'axios';
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
@@ -535,16 +534,15 @@ export default class Game6PlayScene extends Phaser.Scene {
         rec.close();
         userRecoder.src = URL.createObjectURL(blob);
         userRecoder.play();
-        var form = new FormData();
-        form.append("audio", blob)
-        Axios.post(apiPath.postAudio, form).then(res => {
+        post(apiPath.postAudio,{audio:blob},'json',true)
+        .then(res=>{
           luyinBtn.setTexture("btn_luyin");
           originalBtn.setAlpha(1);
           backplayBtn.setAlpha(1);
           let correctAnswer = that.phoneticData[index].name;
-          let result = res.data.result;
+          let result = res.result;
           checkoutResult(correctAnswer, result);
-        })
+        });
       });
     }
 
