@@ -2,6 +2,7 @@ import 'phaser';
 import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
+import {StaticAni} from '../../public/JonnyAnimate';
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
@@ -69,8 +70,6 @@ export default class Game6PlayScene extends Phaser.Scene {
   private cloudWord: Phaser.GameObjects.Container; //单词容器
   private voiceBtns: Phaser.GameObjects.Container; //语音按钮组
   private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
-
-
 
   private particles: Phaser.GameObjects.Particles.ParticleEmitterManager; // 粒子控制器
   private emitters: Phaser.GameObjects.Particles.ParticleEmitter;  //粒子发射器
@@ -505,19 +504,12 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function alphaScaleMax() {
-      alphaScaleFuc(this, 1.2, 1.2, 1);
+      StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
     }
 
     function alphaScaleMin() {
-      alphaScaleFuc(this, 1, 1, 0.7);
+      StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
     }
-
-    function alphaScaleFuc(obj, _scaleX: number, _scaleY: number, _alpha: number) {
-      obj.scaleX = _scaleX;
-      obj.scaleY = _scaleY;
-      obj.alpha = _alpha;
-    }
-
 
     function aniPlay() {
       let dx = ox + radius * Math.cos(radian.value);
