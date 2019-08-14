@@ -107,6 +107,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.createStaticScene();
     this.createAudio();
     this.createDynamicScene();
+    this.createEmitter();
     this.gameStart();
   }
 
@@ -152,7 +153,7 @@ export default class Game6PlayScene extends Phaser.Scene {
    * 注册事件
    */
   private boom(): void {
-    this.emitters.explode(40, 242 + 521 * 0.5, 0 + 338 * 0.5);
+    (<Phaser.GameObjects.Particles.ParticleEmitter>this.emitters).explode(40, 242 + 521 * 0.5, 0 + 338 * 0.5);
   }
 
   /* 背景音乐 */
@@ -567,7 +568,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       }
       that.cloudWord.setAlpha(0);
       let alertBar = that.add.image(242 + 521 * 0.5, 0 + 338 * 0.5, texture);
-      //that.boom();
+      that.boom();
      /** work init  */
       that.scaleMaxAni(alertBar);
       that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
