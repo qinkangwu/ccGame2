@@ -79,7 +79,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   init(res: { data: any[], index: number }) {
-    this.resize();
+    //this.resize();
     index = res.index;
     this.recordTimes = 0;
     this.phoneticData = res.data.map(function (v) {
@@ -89,11 +89,11 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   preload(): void {
-    let currentPhoneticData = this.phoneticData[index];
-    this.load.audio(currentPhoneticData.name, currentPhoneticData.audioKey);
-    currentPhoneticData.phoneticSymbols.forEach(_v => {
-      this.load.audio(_v.name, _v.audioKey);
-    })
+    // let currentPhoneticData = this.phoneticData[index];
+    // this.load.audio(currentPhoneticData.name, currentPhoneticData.audioKey);
+    // currentPhoneticData.phoneticSymbols.forEach(_v => {
+    //   this.load.audio(_v.name, _v.audioKey);
+    // })
   }
 
   create(): void {
@@ -107,24 +107,6 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   update(time: number, delta: number): void {
-  }
-
-
-  /**
-   * 重置画布尺寸与定位
-   */
-  private resize(): void {
-    var content: HTMLElement = document.querySelector("#content");
-    content.style.backgroundColor = "#000000";
-    var canvas = document.querySelector("canvas");
-    canvas.className = "obj-cover-center";
-    this.scale.resize(1024, 552);
-    canvas.setAttribute("style", `
-      width: 100% !important;
-      height: 100% !important;
-      object-fit: contain;
-      object-position: center;
-      `)
   }
 
   /** * 游戏开始 */
