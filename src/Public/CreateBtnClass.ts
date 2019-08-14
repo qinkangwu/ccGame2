@@ -106,7 +106,11 @@ export default class CreateBtnClass {
     }
 
     private recordEnd () : void {
-      this.config.recordEndCallback.call(this.config.recordScope || this.scene)
+      this.config.recordEndCallback.call(this.config.recordScope || this.scene);
+      this.recordEndBtn.alpha = 0;
+      this.recordEndBtn.depth = -1;
+      this.recordStartBtn.alpha = 1;
+      this.recordStartBtn.depth = 1;
       this.timerObj && this.timerObj.stop();
       this.recordGraphics.destroy();
     }

@@ -248,10 +248,6 @@ export default class Game7PlayScene extends Phaser.Scene {
 
     private recordEndHandle() : void {
       //录音结束
-      this.createBtnClass.recordEndBtn.alpha = 0;
-      this.createBtnClass.recordEndBtn.depth = -1;
-      this.createBtnClass.recordStartBtn.alpha = 1;
-      this.createBtnClass.recordStartBtn.depth = 1;
       this.rec && this.rec.stop((blob,duration)=>{
         this.recordBlob = blob; //保存blob 用于播放
         this.rec.close();
