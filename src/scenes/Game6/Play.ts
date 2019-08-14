@@ -223,6 +223,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     that.arrowAgainShow();
 
     function ballOnDragStart() {
+      that.clickSound.play();
       that.status = "一轮上下拖拽开始";
       that.scaleMaxAni(this);
       that.arrowAgainHide();
@@ -245,6 +246,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     function overlapHandler() {
       that.status = "一个上下拖拽结束";
+      that.clickSound.play();
       ball.list[0].off("drag", ballImgOnDrag);
       ball.list[0].off("dragstart", ballOnDragStart);
       ball.list[0].off("dragend", ballOnDragEnd);
@@ -375,6 +377,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     collider = this.physics.add.overlap(collisoins, hitObject, hitFuc, null, this);
 
     function hitFuc(...args) {
+      that.correctSound.play();
       args[0].alpha = 0;
       args[0].parentContainer.list[1].alpha = 0;
       <Phaser.Physics.Arcade.Image>args[0].disableBody(true, true);
