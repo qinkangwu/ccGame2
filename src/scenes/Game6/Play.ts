@@ -50,12 +50,12 @@ var scaleWidthTranslate: Function = function (_width: number) {
 
 export default class Game6PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
-  private recordTimes:number;
+  private recordTimes: number;
 
   private bgm: Phaser.Sound.BaseSound; //背景音乐
-  private clickSound:Phaser.Sound.BaseSound;
-  private correctSound:Phaser.Sound.BaseSound;
-  private wrongSound:Phaser.Sound.BaseSound;
+  private clickSound: Phaser.Sound.BaseSound;
+  private correctSound: Phaser.Sound.BaseSound;
+  private wrongSound: Phaser.Sound.BaseSound;
 
 
   private phoneticData: Game6DataItem[] = []; //音标数据
@@ -70,7 +70,11 @@ export default class Game6PlayScene extends Phaser.Scene {
   private cloudWord: Phaser.GameObjects.Container; //单词容器
   private voiceBtns: Phaser.GameObjects.Container; //语音按钮组
   private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
-  
+
+
+
+  private particles: Phaser.GameObjects.Particles.ParticleEmitterManager; // 粒子控制器
+  private emitters: Phaser.GameObjects.Particles.ParticleEmitter;  //粒子发射器
 
   constructor() {
     super({
@@ -97,7 +101,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   create(): void {
-    if(index===0){
+    if (index === 0) {
       this.createBgm();
     }
     this.createStaticScene();
@@ -127,9 +131,32 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.add.existing(this.cloudWord);
     this.add.existing(this.voiceBtns);
   }
-  
+
+  /**
+   * 创建粒子效果发射器
+   */
+  private createEmitter(): void {
+    this.particles = this.add.particles('particles');
+    this.emitters = this.particles.createEmitter({
+      lifespan: 1000,
+      speed: { min: 300, max: 400 },
+      alpha: { start: 0.7, end: 0 },
+      scale: { start: 0.7, end: 0 },
+      rotate: { start: 0, end: 360, ease: 'Power2' },
+      blendMode: 'ADD',
+      on: false
+    })
+  }
+
+  /**
+   * 注册事件
+   */
+  private boom(): void {
+    this.emitters.explode(40, 242 + 521 * 0.5, 0 + 338 * 0.5);
+  }
+
   /* 背景音乐 */
-  private createBgm():void{
+  private createBgm(): void {
     this.bgm = this.sound.add('bgm');
     this.bgm.addMarker({
       name: "start",
@@ -517,41 +544,43 @@ export default class Game6PlayScene extends Phaser.Scene {
       });
     }
 
-    function checkoutResult(correctAnswer,result) {
+    function checkoutResult(correctAnswer, result) {
       if (correctAnswer === result) {
-        alertBarEl("tips_goodjob",that.nextLevel.bind(that));
+        alertBarEl("tips_goodjob", that.nextLevel.bind(that));
       } else {
-        if(that.recordTimes===2){
-            alertBarEl("tips_no",that.nextLevel.bind(that));
-        }else{
-           alertBarEl("tips_tryagain",()=>{
-            luyinBtn.on("pointerdown",recordReady);
-           });
-        } 
+        if (that.recordTimes === 2) {
+          alertBarEl("tips_no", that.nextLevel.bind(that));
+        } else {
+          alertBarEl("tips_tryagain", () => {
+            luyinBtn.on("pointerdown", recordReady);
+          });
+        }
       }
     }
 
-    function alertBarEl(texture:string,callBack){
-        if(texture==="tips_goodjob"){
-            that.correctSound.play();
+    function alertBarEl(texture: string, callBack) {
+      if (texture === "tips_goodjob") {
+        that.correctSound.play();
+      }
+      if (texture === "tips_tryagain" || texture === "tips_no") {
+        that.wrongSound.play();
+      }
+      that.cloudWord.setAlpha(0);
+      let alertBar = that.add.image(242 + 521 * 0.5, 0 + 338 * 0.5, texture);
+      //that.boom();
+     /** work init  */
+      that.scaleMaxAni(alertBar);
+      that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+        targets: alertBar,
+        scale: 0.5,
+        alpha: 0,
+        duration: 1000,
+        delay: 1000,
+        onComplete: () => {
+          alertBar.destroy();
+          callBack();
         }
-        if(texture==="tips_tryagain" || texture==="tips_no"){
-           that.wrongSound.play(); 
-        }
-        that.cloudWord.setAlpha(0);
-        let alertBar = that.add.image(242+521*0.5,0+338*0.5,texture);
-        that.scaleMaxAni(alertBar);
-        that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-          targets:alertBar,
-          scale:0.5,
-          alpha:0,
-          duration:1000,
-          delay:1000,
-          onComplete:()=>{
-            alertBar.destroy();
-            callBack();
-          }
-        });
+      });
     }
 
     function resetStart() {
@@ -563,7 +592,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     function recordReady() {
       luyinBtn.off("pointerdown", recordReady);
       rec.open(() => {
-        that.recordTimes+=1;
+        that.recordTimes += 1;
         that.bgm.pause();
         luyinBtn.setTexture("btn_luyin_progress");
         backplayBtn.setData("haveRecord", "no");
@@ -712,7 +741,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   private createAudio(): void {
     let audioKey = this.phoneticData[index].name;
     this.wordSpeaker = this.sound.add(audioKey);
-    
+
   }
 
   /* 搭建静态场景 */
