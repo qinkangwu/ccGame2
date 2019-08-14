@@ -25,6 +25,9 @@ export default class Game6LoadScene extends Phaser.Scene {
 
   preload(): void {
     this.load.audio('bgm','assets/Game6/bgm.mp3');
+    this.load.audio('correct','assets/sounds/正确音效.mp3');
+    this.load.audio('click','assets/sounds/点击音效.mp3');
+    this.load.audio('wrong','assets/sounds/错误音效.mp3');
     this.assets.forEach((v)=>{
       this.load.image(v.key,v.url);
     })

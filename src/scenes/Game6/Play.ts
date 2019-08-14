@@ -53,6 +53,11 @@ export default class Game6PlayScene extends Phaser.Scene {
   private recordTimes:number;
 
   private bgm: Phaser.Sound.BaseSound; //背景音乐
+  private clickSound:Phaser.Sound.BaseSound;
+  private correctSound:Phaser.Sound.BaseSound;
+  private wrongSound:Phaser.Sound.BaseSound;
+
+
   private phoneticData: Game6DataItem[] = []; //音标数据
   private bg: Phaser.GameObjects.Image; //背景图片 
   private btn_exit: Phaser.GameObjects.Image;  //退出按钮
@@ -65,6 +70,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   private cloudWord: Phaser.GameObjects.Container; //单词容器
   private voiceBtns: Phaser.GameObjects.Container; //语音按钮组
   private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
+  
 
   constructor() {
     super({
@@ -153,6 +159,9 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     this.bgm.play("start", config);
+    this.clickSound = this.sound.add('click');
+    this.correctSound = this.sound.add('correct');
+    this.wrongSound = this.sound.add('wrong');
   }
 
   /* 创建药瓶 */
@@ -535,6 +544,12 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function alertBarEl(texture:string,callBack){
+        if(texture==="tips_goodjob"){
+            that.correctSound.play();
+        }
+        if(texture==="tips_tryagain" || texture==="tips_no"){
+           that.wrongSound.play(); 
+        }
         that.cloudWord.setAlpha(0);
         let alertBar = that.add.image(242+521*0.5,0+338*0.5,texture);
         that.scaleMaxAni(alertBar);
@@ -704,10 +719,12 @@ export default class Game6PlayScene extends Phaser.Scene {
     arrowLObj.alpha = 0;
   }
 
+
   /* 创建背景音乐 ，并设置为自动播放*/
   private createAudio(): void {
     let audioKey = this.phoneticData[index].name;
     this.wordSpeaker = this.sound.add(audioKey);
+    
   }
 
   /* 搭建静态场景 */
