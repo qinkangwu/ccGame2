@@ -89,11 +89,11 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // let currentPhoneticData = this.phoneticData[index];
-    // this.load.audio(currentPhoneticData.name, currentPhoneticData.audioKey);
-    // currentPhoneticData.phoneticSymbols.forEach(_v => {
-    //   this.load.audio(_v.name, _v.audioKey);
-    // })
+    let currentPhoneticData = this.phoneticData[index];
+    this.load.audio(currentPhoneticData.name, currentPhoneticData.audioKey);
+    currentPhoneticData.phoneticSymbols.forEach(_v => {
+      this.load.audio(_v.name, _v.audioKey);
+    })
   }
 
   create(): void {
