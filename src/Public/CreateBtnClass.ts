@@ -9,6 +9,15 @@ export default class CreateBtnClass {
     private config ;
     private bgmAnims : Phaser.Tweens.Tween;
     private bgmFlag : boolean = true ; //音乐开关
+    public playBtn : Phaser.GameObjects.Image; //播放音频按钮
+    public recordStartBtn : Phaser.GameObjects.Image; //录音开始按钮
+    public recordEndBtn : Phaser.GameObjects.Image; //录音结束按钮
+    private recordGraphics : Phaser.GameObjects.Graphics ; //停止录音进度条绘制对象
+    private timerObj : Phaser.Tweens.Tween; //定时器
+    public playRecordBtn : Phaser.GameObjects.Image; //播放录音按钮
+    private timerNum : object = {
+      d : 360
+    }; //进度条角度
     constructor(scene,config : config){
         this.scene = scene;
         this.config = config;
@@ -28,25 +37,25 @@ export default class CreateBtnClass {
         .setDisplaySize(60,60)
         .setInteractive()
         .setData('isBtn',true);
-        this.scene.playBtn = this.scene.add.image(window.innerWidth / 2 - 150, window.innerHeight - 80 , 'icons2' , 'btn_last2.png')
+        this.playBtn = this.scene.add.image(window.innerWidth / 2 - 150, window.innerHeight - 80 , 'icons2' , 'btn_last2.png')
         .setDisplaySize(60 , 60)
         .setOrigin(.5)
         .setAlpha(0)
         .setInteractive()
         .setData('isBtn',true)
         .setData('_s',true);
-        this.scene.recordStartBtn = this.scene.add.image(window.innerWidth / 2, window.innerHeight - 80 , 'icons2' , 'btn_luyin2.png')
+        this.recordStartBtn = this.scene.add.image(window.innerWidth / 2, window.innerHeight - 80 , 'icons2' , 'btn_luyin2.png')
         .setDisplaySize(110, 110)
         .setAlpha(0)
         .setInteractive()
         .setData('isBtn',true)
         .setData('_s',true);
-        this.scene.recordEndBtn = this.scene.add.image(window.innerWidth / 2, window.innerHeight - 80 , 'recordIcon')
+        this.recordEndBtn = this.scene.add.image(window.innerWidth / 2, window.innerHeight - 80 , 'recordIcon')
         .setDisplaySize(110 , 110 )
         .setAlpha(0)
         .setInteractive()
         .setData('_s',true);
-        this.scene.playRecordBtn = this.scene.add.image(window.innerWidth / 2 + 150 , window.innerHeight - 80 , 'icons2' , 'btn_last.png')
+        this.playRecordBtn = this.scene.add.image(window.innerWidth / 2 + 150 , window.innerHeight - 80 , 'icons2' , 'btn_last.png')
         .setDisplaySize(60  , 60 )
         .setOrigin(.5)
         .setAlpha(0)
@@ -62,15 +71,62 @@ export default class CreateBtnClass {
         this.bindEventHandle();
     }
 
+    private drawArc () : void {
+      //绘制进度条
+      this.clearArc();
+      this.recordGraphics = this.scene.add.graphics();
+      this.recordGraphics.depth = 100;
+      this.recordGraphics.lineStyle(9,0xffffff,1);
+      this.recordGraphics.beginPath();
+      //@ts-ignore
+      this.recordGraphics.arc(this.recordEndBtn.x,this.recordEndBtn.y,52,Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(this.timerNum.d -- ),false);
+      this.recordGraphics.strokePath();
+    }
+
+    private clearArc () : void {
+      this.recordGraphics && this.recordGraphics.clear();
+      this.recordGraphics && this.recordGraphics.destroy();
+      this.recordGraphics = null;
+      //@ts-ignore
+      if(this.timerNum.d <= 0 ){
+        this.config.recordEndCallback.call(this.config.recordScope || this.scene);
+      }
+    }
+
     private bindEventHandle () : void {
         this.scene.input.on('pointerdown',this.globalClickHandle.bind(this));
         this.scene.input.on('gameobjectover',this.gameOverHandle.bind(this));
         this.scene.input.on('gameobjectout',this.gameOutHandle.bind(this));
         this.scene.musicBtn.on('pointerdown',this.switchMusic.bind(this,this.bgmFlag));
         this.scene.backToListBtn.on('pointerdown',this.backToListHandle.bind(this));
-        this.scene.recordStartBtn.on('pointerdown',this.config.recordStartCallback.bind(this.config.recordScope || this.scene));
-        this.scene.recordEndBtn.on('pointerdown',this.config.recordEndCallback.bind(this.config.recordScope || this.scene));
-        this.scene.playRecordBtn.on('pointerdown',this.config.playRecordCallback.bind(this.scene));
+        this.recordStartBtn.on('pointerdown',this.recordStart.bind(this));
+        this.playBtn.on('pointerdown',this.config.playBtnCallback.bind(this.scene));
+        this.recordEndBtn.on('pointerdown',this.recordEnd.bind(this));
+        this.playRecordBtn.on('pointerdown',this.config.playRecordCallback.bind(this.scene));
+    }
+
+    private recordEnd () : void {
+      this.config.recordEndCallback.call(this.config.recordScope || this.scene)
+      this.timerObj && this.timerObj.stop();
+      this.recordGraphics.destroy();
+    }
+    
+    private recordStart () : void {
+      this.recordEndBtn.alpha = 1;
+      this.recordEndBtn.depth = 1;
+      this.recordStartBtn.alpha = 0;
+      this.recordStartBtn.depth = -1;
+      //@ts-ignore
+      this.timerNum.d = 360;
+      this.drawArc();
+      this.timerObj && this.timerObj.remove();
+      this.timerObj = this.scene.tweens.add({
+        targets : this.timerNum,
+        d : 0,
+        duration : 3000,
+        onUpdate : this.drawArc.bind(this)
+      })
+      this.config.recordStartCallback.call(this.config.recordScope || this.scene)
     }
 
     private backToListHandle() : void {
@@ -110,10 +166,6 @@ export default class CreateBtnClass {
     private globalClickHandle (...args) : void {
         //点击按钮缩放
         let obj : object = args[1][0];
-        //@ts-ignore
-        // if(!obj || !obj.getData('playVideo')){
-        //   this.clearVideoFrameHandle();  //隐藏视频
-        // }
         if(!obj) return;
         //@ts-ignore
         let isBtn : boolean = obj.getData('isBtn');

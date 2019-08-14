@@ -12,18 +12,9 @@ export default class Game7PlayScene extends Phaser.Scene {
     private handle : Phaser.GameObjects.Sprite ; //手柄
     private goldIcon : Phaser.GameObjects.Image; //金币数量
     private goldText : Phaser.GameObjects.Text; //金币文本
-    private playBtn : Phaser.GameObjects.Image; //播放音频按钮
-    private recordStartBtn : Phaser.GameObjects.Image; //录音开始按钮
-    private playRecordBtn : Phaser.GameObjects.Image; //播放录音按钮
     private bgm : Phaser.Sound.BaseSound ; //背景音乐
-    private recordEndBtn : Phaser.GameObjects.Image; //录音结束按钮
     private wordsArr : string[] = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']; //基础单词随机组合数组
     private rec ; //录音对象
-    private recordGraphics : Phaser.GameObjects.Graphics ; //停止录音进度条绘制对象
-    private timerNum : object = {
-      d : 360
-    }; //进度条角度
-    private timerObj : Phaser.Tweens.Tween; //定时器
     private resultArr : any[] = [] ; //结果的集合
     private word1 : Phaser.GameObjects.Text; //游玩过程当中随机1号
     private word2 : Phaser.GameObjects.Text; //游玩过程当中随机1号
@@ -31,6 +22,7 @@ export default class Game7PlayScene extends Phaser.Scene {
     private renderingTimerObj : Phaser.Time.TimerEvent; //过程timer
     private recordBlob : Blob ; //录音二进制数据
     private goldNumber : number = 0; //金币数量文本
+    private createBtnClass : CreateBtnClass ; //按钮组件返回
     constructor() {
       super({
         key: "Game7PlayScene"
@@ -51,7 +43,7 @@ export default class Game7PlayScene extends Phaser.Scene {
       this.createMask(); //创建遮罩层
       this.renderSuccess([],true); //初始化渲染
       this.createGold(); //创建金币
-      new CreateBtnClass(this,{
+      this.createBtnClass = new CreateBtnClass(this,{
         recordStartCallback : this.recordStartHandle,
         recordEndCallback : this.recordEndHandle,
         playBtnCallback : ()=>{},
@@ -213,33 +205,11 @@ export default class Game7PlayScene extends Phaser.Scene {
       this.word2 = null;
       this.word3 = null;
       this.tweens.add({
-        targets : [this.recordStartBtn],
+        targets : [this.createBtnClass.recordStartBtn],
         alpha : 1,
         duration : 500,
         ease : 'Sine.easeInOut',
       })
-    }
-
-    private drawArc () : void {
-      //绘制进度条
-      this.clearArc();
-      this.recordGraphics = this.add.graphics();
-      this.recordGraphics.depth = 100;
-      this.recordGraphics.lineStyle(9,0xffffff,1);
-      this.recordGraphics.beginPath();
-      //@ts-ignore
-      this.recordGraphics.arc(this.recordEndBtn.x,this.recordEndBtn.y,52,Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(this.timerNum.d -- ),false);
-      this.recordGraphics.strokePath();
-    }
-
-    private clearArc () : void {
-      this.recordGraphics && this.recordGraphics.clear();
-      this.recordGraphics && this.recordGraphics.destroy();
-      this.recordGraphics = null;
-      //@ts-ignore
-      if(this.timerNum.d <= 0 ){
-        this.recordEndHandle();
-      }
     }
 
     private handleClick () : void {
@@ -247,7 +217,7 @@ export default class Game7PlayScene extends Phaser.Scene {
       this.handle.play('begin');
       this.renderAnims();
       this.tweens.add({
-        targets : [this.playBtn,this.recordStartBtn,this.playRecordBtn],
+        targets : [this.createBtnClass.playBtn,this.createBtnClass.recordStartBtn,this.createBtnClass.playRecordBtn],
         alpha : 0,
         duration : 500,
         ease : 'Sine.easeInOut',
@@ -278,29 +248,25 @@ export default class Game7PlayScene extends Phaser.Scene {
 
     private recordEndHandle() : void {
       //录音结束
-      this.recordEndBtn.alpha = 0;
-      this.recordEndBtn.depth = -1;
-      this.recordStartBtn.alpha = 1;
-      this.recordStartBtn.depth = 1;
+      this.createBtnClass.recordEndBtn.alpha = 0;
+      this.createBtnClass.recordEndBtn.depth = -1;
+      this.createBtnClass.recordStartBtn.alpha = 1;
+      this.createBtnClass.recordStartBtn.depth = 1;
       this.rec && this.rec.stop((blob,duration)=>{
         this.recordBlob = blob; //保存blob 用于播放
         this.rec.close();
-        this.timerObj && this.timerObj.stop();
-        //@ts-ignore
-        this.timerNum.d = 360;
-        this.clearArc();
         let files : File = new File([blob],'aaa.wav',{
           type : blob.type
         });
         this.tweens.add({
-          targets : [this.playBtn,this.playRecordBtn],
+          targets : [this.createBtnClass.playBtn,this.createBtnClass.playRecordBtn],
           alpha : 1 ,
           duration : 500,
           ease : 'Sine.easeInOut'
         })
       },(msg)=>{
         this.tweens.add({
-          targets : [this.playBtn,this.playRecordBtn],
+          targets : [this.createBtnClass.playBtn,this.createBtnClass.playRecordBtn],
           alpha : 1 ,
           duration : 500,
           ease : 'Sine.easeInOut'
@@ -316,18 +282,6 @@ export default class Game7PlayScene extends Phaser.Scene {
         type : 'wav'
       });
       this.rec.open(()=>{
-        this.recordEndBtn.alpha = 1;
-        this.recordEndBtn.depth = 1;
-        this.recordStartBtn.alpha = 0;
-        this.recordStartBtn.depth = -1;
-        this.drawArc();
-        this.timerObj && this.timerObj.remove();
-        this.timerObj = this.tweens.add({
-          targets : this.timerNum,
-          d : 0,
-          duration : 3000,
-          onUpdate : this.drawArc.bind(this)
-        })
         this.rec.start();
       })
     }
