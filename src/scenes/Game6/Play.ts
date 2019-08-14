@@ -50,7 +50,7 @@ var scaleWidthTranslate: Function = function (_width: number) {
 
 export default class Game6PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
-  private recordTimes:number = 0;
+  private recordTimes:number;
 
   private bgm: Phaser.Sound.BaseSound; //背景音乐
   private phoneticData: Game6DataItem[] = []; //音标数据
@@ -65,7 +65,6 @@ export default class Game6PlayScene extends Phaser.Scene {
   private cloudWord: Phaser.GameObjects.Container; //单词容器
   private voiceBtns: Phaser.GameObjects.Container; //语音按钮组
   private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
-  //private btns:Phaser.GameObjects.Container; 
 
   constructor() {
     super({
@@ -76,6 +75,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   init(res: { data: any[], index: number }) {
     this.resize();
     index = res.index;
+    this.recordTimes = 0;
     this.phoneticData = res.data.map(function (v) {
       delete v.uselessPhoneticSymbols;
       return v;
@@ -91,8 +91,11 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.createAudio();
+    if(index===0){
+      this.createBgm();
+    }
     this.createStaticScene();
+    this.createAudio();
     this.createDynamicScene();
     this.gameStart();
   }
@@ -135,6 +138,21 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.add.existing(this.arrows);
     this.add.existing(this.cloudWord);
     this.add.existing(this.voiceBtns);
+  }
+  
+  /* 背景音乐 */
+  private createBgm():void{
+    this.bgm = this.sound.add('bgm');
+    this.bgm.addMarker({
+      name: "start",
+      start: 0
+    } as Phaser.Types.Sound.SoundMarker);
+    let config: Phaser.Types.Sound.SoundConfig = {
+      loop: true,
+      volume: 0.2
+    }
+
+    this.bgm.play("start", config);
   }
 
   /* 创建药瓶 */
@@ -500,18 +518,35 @@ export default class Game6PlayScene extends Phaser.Scene {
       });
     }
 
-    function checkoutResult(correctAnswer, result) {
+    function checkoutResult(correctAnswer,result) {
       if (correctAnswer === result) {
-        that.nextLevel();
+        alertBarEl("tips_goodjob",that.nextLevel.bind(that));
       } else {
         if(that.recordTimes===2){
-            alert("没有机会啦")
-            that.nextLevel();
+            alertBarEl("tips_no",that.nextLevel.bind(that));
         }else{
-           alert("再来一次");
-           luyinBtn.on("pointerdown", recordReady);
+           alertBarEl("tips_tryagain",()=>{
+            luyinBtn.on("pointerdown",recordReady);
+           });
         } 
       }
+    }
+
+    function alertBarEl(texture:string,callBack){
+        that.cloudWord.setAlpha(0);
+        let alertBar = that.add.image(242+521*0.5,0+338*0.5,texture);
+        that.scaleMaxAni(alertBar);
+        that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+          targets:alertBar,
+          scale:0.5,
+          alpha:0,
+          duration:1000,
+          delay:1000,
+          onComplete:()=>{
+            alertBar.destroy();
+            callBack();
+          }
+        });
     }
 
     function resetStart() {
@@ -522,28 +557,8 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function recordReady() {
-      //console.log(that.status);
-      // if(that.status === "没有机会"){
-      //   return false; 
-      // }
-      // if(that.status === "正在录制中"){
-      //   return false; 
-      // }
-      // if(that.status === "录音结束，数据正在上传中"){
-      //   return false; 
-      // }
-      /** wordk init 解决录音阻挡的问题 */
-      // if(that.recordStatus.control){
-      //   console.log("正在录制，请勿操作");
-      //   return false;
-      // }
-      // if(that.recordTimes>=2){
-      //   console.log("录制次数不能超过2");
-      //   return false;
-      // }
       luyinBtn.off("pointerdown", recordReady);
       rec.open(() => {
-       // that.recordStatus.control = true;
         that.recordTimes+=1;
         that.bgm.pause();
         luyinBtn.setTexture("btn_luyin_progress");
@@ -562,14 +577,17 @@ export default class Game6PlayScene extends Phaser.Scene {
 
   }
 
+  /**
+   * 下一关
+   */
   private nextLevel(): void {
-    this.recordTimes = 0; 
+    this.recordTimes = 0;
     this.status = null;
-    this.bgm.destroy();
-    this.balls.destroy();
-    this.nullballs.destroy();
-    this.arrows.destroy();
-    this.wordSpeaker.destroy();
+    //this.bgm.destroy();
+    // this.balls.destroy();
+    // this.nullballs.destroy();
+    // this.arrows.destroy();
+    // this.wordSpeaker.destroy();
     index += 1;
     this.scene.start('Game6PlayScene', {
       data: this.phoneticData,
@@ -654,6 +672,20 @@ export default class Game6PlayScene extends Phaser.Scene {
     })
   }
 
+  /**
+   * 缩小且Q弹的动效
+   */
+  private scaleMinAni(obj): void {
+    let ani: Phaser.Tweens.Tween = this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+      targets: obj,
+      scale: 0.6,
+      duration: 100,
+      yoyo: true,
+      onComplete: function () {
+        ani.remove();
+      }
+    })
+  }
 
   /**
    * 显示左右箭头
@@ -673,23 +705,13 @@ export default class Game6PlayScene extends Phaser.Scene {
 
   /* 创建背景音乐 ，并设置为自动播放*/
   private createAudio(): void {
-    this.bgm = this.sound.add('bgm');
-    this.bgm.addMarker({
-      name: "start",
-      start: 0
-    } as Phaser.Types.Sound.SoundMarker);
-    let config: Phaser.Types.Sound.SoundConfig = {
-      loop: true,
-      volume: 0.2
-    }
-    this.bgm.play("start", config);
-
     let audioKey = this.phoneticData[index].name;
     this.wordSpeaker = this.sound.add(audioKey);
   }
 
   /* 搭建静态场景 */
   private createStaticScene(): void {
+
     this.bg = new Phaser.GameObjects.Image(this, 0, 0, "bg").setOrigin(0);
 
     this.btn_exit = new Phaser.GameObjects.Image(this, 25, 25, "btn_exit").setOrigin(0);
