@@ -310,6 +310,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function onLeftRightDrag(pointer, dragX, dragY): void {
+      console.log(1);
       (<Phaser.GameObjects.Image>this).setPosition(dragX, dragY);
       (<Phaser.GameObjects.Text>this.parentContainer.list[1]).setPosition(dragX, dragY);
       setMirror.call(this, dragX, dragY);

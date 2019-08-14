@@ -33,6 +33,7 @@ export default class Game7LoadScene extends Phaser.Scene {
     this.load.image('machine','assets/Game7/machine.png');
     this.load.image('mask','assets/Game7/mask.png');
     this.load.audio('bgm','assets/Game5/bgm.mp3');
+    this.load.image('recordIcon','assets/Game7/btn_luyin.png');
     this.load.multiatlas('icons','assets/Game7/imgsJson.json','assets/Game7');
     this.load.multiatlas('icons2','assets/Game7/imgsJson2.json','assets/Game7');
     this.load.audio('bgm','assets/Game5/bgm.mp3');
