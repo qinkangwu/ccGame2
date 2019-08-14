@@ -1,3 +1,4 @@
+import "phaser";
 import { config } from "../interface/CreateBtnClassInt";
 
 /**
