@@ -50,6 +50,7 @@ var scaleWidthTranslate: Function = function (_width: number) {
 
 export default class Game6PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
+  private recordTimes:number = 0;
 
   private bgm: Phaser.Sound.BaseSound; //背景音乐
   private phoneticData: Game6DataItem[] = []; //音标数据
@@ -438,7 +439,6 @@ export default class Game6PlayScene extends Phaser.Scene {
     originalBtn.on("pointerup", originalBtnUp);
 
     function originalBtnDown() {
-      console.log(that.status);
       alphaScaleMax.call(this);
     }
 
@@ -458,7 +458,6 @@ export default class Game6PlayScene extends Phaser.Scene {
     }))
 
     function recordStartFuc() {
-      that.status = "正在录制中";
       rec.start();
     }
 
@@ -486,9 +485,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     function recordEndFuc() {
       resetStart();
       that.bgm.resume();
-      luyinBtn.on("pointerdown", recordReady);
       backplayBtn.setData("haveRecord", "yes");
-      that.status = "录音结束，数据正在上传中";
       rec.stop((blob: string) => {
         rec.close();
         userRecoder.src = URL.createObjectURL(blob);
@@ -505,17 +502,15 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     function checkoutResult(correctAnswer, result) {
       if (correctAnswer === result) {
-        that.status = "正确";
         that.nextLevel();
       } else {
-        if (that.status === "再来一次") {
-          that.status = "没有机会";
-          alert("没有机会");
-          that.nextLevel();
-          return false;
-        }
-        that.status = "再来一次";
-        alert("再来一次");
+        if(that.recordTimes===2){
+            alert("没有机会啦")
+            that.nextLevel();
+        }else{
+           alert("再来一次");
+           luyinBtn.on("pointerdown", recordReady);
+        } 
       }
     }
 
@@ -527,23 +522,30 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function recordReady() {
-      console.log(that.status);
-      if(that.status === "正在录制中"){
-        return false; 
-      }
-      if(that.status === "没有机会"){
-        return false; 
-      }
-      if(that.status === "录音结束，数据正在上传中"){
-        return false; 
-      }
-      if(that.status === "没有机会"){
-        return false; 
-      }
+      //console.log(that.status);
+      // if(that.status === "没有机会"){
+      //   return false; 
+      // }
+      // if(that.status === "正在录制中"){
+      //   return false; 
+      // }
+      // if(that.status === "录音结束，数据正在上传中"){
+      //   return false; 
+      // }
       /** wordk init 解决录音阻挡的问题 */
+      // if(that.recordStatus.control){
+      //   console.log("正在录制，请勿操作");
+      //   return false;
+      // }
+      // if(that.recordTimes>=2){
+      //   console.log("录制次数不能超过2");
+      //   return false;
+      // }
+      luyinBtn.off("pointerdown", recordReady);
       rec.open(() => {
+       // that.recordStatus.control = true;
+        that.recordTimes+=1;
         that.bgm.pause();
-        luyinBtn.off("pointerdown", recordReady);
         luyinBtn.setTexture("btn_luyin_progress");
         backplayBtn.setData("haveRecord", "no");
         cirAni.play();
@@ -561,6 +563,8 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   private nextLevel(): void {
+    this.recordTimes = 0; 
+    this.status = null;
     this.bgm.destroy();
     this.balls.destroy();
     this.nullballs.destroy();
