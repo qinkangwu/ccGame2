@@ -502,6 +502,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     function recordEndFuc() {
       resetStart();
+      luyinBtn.setTexture("analysis");
       that.bgm.resume();
       backplayBtn.setData("haveRecord", "yes");
       rec.stop((blob: string) => {
@@ -511,6 +512,7 @@ export default class Game6PlayScene extends Phaser.Scene {
         var form = new FormData();
         form.append("audio", blob)
         Axios.post(apiPath.postAudio, form).then(res => {
+          luyinBtn.setTexture("btn_luyin");
           let correctAnswer = that.phoneticData[index].name;
           let result = res.data.result;
           checkoutResult(correctAnswer, result);
@@ -550,7 +552,6 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function resetStart() {
-      luyinBtn.setTexture("btn_luyin");
       radian.value = 0;
       cir.clear();
       cir.fillStyle(0xffffff, 1);
