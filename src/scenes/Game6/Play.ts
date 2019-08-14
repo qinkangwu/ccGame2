@@ -452,6 +452,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       if (haveRecord === "no") {
         return false;
       }
+      that.clickSound.play();
       alphaScaleMax.call(this);
       userRecoder.play();
     }
@@ -460,12 +461,12 @@ export default class Game6PlayScene extends Phaser.Scene {
       alphaScaleMin.call(this);
     }
 
-
     originalBtn.setInteractive();
     originalBtn.on("pointerdown", originalBtnDown);
     originalBtn.on("pointerup", originalBtnUp);
 
     function originalBtnDown() {
+      that.clickSound.play();
       alphaScaleMax.call(this);
     }
 
