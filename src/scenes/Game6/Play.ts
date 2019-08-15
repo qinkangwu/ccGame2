@@ -536,7 +536,6 @@ export default class Game6PlayScene extends Phaser.Scene {
           .then(res => {
             analysisMask.destroy();
             luyinBtn.setTexture("btn_luyin");
-            console.log(analysisMask);
             analysisMask.destroy(); 
             originalBtn.setAlpha(1);
             backplayBtn.setAlpha(1);
@@ -592,6 +591,7 @@ export default class Game6PlayScene extends Phaser.Scene {
         delay: 1000,
         onComplete: () => {
           alertBar.destroy();
+          that.cloudWord.setAlpha(1);
           callBack();
         }
       });
