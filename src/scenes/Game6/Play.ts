@@ -741,22 +741,55 @@ export default class Game6PlayScene extends Phaser.Scene {
 
   /* 搭建静态场景 */
   private createStaticScene(): void {
-
+    let that = this;
     this.bg = new Phaser.GameObjects.Image(this, 0, 0, "bg").setOrigin(0);
 
-    this.btn_exit = new Phaser.GameObjects.Image(this, 25, 25, "btn_exit").setOrigin(0);
+    this.btn_exit = new Phaser.GameObjects.Image(this, 25+60*0.5, 25+60*0.5, "btn_exit").setOrigin(0.5).setAlpha(0.7);
     this.btn_exit.setInteractive();
-    this.btn_exit.on("pointerdown", this.exitGame);
+    this.btn_exit.on("pointerdown",function (){
+      StaticAni.prototype.alphaScaleFuc(this,1.2,1.2,1);
+      that.exitGame();
+    });
+    this.btn_exit.on("pointerup",function (){
+      StaticAni.prototype.alphaScaleFuc(this,1,1,0.7); 
+    });
 
-    this.btn_sound = new Phaser.GameObjects.Sprite(this, 939, 25, "btn_sound_on").setOrigin(0);
+    this.btn_sound = new Phaser.GameObjects.Sprite(this, 939+60*0.5, 25+60*0.5, "btn_sound_on").setOrigin(0.5).setAlpha(0.7);
     this.btn_sound.setInteractive();
-    this.btn_sound.on("pointerdown", this.onOffSound);
+    this.btn_sound.on("pointerdown",function (){
+      StaticAni.prototype.alphaScaleFuc(this,1.2,1.2,1); 
+      onOffSound.call(this);
+    });
+    this.btn_sound.on("pointerup",function (){
+      StaticAni.prototype.alphaScaleFuc(this,1,1,0.7);
+    });
+
     this.staticScene = new Phaser.GameObjects.Container(this, 0, 0, [
       this.bg,
       this.btn_exit,
       this.btn_sound
     ]);
     this.add.existing(this.staticScene);
+
+    function gameobjectoutHandle(){
+      StaticAni.prototype.alphaScaleFuc(this,1,1,0.7);
+    }
+
+    function gameobjectoverHandle(){
+      console.log("yes");
+      StaticAni.prototype.alphaScaleFuc(this,1.2,1.2,1);
+    } 
+
+    function onOffSound() {
+      let bgm = that.bgm;
+      if (bgm.isPlaying) {
+        this.setTexture("btn_sound_off");
+        bgm.pause();
+      } else {
+        this.setTexture("btn_sound_on");
+        bgm.play();
+      }
+    }
   }
 
   /* 退出游戏*/
@@ -764,16 +797,5 @@ export default class Game6PlayScene extends Phaser.Scene {
     console.log("Game Over");
   }
 
-  /* 关闭或播放音乐 */
-  private onOffSound(this: any) {
-    let bgm = this.scene.bgm;
-    if (bgm.isPlaying) {
-      this.setTexture("btn_sound_off");
-      bgm.pause();
-    } else {
-      this.setTexture("btn_sound_on");
-      bgm.play();
-    }
-  }
 
 };
