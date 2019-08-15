@@ -8,6 +8,7 @@ const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
 const W = 1024;
 const H = 552;
+var rotate:number = 0;   //音频按钮的旋转初始值
 var index: number; //题目的指针，默认为0
 
 var arrowUpObj: any = null;
@@ -91,11 +92,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // let currentPhoneticData = this.phoneticData[index];
-    // this.load.audio(currentPhoneticData.name, currentPhoneticData.audioKey);
-    // currentPhoneticData.phoneticSymbols.forEach(_v => {
-    //   this.load.audio(_v.name, _v.audioKey);
-    // })
+
   }
 
   create(): void {
@@ -110,6 +107,14 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   update(time: number, delta: number): void {
+    if(this.btn_sound.rotation===Math.PI*2){
+      this.btn_sound.rotation = 0;
+    }
+    if(this.bgm.isPlaying){
+      this.btn_sound.rotation+=0.05;
+    }else{
+      this.btn_sound.rotation = 0;
+    } 
   }
 
   /** * 游戏开始 */
