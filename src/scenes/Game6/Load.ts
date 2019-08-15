@@ -20,7 +20,7 @@ export default class Game6LoadScene extends Phaser.Scene {
 
   init(): void {
     this.resize();
-    this.centerText = this.add.text(window.innerWidth / 2 ,window.innerHeight /2 ,'0%',{
+    this.centerText = this.add.text(1024*0.5,552*0.5 ,'0%',{
       fill : '#fff',
       font: 'bold 60px Arial',
       bold : true,
@@ -36,8 +36,8 @@ export default class Game6LoadScene extends Phaser.Scene {
       this.load.image(v.key,v.url);
     })
     this.load.on("progress",(e:any)=>{
-        e = Math.floor(e);
-        this.centerText.setText(`${e*100}%`);
+        e = Math.floor(e*100);
+        this.centerText.setText(`${e}%`);
     })
     this.load.on("complete",(e:any)=>{
       this.imgLoadDone = true;
