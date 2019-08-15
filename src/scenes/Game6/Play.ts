@@ -8,6 +8,7 @@ const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
 const W = 1024;
 const H = 552;
+var ableStop:number = 0;  //0=>不能停止，1=>能停止,2=>已经停止 
 var rotate:number = 0;   //音频按钮的旋转初始值
 var index: number; //题目的指针，默认为0
 
@@ -560,6 +561,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function checkoutResult(correctAnswer, result) {
+      console.log(that.recordTimes);
       if (correctAnswer === result) {
         alertBarEl("tips_goodjob", that.nextLevel.bind(that));
       } else {
@@ -567,7 +569,10 @@ export default class Game6PlayScene extends Phaser.Scene {
           alertBarEl("tips_no", that.nextLevel.bind(that));
         } else {
           alertBarEl("tips_tryagain", () => {
+            if(ableStop===2){
             luyinBtn.on("pointerdown", recordReady);
+            }
+            ableStop = 0;
           });
         }
       }
@@ -605,9 +610,19 @@ export default class Game6PlayScene extends Phaser.Scene {
       cir.fillStyle(0xffffff, 1);
     }
 
+    
     function recordReady() {
-      luyinBtn.off("pointerdown", recordReady);
+      console.log(ableStop);
+      if(ableStop===1){
+          luyinBtn.off("pointerdown", recordReady);
+          ableStop = 2;
+          console.log("已经停止");
+          cirAni.complete();
+          //radian.value = Math.PI*1.9;
+          return false;
+      }
       rec.open(() => {
+        ableStop = 1;
         that.recordTimes += 1;
         that.bgm.pause();
         luyinBtn.setTexture("btn_luyin_progress");
@@ -631,12 +646,9 @@ export default class Game6PlayScene extends Phaser.Scene {
   private nextLevel(): void {
     this.recordTimes = 0;
     this.status = null;
-    //this.bgm.destroy();
-    // this.balls.destroy();
-    // this.nullballs.destroy();
-    // this.arrows.destroy();
-    // this.wordSpeaker.destroy();
+    ableStop = 0;
     index += 1;
+    index = index % this.phoneticData.length;
     this.scene.start('Game6PlayScene', {
       data: this.phoneticData,
       index: index
