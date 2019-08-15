@@ -2,7 +2,7 @@ import 'phaser';
 import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
-import {StaticAni} from '../../public/JonnyAnimate';
+import { StaticAni } from '../../public/JonnyAnimate';
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
@@ -527,15 +527,15 @@ export default class Game6PlayScene extends Phaser.Scene {
         rec.close();
         userRecoder.src = URL.createObjectURL(blob);
         userRecoder.play();
-        post(apiPath.postAudio,{audio:blob},'json',true)
-        .then(res=>{
-          luyinBtn.setTexture("btn_luyin");
-          originalBtn.setAlpha(1);
-          backplayBtn.setAlpha(1);
-          let correctAnswer = that.phoneticData[index].name;
-          let result = res.result;
-          checkoutResult(correctAnswer, result);
-        });
+        post(apiPath.postAudio, { audio: blob }, 'json', true)
+          .then(res => {
+            luyinBtn.setTexture("btn_luyin");
+            originalBtn.setAlpha(1);
+            backplayBtn.setAlpha(1);
+            let correctAnswer = that.phoneticData[index].name;
+            let result = res.result;
+            checkoutResult(correctAnswer, result);
+          });
       });
     }
 
@@ -563,7 +563,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       that.cloudWord.setAlpha(0);
       let alertBar = that.add.image(242 + 521 * 0.5, 0 + 338 * 0.5, texture);
       that.boom();
-     /** work init  */
+      /** work init  */
       that.scaleMaxAni(alertBar);
       that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
         targets: alertBar,
@@ -744,24 +744,33 @@ export default class Game6PlayScene extends Phaser.Scene {
     let that = this;
     this.bg = new Phaser.GameObjects.Image(this, 0, 0, "bg").setOrigin(0);
 
-    this.btn_exit = new Phaser.GameObjects.Image(this, 25+60*0.5, 25+60*0.5, "btn_exit").setOrigin(0.5).setAlpha(0.7);
-    this.btn_exit.setInteractive();
-    this.btn_exit.on("pointerdown",function (){
-      StaticAni.prototype.alphaScaleFuc(this,1.2,1.2,1);
+    let shape = new Phaser.Geom.Circle(60 * 0.5, 60 * 0.5, 60);
+
+    this.btn_exit = new Phaser.GameObjects.Image(this, 25 + 60 * 0.5, 25 + 60 * 0.5, "btn_exit").setOrigin(0.5).setAlpha(0.7);
+    this.btn_exit.setInteractive(shape, Phaser.Geom.Circle.Contains);
+    this.btn_exit.on("pointerdown", function () {
+      StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
       that.exitGame();
     });
-    this.btn_exit.on("pointerup",function (){
-      StaticAni.prototype.alphaScaleFuc(this,1,1,0.7); 
+    this.btn_exit.on("pointerup", function () {
+      StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
     });
 
-    this.btn_sound = new Phaser.GameObjects.Sprite(this, 939+60*0.5, 25+60*0.5, "btn_sound_on").setOrigin(0.5).setAlpha(0.7);
-    this.btn_sound.setInteractive();
-    this.btn_sound.on("pointerdown",function (){
-      StaticAni.prototype.alphaScaleFuc(this,1.2,1.2,1); 
+    this.btn_sound = new Phaser.GameObjects.Sprite(this, 939 + 60 * 0.5, 25 + 60 * 0.5, "btn_sound_on").setOrigin(0.5).setAlpha(0.7);
+
+    this.btn_sound.setInteractive(shape, Phaser.Geom.Circle.Contains);
+
+    this.btn_exit.on("pointerover", gameobjectoverHandle);
+    this.btn_exit.on("pointerout", gameobjectoutHandle);
+    this.btn_sound.on("pointerover", gameobjectoverHandle);
+    this.btn_sound.on("pointerout", gameobjectoutHandle);
+
+    this.btn_sound.on("pointerdown", function () {
+      StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
       onOffSound.call(this);
     });
-    this.btn_sound.on("pointerup",function (){
-      StaticAni.prototype.alphaScaleFuc(this,1,1,0.7);
+    this.btn_sound.on("pointerup", function () {
+      StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
     });
 
     this.staticScene = new Phaser.GameObjects.Container(this, 0, 0, [
@@ -771,14 +780,13 @@ export default class Game6PlayScene extends Phaser.Scene {
     ]);
     this.add.existing(this.staticScene);
 
-    function gameobjectoutHandle(){
-      StaticAni.prototype.alphaScaleFuc(this,1,1,0.7);
+    function gameobjectoutHandle() {
+      StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
     }
 
-    function gameobjectoverHandle(){
-      console.log("yes");
-      StaticAni.prototype.alphaScaleFuc(this,1.2,1.2,1);
-    } 
+    function gameobjectoverHandle() {
+      StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
+    }
 
     function onOffSound() {
       let bgm = that.bgm;
