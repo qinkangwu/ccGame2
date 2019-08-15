@@ -527,6 +527,9 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function recordEndFuc() {
+      if(ableStop===1){
+        luyinBtn.off("pointerdown", recordReady);
+      }
       resetStart();
       let analysisMask:Phaser.GameObjects.Container = createMaskAnalysis();
       that.bgm.resume();
@@ -569,7 +572,7 @@ export default class Game6PlayScene extends Phaser.Scene {
           alertBarEl("tips_no", that.nextLevel.bind(that));
         } else {
           alertBarEl("tips_tryagain", () => {
-            if(ableStop===2){
+            if(ableStop===2||ableStop===1){
             luyinBtn.on("pointerdown", recordReady);
             }
             ableStop = 0;
