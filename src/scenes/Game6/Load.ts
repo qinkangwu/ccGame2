@@ -46,6 +46,7 @@ export default class Game6LoadScene extends Phaser.Scene {
     }
 
   create(): void {
+     let bg = this.add.image(0,0,"bg").setOrigin(0).setAlpha(0.4);
      let cover = this.add.image(1024*0.5,552*0.5,"cover");
      cover.setInteractive();
      cover.on("pointerdown",()=>{
