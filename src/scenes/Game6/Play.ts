@@ -99,6 +99,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     if (index === 0) {
       this.createBgm();
     }
+    //index = 6; //test
     this.createStaticScene();
     this.createAudio();
     this.createDynamicScene();
@@ -343,10 +344,11 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function onLeftRightDrag(pointer, dragX, dragY): void {
-      console.log(1);
       (<Phaser.GameObjects.Image>this).setPosition(dragX, dragY);
       (<Phaser.GameObjects.Text>this.parentContainer.list[1]).setPosition(dragX, dragY);
-      setMirror.call(this, dragX, dragY);
+      if(that.balls.list.length > 2){
+        setMirror.call(this, dragX, dragY);
+      }
     }
 
     /* 镜像制作 */
