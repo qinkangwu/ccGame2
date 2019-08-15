@@ -383,6 +383,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       that.status = "一轮左或右拖拽结束";
       that.scaleMaxAni(args[1]);
       if (hits === that.balls.list.length - 1) {
+        that.boom();
         that.status = "一轮左右拖拽结束";
         args[0].off("drag", onLeftRightDrag);
         args[0].off("dragend", onLeftRightDragEnd);
