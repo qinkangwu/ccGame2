@@ -495,7 +495,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     let cirAni = this.tweens.add((<Phaser.Types.Tweens.TweenBuilderConfig>{
       targets: radian,
-      value: 2 * Math.PI * -1,
+      value: 2 * Math.PI,
       duration: 3000,   //录音时间3秒钟
       paused: true,
       onStart: recordStartFuc,
