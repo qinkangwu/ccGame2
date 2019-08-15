@@ -1,3 +1,4 @@
+import "phaser";
 import { config } from "../interface/CreateBtnClassInt";
 
 /**
@@ -89,7 +90,7 @@ export default class CreateBtnClass {
       this.recordGraphics = null;
       //@ts-ignore
       if(this.timerNum.d <= 0 ){
-        this.config.recordEndCallback.call(this.config.recordScope || this.scene);
+        this.recordEnd();
       }
     }
 
@@ -112,7 +113,8 @@ export default class CreateBtnClass {
       this.recordStartBtn.alpha = 1;
       this.recordStartBtn.depth = 1;
       this.timerObj && this.timerObj.stop();
-      this.recordGraphics.destroy();
+      this.recordGraphics && this.recordGraphics.destroy && this.recordGraphics.destroy();
+      this.recordGraphics && (this.recordGraphics = null);
     }
     
     private recordStart () : void {

@@ -36,8 +36,6 @@ export default class Game7LoadScene extends Phaser.Scene {
     this.load.image('recordIcon','assets/Game7/btn_luyin.png');
     this.load.multiatlas('icons','assets/Game7/imgsJson.json','assets/Game7');
     this.load.multiatlas('icons2','assets/Game7/imgsJson2.json','assets/Game7');
-    this.load.audio('bgm','assets/Game5/bgm.mp3');
-    this.load.audio('clickMp3','assets/Game5/click.mp3');
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;

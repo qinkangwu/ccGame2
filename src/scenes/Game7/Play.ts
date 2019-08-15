@@ -2,10 +2,10 @@ import 'phaser';
 import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import CreateBtnClass from '../../Public/CreateBtnClass';
+import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 
 const scaleX : number = window.innerWidth / 1024;
 const scaleY : number = window.innerHeight / 552;
-const timerMoveSecons = 3000; //进度多少毫秒走完
 
 export default class Game7PlayScene extends Phaser.Scene {
     private machine : Phaser.GameObjects.Image ; //机器主体
@@ -17,12 +17,15 @@ export default class Game7PlayScene extends Phaser.Scene {
     private rec ; //录音对象
     private resultArr : any[] = [] ; //结果的集合
     private word1 : Phaser.GameObjects.Text; //游玩过程当中随机1号
-    private word2 : Phaser.GameObjects.Text; //游玩过程当中随机1号
-    private word3 : Phaser.GameObjects.Text; //游玩过程当中随机1号
+    private word2 : Phaser.GameObjects.Text; //游玩过程当中随机2号
+    private word3 : Phaser.GameObjects.Text; //游玩过程当中随机3号
     private renderingTimerObj : Phaser.Time.TimerEvent; //过程timer
     private recordBlob : Blob ; //录音二进制数据
-    private goldNumber : number = 0; //金币数量文本
+    private goldNumber : object = {
+      n : 0
+    }; //金币数量文本
     private createBtnClass : CreateBtnClass ; //按钮组件返回
+    private tips : TipsParticlesEmitter; //tip组件
     constructor() {
       super({
         key: "Game7PlayScene"
@@ -49,7 +52,8 @@ export default class Game7PlayScene extends Phaser.Scene {
         playBtnCallback : ()=>{},
         playRecordCallback : this.playRecord,
         bgm : this.bgm
-      });
+      }); //按钮公共组件
+      this.tips = new TipsParticlesEmitter(this); //tip组件
     }
 
     private createGold () : void {
@@ -58,7 +62,8 @@ export default class Game7PlayScene extends Phaser.Scene {
         .setOrigin(.5)
         .setDisplaySize(60,60)
         .setInteractive()
-      this.goldText = this.add.text(this.goldIcon.x + 13,this.goldIcon.y + 16,this.goldNumber + '',{
+      //@ts-ignore
+      this.goldText = this.add.text(this.goldIcon.x + 13,this.goldIcon.y + 16,this.goldNumber.n + '',{
         font: 'Bold 14px Arial Rounded MT',
         fill : '#fff',
       }).setOrigin(.5);
@@ -101,7 +106,11 @@ export default class Game7PlayScene extends Phaser.Scene {
       !this.renderAnims.clearTimer && (this.renderAnims.clearTimer = this.time.addEvent({
         delay : 2000,
         callback : ()=>{
-          this.renderSuccess(['h','i']); //结束
+          if(Phaser.Math.Between(1,100) < 10){
+            this.renderSuccess([]); //结束
+          }else{
+            this.renderSuccess([]); //结束
+          }
         }
       }))
     }
@@ -191,6 +200,8 @@ export default class Game7PlayScene extends Phaser.Scene {
               .setDisplaySize(95,95)
               .setOrigin(.5));
             !init && this.renderEndHandle();
+            !init && data.length === 0 && this.subGoldNum(3);
+            !init && data.length < 3 && data.length !== 0 && this.subGoldNum(3 - data.length);
         }
       })
     }
@@ -215,7 +226,12 @@ export default class Game7PlayScene extends Phaser.Scene {
     private handleClick () : void {
       //点击摇杆
       this.handle.play('begin');
-      this.renderAnims();
+      this.time.addEvent({
+        delay : 300,
+        callback : ()=>{
+          this.renderAnims();
+        }
+      })
       this.tweens.add({
         targets : [this.createBtnClass.playBtn,this.createBtnClass.recordStartBtn,this.createBtnClass.playRecordBtn],
         alpha : 0,
@@ -268,6 +284,55 @@ export default class Game7PlayScene extends Phaser.Scene {
           ease : 'Sine.easeInOut'
         });
         console.log('录音失败' + msg);
+      })
+    }
+
+    private subGoldNum (num : number) : void {
+      this.tweens.add({
+        targets : [this.goldIcon],
+        displayHeight : 90,
+        displayWidth : 90,
+        ease : 'Sine.easeInOut',
+        duration : 200,
+        onComplete : ()=>{
+          this.tweens.add({
+            targets : [this.goldIcon],
+            displayHeight : 60,
+            displayWidth : 60,
+            duration : 200,
+            ease : 'Sine.easeInOut',
+          })
+        }
+      });
+      this.tweens.add({
+        targets : [this.goldText],
+        scaleX : 1.5,
+        scaleY : 1.5,
+        x : this.goldIcon.x + 20,
+        y : this.goldIcon.y + 23,
+        ease : 'Sine.easeInOut',
+        duration : 200,
+        onComplete : ()=>{
+          this.tweens.add({
+            targets : [this.goldText],
+            scaleX : 1,
+            scaleY : 1,
+            x : this.goldIcon.x + 13,
+            y : this.goldIcon.y + 16,
+            duration : 200,
+            ease : 'Sine.easeInOut',
+          })
+        }
+      });
+      this.tweens.add({
+        targets : this.goldNumber,
+        //@ts-ignore
+        n : this.goldNumber.n + num,
+        duration : 500,
+        onUpdate : ()=>{
+          //@ts-ignore
+          this.goldText.setText(Math.ceil(this.goldNumber.n) + '');
+        }
       })
     }
 
