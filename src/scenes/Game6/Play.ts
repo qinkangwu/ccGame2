@@ -572,6 +572,7 @@ export default class Game6PlayScene extends Phaser.Scene {
           alertBarEl("tips_no", that.nextLevel.bind(that));
         } else {
           alertBarEl("tips_tryagain", () => {
+            that.cloudWord.setAlpha(1);
             if(ableStop===2||ableStop===1){
             luyinBtn.on("pointerdown", recordReady);
             }
@@ -591,7 +592,6 @@ export default class Game6PlayScene extends Phaser.Scene {
       that.cloudWord.setAlpha(0);
       let alertBar = that.add.image(242 + 521 * 0.5, 0 + 338 * 0.5, texture);
       that.boom();
-      /** work init  */
       that.scaleMaxAni(alertBar);
       that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
         targets: alertBar,
@@ -601,7 +601,6 @@ export default class Game6PlayScene extends Phaser.Scene {
         delay: 1000,
         onComplete: () => {
           alertBar.destroy();
-          that.cloudWord.setAlpha(1);
           callBack();
         }
       });
