@@ -525,7 +525,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     function recordEndFuc() {
       resetStart();
-      luyinBtn.setTexture("analysis");
+      let analysisMask:Phaser.GameObjects.Container = createMaskAnalysis();
       that.bgm.resume();
       backplayBtn.setData("haveRecord", "yes");
       rec.stop((blob: string) => {
@@ -534,7 +534,10 @@ export default class Game6PlayScene extends Phaser.Scene {
         userRecoder.play();
         post(apiPath.postAudio, { audio: blob }, 'json', true)
           .then(res => {
+            analysisMask.destroy();
             luyinBtn.setTexture("btn_luyin");
+            console.log(analysisMask);
+            analysisMask.destroy(); 
             originalBtn.setAlpha(1);
             backplayBtn.setAlpha(1);
             let correctAnswer = that.phoneticData[index].name;
@@ -542,6 +545,17 @@ export default class Game6PlayScene extends Phaser.Scene {
             checkoutResult(correctAnswer, result);
           });
       });
+    }
+
+    function createMaskAnalysis():Phaser.GameObjects.Container{
+      let bgShape = new Phaser.GameObjects.Graphics(that);
+      bgShape.fillStyle(0x000000,0.6);
+      bgShape.fillRect(0,0,W,H);
+      let analysis = new Phaser.GameObjects.Image(that,W*0.5,H*0.5,"analysis").setOrigin(0.5);
+      let maskAnalysis = new Phaser.GameObjects.Container(that);
+      maskAnalysis.add([bgShape,analysis]);
+      that.add.existing(maskAnalysis);
+      return maskAnalysis; 
     }
 
     function checkoutResult(correctAnswer, result) {
@@ -607,7 +621,6 @@ export default class Game6PlayScene extends Phaser.Scene {
         }
       });
     }
-
   }
 
   /**
