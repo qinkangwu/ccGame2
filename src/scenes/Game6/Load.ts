@@ -51,7 +51,6 @@ export default class Game6LoadScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.scale.startFullscreen();
     this.bg = this.add.image(0, 0, "bg").setOrigin(0).setAlpha(0);
     this.cover = this.add.image(1024 * 0.5, 552 * 0.5, "cover").setAlpha(0);
     this.cover.setInteractive();
@@ -67,17 +66,21 @@ export default class Game6LoadScene extends Phaser.Scene {
   }
 
   private resize(): void {
+    let head = document.querySelector("head");
+    head.innerHTML+=`
+      <link href="assets/css/jonny.css" rel="stylesheet"/>
+    `;
     var content: HTMLElement = document.querySelector("#content");
     content.style.backgroundColor = "#000000";
     var canvas = document.querySelector("canvas");
     canvas.className = "obj-cover-center";
     this.scale.resize(1024, 552);
-    canvas.setAttribute("style", `
-      width: 100% !important;
-      height: 100% !important;
-      object-fit: contain;
-      object-position: center;
-      `)
+    // canvas.setAttribute("style", `
+    //   width: 100% !important;
+    //   height: 100% !important;
+    //   object-fit: ;
+    //   object-position: center;
+    //   `)
   }
 
   /**
