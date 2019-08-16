@@ -2,7 +2,7 @@ import 'phaser';
 import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
-import { StaticAni } from '../../public/JonnyAnimate';
+import { StaticAni } from '../../public/jonny/animate';
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
