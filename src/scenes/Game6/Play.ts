@@ -616,7 +616,6 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     
     function recordReady() {
-      console.log(ableStop);
       if(ableStop===1){
           luyinBtn.off("pointerdown", recordReady);
           ableStop = 2;
