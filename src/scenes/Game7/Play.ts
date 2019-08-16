@@ -3,6 +3,7 @@ import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import CreateBtnClass from '../../Public/CreateBtnClass';
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
+import CreateMask from '../../Public/CreateMask';
 
 const scaleX : number = window.innerWidth / 1024;
 const scaleY : number = window.innerHeight / 552;
@@ -43,7 +44,10 @@ export default class Game7PlayScene extends Phaser.Scene {
       this.createBgi(); //背景图
       this.createMachine(); //创建机器
       this.createBgm(); //背景音乐
-      this.createMask(); //创建遮罩层
+      new CreateMask(this,()=>{
+        this.initEmitHandle(); //初始化事件
+        this.handleAnims(); //初始化动画
+      })
       this.renderSuccess([],true); //初始化渲染
       this.createGold(); //创建金币
       this.createBtnClass = new CreateBtnClass(this,{
@@ -67,24 +71,6 @@ export default class Game7PlayScene extends Phaser.Scene {
         font: 'Bold 14px Arial Rounded MT',
         fill : '#fff',
       }).setOrigin(.5);
-    }
-
-    private createMask () : void {
-      //创建开始游戏遮罩
-      let graphicsObj : Phaser.GameObjects.Graphics = this.add.graphics();
-      graphicsObj.fillStyle(0x000000,.5);
-      graphicsObj.fillRect(0,0,window.innerWidth,window.innerHeight).setDepth(1);
-      let mask : Phaser.GameObjects.Image = this.add.image(window.innerWidth / 2, window.innerHeight / 2 , 'mask').setDepth(100);
-      let zoneObj : Phaser.GameObjects.Zone = this.add.zone(window.innerWidth / 2 - 104.5,window.innerHeight / 2 + 138 ,209 , 53 ).setOrigin(0).setInteractive();
-      let that : Game7PlayScene = this;
-      zoneObj.on('pointerdown',function () {
-        //点击开始游戏注销组件
-        zoneObj.destroy();
-        graphicsObj.destroy();
-        mask.destroy();
-        that.initEmitHandle(); //初始化事件
-        that.handleAnims(); //初始化动画
-      });
     }
 
     private renderAnims () : void {
@@ -257,6 +243,7 @@ export default class Game7PlayScene extends Phaser.Scene {
     }
 
     private playRecord () : void {
+      if(!this.recordBlob) return;
       const audio = document.createElement("audio");
       audio.src = URL.createObjectURL(this.recordBlob);
       audio.play();

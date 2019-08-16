@@ -48,6 +48,8 @@ const initHandle = (arr : object[]) : void=>{
 
 const loadOnDemand = (menu : string ) : void=>{
   //按需加载
+  //@ts-ignore
+  window.currentGame = menu; 
   let menuStr = [];
   //@ts-ignore
   require.context(`./scenes/`,true,/\.ts$/).keys().map((r : string)=>{
