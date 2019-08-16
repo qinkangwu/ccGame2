@@ -2,12 +2,15 @@ import 'phaser';
 import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
-import {StaticAni} from '../../public/JonnyAnimate';
+import { StaticAni } from '../../public/JonnyAnimate';
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
 const W = 1024;
 const H = 552;
+const vol = 0.3; //背景音乐的音量
+var ableStop:number = 0;  //0=>不能停止，1=>能停止,2=>已经停止 
+var rotate:number = 0;   //音频按钮的旋转初始值
 var index: number; //题目的指针，默认为0
 
 var arrowUpObj: any = null;
@@ -91,17 +94,14 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   preload(): void {
-    let currentPhoneticData = this.phoneticData[index];
-    this.load.audio(currentPhoneticData.name, currentPhoneticData.audioKey);
-    currentPhoneticData.phoneticSymbols.forEach(_v => {
-      this.load.audio(_v.name, _v.audioKey);
-    })
+
   }
 
   create(): void {
     if (index === 0) {
       this.createBgm();
     }
+    //index = 6; //test
     this.createStaticScene();
     this.createAudio();
     this.createDynamicScene();
@@ -110,6 +110,14 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   update(time: number, delta: number): void {
+    if(this.btn_sound.rotation===Math.PI*2){
+      this.btn_sound.rotation = 0;
+    }
+    if(this.bgm.isPlaying){
+      this.btn_sound.rotation+=0.05;
+    }else{
+      this.btn_sound.rotation = 0;
+    } 
   }
 
   /** * 游戏开始 */
@@ -163,7 +171,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     } as Phaser.Types.Sound.SoundMarker);
     let config: Phaser.Types.Sound.SoundConfig = {
       loop: true,
-      volume: 0.2
+      volume: vol
     }
 
     this.bgm.play("start", config);
@@ -338,10 +346,11 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function onLeftRightDrag(pointer, dragX, dragY): void {
-      console.log(1);
       (<Phaser.GameObjects.Image>this).setPosition(dragX, dragY);
       (<Phaser.GameObjects.Text>this.parentContainer.list[1]).setPosition(dragX, dragY);
-      setMirror.call(this, dragX, dragY);
+      if(that.balls.list.length > 2){
+        setMirror.call(this, dragX, dragY);
+      }
     }
 
     /* 镜像制作 */
@@ -383,6 +392,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       that.status = "一轮左或右拖拽结束";
       that.scaleMaxAni(args[1]);
       if (hits === that.balls.list.length - 1) {
+        that.boom();
         that.status = "一轮左右拖拽结束";
         args[0].off("drag", onLeftRightDrag);
         args[0].off("dragend", onLeftRightDragEnd);
@@ -489,7 +499,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     let cirAni = this.tweens.add((<Phaser.Types.Tweens.TweenBuilderConfig>{
       targets: radian,
-      value: 2 * Math.PI * -1,
+      value: 2 * Math.PI,
       duration: 3000,   //录音时间3秒钟
       paused: true,
       onStart: recordStartFuc,
@@ -500,6 +510,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     function recordStartFuc() {
       originalBtn.setAlpha(0);
       backplayBtn.setAlpha(0);
+      that.cloudWord.setAlpha(0);
       rec.start();
     }
 
@@ -518,27 +529,44 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function recordEndFuc() {
+      if(ableStop===1){
+        luyinBtn.off("pointerdown", recordReady);
+      }
       resetStart();
-      luyinBtn.setTexture("analysis");
+      let analysisMask:Phaser.GameObjects.Container = createMaskAnalysis();
       that.bgm.resume();
       backplayBtn.setData("haveRecord", "yes");
       rec.stop((blob: string) => {
         rec.close();
         userRecoder.src = URL.createObjectURL(blob);
         userRecoder.play();
-        post(apiPath.postAudio,{audio:blob},'json',true)
-        .then(res=>{
-          luyinBtn.setTexture("btn_luyin");
-          originalBtn.setAlpha(1);
-          backplayBtn.setAlpha(1);
-          let correctAnswer = that.phoneticData[index].name;
-          let result = res.result;
-          checkoutResult(correctAnswer, result);
-        });
+        post(apiPath.postAudio, { audio: blob }, 'json', true)
+          .then(res => {
+            analysisMask.destroy();
+            luyinBtn.setTexture("btn_luyin");
+            analysisMask.destroy(); 
+            originalBtn.setAlpha(1);
+            backplayBtn.setAlpha(1);
+            let correctAnswer = that.phoneticData[index].name;
+            let result = res.result;
+            checkoutResult(correctAnswer, result);
+          });
       });
     }
 
+    function createMaskAnalysis():Phaser.GameObjects.Container{
+      let bgShape = new Phaser.GameObjects.Graphics(that);
+      bgShape.fillStyle(0x000000,0.6);
+      bgShape.fillRect(0,0,W,H);
+      let analysis = new Phaser.GameObjects.Image(that,W*0.5,H*0.5,"analysis").setOrigin(0.5);
+      let maskAnalysis = new Phaser.GameObjects.Container(that);
+      maskAnalysis.add([bgShape,analysis]);
+      that.add.existing(maskAnalysis);
+      return maskAnalysis; 
+    }
+
     function checkoutResult(correctAnswer, result) {
+      console.log(that.recordTimes);
       if (correctAnswer === result) {
         alertBarEl("tips_goodjob", that.nextLevel.bind(that));
       } else {
@@ -546,7 +574,11 @@ export default class Game6PlayScene extends Phaser.Scene {
           alertBarEl("tips_no", that.nextLevel.bind(that));
         } else {
           alertBarEl("tips_tryagain", () => {
+            that.cloudWord.setAlpha(1);
+            if(ableStop===2||ableStop===1){
             luyinBtn.on("pointerdown", recordReady);
+            }
+            ableStop = 0;
           });
         }
       }
@@ -559,10 +591,9 @@ export default class Game6PlayScene extends Phaser.Scene {
       if (texture === "tips_tryagain" || texture === "tips_no") {
         that.wrongSound.play();
       }
-      that.cloudWord.setAlpha(0);
+      //that.cloudWord.setAlpha(0);
       let alertBar = that.add.image(242 + 521 * 0.5, 0 + 338 * 0.5, texture);
       that.boom();
-     /** work init  */
       that.scaleMaxAni(alertBar);
       that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
         targets: alertBar,
@@ -583,9 +614,19 @@ export default class Game6PlayScene extends Phaser.Scene {
       cir.fillStyle(0xffffff, 1);
     }
 
+    
     function recordReady() {
-      luyinBtn.off("pointerdown", recordReady);
+      console.log(ableStop);
+      if(ableStop===1){
+          luyinBtn.off("pointerdown", recordReady);
+          ableStop = 2;
+          console.log("已经停止");
+          cirAni.complete();
+          //radian.value = Math.PI*1.9;
+          return false;
+      }
       rec.open(() => {
+        ableStop = 1;
         that.recordTimes += 1;
         that.bgm.pause();
         luyinBtn.setTexture("btn_luyin_progress");
@@ -601,7 +642,6 @@ export default class Game6PlayScene extends Phaser.Scene {
         }
       });
     }
-
   }
 
   /**
@@ -610,12 +650,9 @@ export default class Game6PlayScene extends Phaser.Scene {
   private nextLevel(): void {
     this.recordTimes = 0;
     this.status = null;
-    //this.bgm.destroy();
-    // this.balls.destroy();
-    // this.nullballs.destroy();
-    // this.arrows.destroy();
-    // this.wordSpeaker.destroy();
+    ableStop = 0;
     index += 1;
+    index = index % this.phoneticData.length;
     this.scene.start('Game6PlayScene', {
       data: this.phoneticData,
       index: index
@@ -740,22 +777,63 @@ export default class Game6PlayScene extends Phaser.Scene {
 
   /* 搭建静态场景 */
   private createStaticScene(): void {
-
+    let that = this;
     this.bg = new Phaser.GameObjects.Image(this, 0, 0, "bg").setOrigin(0);
 
-    this.btn_exit = new Phaser.GameObjects.Image(this, 25, 25, "btn_exit").setOrigin(0);
-    this.btn_exit.setInteractive();
-    this.btn_exit.on("pointerdown", this.exitGame);
+    let shape = new Phaser.Geom.Circle(60 * 0.5, 60 * 0.5, 60);
 
-    this.btn_sound = new Phaser.GameObjects.Sprite(this, 939, 25, "btn_sound_on").setOrigin(0);
-    this.btn_sound.setInteractive();
-    this.btn_sound.on("pointerdown", this.onOffSound);
+    this.btn_exit = new Phaser.GameObjects.Image(this, 25 + 60 * 0.5, 25 + 60 * 0.5, "btn_exit").setOrigin(0.5).setAlpha(0.7);
+    this.btn_exit.setInteractive(shape, Phaser.Geom.Circle.Contains);
+    this.btn_exit.on("pointerdown", function () {
+      StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
+      that.exitGame();
+    });
+    this.btn_exit.on("pointerup", function () {
+      StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
+    });
+
+    this.btn_sound = new Phaser.GameObjects.Sprite(this, 939 + 60 * 0.5, 25 + 60 * 0.5, "btn_sound_on").setOrigin(0.5).setAlpha(0.7);
+
+    this.btn_sound.setInteractive(shape, Phaser.Geom.Circle.Contains);
+
+    this.btn_exit.on("pointerover", gameobjectoverHandle);
+    this.btn_exit.on("pointerout", gameobjectoutHandle);
+    this.btn_sound.on("pointerover", gameobjectoverHandle);
+    this.btn_sound.on("pointerout", gameobjectoutHandle);
+
+    this.btn_sound.on("pointerdown", function () {
+      StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
+      onOffSound.call(this);
+    });
+    this.btn_sound.on("pointerup", function () {
+      StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
+    });
+
     this.staticScene = new Phaser.GameObjects.Container(this, 0, 0, [
       this.bg,
       this.btn_exit,
       this.btn_sound
     ]);
     this.add.existing(this.staticScene);
+
+    function gameobjectoutHandle() {
+      StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
+    }
+
+    function gameobjectoverHandle() {
+      StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
+    }
+
+    function onOffSound() {
+      let bgm = that.bgm;
+      if (bgm.isPlaying) {
+        this.setTexture("btn_sound_off");
+        bgm.pause();
+      } else {
+        this.setTexture("btn_sound_on");
+        bgm.resume();
+      }
+    }
   }
 
   /* 退出游戏*/
@@ -763,16 +841,5 @@ export default class Game6PlayScene extends Phaser.Scene {
     console.log("Game Over");
   }
 
-  /* 关闭或播放音乐 */
-  private onOffSound(this: any) {
-    let bgm = this.scene.bgm;
-    if (bgm.isPlaying) {
-      this.setTexture("btn_sound_off");
-      bgm.pause();
-    } else {
-      this.setTexture("btn_sound_on");
-      bgm.play();
-    }
-  }
 
 };
