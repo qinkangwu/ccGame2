@@ -2,7 +2,7 @@
  * @param w canvas's width
  * @param h canvas's height
  */
-export default function resize(w:number,h:number){
+export function resize(w:number,h:number){
     var content: HTMLElement = document.querySelector("#content");
     content.style.backgroundColor = "#000000";
     var canvas = document.querySelector("canvas");

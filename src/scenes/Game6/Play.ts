@@ -3,6 +3,7 @@ import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
 import { StaticAni } from '../../public/jonny/animate';
+import {Cover} from '../../public/jonny/core/cover';
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
@@ -55,6 +56,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
   private recordTimes: number;
 
+  private cover:Phaser.GameObjects.Container;
   private bgm: Phaser.Sound.BaseSound; //背景音乐
   private clickSound: Phaser.Sound.BaseSound;
   private correctSound: Phaser.Sound.BaseSound;
@@ -102,6 +104,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       this.createBgm();
     }
     //index = 6; //test
+
     this.createStaticScene();
     this.createAudio();
     this.createDynamicScene();
@@ -808,12 +811,15 @@ export default class Game6PlayScene extends Phaser.Scene {
       StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
     });
 
+    this.cover = new Cover(this,"cover"); 
+
     this.staticScene = new Phaser.GameObjects.Container(this, 0, 0, [
       this.bg,
       this.btn_exit,
-      this.btn_sound
+      this.btn_sound,
     ]);
     this.add.existing(this.staticScene);
+    this.add.existing(this.cover);
 
     function gameobjectoutHandle() {
       StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);

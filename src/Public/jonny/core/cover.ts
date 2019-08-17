@@ -1,17 +1,30 @@
-class Cover extends Phaser.GameObjects.Container{
+export class Cover extends Phaser.GameObjects.Container{
     constructor(scene:Phaser.Scene,coverTexture:string){
-        super(scene);
-        this.createElement(scene,coverTexture);
+        super(scene,0,0);
+        this.init(scene,coverTexture);
     }
 
-    createElement(scene:Phaser.Scene,coverTexture:string){
+    init(scene,coverTexture){
+        this.add([
+            this.createbg(scene),
+            this.createCover(scene,coverTexture)
+        ])
+        this.setDepth(100);
+    }
+
+    createbg(scene){
         let bg = new Phaser.GameObjects.Graphics(scene);
-        bg.fillStyle(0x000000).setAlpha(0.6);
+        bg.fillStyle(0x000000);
+        bg.fillRect(0,0,scene.game.renderer.width,scene.game.renderer.height);
+        return bg;
+    }
+
+    createCover(scene:Phaser.Scene,coverTexture:string){
         let cover = new Phaser.GameObjects.Image(scene,0, 0,coverTexture).setOrigin(0.5);
         cover.setPosition(
             scene.game.renderer.width*0.5,
-            scene.game.renderer.width*0.5
+            scene.game.renderer.height*0.5
         );
-        this.add([bg,cover])
+        return cover;
     }
 }

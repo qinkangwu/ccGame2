@@ -2,7 +2,7 @@ import 'phaser';
 import apiPath from '../../lib/apiPath';
 import { get, makeParams } from '../../lib/http';
 import { Game6DataItem, game6asset } from '../../interface/Game6';
-import core from '../../Public/jonny/core'; 
+import {resize} from '../../Public/jonny/core/resize'; 
 
 const W = 1024;
 const H = 552;
@@ -21,7 +21,7 @@ export default class Game6LoadScene extends Phaser.Scene {
   }
 
   init(): void {
-    core.resize.call(this,W,H);
+    resize.call(this,W,H);
     this.centerText = this.add.text(1024 * 0.5, 552 * 0.5, '0%', {
       fill: '#fff',
       font: 'bold 60px Arial',
