@@ -1,0 +1,6 @@
+.obj-cover-center{
+    width: 100% !important;
+      height: 100% !important;
+      object-fit: contain;
+      object-position: center;
+}

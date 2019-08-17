@@ -7,7 +7,7 @@ import { config } from "../interface/CreateBtnClassInt";
  * @param config 配置对象--属性参照interface
  */
 export default class CreateBtnClass {
-    private scene ; 
+    private scene ;
     private config ;
     private bgmAnims : Phaser.Tweens.Tween;
     private bgmFlag : boolean = true ; //音乐开关
@@ -28,6 +28,7 @@ export default class CreateBtnClass {
     }
 
     private init () : void {
+        console.log(1);
         this.scene.backToListBtn = this.scene.add.image(55, 55,'icons2','btn_exit.png')
         .setOrigin(.5)
         .setAlpha(.6)
@@ -127,7 +128,7 @@ export default class CreateBtnClass {
       this.recordGraphics && (this.recordGraphics = null);
       console.log(1);
     }
-    
+
     private recordStart () : void {
       this.recordEndBtn.alpha = 1;
       this.recordEndBtn.depth = 1;
@@ -157,7 +158,7 @@ export default class CreateBtnClass {
         this.bgmFlag && this.bgmAnims.resume() || this.bgmAnims.pause();
         this.bgmFlag && this.config.bgm.resume() || this.config.bgm.pause();
         this.bgmFlag && this.scene.musicBtn.setFrame('btn_play2.png') || this.scene.musicBtn.setFrame('btn_play.png');
-        !this.bgmFlag && (this.scene.musicBtn.angle = 0); 
+        !this.bgmFlag && (this.scene.musicBtn.angle = 0);
         this.scene.musicBtn.alpha = 1;
       }
 

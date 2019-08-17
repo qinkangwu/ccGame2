@@ -2,14 +2,16 @@ import 'phaser';
 import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
-import { StaticAni } from '../../public/JonnyAnimate';
+import { StaticAni } from '../../public/jonny/animate';
+import test from '../../public/cover';
+console.log(test);
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
 const W = 1024;
 const H = 552;
 const vol = 0.3; //背景音乐的音量
-var ableStop:number = 0;  //0=>不能停止，1=>能停止,2=>已经停止 
+var ableStop:number = 0;  //0=>不能停止，1=>能停止,2=>已经停止
 var rotate:number = 0;   //音频按钮的旋转初始值
 var index: number; //题目的指针，默认为0
 
@@ -55,6 +57,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
   private recordTimes: number;
 
+  private cover:Phaser.GameObjects.Container;
   private bgm: Phaser.Sound.BaseSound; //背景音乐
   private clickSound: Phaser.Sound.BaseSound;
   private correctSound: Phaser.Sound.BaseSound;
@@ -62,7 +65,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
 
   private phoneticData: Game6DataItem[] = []; //音标数据
-  private bg: Phaser.GameObjects.Image; //背景图片 
+  private bg: Phaser.GameObjects.Image; //背景图片
   private btn_exit: Phaser.GameObjects.Image;  //退出按钮
   private btn_sound: Phaser.GameObjects.Sprite; //音乐按钮
   private staticScene: Phaser.GameObjects.Container; // 静态组
@@ -102,6 +105,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       this.createBgm();
     }
     //index = 6; //test
+
     this.createStaticScene();
     this.createAudio();
     this.createDynamicScene();
@@ -117,7 +121,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       this.btn_sound.rotation+=0.05;
     }else{
       this.btn_sound.rotation = 0;
-    } 
+    }
   }
 
   /** * 游戏开始 */
@@ -338,7 +342,7 @@ export default class Game6PlayScene extends Phaser.Scene {
         //  (<Phaser.GameObjects.Text>this.parentContainer.list[1]).setPosition(
         //   this.parentContainer.list[1].getData("ox"),
         //   this.parentContainer.list[1].getData("oy")
-        //   ); 
+        //   );
       }
       if (that.status !== "一轮左右拖拽结束") {
         that.arrowLRShow();
@@ -544,7 +548,7 @@ export default class Game6PlayScene extends Phaser.Scene {
           .then(res => {
             analysisMask.destroy();
             luyinBtn.setTexture("btn_luyin");
-            analysisMask.destroy(); 
+            analysisMask.destroy();
             originalBtn.setAlpha(1);
             backplayBtn.setAlpha(1);
             let correctAnswer = that.phoneticData[index].name;
@@ -562,7 +566,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       let maskAnalysis = new Phaser.GameObjects.Container(that);
       maskAnalysis.add([bgShape,analysis]);
       that.add.existing(maskAnalysis);
-      return maskAnalysis; 
+      return maskAnalysis;
     }
 
     function checkoutResult(correctAnswer, result) {
@@ -614,9 +618,8 @@ export default class Game6PlayScene extends Phaser.Scene {
       cir.fillStyle(0xffffff, 1);
     }
 
-    
+
     function recordReady() {
-      console.log(ableStop);
       if(ableStop===1){
           luyinBtn.off("pointerdown", recordReady);
           ableStop = 2;
@@ -809,12 +812,15 @@ export default class Game6PlayScene extends Phaser.Scene {
       StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
     });
 
+    //this.cover = new Cover(this,"cover");
+
     this.staticScene = new Phaser.GameObjects.Container(this, 0, 0, [
       this.bg,
       this.btn_exit,
-      this.btn_sound
+      this.btn_sound,
     ]);
     this.add.existing(this.staticScene);
+    //this.add.existing(this.cover);
 
     function gameobjectoutHandle() {
       StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
