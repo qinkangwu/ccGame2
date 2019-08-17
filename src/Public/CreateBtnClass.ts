@@ -125,6 +125,7 @@ export default class CreateBtnClass {
       this.timerObj && this.timerObj.stop();
       this.recordGraphics && this.recordGraphics.destroy && this.recordGraphics.destroy();
       this.recordGraphics && (this.recordGraphics = null);
+      console.log(1);
     }
     
     private recordStart () : void {
@@ -179,6 +180,8 @@ export default class CreateBtnClass {
         //@ts-ignore
         let isBtn : boolean = obj.getData('isBtn');
         if(!isBtn) return;
+        //@ts-ignore
+        let _s : boolean = obj.getData('_s');
         this.playMusic('clickMp3');
         this.scene.tweens.add({
             targets : obj,
@@ -197,7 +200,7 @@ export default class CreateBtnClass {
                 })
             }
         });
-        this.scene.tweens.add({
+        !_s && this.scene.tweens.add({
           targets : obj,
           delay : 3000,
           alpha : .6,

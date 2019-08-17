@@ -1,14 +1,16 @@
 import 'phaser';
-import {get} from '../../lib/http';
+import {get, post} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import CreateBtnClass from '../../Public/CreateBtnClass';
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 import CreateMask from '../../Public/CreateMask';
+import { Game7DataItem } from "../../interface/Game7";
 
 const scaleX : number = window.innerWidth / 1024;
 const scaleY : number = window.innerHeight / 552;
 
 export default class Game7PlayScene extends Phaser.Scene {
+    private ccData : Game7DataItem[] = []; //数据
     private machine : Phaser.GameObjects.Image ; //机器主体
     private handle : Phaser.GameObjects.Sprite ; //手柄
     private goldIcon : Phaser.GameObjects.Image; //金币数量
@@ -27,6 +29,7 @@ export default class Game7PlayScene extends Phaser.Scene {
     }; //金币数量文本
     private createBtnClass : CreateBtnClass ; //按钮组件返回
     private tips : TipsParticlesEmitter; //tip组件
+    private currentIndex : number = -1 ; //当前数据索引
     constructor() {
       super({
         key: "Game7PlayScene"
@@ -34,9 +37,11 @@ export default class Game7PlayScene extends Phaser.Scene {
     }
   
     init(data): void {
+      data && data.data && (this.ccData = data.data);
     }
   
     preload(): void {
+
     }
     
   
@@ -53,11 +58,14 @@ export default class Game7PlayScene extends Phaser.Scene {
       this.createBtnClass = new CreateBtnClass(this,{
         recordStartCallback : this.recordStartHandle,
         recordEndCallback : this.recordEndHandle,
-        playBtnCallback : ()=>{},
+        playBtnCallback : ()=>{
+          this.playMusic(this.ccData[this.currentIndex].id);
+        },
         playRecordCallback : this.playRecord,
         bgm : this.bgm
       }); //按钮公共组件
       this.tips = new TipsParticlesEmitter(this); //tip组件
+      // this.loadMusic(this.ccData);
     }
 
     private createGold () : void {
@@ -75,6 +83,7 @@ export default class Game7PlayScene extends Phaser.Scene {
 
     private renderAnims () : void {
       //开启摇摇乐
+      this.currentIndex = this.currentIndex + 1 > this.ccData.length - 1 ? 0 : this.currentIndex + 1 ;
       this.renderingTimerObj && this.renderingTimerObj.remove();
       this.renderingTimerObj && this.renderingTimerObj.destroy();
       this.renderingTimerObj && (this.renderingTimerObj = null);
@@ -94,8 +103,9 @@ export default class Game7PlayScene extends Phaser.Scene {
         callback : ()=>{
           if(Phaser.Math.Between(1,100) < 10){
             this.renderSuccess([]); //结束
+            this.currentIndex -- ;
           }else{
-            this.renderSuccess([]); //结束
+            this.renderSuccess(this.ccData[this.currentIndex].name.split('')); //结束
           }
         }
       }))
@@ -242,11 +252,55 @@ export default class Game7PlayScene extends Phaser.Scene {
       this.handle.on('pointerdown',this.handleClick.bind(this));
     }
 
+    private loadMusic (data : Array<Game7DataItem>) : void {
+      //加载音频
+      data && data.map((r :Game7DataItem , i : number )=>{
+        this.load.audio(r.id,r.audioKey);
+      })
+      this.load.start(); //preload自动运行，其他地方加载资源必须手动启动，不然加载失效
+    }
+
     private playRecord () : void {
+      //播放录音
       if(!this.recordBlob) return;
       const audio = document.createElement("audio");
       audio.src = URL.createObjectURL(this.recordBlob);
       audio.play();
+    }
+
+    private trueOrFail (res : string) : void {
+      //判断录音是否正确
+      this.ccData[this.currentIndex].name === res ? this.tips.success() : this.tips.error();
+    }
+
+    private uploadRecord (file : File) : void {
+      //上传录音识别
+      let loading : Phaser.GameObjects.Image = this.add.image(window.innerWidth / 2 , window.innerHeight / 2 ,'recordLoading').setOrigin(.5);
+      this.tweens.add({
+        targets : [this.createBtnClass.playBtn,this.createBtnClass.playRecordBtn,this.createBtnClass.recordStartBtn],
+        alpha : 0 ,
+        duration : 500,
+        ease : 'Sine.easeInOut'
+      });
+      post(apiPath.uploadRecord,{file},'json',true).then((res)=>{
+        loading.destroy();
+        if(!res || res.code !== '0000') return;
+        this.trueOrFail(res.result); //对比数据
+        this.tweens.add({
+          targets : [this.createBtnClass.recordStartBtn,this.createBtnClass.playBtn,this.createBtnClass.playRecordBtn],
+          alpha : 1,
+          duration : 500,
+          ease : 'Sine.easeInOut',
+        })
+      },()=>{
+        loading.destroy();
+        this.tweens.add({
+          targets : [this.createBtnClass.recordStartBtn,this.createBtnClass.playBtn,this.createBtnClass.playRecordBtn],
+          alpha : 1,
+          duration : 500,
+          ease : 'Sine.easeInOut',
+        })
+      })
     }
 
     private recordEndHandle() : void {
@@ -257,19 +311,8 @@ export default class Game7PlayScene extends Phaser.Scene {
         let files : File = new File([blob],'aaa.wav',{
           type : blob.type
         });
-        this.tweens.add({
-          targets : [this.createBtnClass.playBtn,this.createBtnClass.playRecordBtn],
-          alpha : 1 ,
-          duration : 500,
-          ease : 'Sine.easeInOut'
-        })
+        this.uploadRecord(files);
       },(msg)=>{
-        this.tweens.add({
-          targets : [this.createBtnClass.playBtn,this.createBtnClass.playRecordBtn],
-          alpha : 1 ,
-          duration : 500,
-          ease : 'Sine.easeInOut'
-        });
         console.log('录音失败' + msg);
       })
     }

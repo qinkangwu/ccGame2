@@ -1,14 +1,16 @@
 import 'phaser';
 import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
+import { Game7DataItem } from "../../interface/Game7";
 
 export default class Game7LoadScene extends Phaser.Scene {
+  private ccData : Game7DataItem[] = [];
   private centerText : Phaser.GameObjects.Text; //文本内容
   private DefaultLoadSeconds : number = 50; //每秒增加百分之多少
   private process : number = 0; //进度
   private timer  : Phaser.Time.TimerEvent  ;  //定时器id
   private imgLoadDone : boolean = false;  //图片是否加载完毕
-  private dataLoadDone : boolean = true;   //数据是否加载完毕
+  private dataLoadDone : boolean = false;   //数据是否加载完毕
 
   constructor() {
     super({
@@ -24,7 +26,7 @@ export default class Game7LoadScene extends Phaser.Scene {
       bold : true,
     }).setOrigin(.5,.5);
 
-    // this.getData();
+    this.getData();
 
   }
 
@@ -34,6 +36,7 @@ export default class Game7LoadScene extends Phaser.Scene {
     this.load.image('mask','assets/Game7/mask.png');
     this.load.audio('bgm','assets/Game5/bgm.mp3');
     this.load.image('recordIcon','assets/Game7/btn_luyin.png');
+    this.load.image('recordLoading','assets/Game7/recordLoading.png');
     this.load.multiatlas('icons','assets/Game7/imgsJson.json','assets/Game7');
     this.load.multiatlas('icons2','assets/Game7/imgsJson2.json','assets/Game7');
     this.load.on('complete',()=>{
@@ -55,6 +58,10 @@ export default class Game7LoadScene extends Phaser.Scene {
 
   private getData () : void {
     //获取数据
+    get(apiPath.getGame7Data).then(res=>{
+      res && res.code === '0000' && (this.ccData = res.result);
+      this.dataLoadDone = true;
+    })
   }
 
   private loadHandle () : void {
@@ -66,7 +73,9 @@ export default class Game7LoadScene extends Phaser.Scene {
           this.centerText.setText('99%');
           if(this.imgLoadDone && this.dataLoadDone){
             this.centerText.setText('100%');
-            this.scene.start('Game7PlayScene');
+            this.scene.start('Game7PlayScene',{
+              data : this.ccData
+            });
           }
           return;
         }
