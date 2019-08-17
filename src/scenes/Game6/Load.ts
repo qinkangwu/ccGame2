@@ -2,6 +2,10 @@ import 'phaser';
 import apiPath from '../../lib/apiPath';
 import { get, makeParams } from '../../lib/http';
 import { Game6DataItem, game6asset } from '../../interface/Game6';
+import core from '../../Public/jonny/core'; 
+
+const W = 1024;
+const H = 552;
 
 export default class Game6LoadScene extends Phaser.Scene {
   private _loader: Phaser.Loader.LoaderPlugin;
@@ -23,7 +27,7 @@ export default class Game6LoadScene extends Phaser.Scene {
   }
 
   init(): void {
-    this.resize();
+    core.resize.call(this,W,H);
     this.centerText = this.add.text(1024 * 0.5, 552 * 0.5, '0%', {
       fill: '#fff',
       font: 'bold 60px Arial',
@@ -65,23 +69,25 @@ export default class Game6LoadScene extends Phaser.Scene {
     });
   }
 
-  private resize(): void {
-    let head = document.querySelector("head");
-    head.innerHTML+=`
-      <link href="assets/css/jonny.css" rel="stylesheet"/>
-    `;
-    var content: HTMLElement = document.querySelector("#content");
-    content.style.backgroundColor = "#000000";
-    var canvas = document.querySelector("canvas");
-    canvas.className = "obj-cover-center";
-    this.scale.resize(1024, 552);
-    // canvas.setAttribute("style", `
-    //   width: 100% !important;
-    //   height: 100% !important;
-    //   object-fit: ;
-    //   object-position: center;
-    //   `)
-  }
+  // private resize(): void {
+  //   // let head = document.querySelector("head");
+  //   // head.innerHTML+=`
+  //   //   <link href="assets/css/jonny.css" rel="stylesheet"/>
+  //   // `;
+  //   var content: HTMLElement = document.querySelector("#content");
+  //   content.style.backgroundColor = "#000000";
+  //   var canvas = document.querySelector("canvas");
+  //   this.scale.resize(1024, 552);
+  //   this.scale.scaleMode = Phaser.Scale.NONE;
+  //   canvas.setAttribute("style", `
+  //     width: 100% !important;
+  //     height: 100% !important;
+  //     object-fit: ;
+  //     object-position: center;
+  //     `)
+  //   //this.scale.
+  //   /* init work*/
+  // }
 
   /**
    * 正式状态
