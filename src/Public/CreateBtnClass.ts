@@ -26,7 +26,6 @@ export default class CreateBtnClass {
     }
 
     private init () : void {
-        console.log(1);
         this.scene.backToListBtn = this.scene.add.image(55, 55,'icons2','btn_exit.png')
         .setOrigin(.5)
         .setAlpha(.6)

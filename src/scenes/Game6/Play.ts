@@ -3,8 +3,8 @@ import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
 import { StaticAni } from '../../public/jonny/animate';
-import test from '../../public/cover';
-console.log(test);
+import {Cover} from '../../Public/jonny/core';
+
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
@@ -812,15 +812,16 @@ export default class Game6PlayScene extends Phaser.Scene {
       StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
     });
 
-    //this.cover = new Cover(this,"cover");
-
     this.staticScene = new Phaser.GameObjects.Container(this, 0, 0, [
       this.bg,
       this.btn_exit,
       this.btn_sound,
     ]);
+
+    this.cover = new Cover(this,"cover");
+
     this.add.existing(this.staticScene);
-    //this.add.existing(this.cover);
+    this.add.existing(this.cover);
 
     function gameobjectoutHandle() {
       StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
