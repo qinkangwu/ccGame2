@@ -540,11 +540,14 @@ export default class Game6PlayScene extends Phaser.Scene {
       let analysisMask:Phaser.GameObjects.Container = createMaskAnalysis();
       that.bgm.resume();
       backplayBtn.setData("haveRecord", "yes");
-      rec.stop((blob: string) => {
+      rec.stop((blob:any) => {
         rec.close();
         userRecoder.src = URL.createObjectURL(blob);
         userRecoder.play();
-        post(apiPath.postAudio, { audio: blob }, 'json', true)
+        let file:File = new File([blob],'aaa.wav',{
+          type : blob.type
+        });
+        post(apiPath.uploadRecord, {file}, 'json', true)
           .then(res => {
             analysisMask.destroy();
             luyinBtn.setTexture("btn_luyin");
