@@ -118,16 +118,6 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   update(time: number, delta: number): void {
-    // if(this.btn_sound.rotation===Math.PI*2){
-    //   this.btn_sound.rotation = 0;
-    // }
-    // if(this.bgm.isPlaying){
-    //   this.btn_sound.rotation+=0.05;
-    // }else{
-    //   this.btn_sound.rotation = 0;
-    // }
-    //this.btn_sound.update
-    //this.btn_sound.
     this.btn_sound.mountUpdate();
   }
 
