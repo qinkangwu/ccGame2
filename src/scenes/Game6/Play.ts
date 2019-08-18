@@ -4,6 +4,8 @@ import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
 import { StaticAni } from '../../public/jonny/animate';
 import {Cover} from '../../Public/jonny/core';
+import {Button} from '../../Public/jonny/components' 
+//console.log(Button);
 
 
 const WIDTH = window.innerWidth;
@@ -66,8 +68,8 @@ export default class Game6PlayScene extends Phaser.Scene {
 
   private phoneticData: Game6DataItem[] = []; //音标数据
   private bg: Phaser.GameObjects.Image; //背景图片
-  private btn_exit: Phaser.GameObjects.Image;  //退出按钮
-  private btn_sound: Phaser.GameObjects.Sprite; //音乐按钮
+  private btn_exit:Button;  //退出按钮
+  private btn_sound:Button; //音乐按钮
   private staticScene: Phaser.GameObjects.Container; // 静态组
 
   private balls: Phaser.GameObjects.Container; //药品序列
@@ -790,32 +792,21 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     let shape = new Phaser.Geom.Circle(60 * 0.5, 60 * 0.5, 60);
 
-    this.btn_exit = new Phaser.GameObjects.Image(this, 25 + 60 * 0.5, 25 + 60 * 0.5, "btn_exit").setOrigin(0.5).setAlpha(0.7);
-    this.btn_exit.setInteractive(shape, Phaser.Geom.Circle.Contains);
-    this.btn_exit.on("pointerdown", function () {
-      StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
-      that.exitGame();
-    });
-    this.btn_exit.on("pointerup", function () {
-      StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
-    });
+    this.btn_exit = new Button(this,25 + 60 * 0.5, 25 + 60 * 0.5, "btn_exit",shape,Phaser.Geom.Circle.Contains);
+    this.btn_exit.pointerdownFunc = that.exitGame;
 
-    this.btn_sound = new Phaser.GameObjects.Sprite(this, 939 + 60 * 0.5, 25 + 60 * 0.5, "btn_sound_on").setOrigin(0.5).setAlpha(0.7);
-
-    this.btn_sound.setInteractive(shape, Phaser.Geom.Circle.Contains);
-
-    this.btn_exit.on("pointerover", gameobjectoverHandle);
-    this.btn_exit.on("pointerout", gameobjectoutHandle);
-    this.btn_sound.on("pointerover", gameobjectoverHandle);
-    this.btn_sound.on("pointerout", gameobjectoutHandle);
-
-    this.btn_sound.on("pointerdown", function () {
-      StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
-      onOffSound.call(this);
-    });
-    this.btn_sound.on("pointerup", function () {
-      StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
-    });
+    this.btn_sound = new Button(this, 939 + 60 * 0.5, 25 + 60 * 0.5, "btn_sound_on",shape,Phaser.Geom.Circle.Contains);
+    this.btn_sound.pointerdownFunc = onOffSound;
+    function onOffSound() {
+      let bgm = that.bgm;
+      if (bgm.isPlaying) {
+        this.setTexture("btn_sound_off");
+        bgm.pause();
+      } else {
+        this.setTexture("btn_sound_on");
+        bgm.resume();
+      }
+    }
 
     this.staticScene = new Phaser.GameObjects.Container(this, 0, 0, [
       this.bg,
@@ -834,16 +825,6 @@ export default class Game6PlayScene extends Phaser.Scene {
       StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
     }
 
-    function onOffSound() {
-      let bgm = that.bgm;
-      if (bgm.isPlaying) {
-        this.setTexture("btn_sound_off");
-        bgm.pause();
-      } else {
-        this.setTexture("btn_sound_on");
-        bgm.resume();
-      }
-    }
   }
 
   /* 退出游戏*/
