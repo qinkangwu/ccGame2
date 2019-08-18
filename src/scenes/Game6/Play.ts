@@ -4,7 +4,7 @@ import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
 import { StaticAni } from '../../public/jonny/animate';
 import {Cover} from '../../Public/jonny/core';
-import {Button} from '../../Public/jonny/components' 
+import {Button,ButtonMusic} from '../../Public/jonny/components' 
 //console.log(Button);
 
 
@@ -69,7 +69,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   private phoneticData: Game6DataItem[] = []; //音标数据
   private bg: Phaser.GameObjects.Image; //背景图片
   private btn_exit:Button;  //退出按钮
-  private btn_sound:Button; //音乐按钮
+  private btn_sound:ButtonMusic; //音乐按钮
   private staticScene: Phaser.GameObjects.Container; // 静态组
 
   private balls: Phaser.GameObjects.Container; //药品序列
@@ -118,14 +118,17 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   update(time: number, delta: number): void {
-    if(this.btn_sound.rotation===Math.PI*2){
-      this.btn_sound.rotation = 0;
-    }
-    if(this.bgm.isPlaying){
-      this.btn_sound.rotation+=0.05;
-    }else{
-      this.btn_sound.rotation = 0;
-    }
+    // if(this.btn_sound.rotation===Math.PI*2){
+    //   this.btn_sound.rotation = 0;
+    // }
+    // if(this.bgm.isPlaying){
+    //   this.btn_sound.rotation+=0.05;
+    // }else{
+    //   this.btn_sound.rotation = 0;
+    // }
+    //this.btn_sound.update
+    //this.btn_sound.
+    this.btn_sound.mountUpdate();
   }
 
   /** * 游戏开始 */
@@ -795,18 +798,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.btn_exit = new Button(this,25 + 60 * 0.5, 25 + 60 * 0.5, "btn_exit",shape,Phaser.Geom.Circle.Contains);
     this.btn_exit.pointerdownFunc = that.exitGame;
 
-    this.btn_sound = new Button(this, 939 + 60 * 0.5, 25 + 60 * 0.5, "btn_sound_on",shape,Phaser.Geom.Circle.Contains);
-    this.btn_sound.pointerdownFunc = onOffSound;
-    function onOffSound() {
-      let bgm = that.bgm;
-      if (bgm.isPlaying) {
-        this.setTexture("btn_sound_off");
-        bgm.pause();
-      } else {
-        this.setTexture("btn_sound_on");
-        bgm.resume();
-      }
-    }
+    this.btn_sound = new ButtonMusic(this, 939 + 60 * 0.5, 25 + 60 * 0.5, "btn_sound_on");
 
     this.staticScene = new Phaser.GameObjects.Container(this, 0, 0, [
       this.bg,
@@ -814,16 +806,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       this.btn_sound,
     ]);
 
-
     this.add.existing(this.staticScene);
-
-    function gameobjectoutHandle() {
-      StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
-    }
-
-    function gameobjectoverHandle() {
-      StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
-    }
 
   }
 
