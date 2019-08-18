@@ -103,6 +103,8 @@ export default class Game6PlayScene extends Phaser.Scene {
   create(): void {
     if (index === 0) {
       this.createBgm();
+      this.cover = new Cover(this,"cover");
+      this.add.existing(this.cover);
     }
     //index = 6; //test
 
@@ -821,10 +823,8 @@ export default class Game6PlayScene extends Phaser.Scene {
       this.btn_sound,
     ]);
 
-    this.cover = new Cover(this,"cover");
 
     this.add.existing(this.staticScene);
-    this.add.existing(this.cover);
 
     function gameobjectoutHandle() {
       StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
