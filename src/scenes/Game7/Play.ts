@@ -65,7 +65,7 @@ export default class Game7PlayScene extends Phaser.Scene {
         bgm : this.bgm
       }); //按钮公共组件
       this.tips = new TipsParticlesEmitter(this); //tip组件
-      // this.loadMusic(this.ccData);
+      this.loadMusic(this.ccData);
     }
 
     private createGold () : void {
@@ -83,7 +83,6 @@ export default class Game7PlayScene extends Phaser.Scene {
 
     private renderAnims () : void {
       //开启摇摇乐
-      this.currentIndex = this.currentIndex + 1 > this.ccData.length - 1 ? 0 : this.currentIndex + 1 ;
       this.renderingTimerObj && this.renderingTimerObj.remove();
       this.renderingTimerObj && this.renderingTimerObj.destroy();
       this.renderingTimerObj && (this.renderingTimerObj = null);
@@ -101,6 +100,7 @@ export default class Game7PlayScene extends Phaser.Scene {
       !this.renderAnims.clearTimer && (this.renderAnims.clearTimer = this.time.addEvent({
         delay : 2000,
         callback : ()=>{
+          this.currentIndex = this.currentIndex + 1 > this.ccData.length - 1 ? 0 : this.currentIndex + 1 ;
           if(Phaser.Math.Between(1,100) < 10){
             this.renderSuccess([]); //结束
             this.currentIndex -- ;
@@ -195,14 +195,14 @@ export default class Game7PlayScene extends Phaser.Scene {
             this.add.image(this.machine.x + 31 + (95 * scaleX),this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),'icons2','civa_gold2.png')
               .setDisplaySize(95,95)
               .setOrigin(.5));
-            !init && this.renderEndHandle();
+            !init && this.renderEndHandle(data);
             !init && data.length === 0 && this.subGoldNum(3);
             !init && data.length < 3 && data.length !== 0 && this.subGoldNum(3 - data.length);
         }
       })
     }
 
-    private renderEndHandle () : void {
+    private renderEndHandle (data : string[]) : void {
       this.renderingTimerObj && this.renderingTimerObj.remove();
       this.renderingTimerObj && this.renderingTimerObj.destroy();
       this.renderingTimerObj && (this.renderingTimerObj = null);
@@ -211,7 +211,7 @@ export default class Game7PlayScene extends Phaser.Scene {
       this.word1 = null;
       this.word2 = null;
       this.word3 = null;
-      this.tweens.add({
+      data.length > 0 && this.tweens.add({
         targets : [this.createBtnClass.recordStartBtn],
         alpha : 1,
         duration : 500,

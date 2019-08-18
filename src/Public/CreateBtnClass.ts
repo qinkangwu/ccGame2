@@ -28,7 +28,6 @@ export default class CreateBtnClass {
     }
 
     private init () : void {
-        console.log(1);
         this.scene.backToListBtn = this.scene.add.image(55, 55,'icons2','btn_exit.png')
         .setOrigin(.5)
         .setAlpha(.6)
@@ -100,7 +99,7 @@ export default class CreateBtnClass {
       this.recordGraphics = null;
       //@ts-ignore
       if(this.timerNum.d >= 360 ){
-        this.recordEnd();
+        this.recordEnd.call(this);
       }
     }
 
@@ -124,9 +123,8 @@ export default class CreateBtnClass {
       this.recordStartBtn.alpha = 1;
       this.recordStartBtn.depth = 1;
       this.timerObj && this.timerObj.stop();
-      this.recordGraphics && this.recordGraphics.destroy && this.recordGraphics.destroy();
+      this.recordGraphics && this.recordGraphics.clear();
       this.recordGraphics && (this.recordGraphics = null);
-      console.log(1);
     }
 
     private recordStart () : void {
@@ -142,7 +140,12 @@ export default class CreateBtnClass {
         targets : this.timerNum,
         d : 360,
         duration : 3000,
-        onUpdate : this.drawArc.bind(this)
+        onUpdate : this.drawArc.bind(this),
+        onComplete : ()=>{
+          this.recordGraphics && this.recordGraphics.clear();
+          this.recordGraphics && this.recordGraphics.destroy();
+          this.recordGraphics && (this.recordGraphics = null);
+        }
       })
       this.config.recordStartCallback.call(this.config.recordScope || this.scene)
     }
