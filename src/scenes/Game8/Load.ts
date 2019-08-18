@@ -1,16 +1,14 @@
-import 'phaser';
 import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
-import { Game7DataItem } from "../../interface/Game7";
+import 'phaser';
 
-export default class Game7LoadScene extends Phaser.Scene {
-  private ccData : Game7DataItem[] = [];
+export default class Game8LoadScene extends Phaser.Scene {
   private centerText : Phaser.GameObjects.Text; //文本内容
-  private DefaultLoadSeconds : number = 50; //每秒增加百分之多少
+  private DefaultLoadSeconds : number = 33; //每秒增加百分之多少
   private process : number = 0; //进度
   private timer  : Phaser.Time.TimerEvent  ;  //定时器id
   private imgLoadDone : boolean = false;  //图片是否加载完毕
-  private dataLoadDone : boolean = false;   //数据是否加载完毕
+  private dataLoadDone : boolean = true;   //数据是否加载完毕
 
   constructor() {
     super({
@@ -24,21 +22,24 @@ export default class Game7LoadScene extends Phaser.Scene {
       fill : '#fff',
       font: 'bold 60px Arial',
       bold : true,
+      // shadow: {
+      //           color: '#fff',
+      //           fill: true,
+      //           offsetX: 2,
+      //           offsetY: 2,
+      //           blur: 8
+      // }
     }).setOrigin(.5,.5);
 
-    this.getData();
+    // this.getData();
 
   }
 
   preload(): void {
-    this.load.image('game7Bgi','assets/Game7/bgi.png');
-    this.load.image('machine','assets/Game7/machine.png');
-    this.load.image('mask','assets/Game7/mask.png');
+    this.load.image('bgi','assets/Game8/bgi.png');
     this.load.audio('bgm','assets/Game5/bgm.mp3');
-    this.load.image('recordIcon','assets/Game7/btn_luyin.png');
-    this.load.image('recordLoading','assets/Game7/recordLoading.png');
-    this.load.multiatlas('icons','assets/Game7/imgsJson.json','assets/Game7');
-    this.load.multiatlas('icons2','assets/Game7/imgsJson2.json','assets/Game7');
+    this.load.multiatlas('game8Icons','assets/Game8/imgsJson.json','assets/Game8');
+    this.load.multiatlas('game8Icons2','assets/Game8/imgsJson2.json','assets/Game8');
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;
@@ -58,10 +59,6 @@ export default class Game7LoadScene extends Phaser.Scene {
 
   private getData () : void {
     //获取数据
-    get(apiPath.getGame7Data).then(res=>{
-      res && res.code === '0000' && (this.ccData = res.result);
-      this.dataLoadDone = true;
-    })
   }
 
   private loadHandle () : void {
@@ -73,9 +70,12 @@ export default class Game7LoadScene extends Phaser.Scene {
           this.centerText.setText('99%');
           if(this.imgLoadDone && this.dataLoadDone){
             this.centerText.setText('100%');
-            this.scene.start('Game7PlayScene',{
-              data : this.ccData
-            });
+            // this.tweens.add({
+            //   targets : this.centerText,
+            //   duration : 500,
+            //   alpha : 0
+            // })
+            this.scene.start('Game8PlayScene');
           }
           return;
         }

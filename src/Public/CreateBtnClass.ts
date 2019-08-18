@@ -2,6 +2,7 @@ import "phaser";
 import { config } from "../interface/CreateBtnClassInt";
 
 /**
+ * @class CreateBtnClass 按钮公共组件
  * @param scene 当前场景
  * @param config 配置对象--属性参照interface
  */
@@ -16,8 +17,9 @@ export default class CreateBtnClass {
     private recordGraphics : Phaser.GameObjects.Graphics ; //停止录音进度条绘制对象
     private timerObj : Phaser.Tweens.Tween; //定时器
     public playRecordBtn : Phaser.GameObjects.Image; //播放录音按钮
+    private previewBtn : Phaser.GameObjects.Image; //返回上一步按钮
     private timerNum : object = {
-      d : 360
+      d : 0
     }; //进度条角度
     constructor(scene,config : config){
         this.scene = scene;
@@ -38,31 +40,38 @@ export default class CreateBtnClass {
         .setDisplaySize(60,60)
         .setInteractive()
         .setData('isBtn',true);
-        this.playBtn = this.scene.add.image(window.innerWidth / 2 - 150, window.innerHeight - 80 , 'icons2' , 'btn_last2.png')
+        this.playBtn = this.scene.add.image(this.config.playBtnPosition && this.config.playBtnPosition.x || window.innerWidth / 2 - 150, this.config.playBtnPosition && this.config.playBtnPosition.y || window.innerHeight - 80 , 'icons2' , 'btn_last2.png')
         .setDisplaySize(60 , 60)
         .setOrigin(.5)
-        .setAlpha(0)
+        .setAlpha(this.config.playBtnPosition && this.config.playBtnPosition.alpha || 0)
         .setInteractive()
         .setData('isBtn',true)
         .setData('_s',true);
-        this.recordStartBtn = this.scene.add.image(window.innerWidth / 2, window.innerHeight - 80 , 'icons2' , 'btn_luyin2.png')
+        this.config.recordStartCallback && (this.recordStartBtn = this.scene.add.image(window.innerWidth / 2, window.innerHeight - 80 , 'icons2' , 'btn_luyin2.png')
         .setDisplaySize(110, 110)
         .setAlpha(0)
         .setInteractive()
         .setData('isBtn',true)
-        .setData('_s',true);
-        this.recordEndBtn = this.scene.add.image(window.innerWidth / 2, window.innerHeight - 80 , 'recordIcon')
+        .setData('_s',true));
+        this.config.recordEndCallback && (this.recordEndBtn = this.scene.add.image(window.innerWidth / 2, window.innerHeight - 80 , 'recordIcon')
         .setDisplaySize(110 , 110 )
         .setAlpha(0)
         .setInteractive()
-        .setData('_s',true);
-        this.playRecordBtn = this.scene.add.image(window.innerWidth / 2 + 150 , window.innerHeight - 80 , 'icons2' , 'btn_last.png')
+        .setData('_s',true));
+        this.config.playRecordCallback && (this.playRecordBtn = this.scene.add.image(window.innerWidth / 2 + 150 , window.innerHeight - 80 , 'icons2' , 'btn_last.png')
         .setDisplaySize(60  , 60 )
         .setOrigin(.5)
         .setAlpha(0)
         .setInteractive()
         .setData('isBtn',true)
-        .setData('_s',true);
+        .setData('_s',true));
+        this.config.previewCallback && (this.previewBtn = this.scene.add.image(window.innerWidth - 55 , window.innerHeight - 55 , 'previewBtn')
+        .setDisplaySize(60  , 60 )
+        .setOrigin(.5)
+        .setAlpha(.6)
+        .setInteractive()
+        .setData('isBtn',true)
+        )
         this.bgmAnims = this.scene.tweens.add({
             targets : this.scene.musicBtn,
             duration : 2000,
@@ -80,7 +89,7 @@ export default class CreateBtnClass {
       this.recordGraphics.lineStyle(9,0xffffff,1);
       this.recordGraphics.beginPath();
       //@ts-ignore
-      this.recordGraphics.arc(this.recordEndBtn.x,this.recordEndBtn.y,52,Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(this.timerNum.d -- ),false);
+      this.recordGraphics.arc(this.recordEndBtn.x,this.recordEndBtn.y,52,Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(this.timerNum.d ++ ),true);
       this.recordGraphics.strokePath();
     }
 
@@ -89,8 +98,8 @@ export default class CreateBtnClass {
       this.recordGraphics && this.recordGraphics.destroy();
       this.recordGraphics = null;
       //@ts-ignore
-      if(this.timerNum.d <= 0 ){
-        this.config.recordEndCallback.call(this.config.recordScope || this.scene);
+      if(this.timerNum.d >= 360 ){
+        this.recordEnd.call(this);
       }
     }
 
@@ -100,10 +109,11 @@ export default class CreateBtnClass {
         this.scene.input.on('gameobjectout',this.gameOutHandle.bind(this));
         this.scene.musicBtn.on('pointerdown',this.switchMusic.bind(this,this.bgmFlag));
         this.scene.backToListBtn.on('pointerdown',this.backToListHandle.bind(this));
-        this.recordStartBtn.on('pointerdown',this.recordStart.bind(this));
+        this.config.recordStartCallback && this.recordStartBtn.on('pointerdown',this.recordStart.bind(this));
         this.playBtn.on('pointerdown',this.config.playBtnCallback.bind(this.scene));
-        this.recordEndBtn.on('pointerdown',this.recordEnd.bind(this));
-        this.playRecordBtn.on('pointerdown',this.config.playRecordCallback.bind(this.scene));
+        this.config.recordEndCallback && this.recordEndBtn.on('pointerdown',this.recordEnd.bind(this));
+        this.config.playRecordCallback && this.playRecordBtn.on('pointerdown',this.config.playRecordCallback.bind(this.scene));
+        this.config.previewCallback && this.previewBtn.on('pointerdown',this.config.previewCallback.bind(this.scene));
     }
 
     private recordEnd () : void {
@@ -113,7 +123,8 @@ export default class CreateBtnClass {
       this.recordStartBtn.alpha = 1;
       this.recordStartBtn.depth = 1;
       this.timerObj && this.timerObj.stop();
-      this.recordGraphics.destroy();
+      this.recordGraphics && this.recordGraphics.clear();
+      this.recordGraphics && (this.recordGraphics = null);
     }
 
     private recordStart () : void {
@@ -122,14 +133,19 @@ export default class CreateBtnClass {
       this.recordStartBtn.alpha = 0;
       this.recordStartBtn.depth = -1;
       //@ts-ignore
-      this.timerNum.d = 360;
+      this.timerNum.d = 0;
       this.drawArc();
       this.timerObj && this.timerObj.remove();
       this.timerObj = this.scene.tweens.add({
         targets : this.timerNum,
-        d : 0,
+        d : 360,
         duration : 3000,
-        onUpdate : this.drawArc.bind(this)
+        onUpdate : this.drawArc.bind(this),
+        onComplete : ()=>{
+          this.recordGraphics && this.recordGraphics.clear();
+          this.recordGraphics && this.recordGraphics.destroy();
+          this.recordGraphics && (this.recordGraphics = null);
+        }
       })
       this.config.recordStartCallback.call(this.config.recordScope || this.scene)
     }
@@ -147,13 +163,6 @@ export default class CreateBtnClass {
         this.bgmFlag && this.scene.musicBtn.setFrame('btn_play2.png') || this.scene.musicBtn.setFrame('btn_play.png');
         !this.bgmFlag && (this.scene.musicBtn.angle = 0);
         this.scene.musicBtn.alpha = 1;
-        this.scene.tweens.add({
-          targets : this.scene.musicBtn,
-          delay : 3000,
-          alpha : .6,
-          ease: 'Sine.easeInOut',
-          duration : 500
-        })
       }
 
     private gameOutHandle (...args) : void {
@@ -175,6 +184,8 @@ export default class CreateBtnClass {
         //@ts-ignore
         let isBtn : boolean = obj.getData('isBtn');
         if(!isBtn) return;
+        //@ts-ignore
+        let _s : boolean = obj.getData('_s');
         this.playMusic('clickMp3');
         this.scene.tweens.add({
             targets : obj,
@@ -192,6 +203,13 @@ export default class CreateBtnClass {
                     ease : 'Sine.easeInOut',
                 })
             }
+        });
+        !_s && this.scene.tweens.add({
+          targets : obj,
+          delay : 3000,
+          alpha : .6,
+          ease: 'Sine.easeInOut',
+          duration : 500
         })
     }
 
@@ -229,6 +247,7 @@ export default class CreateBtnClass {
 
     private loadImg () : void {
         this.scene.load.multiatlas('icons2','assets/Game7/imgsJson2.json','assets/Game7');
+        this.scene.load.image('previewBtn','assets/Game8/previewBtn.png');
         this.scene.load.audio('clickMp3','assets/Game5/click.mp3');
         this.scene.load.on('complete',this.init.bind(this))
         this.scene.load.start();
