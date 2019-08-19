@@ -4,8 +4,7 @@ import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
 import { StaticAni } from '../../public/jonny/animate';
 import {Cover} from '../../Public/jonny/core';
-import {Button,ButtonMusic} from '../../Public/jonny/components' 
-//console.log(Button);
+import {Button,ButtonMusic,ButtonExit} from '../../Public/jonny/components'; 
 
 
 const WIDTH = window.innerWidth;
@@ -785,10 +784,8 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     let shape = new Phaser.Geom.Circle(60 * 0.5, 60 * 0.5, 60);
 
-    this.btn_exit = new Button(this,25 + 60 * 0.5, 25 + 60 * 0.5, "btn_exit",shape,Phaser.Geom.Circle.Contains);
-    this.btn_exit.pointerdownFunc = that.exitGame;
-
-    this.btn_sound = new ButtonMusic(this, 939 + 60 * 0.5, 25 + 60 * 0.5, "btn_sound_on");
+    this.btn_exit = new ButtonExit(this);
+    this.btn_sound = new ButtonMusic(this);
 
     this.staticScene = new Phaser.GameObjects.Container(this, 0, 0, [
       this.bg,
@@ -799,11 +796,5 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.add.existing(this.staticScene);
 
   }
-
-  /* 退出游戏*/
-  private exitGame(): void {
-    console.log("Game Over");
-  }
-
 
 };
