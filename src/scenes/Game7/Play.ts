@@ -221,6 +221,8 @@ export default class Game7PlayScene extends Phaser.Scene {
 
     private handleClick () : void {
       //点击摇杆
+      //@ts-ignore
+      if(this.handleClick.clickLock) return;
       this.handle.play('begin');
       this.time.addEvent({
         delay : 300,
@@ -300,7 +302,9 @@ export default class Game7PlayScene extends Phaser.Scene {
           alpha : 1,
           duration : 500,
           ease : 'Sine.easeInOut',
-        })
+        });
+        //@ts-ignore
+        this.handleClick.clickLock = false;
       },()=>{
         loading.destroy();
         this.tweens.add({
@@ -308,7 +312,9 @@ export default class Game7PlayScene extends Phaser.Scene {
           alpha : 1,
           duration : 500,
           ease : 'Sine.easeInOut',
-        })
+        });
+        //@ts-ignore
+        this.handleClick.clickLock = true;
       })
     }
 
@@ -377,6 +383,8 @@ export default class Game7PlayScene extends Phaser.Scene {
 
     private recordStartHandle() : void {
       //录音开始
+      //@ts-ignore
+      this.handleClick.clickLock = true;
       //@ts-ignore
       this.rec = this.rec || window.Recorder({
         type : 'wav'
