@@ -15,13 +15,15 @@ export default class Game9PlayScene extends Phaser.Scene {
   private ccData: Array<Game9DataItem> = [];
   private cover:Phaser.GameObjects.Container;
 
+  private bgm: Phaser.Sound.BaseSound; //背景音乐
   private clickSound: Phaser.Sound.BaseSound;
   private correctSound: Phaser.Sound.BaseSound;
   private wrongSound: Phaser.Sound.BaseSound;
 
+
   private bg: Phaser.GameObjects.Image; //背景图片
-//   private btn_exit:Button;  //退出按钮
-//   private btn_sound:ButtonMusic; //音乐按钮
+  private btn_exit:Button;  //退出按钮
+  private btn_sound:ButtonMusic; //音乐按钮
   private stage: Phaser.GameObjects.Container; // 舞台
 
   private cookie: Phaser.GameObjects.Container; //药品序列
@@ -50,6 +52,7 @@ export default class Game9PlayScene extends Phaser.Scene {
 
   create(): void {
     if (index === 0) {
+      this.createBgm();
       this.createStage();
        this.cover = new Cover(this,"cover");
        this.add.existing(this.cover);
@@ -61,9 +64,26 @@ export default class Game9PlayScene extends Phaser.Scene {
   }
 
   update(time: number, delta: number): void {
-    //this.btn_sound.mountUpdate();
+    this.btn_sound.mountUpdate();
   }
 
+  /* 背景音乐 */
+  private createBgm(): void {
+    this.bgm = this.sound.add('bgm');
+    this.bgm.addMarker({
+      name: "start",
+      start: 0
+    } as Phaser.Types.Sound.SoundMarker);
+    let config: Phaser.Types.Sound.SoundConfig = {
+      loop: true,
+      volume: vol
+    }
+
+    this.bgm.play("start", config);
+    this.clickSound = this.sound.add('click');
+    this.correctSound = this.sound.add('correct');
+    this.wrongSound = this.sound.add('wrong');
+  }
   /**
    * 创建静态场景
    */
@@ -72,8 +92,9 @@ export default class Game9PlayScene extends Phaser.Scene {
      this.add.existing(this.stage);
     
      let bg = this.add.image(0,0,"bg").setOrigin(0);
-     let btn_exit = new ButtonExit(this);
-     this.stage.add([bg,btn_exit])
+     this.btn_exit = new ButtonExit(this);
+     this.btn_sound = new ButtonMusic(this);
+     this.stage.add([bg,this.btn_exit,this.btn_sound])
 
   }
 
