@@ -51,8 +51,8 @@ export default class Game9PlayScene extends Phaser.Scene {
   create(): void {
     if (index === 0) {
       this.createStage();
-    //   this.cover = new Cover(this,"cover");
-    //   this.add.existing(this.cover);
+       this.cover = new Cover(this,"cover");
+       this.add.existing(this.cover);
     }
     // this.createAudio();
     // this.createDynamicScene();
