@@ -2,8 +2,8 @@ import 'phaser';
 import apiPath from '../../lib/apiPath';
 import { get, makeParams } from '../../lib/http';
 import { Game6DataItem, game6asset } from '../../interface/Game6';
-import {resize} from '../../Public/jonny/core/resize'; 
-
+import {resize} from '../../Public/jonny/core'; 
+ 
 const W = 1024;
 const H = 552;
 

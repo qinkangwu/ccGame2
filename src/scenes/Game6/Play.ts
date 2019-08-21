@@ -3,6 +3,10 @@ import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
 import { StaticAni } from '../../public/jonny/animate';
+import {Cover} from '../../Public/jonny/core';
+import {Button,ButtonMusic} from '../../Public/jonny/components' 
+//console.log(Button);
+
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
@@ -64,8 +68,8 @@ export default class Game6PlayScene extends Phaser.Scene {
 
   private phoneticData: Game6DataItem[] = []; //音标数据
   private bg: Phaser.GameObjects.Image; //背景图片
-  private btn_exit: Phaser.GameObjects.Image;  //退出按钮
-  private btn_sound: Phaser.GameObjects.Sprite; //音乐按钮
+  private btn_exit:Button;  //退出按钮
+  private btn_sound:ButtonMusic; //音乐按钮
   private staticScene: Phaser.GameObjects.Container; // 静态组
 
   private balls: Phaser.GameObjects.Container; //药品序列
@@ -101,6 +105,8 @@ export default class Game6PlayScene extends Phaser.Scene {
   create(): void {
     if (index === 0) {
       this.createBgm();
+      this.cover = new Cover(this,"cover");
+      this.add.existing(this.cover);
     }
     //index = 6; //test
 
@@ -112,14 +118,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   update(time: number, delta: number): void {
-    if(this.btn_sound.rotation===Math.PI*2){
-      this.btn_sound.rotation = 0;
-    }
-    if(this.bgm.isPlaying){
-      this.btn_sound.rotation+=0.05;
-    }else{
-      this.btn_sound.rotation = 0;
-    }
+    this.btn_sound.mountUpdate();
   }
 
   /** * 游戏开始 */
@@ -538,11 +537,14 @@ export default class Game6PlayScene extends Phaser.Scene {
       let analysisMask:Phaser.GameObjects.Container = createMaskAnalysis();
       that.bgm.resume();
       backplayBtn.setData("haveRecord", "yes");
-      rec.stop((blob: string) => {
+      rec.stop((blob:any) => {
         rec.close();
         userRecoder.src = URL.createObjectURL(blob);
         userRecoder.play();
-        post(apiPath.postAudio, { audio: blob }, 'json', true)
+        let file:File = new File([blob],'aaa.wav',{
+          type : blob.type
+        });
+        post(apiPath.uploadRecord, {file}, 'json', true)
           .then(res => {
             analysisMask.destroy();
             luyinBtn.setTexture("btn_luyin");
@@ -783,61 +785,19 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     let shape = new Phaser.Geom.Circle(60 * 0.5, 60 * 0.5, 60);
 
-    this.btn_exit = new Phaser.GameObjects.Image(this, 25 + 60 * 0.5, 25 + 60 * 0.5, "btn_exit").setOrigin(0.5).setAlpha(0.7);
-    this.btn_exit.setInteractive(shape, Phaser.Geom.Circle.Contains);
-    this.btn_exit.on("pointerdown", function () {
-      StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
-      that.exitGame();
-    });
-    this.btn_exit.on("pointerup", function () {
-      StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
-    });
+    this.btn_exit = new Button(this,25 + 60 * 0.5, 25 + 60 * 0.5, "btn_exit",shape,Phaser.Geom.Circle.Contains);
+    this.btn_exit.pointerdownFunc = that.exitGame;
 
-    this.btn_sound = new Phaser.GameObjects.Sprite(this, 939 + 60 * 0.5, 25 + 60 * 0.5, "btn_sound_on").setOrigin(0.5).setAlpha(0.7);
-
-    this.btn_sound.setInteractive(shape, Phaser.Geom.Circle.Contains);
-
-    this.btn_exit.on("pointerover", gameobjectoverHandle);
-    this.btn_exit.on("pointerout", gameobjectoutHandle);
-    this.btn_sound.on("pointerover", gameobjectoverHandle);
-    this.btn_sound.on("pointerout", gameobjectoutHandle);
-
-    this.btn_sound.on("pointerdown", function () {
-      StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
-      onOffSound.call(this);
-    });
-    this.btn_sound.on("pointerup", function () {
-      StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
-    });
-
-    //this.cover = new Cover(this,"cover");
+    this.btn_sound = new ButtonMusic(this, 939 + 60 * 0.5, 25 + 60 * 0.5, "btn_sound_on");
 
     this.staticScene = new Phaser.GameObjects.Container(this, 0, 0, [
       this.bg,
       this.btn_exit,
       this.btn_sound,
     ]);
+
     this.add.existing(this.staticScene);
-    //this.add.existing(this.cover);
 
-    function gameobjectoutHandle() {
-      StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
-    }
-
-    function gameobjectoverHandle() {
-      StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
-    }
-
-    function onOffSound() {
-      let bgm = that.bgm;
-      if (bgm.isPlaying) {
-        this.setTexture("btn_sound_off");
-        bgm.pause();
-      } else {
-        this.setTexture("btn_sound_on");
-        bgm.resume();
-      }
-    }
   }
 
   /* 退出游戏*/
