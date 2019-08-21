@@ -201,7 +201,6 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.ballEvents(ballIndex, nullballIndex);
   }
 
-
   /**
    * 单个药品的上下交互
    */
@@ -283,8 +282,6 @@ export default class Game6PlayScene extends Phaser.Scene {
       arrowUpAni.stop(); //暂停动画
       that.arrows.removeAll();
     }
-
-
   }
 
   /**
@@ -437,8 +434,8 @@ export default class Game6PlayScene extends Phaser.Scene {
     let that = this;
 
     let luyinBtn = new Phaser.GameObjects.Sprite(this, 457 + 110 * 0.5, 417 + 110 * 0.5, "btn_luyin");
-    let backplayBtn = new Phaser.GameObjects.Image(this, 632 + 60 * 0.5, 442 + 60 * 0.5, "btn_last_1").setOrigin(0.5).setAlpha(0.7);
-    let originalBtn = new Phaser.GameObjects.Image(this, 332 + 60 * 0.5, 442 + 60 * 0.5, "btn_last_2").setOrigin(0.5).setAlpha(0.7);
+    let backplayBtn = new Phaser.GameObjects.Image(this, 632 + 60 * 0.5, 442 + 60 * 0.5, "btn_last_1").setOrigin(0.5).setAlpha(0);
+    let originalBtn = new Phaser.GameObjects.Image(this, 332 + 60 * 0.5, 442 + 60 * 0.5, "btn_last_2").setOrigin(0.5).setAlpha(0);
 
     let userRecoder: HTMLAudioElement = new Audio();
     let rec = Recorder({
