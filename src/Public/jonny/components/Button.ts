@@ -3,7 +3,7 @@ import { StaticAni } from '../animate';
 
 /**
  * 初始化为0.7的透明度
- * @scene Phaser.Scene
+ * @scene scene Phaser.Scene
  * @param x number  setOrigin(0.5)
  * @param y number  setOrigin(0.5)
  * @param texture string
