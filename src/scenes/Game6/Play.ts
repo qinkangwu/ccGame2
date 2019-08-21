@@ -193,7 +193,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       let ballImg = this.physics.add.image(1024 * 0.5 + 10, 410, `${ballImgTexures[i]}`).setCircle(71.5, 71.5 * 0.5 + 15, 71.5 * 0.5 + 23);
       ballImg.setData("name", v.name);
       ballImg.setData("arrowIndex", i);
-      let ballText = new Phaser.GameObjects.Text(this, 1024 * 0.5 + 10, 410, v.name, { align: "center", fontSize: "45px" }).setOrigin(0.5);
+      let ballText = new Phaser.GameObjects.Text(this, 1024 * 0.5 + 10, 410, v.name, { align: "center", fontSize: "45px" ,fontFamily:"monospace").setOrigin(0.5);
       let ball = new Phaser.GameObjects.Container(this, 0, 0, [ballImg, ballText]);
       this.balls.add(ball);
     });
@@ -416,7 +416,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     let word = new Phaser.GameObjects.Text(this, 1024 * 0.5, 150, `${this.phoneticData[index].name}`, {
       align: "center",
       color: "rgb(178,90,176)",
-      fontFamily: "ArialRoundedMTBold",
+      fontFamily: "monospace",
       fontSize: "120px"
     } as Phaser.Types.GameObjects.Text.TextSyle).setOrigin(0.5);
     this.cloudWord.add([cloud, word]);
