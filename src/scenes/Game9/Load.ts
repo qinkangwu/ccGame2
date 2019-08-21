@@ -11,7 +11,7 @@ export default class Game9LoadScene extends Phaser.Scene {
   private _loader: Phaser.Loader.LoaderPlugin;
   private ccData: Array<Game9DataItem> = [];
   private centerText: Phaser.GameObjects.Text; //文本内容
-  private assets: Game9asset[] = [{"url":"assets/Game9/bg.jpg","key":"bg"},{"url":"assets/Game9/btn_exit.png","key":"btn_exit"},{"url":"assets/Game9/civa.png","key":"civa"},{"url":"assets/Game9/cookie.png","key":"cookie"},{"url":"assets/Game9/null-cookie.png","key":"null-cookie"},{"url":"assets/Game9/shengmingzhi.png","key":"shengmingzhi"},{"url":"assets/Game9/try-agin-btn.png","key":"try-agin-btn"}];
+  private assets: Game9asset[] = [{"url":"assets/Game9/bg.jpg","key":"bg"},{"url":"assets/Game9/btn_exit.png","key":"btn_exit"},{"url":"assets/Game9/civa.png","key":"civa"},{"url":"assets/Game9/cookie.png","key":"cookie"},{"url":"assets/Game9/null-cookie.png","key":"null-cookie"},{"url":"assets/Game9/shengmingzhi.png","key":"shengmingzhi"},{"url":"assets/Game9/try-agin-btn.png","key":"try-agin-btn"},{ "url": "assets/Game9/btn_sound_off.png", "key": "btn_sound_off" }, { "url": "assets/Game9/btn_sound_on.png", "key": "btn_sound_on" },{"url":"assets/Game9/cover.png","key":"cover"}];
   constructor() {
     super({
       key: "Game6LoadScene"
@@ -30,10 +30,10 @@ export default class Game9LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.audio('bgm', 'assets/Game6/bgm.mp3');
-    this.load.audio('correct', 'assets/sounds/正确音效.mp3');
-    this.load.audio('click', 'assets/sounds/点击音效.mp3');
-    this.load.audio('wrong', 'assets/sounds/错误音效.mp3');
+    this.load.audio('bgm', 'assets/sounds/bgm-happyworld.mp3');
+    this.load.audio('correct', 'assets/sounds/successMp3.mp3');
+    this.load.audio('click', 'assets/sounds/clickMp3.mp3');
+    this.load.audio('wrong', 'assets/sounds/failMp3.mp3');
     this.assets.forEach((v) => {
       this.load.image(v.key, v.url);
     })

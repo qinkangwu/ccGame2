@@ -2,7 +2,7 @@ import 'phaser';
 import Button from './Button';
 
 /**
-  * 在加载文件同时，纹理key必须为 btn_exit
+  * 在加载文件同时，纹理key必须为 btn_exit,注册点为中心,可以修改属性minAlpha
   * @param Phaser.Scene [scene]  
   * @param number [x] options
   * @param number [y] options
