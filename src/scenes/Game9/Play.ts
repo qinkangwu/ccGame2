@@ -65,10 +65,10 @@ export default class Game9PlayScene extends Phaser.Scene {
   }
 
   private createStage(){
-     this.stage = this.add.container(0,0);
+     //this.stage = new 
     
-     let bg = this.add.image(0,0,"bg").setOrigin(0);
-     let btn_exit = new ButtonExit(this);
+     //let bg = this.add.image(0,0,"bg").setOrigin(0);
+     //let btn_exit = new ButtonExit(this);
 
   }
 
