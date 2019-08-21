@@ -2,7 +2,7 @@ import 'phaser';
 import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
-import { StaticAni } from '../../public/jonny/animate';
+import { StaticAni } from '../../Public/jonny/StaticAni';
 import {Cover} from '../../Public/jonny/core';
 import {Button,ButtonMusic,ButtonExit} from '../../Public/jonny/components'; 
 
