@@ -1,8 +1,5 @@
 import 'phaser';
 import { Game9DataItem } from '../../interface/Game9';
-import apiPath from '../../lib/apiPath';
-import { post } from '../../lib/http';
-import { StaticAni } from '../../public/jonny/StaticAni';
 import {Cover} from '../../Public/jonny/core';
 import {Button,ButtonMusic,ButtonExit} from '../../Public/jonny/components'; 
 
@@ -24,11 +21,12 @@ export default class Game9PlayScene extends Phaser.Scene {
   private bg: Phaser.GameObjects.Image; //背景图片
   private btn_exit:Button;  //退出按钮
   private btn_sound:ButtonMusic; //音乐按钮
+
   private stage: Phaser.GameObjects.Container; // 舞台
 
   private cookie: Phaser.GameObjects.Container; //药品序列
   private nullCookie: Phaser.GameObjects.Container; //空圆序列
-  private cloudWord: Phaser.GameObjects.Container; //单词容器
+  // private cloudWord: Phaser.GameObjects.Container; //单词容器
   private voiceBtns: Phaser.GameObjects.Container; //语音按钮组
   private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
 
@@ -37,7 +35,7 @@ export default class Game9PlayScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: "Game6PlayScene"
+      key: "Game9PlayScene"
     });
   }
 
