@@ -2,7 +2,6 @@ import 'phaser';
 import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
-import { StaticAni } from '../../Public/jonny/StaticAni';
 import {Cover} from '../../Public/jonny/core';
 import {Button,ButtonMusic,ButtonExit} from '../../Public/jonny/components'; 
 
@@ -193,7 +192,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       let ballImg = this.physics.add.image(1024 * 0.5 + 10, 410, `${ballImgTexures[i]}`).setCircle(71.5, 71.5 * 0.5 + 15, 71.5 * 0.5 + 23);
       ballImg.setData("name", v.name);
       ballImg.setData("arrowIndex", i);
-      let ballText = new Phaser.GameObjects.Text(this, 1024 * 0.5 + 10, 410, v.name, { align: "center", fontSize: "45px" ,fontFamily:"monospace").setOrigin(0.5);
+      let ballText = new Phaser.GameObjects.Text(this, 1024 * 0.5 + 10, 410, v.name, { align: "center", fontSize: "45px" ,fontFamily:"monospace"}).setOrigin(0.5);
       let ball = new Phaser.GameObjects.Container(this, 0, 0, [ballImg, ballText]);
       this.balls.add(ball);
     });
@@ -420,6 +419,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.scaleMaxAni(cloud);
     this.scaleMaxAni(word);
 
+    this.input.setDefaultCursor("pointer");
     cloud.setInteractive();
     cloud.on("pointerdown", () => {
       that.wordSpeaker.play();
@@ -460,7 +460,19 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     this.voiceBtns.add([luyinBtn, backplayBtn, originalBtn, cir]);
 
+    let luyinTipsAni = this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+      targets:luyinBtn,
+      scale:1.1,
+      yoyo:true,
+      repeat:-1,
+      duration:300
+    })
+
     luyinBtn.setInteractive();
+    luyinBtn.on("pointerover",()=>{
+      luyinTipsAni.remove();
+    });
+
     luyinBtn.on("pointerdown", recordReady);
 
     backplayBtn.setInteractive();
@@ -575,7 +587,6 @@ export default class Game6PlayScene extends Phaser.Scene {
       if (texture === "tips_tryagain" || texture === "tips_no") {
         that.wrongSound.play();
       }
-      //that.cloudWord.setAlpha(0);
       let alertBar = that.add.image(242 + 521 * 0.5, 0 + 338 * 0.5, texture);
       that.boom();
       that.scaleMaxAni(alertBar);
@@ -600,6 +611,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
 
     function recordReady() {
+      luyinTipsAni.remove();
       if(ableStop===1){
           luyinBtn.off("pointerdown", recordReady);
           ableStop = 2;
@@ -762,8 +774,6 @@ export default class Game6PlayScene extends Phaser.Scene {
   private createStaticScene(): void {
     let that = this;
     this.bg = new Phaser.GameObjects.Image(this, 0, 0, "bg").setOrigin(0);
-
-    let shape = new Phaser.Geom.Circle(60 * 0.5, 60 * 0.5, 60);
 
     this.btn_exit = new ButtonExit(this);
     this.btn_sound = new ButtonMusic(this);
