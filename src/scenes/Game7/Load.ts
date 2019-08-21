@@ -2,6 +2,10 @@ import 'phaser';
 import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
 import { Game7DataItem } from "../../interface/Game7";
+import {resize} from '../../Public/jonny/core'; 
+
+const W = 1024;
+const H = 552;
 
 export default class Game7LoadScene extends Phaser.Scene {
   private ccData : Game7DataItem[] = [];
@@ -14,13 +18,14 @@ export default class Game7LoadScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: "Game4LoadScene"
+      key: "Game7LoadScene"
     });
   }
 
   init(/*params: any*/): void {
     //初始化加载进度
-    this.centerText = this.add.text(window.innerWidth / 2 ,window.innerHeight /2 ,'0%',{
+    // resize.call(this,W,H);
+    this.centerText = this.add.text(W / 2 ,H /2 ,'0%',{
       fill : '#fff',
       font: 'bold 60px Arial',
       bold : true,
@@ -34,7 +39,7 @@ export default class Game7LoadScene extends Phaser.Scene {
     this.load.image('game7Bgi','assets/Game7/bgi.png');
     this.load.image('machine','assets/Game7/machine.png');
     this.load.image('mask','assets/Game7/mask.png');
-    this.load.audio('bgm','assets/Game5/bgm.mp3');
+    this.load.audio('bgm','assets/Game7/bgm.mp3');
     this.load.image('recordIcon','assets/Game7/btn_luyin.png');
     this.load.image('recordLoading','assets/Game7/recordLoading.png');
     this.load.multiatlas('icons','assets/Game7/imgsJson.json','assets/Game7');

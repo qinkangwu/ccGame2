@@ -6,8 +6,8 @@ import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 import CreateMask from '../../Public/CreateMask';
 import { Game7DataItem } from "../../interface/Game7";
 
-const scaleX : number = window.innerWidth / 1024;
-const scaleY : number = window.innerHeight / 552;
+const W = 1024;
+const H = 552;
 
 export default class Game7PlayScene extends Phaser.Scene {
     private ccData : Game7DataItem[] = []; //数据
@@ -70,7 +70,7 @@ export default class Game7PlayScene extends Phaser.Scene {
 
     private createGold () : void {
       //创建按钮
-      this.goldIcon = this.add.image(55,window.innerHeight - 55,'icons2','civa_gold.png')
+      this.goldIcon = this.add.image(55,H - 55,'icons2','civa_gold.png')
         .setOrigin(.5)
         .setDisplaySize(60,60)
         .setInteractive()
@@ -123,17 +123,17 @@ export default class Game7PlayScene extends Phaser.Scene {
       //@ts-ignore
       this.word3 && this.word3 !== 'lock' && this.word3.destroy();
       //@ts-ignore
-      this.word1 !== 'lock' && (this.word1 = this.add.text(this.machine.x - 31 - (95 * scaleX),this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),word1,{
+      this.word1 !== 'lock' && (this.word1 = this.add.text(this.machine.x - 31 - 95,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),word1,{
         font: 'Bold 80px Arial Rounded MT',
         fill : '#C5684C',
       }).setOrigin(.5));
       //@ts-ignore
-      this.word2 !== 'lock' && (this.word2 = this.add.text(this.machine.x,this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),word2,{
+      this.word2 !== 'lock' && (this.word2 = this.add.text(this.machine.x,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),word2,{
         font: 'Bold 80px Arial Rounded MT',
         fill : '#C5684C',
       }).setOrigin(.5));
       //@ts-ignore
-      this.word3 !== 'lock' && (this.word3 = this.add.text(this.machine.x + 31 + (95 * scaleX),this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),word3,{
+      this.word3 !== 'lock' && (this.word3 = this.add.text(this.machine.x + 31 + 95 ,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),word3,{
         font: 'Bold 80px Arial Rounded MT',
         fill : '#C5684C',
       }).setOrigin(.5));
@@ -148,12 +148,12 @@ export default class Game7PlayScene extends Phaser.Scene {
       this.resultArr.push(
         data[0] 
           && 
-        this.add.text(this.machine.x - 31 - (95 * scaleX),this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),data[0],{
+        this.add.text(this.machine.x - 31 - 95 ,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),data[0],{
           font: 'Bold 80px Arial Rounded MT',
           fill : '#C5684C',
         }).setOrigin(.5) 
           || 
-        this.add.image(this.machine.x - 31 - (95 * scaleX),this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),'icons2','civa_gold2.png')
+        this.add.image(this.machine.x - 31 - 95 ,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),'icons2','civa_gold2.png')
           .setDisplaySize(95,95)
           .setOrigin(.5)
       );
@@ -167,12 +167,12 @@ export default class Game7PlayScene extends Phaser.Scene {
           this.resultArr.push(
             data[1] 
               &&  
-            this.add.text(this.machine.x,this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),data[1],{
+            this.add.text(this.machine.x,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),data[1],{
               font: 'Bold 80px Arial Rounded MT',
               fill : '#C5684C',
             }).setOrigin(.5)
               ||
-            this.add.image(this.machine.x,this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),'icons2','civa_gold2.png')
+            this.add.image(this.machine.x,this.machine.y + (this.machine.height / 2) + (H  * 0.07 ),'icons2','civa_gold2.png')
               .setDisplaySize(95,95)
               .setOrigin(.5));            
         }
@@ -187,12 +187,12 @@ export default class Game7PlayScene extends Phaser.Scene {
           this.resultArr.push(
             data[2] 
             &&
-            this.add.text(this.machine.x + 31 + (95 * scaleX),this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),data[2],{
+            this.add.text(this.machine.x + 31 + 95 ,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),data[2],{
               font: 'Bold 80px Arial Rounded MT',
               fill : '#C5684C',
             }).setOrigin(.5)
             ||
-            this.add.image(this.machine.x + 31 + (95 * scaleX),this.machine.y + (this.machine.height * scaleY / 2) + (window.innerHeight * scaleY * 0.07 ),'icons2','civa_gold2.png')
+            this.add.image(this.machine.x + 31 + 95 ,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),'icons2','civa_gold2.png')
               .setDisplaySize(95,95)
               .setOrigin(.5));
             !init && this.renderEndHandle(data);
@@ -286,7 +286,7 @@ export default class Game7PlayScene extends Phaser.Scene {
 
     private uploadRecord (file : File) : void {
       //上传录音识别
-      let loading : Phaser.GameObjects.Image = this.add.image(window.innerWidth / 2 , window.innerHeight / 2 ,'recordLoading').setOrigin(.5);
+      let loading : Phaser.GameObjects.Image = this.add.image(W / 2 , H / 2 ,'recordLoading').setOrigin(.5);
       this.tweens.add({
         targets : [this.createBtnClass.playBtn,this.createBtnClass.playRecordBtn,this.createBtnClass.recordStartBtn],
         alpha : 0 ,
@@ -402,19 +402,18 @@ export default class Game7PlayScene extends Phaser.Scene {
 
     private createBgi () : void {
       //背景
-      this.add.image(0,0,'game7Bgi').setDisplaySize(window.innerWidth,window.innerHeight).setOrigin(0);
+      this.add.image(0,0,'game7Bgi').setOrigin(0);
     }
 
     private createMachine () : void {
       //创建机器
-      this.machine = this.add.image(window.innerWidth / 2 , 0 , 'machine').setOrigin(.5,0).setDisplaySize(794 * scaleX,513 * scaleY);
+      this.machine = this.add.image(W / 2 , 0 , 'machine').setOrigin(.5,0);
       this.handle = this.add.sprite(
-        this.machine.x + (this.machine.width * scaleX / 2) - (window.innerWidth * 0.08) , 
-        this.machine.y + (this.machine.height * scaleY / 2 ),
+        this.machine.x + (this.machine.width / 2) - (W * 0.08) , 
+        this.machine.y + (this.machine.height  / 2 ),
         'icons',
         'anims1.png'
-      ).setDisplaySize(123 * scaleX,336 * scaleY)
-        .setInteractive();
+      ).setInteractive();
     }
 
     private createBgm () : void{

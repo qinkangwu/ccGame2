@@ -3,6 +3,9 @@ import { game3DataInterface, game3BookMenus } from '../../interface/Game3';
 import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
 
+const W = 1024;
+const H = 552;
+
 export default class Game3PlayScene extends Phaser.Scene {
     private ccData : Array<game3DataInterface> = [];   //音标数据
     private redSprite : Phaser.GameObjects.Sprite ;  //红气泡
@@ -48,7 +51,7 @@ export default class Game3PlayScene extends Phaser.Scene {
   
     create(): void {
       //初始化渲染
-      this.add.tileSprite(0,0,window.innerWidth,window.innerHeight,'game3Bgi').setOrigin(0); //背景
+      this.add.tileSprite(0,0,W,H,'game3Bgi').setOrigin(0); //背景
       this.drawBottomKeys(); //键盘
       this.drawTopWord(); //音标气泡
       this.createAnims(); //创建动画
@@ -130,15 +133,15 @@ export default class Game3PlayScene extends Phaser.Scene {
       }
       this.flag = 0;
       this.keySpritesArr.map((r,i)=>{
-        this.itemAnimateHandle(r,isLeft && r.x - window.innerWidth || r.x + window.innerWidth,dragNum,isLeft,i);
+        this.itemAnimateHandle(r,isLeft && r.x - W || r.x + W,dragNum,isLeft,i);
       });
 
       this.textsArr.map((r,i)=>{
-        this.itemAnimateHandle(r,isLeft && r.x - window.innerWidth || r.x + window.innerWidth,dragNum,isLeft);
+        this.itemAnimateHandle(r,isLeft && r.x - W || r.x + W,dragNum,isLeft);
       })
 
       this.imgsArr.map((r,i)=>{
-        this.itemAnimateHandle(r,isLeft && r.x - window.innerWidth || r.x + window.innerWidth,dragNum,isLeft);
+        this.itemAnimateHandle(r,isLeft && r.x - W || r.x + W,dragNum,isLeft);
       })
     }
 
@@ -181,14 +184,14 @@ export default class Game3PlayScene extends Phaser.Scene {
         }
         // onComplete : ()=>{
         //   //@ts-ignore
-        //   x < 0 && (item.x = item.x + (window.innerWidth * 2) - dragNum);
+        //   x < 0 && (item.x = item.x + (W * 2) - dragNum);
         //   //@ts-ignore
-        //   x > 0 && (item.x = item.x - (window.innerWidth * 2) - dragNum); 
+        //   x > 0 && (item.x = item.x - (W * 2) - dragNum); 
 
         //   this.tweens.add({
         //     targets : item,
         //     //@ts-ignore
-        //     x : index === 0 ? 0 : x < 0 && item.x - window.innerWidth || item.x + innerWidth,
+        //     x : index === 0 ? 0 : x < 0 && item.x - W || item.x + innerWidth,
         //     ease: 'Sine.easeInOut',
         //     duration : 500
         //   })
@@ -336,11 +339,11 @@ export default class Game3PlayScene extends Phaser.Scene {
         }
       }
       let imgKey : number = 0;
-      let leftDistance : number = (window.innerWidth - (110 * dataArr.length + 5 * (dataArr.length - 1 ))) / 2 ; //计算如果要居中，第一个键盘的x值
-      let itemWidth : number = (window.innerWidth - (5 * (dataArr.length - 1))) / dataArr.length;
+      let leftDistance : number = (W - (110 * dataArr.length + 5 * (dataArr.length - 1 ))) / 2 ; //计算如果要居中，第一个键盘的x值
+      let itemWidth : number = (W - (5 * (dataArr.length - 1))) / dataArr.length;
       for ( let i = 0 ; i < dataArr.length ; i ++){
         //渲染白键
-        let sprite : Phaser.GameObjects.Sprite = this.add.sprite(i === 0 ? (isLeft && window.innerWidth || -window.innerWidth) : this.leftSpriteX + (itemWidth + 5),window.innerHeight - 240,'keys',0).setOrigin(0).setInteractive({
+        let sprite : Phaser.GameObjects.Sprite = this.add.sprite(i === 0 ? (isLeft && W || -W) : this.leftSpriteX + (itemWidth + 5),H - 240,'keys',0).setOrigin(0).setInteractive({
           draggable : true
         });
         sprite.scaleX = itemWidth / sprite.width;
@@ -375,7 +378,7 @@ export default class Game3PlayScene extends Phaser.Scene {
     private animsLayoutHandle (isLeft : boolean = false) : void {
       this.tweens.add({
         targets : [...this.keySpritesArr,...this.imgsArr,...this.textsArr],
-        x : `+=${isLeft && -window.innerWidth || window.innerWidth}`,
+        x : `+=${isLeft && -W || W}`,
         ease: 'Sine.easeInOut',
         duration: 500
       })
@@ -424,8 +427,8 @@ export default class Game3PlayScene extends Phaser.Scene {
 
     private drawTopWord () : void {
       //渲染音标word气泡
-      this.redSprite = this.add.sprite(window.innerWidth / 2,window.innerHeight / 2 - 150,'icons','bg_word_red.png').setOrigin(0.5).setAlpha(0).setScale(1.4);
-      this.blueSprite = this.add.sprite(window.innerWidth / 2,window.innerHeight / 2 - 150,'icons','bg_word_blue.png').setOrigin(0.5).setAlpha(0).setScale(1.4);
+      this.redSprite = this.add.sprite(W / 2,H / 2 - 150,'icons','bg_word_red.png').setOrigin(0.5).setAlpha(0).setScale(1.4);
+      this.blueSprite = this.add.sprite(W / 2,H / 2 - 150,'icons','bg_word_blue.png').setOrigin(0.5).setAlpha(0).setScale(1.4);
       this.redText = this.add.text(this.redSprite.x,this.redSprite.y,'',{
           font: 'bold 65px Arial Rounded MT',
           fill : '#fff',

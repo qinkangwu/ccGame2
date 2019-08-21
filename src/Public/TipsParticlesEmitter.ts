@@ -1,4 +1,6 @@
 import "phaser";
+const W = 1024;
+const H = 552;
 /**
  * @param scene 当前场景
  */
@@ -17,9 +19,9 @@ export default class TipsParticlesEmitter {
     }
 
     private init () : void {
-        this.tips1 = this.scene.add.sprite(window.innerWidth / 2 , window.innerHeight / 2 , 'tips1').setOrigin(.5).setDepth(1002).setScale(0);
-        this.tips2 = this.scene.add.sprite(window.innerWidth / 2 , window.innerHeight / 2 , 'tips2').setOrigin(.5).setDepth(1002).setScale(0);
-        this.tips3 = this.scene.add.sprite(window.innerWidth / 2 , window.innerHeight / 2 , 'tips3').setOrigin(.5).setDepth(1002).setScale(0);
+        this.tips1 = this.scene.add.sprite(W / 2 , H / 2 , 'tips1').setOrigin(.5).setDepth(1002).setScale(0);
+        this.tips2 = this.scene.add.sprite(W / 2 , H / 2 , 'tips2').setOrigin(.5).setDepth(1002).setScale(0);
+        this.tips3 = this.scene.add.sprite(W / 2 , H / 2 , 'tips3').setOrigin(.5).setDepth(1002).setScale(0);
         this.createEmitter(); //注册发射器
     }
 

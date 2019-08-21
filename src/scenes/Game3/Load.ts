@@ -3,6 +3,9 @@ import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
 import { game3BookIdParams, game3DataInterface } from '../../interface/Game3';
 
+const W = 1024;
+const H = 552;
+
 export default class Game3LoadScene extends Phaser.Scene {
   private centerText : Phaser.GameObjects.Text; //文本内容
   private DefaultLoadSeconds : number = 50; //每秒增加百分之多少
@@ -21,7 +24,7 @@ export default class Game3LoadScene extends Phaser.Scene {
 
   init(/*params: any*/): void {
     //初始化加载进度
-    this.centerText = this.add.text(window.innerWidth / 2 ,window.innerHeight /2 ,'0%',{
+    this.centerText = this.add.text(W / 2 ,H /2 ,'0%',{
       fill : '#fff',
       font: 'bold 60px Arial',
       bold : true,

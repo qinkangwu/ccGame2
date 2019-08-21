@@ -1,6 +1,9 @@
 import "phaser";
 import { config } from "../interface/CreateBtnClassInt";
 
+const W = 1024;
+const H = 552;
+
 /**
  * @class CreateBtnClass 按钮公共组件
  * @param scene 当前场景
@@ -34,38 +37,38 @@ export default class CreateBtnClass {
         .setDisplaySize(60 ,60)
         .setInteractive()
         .setData('isBtn',true);
-        this.scene.musicBtn = this.scene.add.image(window.innerWidth - 60,55,'icons2','btn_play2.png')
+        this.scene.musicBtn = this.scene.add.image(W - 60,55,'icons2','btn_play2.png')
         .setOrigin(.5)
         .setAlpha(.6)
         .setDisplaySize(60,60)
         .setInteractive()
         .setData('isBtn',true);
-        this.playBtn = this.scene.add.image(this.config.playBtnPosition && this.config.playBtnPosition.x || window.innerWidth / 2 - 150, this.config.playBtnPosition && this.config.playBtnPosition.y || window.innerHeight - 80 , 'icons2' , 'btn_last2.png')
+        this.playBtn = this.scene.add.image(this.config.playBtnPosition && this.config.playBtnPosition.x || W / 2 - 150, this.config.playBtnPosition && this.config.playBtnPosition.y || H - 80 , 'icons2' , 'btn_last2.png')
         .setDisplaySize(60 , 60)
         .setOrigin(.5)
         .setAlpha(this.config.playBtnPosition && this.config.playBtnPosition.alpha || 0)
         .setInteractive()
         .setData('isBtn',true)
         .setData('_s',true);
-        this.config.recordStartCallback && (this.recordStartBtn = this.scene.add.image(window.innerWidth / 2, window.innerHeight - 80 , 'icons2' , 'btn_luyin2.png')
+        this.config.recordStartCallback && (this.recordStartBtn = this.scene.add.image(W / 2, H - 80 , 'icons2' , 'btn_luyin2.png')
         .setDisplaySize(110, 110)
         .setAlpha(0)
         .setInteractive()
         .setData('isBtn',true)
         .setData('_s',true));
-        this.config.recordEndCallback && (this.recordEndBtn = this.scene.add.image(window.innerWidth / 2, window.innerHeight - 80 , 'recordIcon')
+        this.config.recordEndCallback && (this.recordEndBtn = this.scene.add.image(W / 2, H - 80 , 'recordIcon')
         .setDisplaySize(110 , 110 )
         .setAlpha(0)
         .setInteractive()
         .setData('_s',true));
-        this.config.playRecordCallback && (this.playRecordBtn = this.scene.add.image(window.innerWidth / 2 + 150 , window.innerHeight - 80 , 'icons2' , 'btn_last.png')
+        this.config.playRecordCallback && (this.playRecordBtn = this.scene.add.image(W / 2 + 150 , H - 80 , 'icons2' , 'btn_last.png')
         .setDisplaySize(60  , 60 )
         .setOrigin(.5)
         .setAlpha(0)
         .setInteractive()
         .setData('isBtn',true)
         .setData('_s',true));
-        this.config.previewCallback && (this.previewBtn = this.scene.add.image(window.innerWidth - 55 , window.innerHeight - 55 , 'previewBtn')
+        this.config.previewCallback && (this.previewBtn = this.scene.add.image(W - 55 , H - 55 , 'previewBtn')
         .setDisplaySize(60  , 60 )
         .setOrigin(.5)
         .setAlpha(.6)

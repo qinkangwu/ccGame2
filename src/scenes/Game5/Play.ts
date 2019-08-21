@@ -3,6 +3,9 @@ import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import { game5DataItem } from "../../interface/Game5";
 
+const W = 1024;
+const H = 552;
+
 export default class Game5PlayScene extends Phaser.Scene {
     private ccData : game5DataItem[] ; //数据
     private backToListBtn : Phaser.GameObjects.Image ; //返回列表按钮
@@ -100,14 +103,14 @@ export default class Game5PlayScene extends Phaser.Scene {
       //words展示动画
       this.tweens.add({
         targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
-        y : `+=${window.innerHeight}`,
+        y : `+=${H}`,
         ease: 'Sine.easeInOut',
         duration : 500,
       })
     }
 
     private createDom () : void {
-      let elem : Phaser.GameObjects.DOMElement = this.add.dom(window.innerWidth / 2 ,window.innerHeight / 2).createFromCache('htmlDemo');
+      let elem : Phaser.GameObjects.DOMElement = this.add.dom(W / 2 ,H / 2).createFromCache('htmlDemo');
       elem.setOrigin(.5);
       elem.setDepth(1000);
     }
@@ -124,14 +127,14 @@ export default class Game5PlayScene extends Phaser.Scene {
       this.tweens.add({
         targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
         duration : 500,
-        y : `-=${window.innerHeight}`,
+        y : `-=${H}`,
         ease : 'Sine.easeInOut',
         onComplete : ()=>{
           this.nextTipsHandle();
           this.tweens.add({
             targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
             duration : 500,
-            y : `+=${window.innerHeight}`,
+            y : `+=${H}`,
             ease : 'Sine.easeInOut',
           })
         }
@@ -175,7 +178,7 @@ export default class Game5PlayScene extends Phaser.Scene {
     
     private createCiva () : void {
       //创建civa
-      this.civa = this.add.sprite(107 , -window.innerHeight ,'civa').setOrigin(0).setDisplaySize(267 , 528);
+      this.civa = this.add.sprite(107 , -H ,'civa').setOrigin(0).setDisplaySize(267 , 528);
       this.wordsObj = this.add.text(this.civa.x + this.civa.width / 2,this.civa.y + 230,this.ccData[this.dataIndex].name,{
         font: 'Bold 115px Arial Rounded MT',
         fill : '#856EB4',
@@ -189,7 +192,7 @@ export default class Game5PlayScene extends Phaser.Scene {
 
     private createSketch () : void {
       //创建画板
-      this.sketch = this.add.image(window.innerWidth - 347,window.innerHeight / 2,'sketch').setOrigin(.5).setDisplaySize(529,552);
+      this.sketch = this.add.image(W - 347,H / 2,'sketch').setOrigin(.5).setDisplaySize(529,552);
       this.submitBtn = this.add.image(this.sketch.x,this.sketch.y + 211,'icons','btn_tijiao.png').setOrigin(.5).setInteractive().setData('isBtn',true).setData('_s',true);
       this.add.image(this.sketch.x,this.sketch.y,'line').setOrigin(.5).setDisplaySize(317,247);
       this.penObj = this.add.sprite(this.sketch.x,this.sketch.y,'pen').setOrigin(0).setDepth(900).setAlpha(0);
@@ -249,8 +252,8 @@ export default class Game5PlayScene extends Phaser.Scene {
         iframe.name = 'video';  
       }
       iframe.src = `assets/video.html?vid=${vid}`;
-      iframe.width = window.innerWidth * 0.5859 + '';
-      iframe.height = window.innerHeight * 0.5434 + '';
+      iframe.width = W * 0.5859 + '';
+      iframe.height = H * 0.5434 + '';
       //@ts-ignore
       vBox.style.display = 'block';
       //@ts-ignore
@@ -399,9 +402,9 @@ export default class Game5PlayScene extends Phaser.Scene {
     private createBtn () : void {
       //创建按钮
       this.backToListBtn = this.add.image(55,55,'icons','btn_exit.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);
-      this.clearDrawBtn = this.add.image(55,window.innerHeight - 145,'icons','btn_shangyibu.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);
-      this.playBtn = this.add.image(55,window.innerHeight - 55,'icons','btn_play.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);
-      this.musicBtn = this.add.image(window.innerWidth - 60,55,'icons','btn_music.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);
+      this.clearDrawBtn = this.add.image(55,H - 145,'icons','btn_shangyibu.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);
+      this.playBtn = this.add.image(55,H - 55,'icons','btn_play.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);
+      this.musicBtn = this.add.image(W - 60,55,'icons','btn_music.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);
       this.bgmAnims = this.tweens.add({
         targets : this.musicBtn,
         duration : 2000,
@@ -431,9 +434,9 @@ export default class Game5PlayScene extends Phaser.Scene {
       //创建开始游戏遮罩
       let graphicsObj : Phaser.GameObjects.Graphics = this.add.graphics();
       graphicsObj.fillStyle(0x000000,.5);
-      graphicsObj.fillRect(0,0,window.innerWidth,window.innerHeight).setDepth(1);
-      let mask : Phaser.GameObjects.Image = this.add.image(window.innerWidth / 2, window.innerHeight / 2 , 'mask').setDepth(100);
-      let zoneObj : Phaser.GameObjects.Zone = this.add.zone(window.innerWidth / 2 - 104.5,window.innerHeight / 2 + 138 ,209 , 53 ).setOrigin(0).setInteractive();
+      graphicsObj.fillRect(0,0,W,H).setDepth(1);
+      let mask : Phaser.GameObjects.Image = this.add.image(W / 2, H / 2 , 'mask').setDepth(100);
+      let zoneObj : Phaser.GameObjects.Zone = this.add.zone(W / 2 - 104.5,H / 2 + 138 ,209 , 53 ).setOrigin(0).setInteractive();
       let that : Game5PlayScene = this;
       zoneObj.on('pointerdown',function () {
         //点击开始游戏注销组件
@@ -446,8 +449,8 @@ export default class Game5PlayScene extends Phaser.Scene {
     }
 
     private createBgi () : void {
-      this.add.image(0,0,'game5Bgi').setDisplaySize(window.innerWidth,window.innerHeight).setOrigin(0);
-      this.tips = this.add.sprite(window.innerWidth / 2 , window.innerHeight / 2 , 'tips').setOrigin(.5).setDepth(1002).setScale(0);
+      this.add.image(0,0,'game5Bgi').setDisplaySize(W,H).setOrigin(0);
+      this.tips = this.add.sprite(W / 2 , H / 2 , 'tips').setOrigin(.5).setDepth(1002).setScale(0);
     }
 
     update(time: number , delta : number): void {

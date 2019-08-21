@@ -2,6 +2,8 @@ import 'phaser';
 import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
 import { game4DataItem } from '../../interface/Game4'
+const W = 1024;
+const H = 552;
 
 export default class Game4LoadScene extends Phaser.Scene {
   private ccData : Array<game4DataItem> = []; //数据
@@ -20,7 +22,7 @@ export default class Game4LoadScene extends Phaser.Scene {
 
   init(/*params: any*/): void {
     //初始化加载进度
-    this.centerText = this.add.text(window.innerWidth / 2 ,window.innerHeight /2 ,'0%',{
+    this.centerText = this.add.text(W / 2 ,H /2 ,'0%',{
       fill : '#fff',
       font: 'bold 60px Arial',
       bold : true,
