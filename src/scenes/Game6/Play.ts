@@ -434,8 +434,12 @@ export default class Game6PlayScene extends Phaser.Scene {
     let that = this;
 
     let luyinBtn = new Phaser.GameObjects.Sprite(this, 457 + 110 * 0.5, 417 + 110 * 0.5, "btn_luyin");
-    let backplayBtn = new Phaser.GameObjects.Image(this, 632 + 60 * 0.5, 442 + 60 * 0.5, "btn_last_1").setOrigin(0.5).setAlpha(0);
-    let originalBtn = new Phaser.GameObjects.Image(this, 332 + 60 * 0.5, 442 + 60 * 0.5, "btn_last_2").setOrigin(0.5).setAlpha(0);
+    let backplayBtn = new Button(this, 632 + 60 * 0.5, 442 + 60 * 0.5, "btn_last_1",new Phaser.Geom.Circle(60 * 0.5, 60 * 0.5, 60),Phaser.Geom.Circle.Contains).setOrigin(0.5).setAlpha(0);
+    let originalBtn = new Button(this, 332 + 60 * 0.5, 442 + 60 * 0.5, "btn_last_2",new Phaser.Geom.Circle(60 * 0.5, 60 * 0.5, 60),Phaser.Geom.Circle.Contains).setOrigin(0.5).setAlpha(0);
+    
+    backplayBtn.minAlpha = 1;
+    originalBtn.minAlpha = 1;
+
 
     let userRecoder: HTMLAudioElement = new Audio();
     let rec = Recorder({
@@ -462,8 +466,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     backplayBtn.setInteractive();
     backplayBtn.setData("haveRecord", "no");
 
-    backplayBtn.on("pointerdown", backplayBtnDown);
-    backplayBtn.on("pointerup", backplayBtnUp);
+    backplayBtn.pointerdownFunc = backplayBtnDown;
 
     function backplayBtnDown() {
       let haveRecord = backplayBtn.getData("haveRecord");
@@ -471,25 +474,15 @@ export default class Game6PlayScene extends Phaser.Scene {
         return false;
       }
       that.clickSound.play();
-      alphaScaleMax.call(this);
       userRecoder.play();
     }
 
-    function backplayBtnUp() {
-      alphaScaleMin.call(this);
-    }
 
     originalBtn.setInteractive();
-    originalBtn.on("pointerdown", originalBtnDown);
-    originalBtn.on("pointerup", originalBtnUp);
+    originalBtn.pointerdownFunc = originalBtnDown;
 
     function originalBtnDown() {
       that.clickSound.play();
-      alphaScaleMax.call(this);
-    }
-
-    function originalBtnUp() {
-      alphaScaleMin.call(this);
       that.wordSpeaker.play();
     }
 
@@ -508,14 +501,6 @@ export default class Game6PlayScene extends Phaser.Scene {
       backplayBtn.setAlpha(0);
       that.cloudWord.setAlpha(0);
       rec.start();
-    }
-
-    function alphaScaleMax() {
-      StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
-    }
-
-    function alphaScaleMin() {
-      StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
     }
 
     function aniPlay() {

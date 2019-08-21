@@ -16,10 +16,12 @@ export default class Button extends Phaser.GameObjects.Sprite {
     public pointeroutFunc:Function;
     public pointerdownFunc:Function;
     public pointerupFunc:Function;
+    public minAlpha:number;
 
     constructor(scene: Phaser.Scene, x: number = 0, y: number = 0, texture: string, shape?:any,callback?:Phaser.Types.Input.HitAreaCallback) {
         super(scene, x, y, texture);
         this.initStyle();
+        this.minAlpha = 0.7;
         this.bindEvent(shape,callback);
     }
 
@@ -40,7 +42,7 @@ export default class Button extends Phaser.GameObjects.Sprite {
     }
 
     private pointerupHandler(): void {
-        StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
+        StaticAni.prototype.alphaScaleFuc(this, 1, 1, this.minAlpha);
         if(this.pointerupFunc!==undefined){
             this.pointerupFunc();
         }
@@ -54,7 +56,7 @@ export default class Button extends Phaser.GameObjects.Sprite {
     }
 
     private pointeroutHandler(): void {
-        StaticAni.prototype.alphaScaleFuc(this, 1, 1, 0.7);
+        StaticAni.prototype.alphaScaleFuc(this, 1, 1, this.minAlpha);
         if(this.pointeroverFunc!==undefined){
             this.pointeroverFunc();
         }
