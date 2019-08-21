@@ -1,3 +1,4 @@
+import "phaser";
 import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 
