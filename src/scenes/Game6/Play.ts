@@ -13,7 +13,6 @@ const W = 1024;
 const H = 552;
 const vol = 0.3; //背景音乐的音量
 var ableStop:number = 0;  //0=>不能停止，1=>能停止,2=>已经停止
-var rotate:number = 0;   //音频按钮的旋转初始值
 var index: number; //题目的指针，默认为0
 
 var arrowUpObj: any = null;
