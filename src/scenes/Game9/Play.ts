@@ -64,11 +64,16 @@ export default class Game9PlayScene extends Phaser.Scene {
     //this.btn_sound.mountUpdate();
   }
 
+  /**
+   * 创建静态场景
+   */
   private createStage(){
-     //this.stage = new 
+     this.stage = new Phaser.GameObjects.Container(this);
+     this.add.existing(this.stage);
     
-     //let bg = this.add.image(0,0,"bg").setOrigin(0);
-     //let btn_exit = new ButtonExit(this);
+     let bg = this.add.image(0,0,"bg").setOrigin(0);
+     let btn_exit = new ButtonExit(this);
+     this.stage.add([bg,btn_exit])
 
   }
 

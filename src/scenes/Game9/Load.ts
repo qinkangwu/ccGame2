@@ -11,8 +11,7 @@ export default class Game9LoadScene extends Phaser.Scene {
   private _loader: Phaser.Loader.LoaderPlugin;
   private ccData: Array<Game9DataItem> = [];
   private centerText: Phaser.GameObjects.Text; //文本内容
-  private assets: Game9asset[] = [{ "url": "assets/Game9/bg.jpg", "key": "bg" }, { "url": "assets/Game9/civa.png", "key": "civa" }, { "url": "assets/Game9/cookie.png", "key": "cookie" }, { "url": "assets/Game9/null-cookie.png", "key": "null-cookie" }, { "url": "assets/Game9/shengmingzhi.png", "key": "shengmingzhi" } , { "url": "assets/Game9/try-agin-btn.png", "key": "try-agin-btn" }];
-
+  private assets: Game9asset[] = [{"url":"assets/Game9/bg.jpg","key":"bg"},{"url":"assets/Game9/btn_exit.png","key":"btn_exit"},{"url":"assets/Game9/civa.png","key":"civa"},{"url":"assets/Game9/cookie.png","key":"cookie"},{"url":"assets/Game9/null-cookie.png","key":"null-cookie"},{"url":"assets/Game9/shengmingzhi.png","key":"shengmingzhi"},{"url":"assets/Game9/try-agin-btn.png","key":"try-agin-btn"}];
   constructor() {
     super({
       key: "Game6LoadScene"

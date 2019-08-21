@@ -2,6 +2,7 @@ import 'phaser';
 import Button from './Button';
 
 /**
+  * 在加载文件同时，纹理key必须为 btn_exit
   * @param Phaser.Scene [scene]  
   * @param number [x] options
   * @param number [y] options

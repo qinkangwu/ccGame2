@@ -25,7 +25,7 @@ export default class Cover extends Phaser.GameObjects.Container{
     bindClick(_cover:Phaser.GameObjects.Image,_scene:Phaser.Scene){
         _cover.setInteractive();
         _cover.on("pointerdown",()=>{
-            _scene.scale.startFullscreen();
+            //_scene.scale.startFullscreen();
             this.destroy();
         })
     }
