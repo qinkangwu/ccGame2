@@ -40,6 +40,7 @@ export default class Game8LoadScene extends Phaser.Scene {
     this.load.audio('bgm','assets/Game5/bgm.mp3');
     this.load.multiatlas('game8Icons','assets/Game8/imgsJson.json','assets/Game8');
     this.load.multiatlas('game8Icons2','assets/Game8/imgsJson2.json','assets/Game8');
+    this.load.image('path1','assets/Game8/path1.png');
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;

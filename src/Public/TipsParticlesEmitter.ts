@@ -70,8 +70,15 @@ export default class TipsParticlesEmitter {
         })
     }
 
+    private playMusic(sourceKey : string) : void {
+      //播放音频
+      let mp3 : Phaser.Sound.BaseSound = this.scene.sound.add(sourceKey);
+      mp3.play();
+    }
+
     public success() : void {
         // let tips1 : Phaser.Textures.Frame = this.scene.textures.getFrame('tips1');
+        this.playMusic('successMp3');
         this.tips = this.tips2;
         this.index = 0;
         this.tipsAnims();
@@ -81,6 +88,7 @@ export default class TipsParticlesEmitter {
      * @returns boolean => true : 第二次失败
      */
     public error() : boolean {
+        this.playMusic('error');
         this.index = this.index + 1 > 2 ? 1 : this.index + 1;
         this.index === 1 && (this.tips = this.tips1);
         this.index === 2 && (this.tips = this.tips3);
@@ -93,6 +101,8 @@ export default class TipsParticlesEmitter {
         this.scene.load.image('tips2','assets/Game7/tips2.png');
         this.scene.load.image('tips3','assets/Game7/tips3.png');
         this.scene.load.image('particles','assets/Game5/particles.png');
+        this.scene.load.audio('error','assets/Game5/error.mp3');
+        this.scene.load.audio('successMp3','assets/Game5/success.mp3');
         this.scene.load.on('complete',this.init.bind(this));
         this.scene.load.start();
     }

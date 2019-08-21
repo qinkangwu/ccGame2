@@ -3,8 +3,6 @@ import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
 import { StaticAni } from '../../public/jonny/animate';
-import test from '../../public/cover';
-console.log(test);
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;

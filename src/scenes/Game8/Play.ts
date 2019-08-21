@@ -2,6 +2,7 @@ import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import CreateBtnClass from '../../Public/CreateBtnClass';
 import CreateMask from '../../Public/CreateMask';
+import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 
 export default class Game8PlayScene extends Phaser.Scene {
     private bgm : Phaser.Sound.BaseSound ; //背景音乐
@@ -16,6 +17,7 @@ export default class Game8PlayScene extends Phaser.Scene {
     private choosePopArr : Phaser.GameObjects.Image[] = []; //选择的气泡
     private chooseTextArr : Phaser.GameObjects.Text[] = []; //选择的文本
     private previewLock : boolean = false; //恢复锁
+    private tips : TipsParticlesEmitter; //tip组件
     constructor() {
       super({
         key: "Game8PlayScene"
@@ -51,6 +53,7 @@ export default class Game8PlayScene extends Phaser.Scene {
       this.renderCenterPop(); //渲染中间的泡泡
 
       this.renderLeftUI(); //渲染左边的ui
+      this.tips = new TipsParticlesEmitter(this); //tip组件
     }
 
     private renderLeftUI() : void {
@@ -144,13 +147,15 @@ export default class Game8PlayScene extends Phaser.Scene {
     private itemClickHandle(...args) : void {
       if(!args[1] || args[1].length <= 0 ||  args[1][0].frame.name !== 'bigPop.png') return;
       let obj = args[1][0];
-      this.bait.play('begin');
-      this.moveToHandle(obj)
-
+      this.moveToHandle(obj);
     }
 
     private moveToHandle (obj : Phaser.GameObjects.Image) : void {
       let index : number = obj.getData('index');
+      if(this.leftUiIndex === 3){
+        return;
+      }
+      this.bait.play('begin');
       this.leftUiIndex = this.leftUiIndex + 1 >= 4 ? 0 : this.leftUiIndex + 1
       this.textArr[index].destroy();
       this.tweens.add({
@@ -165,6 +170,9 @@ export default class Game8PlayScene extends Phaser.Scene {
           obj.destroy();
           this.popArr[index] = null;
           this.createSmallPopHandle();
+          if(this.leftUiIndex === 3){
+            this.chooseEndHandle(); 
+          }
         }
       })
     }
@@ -205,6 +213,50 @@ export default class Game8PlayScene extends Phaser.Scene {
         repeat : 0,
         yoyo : true
       })
+    }
+
+    private chooseEndHandle() : void {
+      //成功展示小鱼
+      let graphicsObj : Phaser.GameObjects.Graphics = this.add.graphics();
+      graphicsObj.fillStyle(0x000000,.5);
+      graphicsObj.fillRect(0,0,window.innerWidth,window.innerHeight).setDepth(1001);
+      let path1 : Phaser.GameObjects.Image = this.add.image(window.innerWidth / 2 , window.innerHeight / 2 , 'path1')
+                                                  .setOrigin(.5)
+                                                  .setDepth(1002)
+                                                  .setScale(0);
+      let fish : Phaser.GameObjects.Image = this.add.image(window.innerWidth / 2 , window.innerHeight / 2 ,'game8Icons2' , 'bmf.png')
+                                                  .setOrigin(.5)
+                                                  .setDepth(1003)
+                                                  .setScale(0)
+                                                  .setAngle(0)
+
+      this.tweens.add({
+        targets : path1,
+        ease : 'Sine.easeInOut',
+        duration : 500,
+        scaleX : 1 ,
+        scaleY : 1 
+      });
+
+      this.tweens.add({
+        targets : fish,
+        ease : 'Sine.easeInOut',
+        duration : 500,
+        delay : 500,
+        angle : 360,
+        scaleX : 1,
+        scaleY : 1
+      });
+
+      this.time.addEvent({
+        delay : 2000,
+        callback : ()=>{
+          graphicsObj.destroy();
+          path1.destroy();
+          fish.destroy();
+        }
+      })
+      
     }
 
     private renderCenterPop () : void {

@@ -270,7 +270,16 @@ export default class Game7PlayScene extends Phaser.Scene {
 
     private trueOrFail (res : string) : void {
       //判断录音是否正确
-      this.ccData[this.currentIndex].name === res ? this.tips.success() : this.tips.error();
+      let arr : string[] = res.split('');
+      let arr2 : string[] = this.ccData[this.currentIndex].name.split('');
+      let itemCount : number = +(100 / arr2.length).toFixed(2);
+      let totalCount : number = 0;
+      arr.map((r,i)=>{
+        if(arr2.some((r2)=>r2 === r)){
+          totalCount += itemCount;
+        }
+      })
+      totalCount >= 50 ? this.tips.success() : this.tips.error();
     }
 
     private uploadRecord (file : File) : void {
