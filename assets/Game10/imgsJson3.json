@@ -1,0 +1,55 @@
+{
+	"frames": {
+		"btn_keybord1.png": {
+			"frame": {
+				"x": 1,
+				"y": 1,
+				"w": 178,
+				"h": 173
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 178,
+				"h": 173
+			},
+			"sourceSize": {
+				"w": 178,
+				"h": 173
+			}
+		},
+		"btn_keybord2.png": {
+			"frame": {
+				"x": 181,
+				"y": 1,
+				"w": 178,
+				"h": 173
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 178,
+				"h": 173
+			},
+			"sourceSize": {
+				"w": 178,
+				"h": 173
+			}
+		}
+	},
+	"meta": {
+		"app": "http://www.codeandweb.com/texturepacker",
+		"version": "1.0",
+		"image": "spritesheet.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 360,
+			"h": 175
+		},
+		"scale": "1"
+	}
+}

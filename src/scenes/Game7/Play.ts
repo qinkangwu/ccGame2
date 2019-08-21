@@ -286,7 +286,10 @@ export default class Game7PlayScene extends Phaser.Scene {
 
     private uploadRecord (file : File) : void {
       //上传录音识别
-      let loading : Phaser.GameObjects.Image = this.add.image(W / 2 , H / 2 ,'recordLoading').setOrigin(.5);
+      let loading : Phaser.GameObjects.Image = this.add.image(W / 2 , H / 2 ,'recordLoading').setOrigin(.5).setDepth(2);
+      let graphicsObj : Phaser.GameObjects.Graphics = this.add.graphics();
+        graphicsObj.fillStyle(0x000000,.5);
+        graphicsObj.fillRect(0,0,1024,552).setDepth(1);
       this.tweens.add({
         targets : [this.createBtnClass.playBtn,this.createBtnClass.playRecordBtn,this.createBtnClass.recordStartBtn],
         alpha : 0 ,
@@ -295,6 +298,7 @@ export default class Game7PlayScene extends Phaser.Scene {
       });
       post(apiPath.uploadRecord,{file},'json',true).then((res)=>{
         loading.destroy();
+        graphicsObj.destroy();
         if(!res || res.code !== '0000') return;
         this.trueOrFail(res.result); //对比数据
         this.tweens.add({
@@ -307,6 +311,7 @@ export default class Game7PlayScene extends Phaser.Scene {
         this.handleClick.clickLock = false;
       },()=>{
         loading.destroy();
+        graphicsObj.destroy();
         this.tweens.add({
           targets : [this.createBtnClass.recordStartBtn,this.createBtnClass.playBtn,this.createBtnClass.playRecordBtn],
           alpha : 1,
@@ -409,7 +414,7 @@ export default class Game7PlayScene extends Phaser.Scene {
       //创建机器
       this.machine = this.add.image(W / 2 , 0 , 'machine').setOrigin(.5,0);
       this.handle = this.add.sprite(
-        this.machine.x + (this.machine.width / 2) - (W * 0.08) , 
+        this.machine.x + (this.machine.width / 2) - (W * 0.08 + 17) , 
         this.machine.y + (this.machine.height  / 2 ),
         'icons',
         'anims1.png'

@@ -92,7 +92,7 @@ export default class CreateBtnClass {
       this.recordGraphics.lineStyle(9,0xffffff,1);
       this.recordGraphics.beginPath();
       //@ts-ignore
-      this.recordGraphics.arc(this.recordEndBtn.x,this.recordEndBtn.y,52,Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(this.timerNum.d ++ ),true);
+      this.recordGraphics.arc(this.recordEndBtn.x,this.recordEndBtn.y,52,Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(this.timerNum.d ++ ),false);
       this.recordGraphics.strokePath();
     }
 
