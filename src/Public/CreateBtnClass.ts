@@ -68,12 +68,13 @@ export default class CreateBtnClass {
         .setInteractive()
         .setData('isBtn',true)
         .setData('_s',true));
-        this.config.previewCallback && (this.previewBtn = this.scene.add.image(W - 55 , H - 55 , 'previewBtn')
+        this.config.previewCallback && (this.previewBtn = this.scene.add.image(this.config.previewPosition.x || W - 55 , this.config.previewPosition.y || H - 55 , 'previewBtn')
         .setDisplaySize(60  , 60 )
         .setOrigin(.5)
-        .setAlpha(.6)
+        .setAlpha(this.config.previewPosition.alpha || .6)
         .setInteractive()
         .setData('isBtn',true)
+        .setData('_s',this.config.previewPosition._s)
         )
         this.bgmAnims = this.scene.tweens.add({
             targets : this.scene.musicBtn,

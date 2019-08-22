@@ -7,4 +7,5 @@ export interface config {
     playBtnCallback? : Function; //播放音频按钮回调
     playBtnPosition? : object; //播放音频按钮的样式
     previewCallback? : Function; //返回上一步回调函数
+    previewPosition? : object; //消除按钮样式
 }

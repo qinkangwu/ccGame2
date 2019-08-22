@@ -26,7 +26,12 @@ export default class Game10PlayScene extends Phaser.Scene {
       this.createBgm(); //bgm
       new CreateBtnClass(this,{
         bgm : this.bgm,
-        previewCallback : ()=>{}
+        previewCallback : ()=>{},
+        previewPosition : {
+          y : H - 140,
+          _s : true,
+          alpha : 1
+        }
       });
     }
 

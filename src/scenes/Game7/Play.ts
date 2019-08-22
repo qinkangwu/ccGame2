@@ -78,7 +78,6 @@ export default class Game7PlayScene extends Phaser.Scene {
       this.goldText = this.add.text(this.goldIcon.x + 13,this.goldIcon.y + 16,this.goldNumber.n + '',{
         font: '14px Arial Rounded MT Bold',
         fill : '#fff',
-        fontStyle : 'strong'
       }).setOrigin(.5);
     }
 
@@ -129,7 +128,7 @@ export default class Game7PlayScene extends Phaser.Scene {
         fill : '#C5684C',
         fontStyle : 'bold',
         stroke : '#C5684C',
-        strokeThickness : 5
+        strokeThickness : 2
       }).setOrigin(.5));
       //@ts-ignore
       this.word2 !== 'lock' && (this.word2 = this.add.text(this.machine.x,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),word2,{
@@ -137,13 +136,13 @@ export default class Game7PlayScene extends Phaser.Scene {
         fill : '#C5684C',
         fontStyle : 'bold',
         stroke : '#C5684C',
-        strokeThickness : 5
+        strokeThickness : 2
       }).setOrigin(.5));
       //@ts-ignore
       this.word3 !== 'lock' && (this.word3 = this.add.text(this.machine.x + 31 + 95 ,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),word3,{
         font: '80px Arial Rounded MT Bold',
         stroke : '#C5684C',
-        strokeThickness : 5,
+        strokeThickness : 2,
         fill : '#C5684C',
         fontStyle : 'bold',
       }).setOrigin(.5));
@@ -161,6 +160,8 @@ export default class Game7PlayScene extends Phaser.Scene {
         this.add.text(this.machine.x - 31 - 95 ,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),data[0],{
           font: '80px Arial Rounded MT Bold',
           fill : '#C5684C',
+          stroke : '#C5684C',
+          strokeThickness : 2
         }).setOrigin(.5) 
           || 
         this.add.image(this.machine.x - 31 - 95 ,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),'icons2','civa_gold2.png')
@@ -180,6 +181,8 @@ export default class Game7PlayScene extends Phaser.Scene {
             this.add.text(this.machine.x,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),data[1],{
               font: '80px Arial Rounded MT Bold',
               fill : '#C5684C',
+              stroke : '#C5684C',
+              strokeThickness : 2
             }).setOrigin(.5)
               ||
             this.add.image(this.machine.x,this.machine.y + (this.machine.height / 2) + (H  * 0.07 ),'icons2','civa_gold2.png')
@@ -200,6 +203,8 @@ export default class Game7PlayScene extends Phaser.Scene {
             this.add.text(this.machine.x + 31 + 95 ,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),data[2],{
               font: '80px Arial Rounded MT Bold',
               fill : '#C5684C',
+              stroke : '#C5684C',
+              strokeThickness : 2
             }).setOrigin(.5)
             ||
             this.add.image(this.machine.x + 31 + 95 ,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),'icons2','civa_gold2.png')
