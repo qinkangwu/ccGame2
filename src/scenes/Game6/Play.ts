@@ -691,8 +691,9 @@ export default class Game6PlayScene extends Phaser.Scene {
       x: _nullball.x + _nullball.width*0.5,
       y: _nullball.y + _nullball.height*0.5,
       alpha: 0,
-      duration: 1000,
-      repeat: -1
+      duration: 750,
+      repeat: -1,
+      ease:'Sine.easeOut'
     }))
   }
 
