@@ -25,6 +25,7 @@ const initPosition = {
   y:410
 }
 
+
 declare var Recorder: any; //声音录音
 
 /**
@@ -197,7 +198,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       let ballImg = this.physics.add.image(initPosition.x, initPosition.y, `${ballImgTexures[i]}`).setCircle(71.5, 71.5 * 0.5 + 15, 71.5 * 0.5 + 23);
       ballImg.setData("name", v.name);
       ballImg.setData("arrowIndex", i);
-      let ballText = new Phaser.GameObjects.Text(this, 1024 * 0.5 + 10, 410, v.name, { align: "center", fontSize: "45px" ,fontFamily:"Arial Rounded MT Bold",stroke:"#fff",strokeThickness:2}).setOrigin(0.5);
+      let ballText = new Phaser.GameObjects.Text(this,initPosition.x-5,initPosition.y+18, v.name, { align: "center", fontSize: "47px" ,fontFamily:"Arial Rounded MT Bold",stroke:"#fff",strokeThickness:2}).setOrigin(0.5);
       /**
        * init work
        */
@@ -238,7 +239,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     ball.list[0].on("dragend", ballOnDragEnd);
     function ballImgOnDrag(pointer, dragX, dragY): void {
       (<Phaser.GameObjects.Image>ball.list[0]).setPosition(dragX, dragY);
-      (<Phaser.GameObjects.Text>ball.list[1]).setPosition(dragX, dragY);
+      (<Phaser.GameObjects.Text>ball.list[1]).setPosition(dragX-5, dragY+18);
     }
 
     that.arrowRotateAni(nullballIndex,nullball);
@@ -258,8 +259,8 @@ export default class Game6PlayScene extends Phaser.Scene {
       }
       that.arrowAgainShow();
       if (that.status !== "一个上下拖拽结束") {
-        (<Phaser.GameObjects.Image>ball.list[0]).setPosition(1024 * 0.5 + 10, 410);
-        (<Phaser.GameObjects.Text>ball.list[1]).setPosition(1024 * 0.5 + 10, 410);
+        (<Phaser.GameObjects.Image>ball.list[0]).setPosition(initPosition.x,initPosition.y);
+        (<Phaser.GameObjects.Text>ball.list[1]).setPosition(initPosition.x-5,initPosition.y+18);
       }
     }
 
@@ -273,7 +274,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       ball.list[0].off("dragstart", ballOnDragStart);
       ball.list[0].off("dragend", ballOnDragEnd);
       (<Phaser.GameObjects.Image>ball.list[0]).setPosition(nullball.x + 71.5 * 0.5 + 40, nullball.y + 71.5 * 0.5 + 25);
-      (<Phaser.GameObjects.Text>ball.list[1]).setPosition(nullball.x + 71.5 * 0.5 + 35, nullball.y + 71.5 * 0.5 + 35);
+      (<Phaser.GameObjects.Text>ball.list[1]).setPosition(nullball.x + 71.5 * 0.5 + 35, nullball.y + 71.5 * 0.5 + 45);
       nullball.destroy();  //直接销毁空球体
       speaker.play();
       collider.destroy();
@@ -361,7 +362,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     function onLeftRightDrag(pointer, dragX, dragY): void {
       (<Phaser.GameObjects.Image>this).setPosition(dragX, dragY);
-      (<Phaser.GameObjects.Text>this.parentContainer.list[1]).setPosition(dragX, dragY);
+      (<Phaser.GameObjects.Text>this.parentContainer.list[1]).setPosition(dragX-5, dragY+18);
       if(that.balls.list.length > 2){
         setMirror.call(this, dragX, dragY);
       }
@@ -379,7 +380,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       // @ts-ignore
       that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[0].setPosition(x, y);
       // @ts-ignore
-      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[1].setPosition(x, y);
+      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[1].setPosition(x-5, y+18);
     }
 
     let collider: Phaser.Physics.Arcade.Collider;   //声明一个碰撞器
