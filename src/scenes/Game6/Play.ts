@@ -621,7 +621,7 @@ export default class Game6PlayScene extends Phaser.Scene {
         targets: alertBar,
         scale: 0.5,
         alpha: 0,
-        duration: 500,
+        duration: 300,
         delay: 1000,
         onComplete: () => {
           alertBar.destroy();
