@@ -76,8 +76,9 @@ export default class Game7PlayScene extends Phaser.Scene {
         .setInteractive()
       //@ts-ignore
       this.goldText = this.add.text(this.goldIcon.x + 13,this.goldIcon.y + 16,this.goldNumber.n + '',{
-        font: 'Bold 14px Arial Rounded MT',
+        font: '14px Arial Rounded MT Bold',
         fill : '#fff',
+        fontStyle : 'strong'
       }).setOrigin(.5);
     }
 
@@ -124,18 +125,27 @@ export default class Game7PlayScene extends Phaser.Scene {
       this.word3 && this.word3 !== 'lock' && this.word3.destroy();
       //@ts-ignore
       this.word1 !== 'lock' && (this.word1 = this.add.text(this.machine.x - 31 - 95,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),word1,{
-        font: 'Bold 80px Arial Rounded MT',
+        font: '80px Arial Rounded MT Bold',
         fill : '#C5684C',
+        fontStyle : 'bold',
+        stroke : '#C5684C',
+        strokeThickness : 5
       }).setOrigin(.5));
       //@ts-ignore
       this.word2 !== 'lock' && (this.word2 = this.add.text(this.machine.x,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),word2,{
-        font: 'Bold 80px Arial Rounded MT',
+        font: '80px Arial Rounded MT Bold',
         fill : '#C5684C',
+        fontStyle : 'bold',
+        stroke : '#C5684C',
+        strokeThickness : 5
       }).setOrigin(.5));
       //@ts-ignore
       this.word3 !== 'lock' && (this.word3 = this.add.text(this.machine.x + 31 + 95 ,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),word3,{
-        font: 'Bold 80px Arial Rounded MT',
+        font: '80px Arial Rounded MT Bold',
+        stroke : '#C5684C',
+        strokeThickness : 5,
         fill : '#C5684C',
+        fontStyle : 'bold',
       }).setOrigin(.5));
     }
 
@@ -149,7 +159,7 @@ export default class Game7PlayScene extends Phaser.Scene {
         data[0] 
           && 
         this.add.text(this.machine.x - 31 - 95 ,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),data[0],{
-          font: 'Bold 80px Arial Rounded MT',
+          font: '80px Arial Rounded MT Bold',
           fill : '#C5684C',
         }).setOrigin(.5) 
           || 
@@ -168,7 +178,7 @@ export default class Game7PlayScene extends Phaser.Scene {
             data[1] 
               &&  
             this.add.text(this.machine.x,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),data[1],{
-              font: 'Bold 80px Arial Rounded MT',
+              font: '80px Arial Rounded MT Bold',
               fill : '#C5684C',
             }).setOrigin(.5)
               ||
@@ -188,7 +198,7 @@ export default class Game7PlayScene extends Phaser.Scene {
             data[2] 
             &&
             this.add.text(this.machine.x + 31 + 95 ,this.machine.y + (this.machine.height  / 2) + (H  * 0.07 ),data[2],{
-              font: 'Bold 80px Arial Rounded MT',
+              font: '80px Arial Rounded MT Bold',
               fill : '#C5684C',
             }).setOrigin(.5)
             ||
@@ -414,7 +424,7 @@ export default class Game7PlayScene extends Phaser.Scene {
       //创建机器
       this.machine = this.add.image(W / 2 , 0 , 'machine').setOrigin(.5,0);
       this.handle = this.add.sprite(
-        this.machine.x + (this.machine.width / 2) - (W * 0.08 + 17) , 
+        this.machine.x + (this.machine.width / 2) - (W * 0.08 + 15) , 
         this.machine.y + (this.machine.height  / 2 ),
         'icons',
         'anims1.png'

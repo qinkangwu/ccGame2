@@ -43,13 +43,13 @@ export default class CreateBtnClass {
         .setDisplaySize(60,60)
         .setInteractive()
         .setData('isBtn',true);
-        this.playBtn = this.scene.add.image(this.config.playBtnPosition && this.config.playBtnPosition.x || W / 2 - 150, this.config.playBtnPosition && this.config.playBtnPosition.y || H - 80 , 'icons2' , 'btn_last2.png')
+        this.config.playBtnCallback && (this.playBtn = this.scene.add.image(this.config.playBtnPosition && this.config.playBtnPosition.x || W / 2 - 150, this.config.playBtnPosition && this.config.playBtnPosition.y || H - 80 , 'icons2' , 'btn_last2.png')
         .setDisplaySize(60 , 60)
         .setOrigin(.5)
         .setAlpha(this.config.playBtnPosition && this.config.playBtnPosition.alpha || 0)
         .setInteractive()
         .setData('isBtn',true)
-        .setData('_s',true);
+        .setData('_s',true));
         this.config.recordStartCallback && (this.recordStartBtn = this.scene.add.image(W / 2, H - 80 , 'icons2' , 'btn_luyin2.png')
         .setDisplaySize(110, 110)
         .setAlpha(0)
@@ -113,7 +113,7 @@ export default class CreateBtnClass {
         this.scene.musicBtn.on('pointerdown',this.switchMusic.bind(this,this.bgmFlag));
         this.scene.backToListBtn.on('pointerdown',this.backToListHandle.bind(this));
         this.config.recordStartCallback && this.recordStartBtn.on('pointerdown',this.recordStart.bind(this));
-        this.playBtn.on('pointerdown',this.config.playBtnCallback.bind(this.scene));
+        this.config.playBtnCallback && this.playBtn.on('pointerdown',this.config.playBtnCallback.bind(this.scene));
         this.config.recordEndCallback && this.recordEndBtn.on('pointerdown',this.recordEnd.bind(this));
         this.config.playRecordCallback && this.playRecordBtn.on('pointerdown',this.config.playRecordCallback.bind(this.scene));
         this.config.previewCallback && this.previewBtn.on('pointerdown',this.config.previewCallback.bind(this.scene));

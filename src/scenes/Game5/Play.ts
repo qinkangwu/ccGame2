@@ -115,29 +115,55 @@ export default class Game5PlayScene extends Phaser.Scene {
       elem.setDepth(1000);
     }
 
+    private downloadFile (blob : Blob) : void {
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download',`${this.ccData[this.dataIndex].name}-${this.dataIndex }.${blob.type.split('/')[1]}`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    private dataURItoBlob (dataURI : string ) : Blob {
+      let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]; // mime类型
+      let byteString = atob(dataURI.split(',')[1]); //base64 解码
+      let arrayBuffer = new ArrayBuffer(byteString.length); //创建缓冲数组
+      let intArray = new Uint8Array(arrayBuffer); //创建视图
+
+      for (var i = 0; i < byteString.length; i++) {
+          intArray[i] = byteString.charCodeAt(i);
+      }
+      return new Blob([intArray], {type: mimeString});
+    }
+
     private submitHandle () : void {
       //提交操作
-      if(!this.isDraw) return this.playMusic('error');
-      this.playMusic('successMp3');
-      this.tipsAnims();
-      this.area.clear();
-      this.isDraw = false;
-      this.clearDrawHandle(false);
-      this.dataIndex = this.dataIndex + 1 > this.ccData.length - 1 ? 0 : this.dataIndex + 1;
-      this.tweens.add({
-        targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
-        duration : 500,
-        y : `-=${H}`,
-        ease : 'Sine.easeInOut',
-        onComplete : ()=>{
-          this.nextTipsHandle();
-          this.tweens.add({
-            targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
-            duration : 500,
-            y : `+=${H}`,
-            ease : 'Sine.easeInOut',
-          })
-        }
+      // if(!this.isDraw) return this.playMusic('error');
+      this.game.renderer.snapshotArea(this.area.x,this.area.y,this.area.width,this.area.height,(res : HTMLImageElement)=>{
+        let blob : Blob = this.dataURItoBlob(res.src);
+        this.downloadFile(blob);
+        this.playMusic('successMp3');
+        this.tipsAnims();
+        this.area.clear();
+        this.isDraw = false;
+        this.clearDrawHandle(false);
+        this.dataIndex = this.dataIndex + 1 > this.ccData.length - 1 ? 0 : this.dataIndex + 1;
+        this.tweens.add({
+          targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
+          duration : 500,
+          y : `-=${H}`,
+          ease : 'Sine.easeInOut',
+          onComplete : ()=>{
+            this.nextTipsHandle();
+            this.tweens.add({
+              targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
+              duration : 500,
+              y : `+=${H}`,
+              ease : 'Sine.easeInOut',
+            })
+          }
+        })
       })
     }
 
