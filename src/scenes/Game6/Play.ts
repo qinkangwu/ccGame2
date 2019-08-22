@@ -538,7 +538,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     function recordStartFuc() {
       originalBtn.setAlpha(0);
       backplayBtn.setAlpha(0);
-      that.cloudWord.setAlpha(0);
+      //that.cloudWord.setAlpha(0);
       rec.start();
     }
 
@@ -549,6 +549,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function recordEndFuc() {
+      that.cloudWord.setAlpha(0);
       if(ableStop===1){
         luyinBtn.off("pointerdown", recordReady);
       }
