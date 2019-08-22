@@ -538,7 +538,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     function recordStartFuc() {
       originalBtn.setAlpha(0);
       backplayBtn.setAlpha(0);
-      that.cloudWord.setAlpha(0);
+      //that.cloudWord.setAlpha(0);
       rec.start();
     }
 
@@ -549,6 +549,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function recordEndFuc() {
+      that.cloudWord.setAlpha(0);
       if(ableStop===1){
         luyinBtn.off("pointerdown", recordReady);
       }
@@ -573,8 +574,12 @@ export default class Game6PlayScene extends Phaser.Scene {
             let correctAnswer = that.phoneticData[index].name;
             let result = res.result;
             checkoutResult(correctAnswer, result);
-          });
-      });
+          })
+          .catch(error=>{
+            console.log(error);
+            checkoutResult("error", "err");
+          })
+      })
     }
 
     function createMaskAnalysis():Phaser.GameObjects.Container{
@@ -617,11 +622,11 @@ export default class Game6PlayScene extends Phaser.Scene {
       let alertBar = that.add.image(242 + 521 * 0.5, 0 + 338 * 0.5, texture);
       that.boom();
       that.scaleMaxAni(alertBar);
-      that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+      that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{    //退场动画
         targets: alertBar,
         scale: 0.5,
         alpha: 0,
-        duration: 1000,
+        duration: 300,
         delay: 1000,
         onComplete: () => {
           alertBar.destroy();
