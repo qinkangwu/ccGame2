@@ -1,5 +1,5 @@
 import "phaser";
-import { StaticAni } from '../StaticAni';
+import { StaticAni,TweenAni} from '../Animate';
 
 /**
  * 初始化为0.7的透明度
@@ -20,6 +20,7 @@ export default class Button extends Phaser.GameObjects.Sprite {
 
     constructor(scene: Phaser.Scene, x: number = 0, y: number = 0, texture: string, shape?: any, callback?: Phaser.Types.Input.HitAreaCallback) {
         super(scene, x, y, texture);
+        this.scene = scene;
         this.initStyle();
         this.minAlpha = 0.7;
         this.bindEvent(shape, callback);
@@ -63,7 +64,8 @@ export default class Button extends Phaser.GameObjects.Sprite {
     }
 
     private pointeroverHandler(): void {
-        StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
+        StaticAni.prototype.alphaScaleFuc(this, 1, 1, 1);
+        TweenAni.prototype.alphaScaleYoyoFunc(this.scene,this,1.2,1.2,1);
         if (this.pointeroutFunc !== undefined) {
             this.pointeroverFunc();
         }
