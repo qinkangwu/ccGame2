@@ -10,30 +10,24 @@ export default class Game9PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
 
   private ccData: Array<Game9DataItem> = [];
-  private cover:Phaser.GameObjects.Container;
 
   private bgm: Phaser.Sound.BaseSound; //背景音乐
-  private clickSound: Phaser.Sound.BaseSound;
-  private correctSound: Phaser.Sound.BaseSound;
-  private wrongSound: Phaser.Sound.BaseSound;
+  private clickSound: Phaser.Sound.BaseSound; //点击音效
+  private correctSound: Phaser.Sound.BaseSound; //正确音效
+  private wrongSound: Phaser.Sound.BaseSound; //错误音效
+  private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
 
 
+  private stage: Phaser.GameObjects.Container; // 舞台
+  private cover:Phaser.GameObjects.Container;  //封面
   private bg: Phaser.GameObjects.Image; //背景图片
   private btnExit:Button;  //退出按钮
   private btnSound:ButtonMusic; //音乐按钮
   private originalSoundBtn:Button; //原音按钮
   private tryAginListenBtn:Button; //在听一次按钮
 
-  private stage: Phaser.GameObjects.Container; // 舞台
-
-  private cookie: Phaser.GameObjects.Container; //药品序列
-  private nullCookie: Phaser.GameObjects.Container; //空圆序列
-  // private cloudWord: Phaser.GameObjects.Container; //单词容器
-  private voiceBtns: Phaser.GameObjects.Container; //语音按钮组
-  private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
-
-  private particles: Phaser.GameObjects.Particles.ParticleEmitterManager; // 粒子控制器
-  private emitters: Phaser.GameObjects.Particles.ParticleEmitter;  //粒子发射器
+  private cookie: Phaser.GameObjects.Container; //饼干
+  private nullCookie: Phaser.GameObjects.Container; //空饼干
 
   constructor() {
     super({
@@ -44,7 +38,6 @@ export default class Game9PlayScene extends Phaser.Scene {
   init(res: { data: any[], index: number }) {
     index = res.index;
     this.ccData = res.data;
-    console.log(2);
   }
 
   preload(): void {
