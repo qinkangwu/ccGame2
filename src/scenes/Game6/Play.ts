@@ -500,7 +500,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       luyinTipsAni.remove();
     });
 
-    luyinBtn.on("pointerdown", recordReady);
+    luyinBtn.on("pointerup", recordReady);
 
     backplayBtn.setInteractive();
     backplayBtn.setData("haveRecord", "no");
@@ -551,7 +551,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     function recordEndFuc() {
       that.cloudWord.setAlpha(0);
       if(ableStop===1){
-        luyinBtn.off("pointerdown", recordReady);
+        luyinBtn.off("pointerup", recordReady);
       }
       resetStart();
       let analysisMask:Phaser.GameObjects.Container = createMaskAnalysis();
@@ -604,7 +604,7 @@ export default class Game6PlayScene extends Phaser.Scene {
           alertBarEl("tips_tryagain", () => {
             that.cloudWord.setAlpha(1);
             if(ableStop===2||ableStop===1){
-            luyinBtn.on("pointerdown", recordReady);
+            luyinBtn.on("pointerup", recordReady);
             }
             ableStop = 0;
           });
@@ -646,7 +646,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       luyinTipsAni.remove();
       luyinBtn.scale = 1;
       if(ableStop===1){
-          luyinBtn.off("pointerdown", recordReady);
+          luyinBtn.off("pointerup", recordReady);
           ableStop = 2;
           console.log("已经停止");
           cirAni.complete();
@@ -654,7 +654,9 @@ export default class Game6PlayScene extends Phaser.Scene {
           return false;
       }
       rec.open(() => {
-        ableStop = 1;
+        setTimeout(()=>{
+          ableStop = 1;
+        },1000)
         that.recordTimes += 1;
         that.bgm.pause();
         luyinBtn.setTexture("btn_luyin_progress");
