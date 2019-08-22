@@ -436,11 +436,13 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.scaleMaxAni(word);
 
     
+
     //cloud.input.cursor = 'pointer';
-    cloud.on("pointerover",()=>{
+    word.setInteractive();
+    word.on("pointerover",()=>{
       this.input.setDefaultCursor('url(assets/Game6/pointer.png), pointer');
     });
-    cloud.on("pointerout",()=>{
+    word.on("pointerout",()=>{
       this.input.setDefaultCursor('');
     });
     cloud.setInteractive();
@@ -678,16 +680,17 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   /**
-   * 箭头旋转角度
+   * 箭头旋转角度，位置重置，目标方向的改变
    */
   private arrowRotateAni(_nullballIndex:number,_nullball:Phaser.GameObjects.Image):void{
     arrowUpObj.setPosition(initPosition.x,initPosition.y);
     arrowUpObj.rotation = Phaser.Math.DegToRad(-45 + _nullballIndex*45);
+    arrowUpObj.alpha = 0.7;
     arrowUpAni = this.tweens.add((<Phaser.Types.Tweens.TweenBuilderConfig>{
       targets: arrowUpObj,
       x: _nullball.x + _nullball.width*0.5,
       y: _nullball.y + _nullball.height*0.5,
-      alpha: 1,
+      alpha: 0,
       duration: 1000,
       repeat: -1
     }))
@@ -698,9 +701,6 @@ export default class Game6PlayScene extends Phaser.Scene {
    */
   private arrowAgainShow(): void {
     this.arrows.add(arrowUpObj);
-    //(arrowUpAni as Phaser.Tweens.Tween).duration = 2000;
-    arrowUpAni.x = 100;
-    arrowUpAni.y = 0;
     (arrowUpAni as Phaser.Tweens.Tween).play();
   }
 
