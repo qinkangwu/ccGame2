@@ -20,6 +20,11 @@ var arrowLRAni: any = null;
 var arrowLObj: any = null;
 var arrowRObj: any = null;
 
+const initPosition = {
+  x:1024 * 0.5 + 10,
+  y:410
+}
+
 declare var Recorder: any; //声音录音
 
 /**
@@ -189,7 +194,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     let ballIndex = phoneticSymbols.length - 1;
     let nullballIndex = 0;
     phoneticSymbols.forEach((v, i) => {
-      let ballImg = this.physics.add.image(1024 * 0.5 + 10, 410, `${ballImgTexures[i]}`).setCircle(71.5, 71.5 * 0.5 + 15, 71.5 * 0.5 + 23);
+      let ballImg = this.physics.add.image(initPosition.x, initPosition.y, `${ballImgTexures[i]}`).setCircle(71.5, 71.5 * 0.5 + 15, 71.5 * 0.5 + 23);
       ballImg.setData("name", v.name);
       ballImg.setData("arrowIndex", i);
       let ballText = new Phaser.GameObjects.Text(this, 1024 * 0.5 + 10, 410, v.name, { align: "center", fontSize: "45px" ,fontFamily:"monospace"}).setOrigin(0.5);
@@ -204,9 +209,19 @@ export default class Game6PlayScene extends Phaser.Scene {
    * 单个药品的上下交互
    */
   private ballEvents(ballIndex: number, nullballIndex: number): void {
+    console.log(nullballIndex);
     let that = this;
     let nullBallOffsetX = 241;
     let nullball = this.physics.add.image(201 + nullballIndex * nullBallOffsetX, 67, "img_ballnull").setOrigin(0).setCircle(71.5 * 0.5, 71.5 * 0.5, 71.5 * 0.5);
+
+    this.tweens.add({
+      targets:nullball,
+      alpha:0,
+      duration:300,
+      repeat:3,
+      yoyo:true
+    })
+
     this.nullballs.add(nullball);
 
     let ball: Phaser.GameObjects.Container = (<Phaser.GameObjects.Container>this.balls.list[ballIndex]);
@@ -223,6 +238,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       (<Phaser.GameObjects.Text>ball.list[1]).setPosition(dragX, dragY);
     }
 
+    that.arrowRotateAni(nullballIndex,nullball);
     that.arrowAgainShow();
 
     function ballOnDragStart() {
@@ -662,11 +678,29 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   /**
+   * 箭头旋转角度
+   */
+  private arrowRotateAni(_nullballIndex:number,_nullball:Phaser.GameObjects.Image):void{
+    arrowUpObj.setPosition(initPosition.x,initPosition.y);
+    arrowUpObj.rotation = Phaser.Math.DegToRad(-45 + _nullballIndex*45);
+    arrowUpAni = this.tweens.add((<Phaser.Types.Tweens.TweenBuilderConfig>{
+      targets: arrowUpObj,
+      x: _nullball.x + _nullball.width*0.5,
+      y: _nullball.y + _nullball.height*0.5,
+      alpha: 1,
+      duration: 1000,
+      repeat: -1
+    }))
+  }
+
+  /**
    * 箭头再现
    */
   private arrowAgainShow(): void {
     this.arrows.add(arrowUpObj);
     //(arrowUpAni as Phaser.Tweens.Tween).duration = 2000;
+    arrowUpAni.x = 100;
+    arrowUpAni.y = 0;
     (arrowUpAni as Phaser.Tweens.Tween).play();
   }
 
@@ -691,16 +725,9 @@ export default class Game6PlayScene extends Phaser.Scene {
    * 创建上下循环的箭头及动画
    */
   private createUpArrow(): void {
-    let arrowUp = new Phaser.GameObjects.Image(this, 1024 * 0.5 + 5, 386, "tips_arrow_up").setOrigin(0.5).setAlpha(0);
+    let arrowUp = new Phaser.GameObjects.Image(this, initPosition.x, initPosition.y, "tips_arrow_up").setOrigin(0.5).setAlpha(0);
     arrowUpObj = arrowUp;
     this.arrows.add(arrowUp);
-    arrowUpAni = this.tweens.add((<Phaser.Types.Tweens.TweenBuilderConfig>{
-      targets: arrowUp,
-      y: 386 - 20,
-      alpha: 1,
-      duration: 1000,
-      repeat: -1
-    }))
   }
 
   /**
