@@ -574,8 +574,12 @@ export default class Game6PlayScene extends Phaser.Scene {
             let correctAnswer = that.phoneticData[index].name;
             let result = res.result;
             checkoutResult(correctAnswer, result);
-          });
-      });
+          })
+          .catch(error=>{
+            console.log(error);
+            checkoutResult("error", "err");
+          })
+      })
     }
 
     function createMaskAnalysis():Phaser.GameObjects.Container{
