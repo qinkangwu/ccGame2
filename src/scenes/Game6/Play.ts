@@ -198,7 +198,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       let ballImg = this.physics.add.image(initPosition.x, initPosition.y, `${ballImgTexures[i]}`).setCircle(71.5, 71.5 * 0.5 + 15, 71.5 * 0.5 + 23);
       ballImg.setData("name", v.name);
       ballImg.setData("arrowIndex", i);
-      let ballText = new Phaser.GameObjects.Text(this,initPosition.x-5,initPosition.y+18, v.name, { align: "center", fontSize: "47px" ,fontFamily:"Arial Rounded MT Bold",stroke:"#fff",strokeThickness:2}).setOrigin(0.5);
+      let ballText = new Phaser.GameObjects.Text(this,initPosition.x-5,initPosition.y+18, v.name, { align: "center", fontSize: "47px" ,fontFamily:"ArialRounded MT Bold",stroke:"#fff",strokeThickness:2}).setOrigin(0.5);
       /**
        * init work
        */
