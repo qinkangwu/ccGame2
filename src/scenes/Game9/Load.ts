@@ -11,7 +11,7 @@ export default class Game9LoadScene extends Phaser.Scene {
   private _loader: Phaser.Loader.LoaderPlugin;
   private ccData: Array<Game9DataItem> = [];
   private centerText: Phaser.GameObjects.Text; //文本内容
-  private assets: Game9asset[] = [{"url":"assets/Game9/bg.jpg","key":"bg"},{"url":"assets/Game9/btn_exit.png","key":"btn_exit"},{"url":"assets/Game9/civa.png","key":"civa"},{"url":"assets/Game9/cookie.png","key":"cookie"},{"url":"assets/Game9/null-cookie.png","key":"null-cookie"},{"url":"assets/Game9/shengmingzhi.png","key":"shengmingzhi"},{"url":"assets/Game9/try-agin-btn.png","key":"try-agin-btn"},{ "url": "assets/Game9/btn_sound_off.png", "key": "btn_sound_off" }, { "url": "assets/Game9/btn_sound_on.png", "key": "btn_sound_on" },{"url":"assets/Game9/cover.png","key":"cover"}];
+  private assets: Game9asset[] = [{"url":"assets/Game9/bg.jpg","key":"bg"},{"url":"assets/Game9/civa.png","key":"civa"},{"url":"assets/Game9/cookie.png","key":"cookie"},{"url":"assets/Game9/cover.png","key":"cover"},{"url":"assets/Game9/getSugarGourdWordByBookUnitId.json","key":"getSugarGourdWordByBookUnitId"},{"url":"assets/Game9/null-cookie.png","key":"null-cookie"},{"url":"assets/Game9/shengmingzhi.png","key":"shengmingzhi"},{"url":"assets/Game9/try-agin-btn.png","key":"try-agin-btn"},{"url":"assets/commonUI/backplayBtn.png","key":"backplayBtn"},{"url":"assets/commonUI/btnExit.png","key":"btnExit"},{"url":"assets/commonUI/btnSoundOff.png","key":"btnSoundOff"},{"url":"assets/commonUI/btnSoundOn.png","key":"btnSoundOn"},{"url":"assets/commonUI/originalSoundBtn.png","key":"originalSoundBtn"}];
   constructor() {
     super({
       key: "Game6LoadScene"
@@ -81,7 +81,7 @@ export default class Game9LoadScene extends Phaser.Scene {
       this.centerText.setText(`${e}%`);
     })
     this._loader.on("complete", () => {
-      this.scene.start('Game6PlayScene', {
+      this.scene.start('Game9PlayScene', {
         data: this.ccData,
         index: 0
       });

@@ -1,6 +1,6 @@
 <?php
 $bas=dirname(__FILE__);
-$path=$bas.'/assets/Game9/';
+$path=$bas.'/assets/commonUI/';
 if(is_dir($path)){
   $files=scandir($path);
   unset($files[0]);unset($files[1]);
@@ -8,7 +8,7 @@ if(is_dir($path)){
   foreach($files as $v){
     $tmp=explode('.',$v);
     if($tmp[0]){
-    $out_str.='{"url":"assets/Game9/'.$v.'","key":"'.$tmp[0].'"},';}
+    $out_str.='{"url":"assets/commonUI/'.$v.'","key":"'.$tmp[0].'"},';}
     //$out_str.='"images/xulie/'.$v.'",'.'';}
     //$out_str.= "images/mainView/'.$v.'";
   }

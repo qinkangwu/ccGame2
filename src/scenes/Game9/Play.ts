@@ -21,6 +21,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   private bg: Phaser.GameObjects.Image; //背景图片
   private btn_exit:Button;  //退出按钮
   private btn_sound:ButtonMusic; //音乐按钮
+  private btn_original_sound:Button; //原音按钮
 
   private stage: Phaser.GameObjects.Container; // 舞台
 
@@ -42,6 +43,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   init(res: { data: any[], index: number }) {
     index = res.index;
     this.ccData = res.data;
+    console.log(2);
   }
 
   preload(): void {
@@ -88,12 +90,11 @@ export default class Game9PlayScene extends Phaser.Scene {
   private createStage(){
      this.stage = new Phaser.GameObjects.Container(this);
      this.add.existing(this.stage);
-    
      let bg = this.add.image(0,0,"bg").setOrigin(0);
      this.btn_exit = new ButtonExit(this);
      this.btn_sound = new ButtonMusic(this);
+     this.btn_original_sound = new Button(this,);
      this.stage.add([bg,this.btn_exit,this.btn_sound])
-
   }
 
 
