@@ -446,8 +446,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     word.on("pointerout",()=>{
       this.input.setDefaultCursor('');
     });
-    cloud.setInteractive();
-    cloud.on("pointerdown", () => {
+    word.on("pointerdown", () => {
       that.wordSpeaker.play();
       that.scaleMaxAni(word);
     });
