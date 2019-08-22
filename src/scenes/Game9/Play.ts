@@ -19,9 +19,10 @@ export default class Game9PlayScene extends Phaser.Scene {
 
 
   private bg: Phaser.GameObjects.Image; //背景图片
-  private btn_exit:Button;  //退出按钮
-  private btn_sound:ButtonMusic; //音乐按钮
-  private btn_original_sound:Button; //原音按钮
+  private btnExit:Button;  //退出按钮
+  private btnSound:ButtonMusic; //音乐按钮
+  private originalSoundBtn:Button; //原音按钮
+  private tryAginListenBtn:Button; //在听一次按钮
 
   private stage: Phaser.GameObjects.Container; // 舞台
 
@@ -64,7 +65,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   }
 
   update(time: number, delta: number): void {
-    this.btn_sound.mountUpdate();
+    this.btnSound.mountUpdate();
   }
 
   /* 背景音乐 */
@@ -91,10 +92,12 @@ export default class Game9PlayScene extends Phaser.Scene {
      this.stage = new Phaser.GameObjects.Container(this);
      this.add.existing(this.stage);
      let bg = this.add.image(0,0,"bg").setOrigin(0);
-     this.btn_exit = new ButtonExit(this);
-     this.btn_sound = new ButtonMusic(this);
-     this.btn_original_sound = new Button(this,);
-     this.stage.add([bg,this.btn_exit,this.btn_sound])
+     this.btnExit = new ButtonExit(this);
+     this.btnSound = new ButtonMusic(this);
+     this.originalSoundBtn = new Button(this,25+60*0.5,467+60*0.5,"originalSoundBtn");
+     this.tryAginListenBtn = new Button(this,89,435+50,"try-agin-btn");
+     this.tryAginListenBtn.setOrigin(0,1);
+     this.stage.add([bg,this.btnExit,this.btnSound,this.originalSoundBtn,this.tryAginListenBtn])
   }
 
 
