@@ -1,5 +1,5 @@
 import 'phaser';
-import {get} from '../../lib/http';
+import {get, post} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import { game5DataItem } from "../../interface/Game5";
 
@@ -139,30 +139,38 @@ export default class Game5PlayScene extends Phaser.Scene {
 
     private submitHandle () : void {
       //提交操作
-      // if(!this.isDraw) return this.playMusic('error');
+      if(!this.isDraw) return this.playMusic('error');
+      this.sketchWords.alpha = 0;
       this.game.renderer.snapshotArea(this.area.x,this.area.y,this.area.width,this.area.height,(res : HTMLImageElement)=>{
+        this.sketchWords.alpha = .1;
         let blob : Blob = this.dataURItoBlob(res.src);
-        this.downloadFile(blob);
-        this.playMusic('successMp3');
-        this.tipsAnims();
-        this.area.clear();
-        this.isDraw = false;
-        this.clearDrawHandle(false);
-        this.dataIndex = this.dataIndex + 1 > this.ccData.length - 1 ? 0 : this.dataIndex + 1;
-        this.tweens.add({
-          targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
-          duration : 500,
-          y : `-=${H}`,
-          ease : 'Sine.easeInOut',
-          onComplete : ()=>{
-            this.nextTipsHandle();
-            this.tweens.add({
-              targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
-              duration : 500,
-              y : `+=${H}`,
-              ease : 'Sine.easeInOut',
-            })
-          }
+        // this.downloadFile(blob);
+        post(apiPath.picCompare,{
+          file : new File([blob], `${this.ccData[this.dataIndex].name}-${this.dataIndex }.${blob.type.split('/')[1]}` , {type: blob.type, lastModified: Date.now()})
+        },'json',true).then((res)=>{
+          console.log(res);
+          return;
+          this.playMusic('successMp3');
+          this.tipsAnims();
+          this.area.clear();
+          this.isDraw = false;
+          this.clearDrawHandle(false);
+          this.dataIndex = this.dataIndex + 1 > this.ccData.length - 1 ? 0 : this.dataIndex + 1;
+          this.tweens.add({
+            targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
+            duration : 500,
+            y : `-=${H}`,
+            ease : 'Sine.easeInOut',
+            onComplete : ()=>{
+              this.nextTipsHandle();
+              this.tweens.add({
+                targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
+                duration : 500,
+                y : `+=${H}`,
+                ease : 'Sine.easeInOut',
+              })
+            }
+          })
         })
       })
     }
@@ -224,8 +232,8 @@ export default class Game5PlayScene extends Phaser.Scene {
       this.penObj = this.add.sprite(this.sketch.x,this.sketch.y,'pen').setOrigin(0).setDepth(900).setAlpha(0);
       this.area = this.add.renderTexture(this.sketch.x - this.sketch.width / 2 + 70,this.sketch.y - 150,400,300).setOrigin(0).setInteractive().setDepth(899);
       this.guijiObj = this.textures.getFrame('guiji');
-      this.guijiObj.width = 10;
-      this.guijiObj.height = 10;
+      this.guijiObj.width = 5;
+      this.guijiObj.height = 5;
       this.sketchWords = this.add.text(this.sketch.x,this.sketch.y,this.ccData[this.dataIndex].name.split('').join(' '),{
         font: '200px sxdc',
         fill : '#F98E56'

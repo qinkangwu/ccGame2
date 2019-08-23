@@ -75,7 +75,7 @@ export default class Game7PlayScene extends Phaser.Scene {
         .setDisplaySize(60,60)
         .setInteractive()
       //@ts-ignore
-      this.goldText = this.add.text(this.goldIcon.x + 13,this.goldIcon.y + 16,this.goldNumber.n + '',{
+      this.goldText = this.add.text(this.goldIcon.x + 14,this.goldIcon.y + 17,this.goldNumber.n + '',{
         fontSize: "14px",
         fontFamily:"Arial Rounded MT Bold",
         fill : '#fff',
