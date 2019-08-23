@@ -286,8 +286,8 @@ export default class Game5PlayScene extends Phaser.Scene {
         iframe.name = 'video';  
       }
       iframe.src = `assets/video.html?vid=${vid}`;
-      iframe.width = W * 0.5859 + '';
-      iframe.height = H * 0.5434 + '';
+      iframe.width = window.innerWidth * 0.5859 + '';
+      iframe.height = window.innerHeight * 0.5434 + '';
       //@ts-ignore
       vBox.style.display = 'block';
       //@ts-ignore

@@ -4,6 +4,7 @@ import apiPath from '../../lib/apiPath';
 import CreateBtnClass from '../../Public/CreateBtnClass';
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 import CreateMask from '../../Public/CreateMask';
+import CreateGuideAnims from '../../Public/CreateGuideAnims';
 import { Game7DataItem } from "../../interface/Game7";
 
 const W = 1024;
@@ -30,6 +31,7 @@ export default class Game7PlayScene extends Phaser.Scene {
     private createBtnClass : CreateBtnClass ; //按钮组件返回
     private tips : TipsParticlesEmitter; //tip组件
     private currentIndex : number = -1 ; //当前数据索引
+    private guideAnims : CreateGuideAnims; //引导动画引用
     constructor() {
       super({
         key: "Game7PlayScene"
@@ -217,6 +219,7 @@ export default class Game7PlayScene extends Phaser.Scene {
             !init && this.renderEndHandle(data);
             !init && data.length === 0 && this.subGoldNum(3);
             !init && data.length < 3 && data.length !== 0 && this.subGoldNum(3 - data.length);
+            !init && this.guideAnims.showHandle();
         }
       })
     }
@@ -242,6 +245,7 @@ export default class Game7PlayScene extends Phaser.Scene {
       //点击摇杆
       //@ts-ignore
       if(this.handleClick.clickLock) return;
+      this.guideAnims.hideHandle();
       this.handle.play('begin');
       this.time.addEvent({
         delay : 300,
@@ -438,6 +442,7 @@ export default class Game7PlayScene extends Phaser.Scene {
         'icons',
         'anims1.png'
       ).setInteractive();
+      this.guideAnims = new CreateGuideAnims(this,this.handle.x + 80,this.handle.y - 120); //引导动画
     }
 
     private createBgm () : void{

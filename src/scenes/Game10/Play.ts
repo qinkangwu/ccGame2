@@ -13,6 +13,7 @@ export default class Game10PlayScene extends Phaser.Scene {
     private goldText : Phaser.GameObjects.Text; //金币文本
     private lifeIcon : Phaser.GameObjects.Image; //金币数量
     private lifeText : Phaser.GameObjects.Text; //金币文本
+    private comment : Phaser.GameObjects.Image; //提示按钮
     private goldNumber : object = {
       n : 0,
       l : 0
@@ -68,6 +69,9 @@ export default class Game10PlayScene extends Phaser.Scene {
         fontFamily:"Arial Rounded MT Bold",
         fill : '#fff',
       }).setOrigin(.5);
+
+      // this.comment = this.add.image()
+
     }
 
     private createBgm () : void{
