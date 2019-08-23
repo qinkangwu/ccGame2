@@ -198,7 +198,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       let ballImg = this.physics.add.image(initPosition.x, initPosition.y, `${ballImgTexures[i]}`).setCircle(71.5, 71.5 * 0.5 + 15, 71.5 * 0.5 + 23);
       ballImg.setData("name", v.name);
       ballImg.setData("arrowIndex", i);
-      let ballText = new Phaser.GameObjects.Text(this,initPosition.x-5,initPosition.y+18, v.name, { align: "center", fontSize: "47px" ,fontFamily:"Arial Rounded MT Bold",stroke:"#fff",strokeThickness:2}).setOrigin(0.5);
+      let ballText = new Phaser.GameObjects.Text(this,initPosition.x-5,initPosition.y+18, v.name, { align: "center", fontSize: "47px" ,fontFamily:"ArialRounded MT Bold",stroke:"#fff",strokeThickness:2}).setOrigin(0.5);
       /**
        * init work
        */
@@ -500,7 +500,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       luyinTipsAni.remove();
     });
 
-    luyinBtn.on("pointerdown", recordReady);
+    luyinBtn.on("pointerup", recordReady);
 
     backplayBtn.setInteractive();
     backplayBtn.setData("haveRecord", "no");
@@ -551,7 +551,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     function recordEndFuc() {
       that.cloudWord.setAlpha(0);
       if(ableStop===1){
-        luyinBtn.off("pointerdown", recordReady);
+        luyinBtn.off("pointerup", recordReady);
       }
       resetStart();
       let analysisMask:Phaser.GameObjects.Container = createMaskAnalysis();
@@ -604,7 +604,7 @@ export default class Game6PlayScene extends Phaser.Scene {
           alertBarEl("tips_tryagain", () => {
             that.cloudWord.setAlpha(1);
             if(ableStop===2||ableStop===1){
-            luyinBtn.on("pointerdown", recordReady);
+            luyinBtn.on("pointerup", recordReady);
             }
             ableStop = 0;
           });
@@ -646,7 +646,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       luyinTipsAni.remove();
       luyinBtn.scale = 1;
       if(ableStop===1){
-          luyinBtn.off("pointerdown", recordReady);
+          luyinBtn.off("pointerup", recordReady);
           ableStop = 2;
           console.log("已经停止");
           cirAni.complete();
@@ -654,7 +654,9 @@ export default class Game6PlayScene extends Phaser.Scene {
           return false;
       }
       rec.open(() => {
-        ableStop = 1;
+        setTimeout(()=>{
+          ableStop = 1;
+        },1000)
         that.recordTimes += 1;
         that.bgm.pause();
         luyinBtn.setTexture("btn_luyin_progress");

@@ -1,7 +1,7 @@
 import 'phaser';
 import Button from './Button';
 
-/**
+/** 加载的纹理名称必须为btnSoundOff，btnSoundOn
   * @param Phaser.Scene [scene]  
   * @param number [x] options
   * @param number [y] options
@@ -12,7 +12,7 @@ import Button from './Button';
 
 export default class ButtonMusic extends Button {
   mountUpdate: Function;
-  constructor(scene: Phaser.Scene, x: number = 939 + 60 * 0.5, y: number = 25 + 60 * 0.5, texture: string = "btn_sound_on", shape: any = new Phaser.Geom.Circle(60 * 0.5, 60 * 0.5, 60), callback: Phaser.Types.Input.HitAreaCallback = Phaser.Geom.Circle.Contains) {
+  constructor(scene: Phaser.Scene, x: number = 939 + 60 * 0.5, y: number = 25 + 60 * 0.5, texture: string = "btnSoundOn", shape: any = new Phaser.Geom.Circle(60 * 0.5, 60 * 0.5, 60), callback: Phaser.Types.Input.HitAreaCallback = Phaser.Geom.Circle.Contains) {
     super(scene, x, y, texture, shape, callback)
     this.pointerdownFunc = this.onOffSound.bind(this, scene);
     this.mountUpdate = () => {
@@ -30,10 +30,10 @@ export default class ButtonMusic extends Button {
   onOffSound(scene): void {
     let bgm = scene.bgm;
     if (bgm.isPlaying) {
-      this.setTexture("btn_sound_off");
+      this.setTexture("btnSoundOff");
       bgm.pause();
     } else {
-      this.setTexture("btn_sound_on");
+      this.setTexture("btnSoundOn");
       bgm.resume();
     }
   }

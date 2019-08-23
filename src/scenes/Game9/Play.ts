@@ -10,28 +10,24 @@ export default class Game9PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
 
   private ccData: Array<Game9DataItem> = [];
-  private cover:Phaser.GameObjects.Container;
 
   private bgm: Phaser.Sound.BaseSound; //背景音乐
-  private clickSound: Phaser.Sound.BaseSound;
-  private correctSound: Phaser.Sound.BaseSound;
-  private wrongSound: Phaser.Sound.BaseSound;
-
-
-  private bg: Phaser.GameObjects.Image; //背景图片
-  private btn_exit:Button;  //退出按钮
-  private btn_sound:ButtonMusic; //音乐按钮
-
-  private stage: Phaser.GameObjects.Container; // 舞台
-
-  private cookie: Phaser.GameObjects.Container; //药品序列
-  private nullCookie: Phaser.GameObjects.Container; //空圆序列
-  // private cloudWord: Phaser.GameObjects.Container; //单词容器
-  private voiceBtns: Phaser.GameObjects.Container; //语音按钮组
+  private clickSound: Phaser.Sound.BaseSound; //点击音效
+  private correctSound: Phaser.Sound.BaseSound; //正确音效
+  private wrongSound: Phaser.Sound.BaseSound; //错误音效
   private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
 
-  private particles: Phaser.GameObjects.Particles.ParticleEmitterManager; // 粒子控制器
-  private emitters: Phaser.GameObjects.Particles.ParticleEmitter;  //粒子发射器
+
+  private stage: Phaser.GameObjects.Container; // 舞台
+  private cover:Phaser.GameObjects.Container;  //封面
+  private bg: Phaser.GameObjects.Image; //背景图片
+  private btnExit:Button;  //退出按钮
+  private btnSound:ButtonMusic; //音乐按钮
+  private originalSoundBtn:Button; //原音按钮
+  private tryAginListenBtn:Button; //在听一次按钮
+
+  private cookie: Phaser.GameObjects.Container; //饼干
+  private nullCookie: Phaser.GameObjects.Container; //空饼干
 
   constructor() {
     super({
@@ -62,7 +58,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   }
 
   update(time: number, delta: number): void {
-    this.btn_sound.mountUpdate();
+    this.btnSound.mountUpdate();
   }
 
   /* 背景音乐 */
@@ -88,12 +84,13 @@ export default class Game9PlayScene extends Phaser.Scene {
   private createStage(){
      this.stage = new Phaser.GameObjects.Container(this);
      this.add.existing(this.stage);
-    
      let bg = this.add.image(0,0,"bg").setOrigin(0);
-     this.btn_exit = new ButtonExit(this);
-     this.btn_sound = new ButtonMusic(this);
-     this.stage.add([bg,this.btn_exit,this.btn_sound])
-
+     this.btnExit = new ButtonExit(this);
+     this.btnSound = new ButtonMusic(this);
+     this.originalSoundBtn = new Button(this,25+60*0.5,467+60*0.5,"originalSoundBtn");
+     this.tryAginListenBtn = new Button(this,89,435+50,"try-agin-btn");
+     this.tryAginListenBtn.setOrigin(0,1);
+     this.stage.add([bg,this.btnExit,this.btnSound,this.originalSoundBtn,this.tryAginListenBtn])
   }
 
 
