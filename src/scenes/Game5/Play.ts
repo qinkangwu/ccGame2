@@ -148,7 +148,7 @@ export default class Game5PlayScene extends Phaser.Scene {
         post(apiPath.picCompare,{
           file : new File([blob], `${this.ccData[this.dataIndex].name}-${this.dataIndex }.${blob.type.split('/')[1]}` , {type: blob.type, lastModified: Date.now()})
         },'json',true).then((res)=>{
-          console.log(res);
+          alert(JSON.stringify(res));
           return;
           this.playMusic('successMp3');
           this.tipsAnims();
