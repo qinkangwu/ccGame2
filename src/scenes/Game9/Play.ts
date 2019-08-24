@@ -28,7 +28,8 @@ export default class Game9PlayScene extends Phaser.Scene {
   //动态开始
   private actors: Phaser.GameObjects.Container; // 演员序列
   private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
-  private cookies: Phaser.GameObjects.Container[]=[]; //饼干
+  private cookies: Phaser.GameObjects.Container[] = []; //饼干包含文字
+  private cookieImgs: Phaser.GameObjects.Sprite[] = [];  //饼干图片
   private nullCookies: Phaser.GameObjects.Container; //空饼干
   //动态开始
 
@@ -55,6 +56,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       this.add.existing(this.cover);
     }
     this.createActors();
+    this.dragEvent();
   }
 
   update(time: number, delta: number): void {
@@ -110,21 +112,20 @@ export default class Game9PlayScene extends Phaser.Scene {
     //饼干－－－－
     let cookiesPool = this.ccData[index].phoneticSymbols.concat(this.ccData[index].uselessPhoneticSymbols);
     cookiesPool.sort(() => Math.random() - 0.5).sort(() => Math.random() - 0.5);//两次乱序
-
-    let cookieImgs:Phaser.GameObjects.Sprite[] = [];
-
     cookiesPool.forEach((v, i) => {
       let _ix = i;
       _ix = _ix % 4;
       let _iy = Math.floor(i / 4);
       let _x = 227 + 120 * 0.5 + 158 * _ix;
       let _y = 25 + 91 * 0.5 + 112 * _iy;
-      let _cookieImg = new Button(this, _x, _y, "cookie");
+      let _cookieImg = new Button(this, _x, _y, "cookie",{ pixelPerfect: true, alphaTolerance: 120, draggable: true });
       _cookieImg.name = v.name;
       _cookieImg.setAlpha(1);
       _cookieImg.minAlpha = 1;
+      _cookieImg.setData("initPosition",{x:_cookieImg.x,y:_cookieImg.y});
+      _cookieImg.setData("hit",0);
       _cookieImg.pointerupFunc = () => {
-        let _phonetic:Phaser.Sound.BaseSound  = this.sound.add(_cookieImg.name);
+        let _phonetic: Phaser.Sound.BaseSound = this.sound.add(_cookieImg.name);
         _phonetic.play();
         _phonetic.on("complete", function () {
           _phonetic.destroy();
@@ -133,42 +134,40 @@ export default class Game9PlayScene extends Phaser.Scene {
       let _cookieText = new Phaser.GameObjects.Text(this, _cookieImg.x, _cookieImg.y, v.name, <Phaser.Types.GameObjects.Text.TextSyle>{ align: "center", fontSize: "35px", stroke: "#fff", strokeThickness: 2 }).setOrigin(0.5);
       let _cookies = new Phaser.GameObjects.Container(this);
       _cookies.add([_cookieImg, _cookieText]);
-      cookieImgs.push(_cookieImg);
+      this.cookieImgs.push(_cookieImg);
       this.actors.add(_cookies);
       this.cookies.push(_cookies);
     })
 
-    this.physics.world.enable(cookieImgs);
+    this.physics.world.enable(this.cookieImgs);
 
     //空饼干--------
     this.nullCookies = new Phaser.GameObjects.Container(this);
     this.add.existing(this.nullCookies);
-    let phoneticSymbols = this.ccData[index].phoneticSymbols;  
-    let offsetX:number=0;
-    phoneticSymbols.forEach((v,i,arr)=>{
-        switch(arr.length){
-          case 1:
-              offsetX = (cookieImgs[i].x+cookieImgs[i+3].x)>>1;
-            break;
-          case 2:
-              offsetX = (cookieImgs[i*2].x+cookieImgs[i*2+1].x)>>1;
-           break;
-           case 3:
-              offsetX = (cookieImgs[i].x+cookieImgs[i+1].x)>>1;
-           break;
-           case 4:
-              offsetX = cookieImgs[i].x;
-           break;
-        }
-        let _nullCookieImg = new Phaser.GameObjects.Image(this,offsetX,472,"null-cookie");
-        this.nullCookies.add(_nullCookieImg);
-        this.physics.world.enable(_nullCookieImg);
-        (<Phaser.Physics.Arcade.Body>_nullCookieImg.body).setSize(_nullCookieImg.width*0.5,_nullCookieImg.height*0.5);
+    let phoneticSymbols = this.ccData[index].phoneticSymbols;
+    let offsetX: number = 0;
+    let cookieImgs = this.cookieImgs;
+    phoneticSymbols.forEach((v, i, arr) => {
+      switch (arr.length) {
+        case 1:
+          offsetX = (cookieImgs[i].x + cookieImgs[i + 3].x) >> 1;
+          break;
+        case 2:
+          offsetX = (cookieImgs[i * 2].x + cookieImgs[i * 2 + 1].x) >> 1;
+          break;
+        case 3:
+          offsetX = (cookieImgs[i].x + cookieImgs[i + 1].x) >> 1;
+          break;
+        case 4:
+          offsetX = cookieImgs[i].x;
+          break;
+      }
+      let _nullCookieImg = new Phaser.GameObjects.Image(this, offsetX, 472, "null-cookie");
+      _nullCookieImg.name = v.name;
+      this.nullCookies.add(_nullCookieImg);
+      this.physics.world.enable(_nullCookieImg);
+      (<Phaser.Physics.Arcade.Body>_nullCookieImg.body).setSize(_nullCookieImg.width * 0.5, _nullCookieImg.height * 0.5);
     });
-    console.log(this.nullCookies.list[0]);
-
-
-
   }
 
   /**
@@ -178,8 +177,67 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.wordSpeaker.play();
   }
 
+  /**
+   * 执行拖拽的互动 
+   */
+  private dragEvent(): void {
+    let that = this;
+
+    let hits:number = 0; //碰撞次数
+
+    this.cookies.forEach(cookieEvent);
+    function cookieEvent(v:Phaser.GameObjects.Container) {
+      let cookie = v.list[0]; 
+      cookie.on("dragstart", cookieOnDragStart);
+      cookie.on("drag", cookieOnDrag);
+      cookie.on("dragend", cookieOnDragEnd);
+    }
+
+    function cookieOnDrag(pointer,dragX,dragY) {
+      this.parentContainer.list[1].x = this.x = dragX;
+      this.parentContainer.list[1].y = this.y = dragY;
+    }
+
+    function cookieOnDragStart(pointer,startX,startY) {
+      that.clickSound.play();
+    }
 
 
+    function cookieOnDragEnd() {
+      console.log(this.getData("initPosition"));
+      that.clickSound.play();
+      if(this.getData("hit")===0){
+        this.setPosition(
+          this.getData("initPosition").x,
+          this.getData("initPosition").y
+        );
+        this.parentContainer.list[1].setPosition(
+          this.getData("initPosition").x,
+          this.getData("initPosition").y
+        );
+      }
+    }
 
+
+    let collider = that.physics.add.overlap(that.cookieImgs,that.nullCookies.list, overlapHandler, null, this);
+    function overlapHandler(...args){
+        console.log(1);
+        args[0].setData("hit",1);
+        args[0].setPosition(args[1].x,args[1].y);
+        args[0].parentContainer.list[1].setPosition(args[1].x,args[1].y);
+        args[0].off("drag");
+        args[0].body.destroy();
+        hits+=1;
+        if(hits===that.nullCookies.list.length){
+          dragEnd();
+        }
+    }
+
+    function dragEnd(){
+        console.log("拖拽结束");
+        /**init work */
+    }
+
+  }
 
 }
