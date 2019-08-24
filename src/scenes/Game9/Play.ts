@@ -162,8 +162,10 @@ export default class Game9PlayScene extends Phaser.Scene {
         }
         let _nullCookieImg = new Phaser.GameObjects.Image(this,offsetX,472,"null-cookie");
         this.nullCookies.add(_nullCookieImg);
+        this.physics.world.enable(_nullCookieImg);
+        (<Phaser.Physics.Arcade.Body>_nullCookieImg.body).setSize(_nullCookieImg.width*0.5,_nullCookieImg.height*0.5);
     });
-    this.physics.world.enable(this.nullCookies.list)
+    console.log(this.nullCookies.list[0]);
 
 
 
