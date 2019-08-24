@@ -28,8 +28,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   //动态开始
   private actors: Phaser.GameObjects.Container; // 演员序列
   private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
-  private phonetic:HTMLAudioElement;
-  //private cookie: Phaser.GameObjects.Container; //饼干
+  private cookies: Phaser.GameObjects.Container[]=[]; //饼干
   private nullCookie: Phaser.GameObjects.Container; //空饼干
   //动态开始
 
@@ -78,7 +77,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.tryAginListenBtn.setOrigin(0, 1);
     this.stage.add([bg, this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
     this.originalSoundBtn.on("pointerdown", this.playWord.bind(that));
-    
+
     this.bgm = this.sound.add('bgm');
     this.bgm.addMarker({
       name: "start",
@@ -97,43 +96,44 @@ export default class Game9PlayScene extends Phaser.Scene {
   /**
    * 创建演员们
    */
-  createActors():void{
-     this.actors = new Phaser.GameObjects.Container(this);
-     this.add.existing(this.actors);
+  createActors(): void {
+    this.actors = new Phaser.GameObjects.Container(this);
+    this.add.existing(this.actors);
 
-     //单词发生器
-     let wordSound = this.ccData[index].name;
-     this.wordSpeaker = this.sound.add(wordSound);
+    //单词发生器
+    let wordSound = this.ccData[index].name;
+    this.wordSpeaker = this.sound.add(wordSound);
 
-     //音标发生器
-     //this.phonetic = new Audio();
+    //音标发生器
+    //this.phonetic = new Audio();
 
-     //饼干－－－－
-     let cookiesPool = this.ccData[index].phoneticSymbols.concat(this.ccData[index].uselessPhoneticSymbols);
-     cookiesPool.sort(()=>Math.random() - 0.5).sort(()=>Math.random() - 0.5);//两次乱序
-       
-     cookiesPool.forEach((v,i)=>{
-         let _ix = i;
-         _ix =_ix%4; 
-         let _iy = Math.floor(i/4);
-         let _x = 227+120*0.5+158*_ix;
-         let _y = 25+91*0.5+112*_iy;
-         let _cookieImg = new Button(this,_x,_y,"cookie");
-         _cookieImg.setAlpha(1);
-         _cookieImg.minAlpha = 1;
-         let _cookieText = new Phaser.GameObjects.Text(this,_cookieImg.x,_cookieImg.y,v.name,<Phaser.Types.GameObjects.Text.TextSyle>{ align: "center", fontSize: "35px" ,stroke:"#fff",strokeThickness:2}).setOrigin(0.5);
-        let _cookeis = new Phaser.GameObjects.Container(this);
-        _cookeis.add([_cookieImg,_cookieText]);
-        _cookeis.name = v.name;
-        this.actors.add(_cookeis);
-     })
-      // for(let i = 0;i<length;i++){
-      //   let _cookieImg = new Phaser.GameObjects.Image(this,227+120*0.5,25+91*0.5,"cookie");
-      //   let _cookieText = new Phaser.GameObjects.Text(this,227+120*0.5,25+91*0.5,"");
-      // }
-    //  this.ccData[index].forEach(v=>{
+    //饼干－－－－
+    let cookiesPool = this.ccData[index].phoneticSymbols.concat(this.ccData[index].uselessPhoneticSymbols);
+    cookiesPool.sort(() => Math.random() - 0.5).sort(() => Math.random() - 0.5);//两次乱序
 
-    //  })
+    cookiesPool.forEach((v, i) => {
+      let _ix = i;
+      _ix = _ix % 4;
+      let _iy = Math.floor(i / 4);
+      let _x = 227 + 120 * 0.5 + 158 * _ix;
+      let _y = 25 + 91 * 0.5 + 112 * _iy;
+      let _cookieImg = new Button(this, _x, _y, "cookie");
+      _cookieImg.name = v.name;
+      _cookieImg.setAlpha(1);
+      _cookieImg.minAlpha = 1;
+      _cookieImg.pointerdownFunc = () => {
+        let _phonetic:Phaser.Sound.BaseSound  = this.sound.add(_cookieImg.name);
+        _phonetic.play();
+        _phonetic.on("complete", function () {
+          _phonetic.destroy();
+        });
+      }
+      let _cookieText = new Phaser.GameObjects.Text(this, _cookieImg.x, _cookieImg.y, v.name, <Phaser.Types.GameObjects.Text.TextSyle>{ align: "center", fontSize: "35px", stroke: "#fff", strokeThickness: 2 }).setOrigin(0.5);
+      let _cookies = new Phaser.GameObjects.Container(this);
+      _cookies.add([_cookieImg, _cookieText]);
+      this.actors.add(_cookies);
+      this.cookies.push(_cookies);
+    })
   }
 
   /**
