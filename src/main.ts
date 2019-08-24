@@ -27,7 +27,8 @@ const initHandle = (arr : object[]) : void=>{
       default: 'arcade',
       arcade: {
         gravity: { y: 0 },
-        debug: false
+        //debug: false
+        debug: true
       }
     },
     //transparent : true,

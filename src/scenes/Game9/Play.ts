@@ -29,7 +29,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   private actors: Phaser.GameObjects.Container; // 演员序列
   private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
   private cookies: Phaser.GameObjects.Container[]=[]; //饼干
-  private nullCookie: Phaser.GameObjects.Container; //空饼干
+  private nullCookies: Phaser.GameObjects.Container; //空饼干
   //动态开始
 
   constructor() {
@@ -111,6 +111,8 @@ export default class Game9PlayScene extends Phaser.Scene {
     let cookiesPool = this.ccData[index].phoneticSymbols.concat(this.ccData[index].uselessPhoneticSymbols);
     cookiesPool.sort(() => Math.random() - 0.5).sort(() => Math.random() - 0.5);//两次乱序
 
+    let cookieImgs:Phaser.GameObjects.Sprite[] = [];
+
     cookiesPool.forEach((v, i) => {
       let _ix = i;
       _ix = _ix % 4;
@@ -121,7 +123,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       _cookieImg.name = v.name;
       _cookieImg.setAlpha(1);
       _cookieImg.minAlpha = 1;
-      _cookieImg.pointerdownFunc = () => {
+      _cookieImg.pointerupFunc = () => {
         let _phonetic:Phaser.Sound.BaseSound  = this.sound.add(_cookieImg.name);
         _phonetic.play();
         _phonetic.on("complete", function () {
@@ -131,9 +133,40 @@ export default class Game9PlayScene extends Phaser.Scene {
       let _cookieText = new Phaser.GameObjects.Text(this, _cookieImg.x, _cookieImg.y, v.name, <Phaser.Types.GameObjects.Text.TextSyle>{ align: "center", fontSize: "35px", stroke: "#fff", strokeThickness: 2 }).setOrigin(0.5);
       let _cookies = new Phaser.GameObjects.Container(this);
       _cookies.add([_cookieImg, _cookieText]);
+      cookieImgs.push(_cookieImg);
       this.actors.add(_cookies);
       this.cookies.push(_cookies);
     })
+
+    this.physics.world.enable(cookieImgs);
+
+    //空饼干--------
+    this.nullCookies = new Phaser.GameObjects.Container(this);
+    this.add.existing(this.nullCookies);
+    let phoneticSymbols = this.ccData[index].phoneticSymbols;  
+    let offsetX:number=0;
+    phoneticSymbols.forEach((v,i,arr)=>{
+        switch(arr.length){
+          case 1:
+              offsetX = (cookieImgs[i].x+cookieImgs[i+3].x)>>1;
+            break;
+          case 2:
+              offsetX = (cookieImgs[i*2].x+cookieImgs[i*2+1].x)>>1;
+           break;
+           case 3:
+              offsetX = (cookieImgs[i].x+cookieImgs[i+1].x)>>1;
+           break;
+           case 4:
+              offsetX = cookieImgs[i].x;
+           break;
+        }
+        let _nullCookieImg = new Phaser.GameObjects.Image(this,offsetX,472,"null-cookie");
+        this.nullCookies.add(_nullCookieImg);
+    });
+    this.physics.world.enable(this.nullCookies.list)
+
+
+
   }
 
   /**
