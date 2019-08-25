@@ -94,15 +94,17 @@ export default class CreateBtnClass {
         displayWidth : 120,
         displayHeight : 120,
         ease : 'Sine.easeInOut',
-        duration : 500,
+        duration : 300,
         repeat : -1,
         yoyo : true
-      })
+      });
     }
 
-    private startBtnAnimsHide() : void {
-      this.recordStartAnims.stop();
-      this.scene.tweens.remove(this.recordStartAnims);
+    public startBtnAnimsHide() : void {
+      this.recordStartAnims && this.recordStartAnims.stop();
+      this.recordStartAnims && (this.recordStartAnims = null);
+      this.recordStartBtn.displayHeight = 110;
+      this.recordStartBtn.displayWidth = 110;
     }
 
     private drawArc () : void {

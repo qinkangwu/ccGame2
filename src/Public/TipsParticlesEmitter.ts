@@ -90,7 +90,7 @@ export default class TipsParticlesEmitter {
      * @returns boolean => true : 第二次失败
      */
     public error() : boolean {
-        this.playMusic('error');
+        this.playMusic('successMp3');
         this.index = this.index + 1 > 2 ? 1 : this.index + 1;
         this.index === 1 && (this.tips = this.tips1);
         this.index === 2 && (this.tips = this.tips3);

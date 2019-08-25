@@ -7,6 +7,8 @@ import CreateMask from '../../Public/CreateMask';
 import CreateGuideAnims from '../../Public/CreateGuideAnims';
 import { Game7DataItem } from "../../interface/Game7";
 
+declare var Fr:any;
+
 const W = 1024;
 const H = 552;
 
@@ -248,6 +250,7 @@ export default class Game7PlayScene extends Phaser.Scene {
       //点击摇杆
       //@ts-ignore
       if(this.handleClick.clickLock) return;
+      this.createBtnClass.startBtnAnimsHide();
       this.guideAnims.hideHandle();
       this.handle.play('begin');
       this.time.addEvent({
@@ -351,16 +354,14 @@ export default class Game7PlayScene extends Phaser.Scene {
 
     private recordEndHandle() : void {
       //录音结束
-      this.rec && this.rec.stop((blob,duration)=>{
-        this.recordBlob = blob; //保存blob 用于播放
-        this.rec.close();
+      Fr.voice.export((blob)=>{
+        this.recordBlob = blob;
+        Fr.voice.stop();
         let files : File = new File([blob],'aaa.wav',{
           type : blob.type
         });
         this.uploadRecord(files);
         this.playRecord();
-      },(msg)=>{
-        console.log('录音失败' + msg);
       })
     }
 
@@ -432,13 +433,7 @@ export default class Game7PlayScene extends Phaser.Scene {
       //录音开始
       //@ts-ignore
       this.handleClick.clickLock = true;
-      //@ts-ignore
-      this.rec = this.rec || window.Recorder({
-        type : 'wav'
-      });
-      this.rec.open(()=>{
-        this.rec.start();
-      })
+      Fr.voice.record();
     }
 
     private playMusic (sourceKey : string) : void {
