@@ -107,6 +107,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
   create(): void {
     if (index === 0) {
+      this.scene.pause();
       this.createBgm();
       this.cover = new Cover(this,"cover");
       this.add.existing(this.cover);
