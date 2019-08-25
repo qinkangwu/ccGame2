@@ -5,6 +5,7 @@ import { post } from '../../lib/http';
 import {Cover} from '../../Public/jonny/core';
 import {Button,ButtonMusic,ButtonExit} from '../../Public/jonny/components'; 
 
+declare var Fr:any;
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
@@ -92,7 +93,6 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   init(res: { data: any[], index: number }) {
-    //this.resize();
     index = res.index;
     this.recordTimes = 0;
     this.phoneticData = res.data.map(function (v) {
@@ -468,12 +468,6 @@ export default class Game6PlayScene extends Phaser.Scene {
 
 
     let userRecoder: HTMLAudioElement = new Audio();
-    let rec = Recorder({
-      type: "wav",
-      bitRate: 16,
-      sampleRate: 16000
-    });
-
 
     let cir = new Phaser.GameObjects.Graphics(this);
     cir.fillStyle(0xffffff, 1);
@@ -538,8 +532,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     function recordStartFuc() {
       originalBtn.setAlpha(0);
       backplayBtn.setAlpha(0);
-      //that.cloudWord.setAlpha(0);
-      rec.start();
+      Fr.voice.record();
     }
 
     function aniPlay() {
@@ -557,10 +550,12 @@ export default class Game6PlayScene extends Phaser.Scene {
       let analysisMask:Phaser.GameObjects.Container = createMaskAnalysis();
       that.bgm.resume();
       backplayBtn.setData("haveRecord", "yes");
-      rec.stop((blob:any) => {
-        rec.close();
-        userRecoder.src = URL.createObjectURL(blob);
-        userRecoder.play();
+      Fr.voice.export(function (url) {
+       userRecoder.src = url;
+       userRecoder.play(); 
+      }, "base64");
+      Fr.voice.export(function (blob){
+      Fr.voice.stop();
         let file:File = new File([blob],'aaa.wav',{
           type : blob.type
         });
@@ -594,16 +589,15 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function checkoutResult(correctAnswer, result) {
-      console.log(that.recordTimes);
       if (correctAnswer === result) {
         alertBarEl("tips_goodjob", that.nextLevel.bind(that));
       } else {
-        if (that.recordTimes === 2) {
+        if (that.recordTimes >= 2) {
           alertBarEl("tips_no", that.nextLevel.bind(that));
         } else {
           alertBarEl("tips_tryagain", () => {
             that.cloudWord.setAlpha(1);
-            if(ableStop===2||ableStop===1){
+            if(ableStop>=2||ableStop===1){
             luyinBtn.on("pointerup", recordReady);
             }
             ableStop = 0;
@@ -653,24 +647,16 @@ export default class Game6PlayScene extends Phaser.Scene {
           //radian.value = Math.PI*1.9;
           return false;
       }
-      rec.open(() => {
+      
         setTimeout(()=>{
           ableStop = 1;
         },1000)
         that.recordTimes += 1;
+        console.log("this.recordTimes",that.recordTimes);
         that.bgm.pause();
         luyinBtn.setTexture("btn_luyin_progress");
         backplayBtn.setData("haveRecord", "no");
         cirAni.play();
-      }, (errMsg, isUserNotAllow) => {
-        if (isUserNotAllow) {
-          alert("您拒绝赋予本应用录音的权限");
-          return false;
-        }
-        if (errMsg) {
-          console.log(errMsg);
-        }
-      });
     }
   }
 
@@ -720,7 +706,6 @@ export default class Game6PlayScene extends Phaser.Scene {
    */
   private arrowAgainHide(): void {
     this.arrows.remove(arrowUpObj);
-    //(arrowUpAni as Phaser.Tweens.Tween).duration = 2000;
     (arrowUpAni as Phaser.Tweens.Tween).stop();
   }
 

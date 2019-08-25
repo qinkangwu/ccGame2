@@ -75,6 +75,9 @@ export default class Game9LoadScene extends Phaser.Scene {
       v.phoneticSymbols.forEach(_v => {
         this._loader.audio(_v.name, _v.audioKey);
       })
+      v.uselessPhoneticSymbols.forEach(_v => {
+        this._loader.audio(_v.name, _v.audioKey);
+      })
     })
     this._loader.on("progress", (e: any) => {
       e = Math.floor(50 + e * 50);
