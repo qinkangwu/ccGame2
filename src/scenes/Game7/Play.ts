@@ -238,7 +238,10 @@ export default class Game7PlayScene extends Phaser.Scene {
         alpha : 1,
         duration : 500,
         ease : 'Sine.easeInOut',
-      })
+        onComplete : ()=>{
+          this.createBtnClass.startBtnAnimsShow(); //录音按钮动画
+        }
+      });
     }
 
     private handleClick () : void {

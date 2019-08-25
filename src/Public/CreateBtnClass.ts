@@ -25,6 +25,7 @@ export default class CreateBtnClass {
     private timerNum : object = {
       d : 0
     }; //进度条角度
+    private recordStartAnims : Phaser.Tweens.Tween; //录音开始按钮动画引用
     constructor(scene,config : config){
         this.scene = scene;
         this.config = config;
@@ -87,6 +88,23 @@ export default class CreateBtnClass {
         this.bindEventHandle();
     }
 
+    public startBtnAnimsShow() : void {
+      this.recordStartAnims = this.scene.tweens.add({
+        targets : this.recordStartBtn,
+        displayWidth : 120,
+        displayHeight : 120,
+        ease : 'Sine.easeInOut',
+        duration : 500,
+        repeat : -1,
+        yoyo : true
+      })
+    }
+
+    private startBtnAnimsHide() : void {
+      this.recordStartAnims.stop();
+      this.scene.tweens.remove(this.recordStartAnims);
+    }
+
     private drawArc () : void {
       //绘制进度条
       this.clearArc();
@@ -132,6 +150,7 @@ export default class CreateBtnClass {
       this.timerObj && this.timerObj.stop();
       this.recordGraphics && this.recordGraphics.clear();
       this.recordGraphics && (this.recordGraphics = null);
+      this.startBtnAnimsHide(); //停止录音按钮动画效果
     }
 
     private recordStart () : void {
