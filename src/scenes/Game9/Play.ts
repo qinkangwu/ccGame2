@@ -1,6 +1,6 @@
 import 'phaser';
 import { Game9DataItem } from '../../interface/Game9';
-import { Cover } from '../../Public/jonny/core';
+import { Cover,rotateTips } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit } from '../../Public/jonny/components';
 
 const vol = 0.3; //背景音乐的音量
@@ -51,9 +51,11 @@ export default class Game9PlayScene extends Phaser.Scene {
 
   create(): void {
     if (index === 0) {
+      this.scene.pause();
       this.createStage();
       this.cover = new Cover(this, "cover");
       this.add.existing(this.cover);
+      rotateTips.init();
     }
     this.createActors();
     this.dragEvent();
@@ -124,15 +126,9 @@ export default class Game9PlayScene extends Phaser.Scene {
       _cookieImg.minAlpha = 1;
       _cookieImg.setData("initPosition",{x:_cookieImg.x,y:_cookieImg.y});
       _cookieImg.setData("hit",0);
-      _cookieImg.pointerupFunc = () => {
-        let _phonetic: Phaser.Sound.BaseSound = this.sound.add(_cookieImg.name);
-        _phonetic.play();
-        _phonetic.on("complete", function () {
-          _phonetic.destroy();
-        });
-      }
+      _cookieImg.pointerdownFunc = this.playPhonetic.bind(this,_cookieImg.name);
       let _cookieText = new Phaser.GameObjects.Text(this, _cookieImg.x, _cookieImg.y, v.name, <Phaser.Types.GameObjects.Text.TextSyle>{ align: "center", fontSize: "35px", stroke: "#fff", strokeThickness: 2 }).setOrigin(0.5);
-      let _cookies = new Phaser.GameObjects.Container(this);
+      let _cookies = new Phaser.GameObjects.Container(this).setAlpha(1);
       _cookies.add([_cookieImg, _cookieText]);
       this.cookieImgs.push(_cookieImg);
       this.actors.add(_cookies);
@@ -140,6 +136,41 @@ export default class Game9PlayScene extends Phaser.Scene {
     })
 
     this.physics.world.enable(this.cookieImgs);
+
+    //饼干动画 开始--------------
+    this.cookies.forEach((cookie,index)=>{
+      let i = index;
+      i = i % 4;
+      cookie.y+= (50 + i*50);
+      cookie.setAlpha(0);
+    })
+
+    let cookieIndex = 0;
+
+    let bounceAni = ()=>{
+      let that = this;
+      this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+        targets:this.cookies[cookieIndex],
+        duration:300,
+        alpha:1,
+        y:0,
+        ease:"Bounce.easeOut",
+        onComplete:function (){
+          cookieIndex+=1;
+          if(cookieIndex===2){
+            that.wordSpeaker.play();
+          }
+          if(cookieIndex>cookiesPool.length-1){
+            return false;
+          }else{
+            bounceAni();
+          }
+        }
+      })
+    };
+    bounceAni();
+
+    //饼干动画 结束
 
     //空饼干--------
     this.nullCookies = new Phaser.GameObjects.Container(this);
@@ -164,11 +195,26 @@ export default class Game9PlayScene extends Phaser.Scene {
       }
       let _nullCookieImg = new Phaser.GameObjects.Image(this, offsetX, 472, "null-cookie");
       _nullCookieImg.name = v.name;
+      _nullCookieImg.setAlpha(0);
       this.nullCookies.add(_nullCookieImg);
       this.physics.world.enable(_nullCookieImg);
       (<Phaser.Physics.Arcade.Body>_nullCookieImg.body).setSize(_nullCookieImg.width * 0.5, _nullCookieImg.height * 0.5);
     });
+
+    //空饼干动画
+    this.nullCookies.list.forEach((nullcookie,i)=>{
+        this.tweens.add({
+          targets:nullcookie,
+          alpha:1,
+          delay:1000*i,
+          duration:500
+        })
+    }) 
+
+
   }
+
+
 
   /**
    * 播放目前的单词
@@ -176,6 +222,18 @@ export default class Game9PlayScene extends Phaser.Scene {
   private playWord(): void {
     this.wordSpeaker.play();
   }
+
+  /**
+   * 播放饼干上的音标
+   */
+  private playPhonetic(key):void{
+    let _phonetic: Phaser.Sound.BaseSound = this.sound.add(key);
+    _phonetic.play();
+    _phonetic.on("complete", function () {
+      _phonetic.destroy();
+    });
+  }
+
 
   /**
    * 执行拖拽的互动 
@@ -225,16 +283,26 @@ export default class Game9PlayScene extends Phaser.Scene {
         args[0].setData("hit",1);
         args[0].setPosition(args[1].x,args[1].y);
         args[0].parentContainer.list[1].setPosition(args[1].x,args[1].y);
+        args[0].off("dragstart");
         args[0].off("drag");
+        args[0].off("dragend");
         args[0].body.destroy();
+        args[1].destroy();
+        that.playPhonetic(args[0].name);
         hits+=1;
-        if(hits===that.nullCookies.list.length){
-          dragEnd();
+        if(hits===that.ccData[index].phoneticSymbols.length){
+          dragEnd(args[0],args[1]);
         }
     }
 
-    function dragEnd(){
+    function dragEnd(cookie,nullCookie){
         console.log("拖拽结束");
+        that.cookieImgs.forEach(v=>{
+        v.off("dragstart");
+        v.off("drag");
+        v.off("dragend");
+        })
+        //that.playPhonetic(cookie.name);
         /**init work */
     }
 
