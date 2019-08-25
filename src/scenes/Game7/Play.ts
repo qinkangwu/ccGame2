@@ -99,6 +99,7 @@ export default class Game7PlayScene extends Phaser.Scene {
       !this.renderAnims.clearTimer && this.resultArr.map((r,i)=>{
         r.destroy();
       });
+      this.resultArr.length = 0 ;
       //@ts-ignore
       !this.renderAnims.clearTimer && (this.renderAnims.clearTimer = this.time.addEvent({
         delay : 2000,
@@ -219,7 +220,6 @@ export default class Game7PlayScene extends Phaser.Scene {
             !init && this.renderEndHandle(data);
             !init && data.length === 0 && this.subGoldNum(3);
             !init && data.length < 3 && data.length !== 0 && this.subGoldNum(3 - data.length);
-            !init && this.guideAnims.showHandle();
         }
       })
     }
@@ -355,56 +355,72 @@ export default class Game7PlayScene extends Phaser.Scene {
           type : blob.type
         });
         this.uploadRecord(files);
+        this.playRecord();
       },(msg)=>{
         console.log('录音失败' + msg);
       })
     }
 
     private subGoldNum (num : number) : void {
+      //@ts-ignore
+      this.handleClick.clickLock = true;
+      let civaGold = this.add.image(this.resultArr[2].x - 20 ,this.resultArr[2].y + 20,'civaGold').setDisplaySize(50,50).setDepth(100);
       this.tweens.add({
-        targets : [this.goldIcon],
-        displayHeight : 90,
-        displayWidth : 90,
-        ease : 'Sine.easeInOut',
-        duration : 200,
+        targets : civaGold,
+        ease : 'line',
+        duration : 800,
+        x : this.goldIcon.x,
+        y : this.goldIcon.y,
         onComplete : ()=>{
+          //@ts-ignore
+          this.handleClick.clickLock = false;
+          civaGold.destroy();
           this.tweens.add({
             targets : [this.goldIcon],
-            displayHeight : 60,
-            displayWidth : 60,
-            duration : 200,
+            displayHeight : 90,
+            displayWidth : 90,
             ease : 'Sine.easeInOut',
-          })
-        }
-      });
-      this.tweens.add({
-        targets : [this.goldText],
-        scaleX : 1.5,
-        scaleY : 1.5,
-        x : this.goldIcon.x + 20,
-        y : this.goldIcon.y + 23,
-        ease : 'Sine.easeInOut',
-        duration : 200,
-        onComplete : ()=>{
+            duration : 200,
+            onComplete : ()=>{
+              this.tweens.add({
+                targets : [this.goldIcon],
+                displayHeight : 60,
+                displayWidth : 60,
+                duration : 200,
+                ease : 'Sine.easeInOut',
+              })
+            }
+          });
           this.tweens.add({
             targets : [this.goldText],
-            scaleX : 1,
-            scaleY : 1,
-            x : this.goldIcon.x + 13,
-            y : this.goldIcon.y + 16,
-            duration : 200,
+            scaleX : 1.5,
+            scaleY : 1.5,
+            x : this.goldIcon.x + 20,
+            y : this.goldIcon.y + 23,
             ease : 'Sine.easeInOut',
+            duration : 200,
+            onComplete : ()=>{
+              this.tweens.add({
+                targets : [this.goldText],
+                scaleX : 1,
+                scaleY : 1,
+                x : this.goldIcon.x + 13,
+                y : this.goldIcon.y + 16,
+                duration : 200,
+                ease : 'Sine.easeInOut',
+              })
+            }
+          });
+          this.tweens.add({
+            targets : this.goldNumber,
+            //@ts-ignore
+            n : this.goldNumber.n + num,
+            duration : 500,
+            onUpdate : ()=>{
+              //@ts-ignore
+              this.goldText.setText(Math.ceil(this.goldNumber.n) + '');
+            }
           })
-        }
-      });
-      this.tweens.add({
-        targets : this.goldNumber,
-        //@ts-ignore
-        n : this.goldNumber.n + num,
-        duration : 500,
-        onUpdate : ()=>{
-          //@ts-ignore
-          this.goldText.setText(Math.ceil(this.goldNumber.n) + '');
         }
       })
     }

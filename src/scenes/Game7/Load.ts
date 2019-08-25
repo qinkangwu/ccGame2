@@ -42,6 +42,7 @@ export default class Game7LoadScene extends Phaser.Scene {
     this.load.audio('bgm','assets/Game7/bgm.mp3');
     this.load.image('recordIcon','assets/Game7/btn_luyin.png');
     this.load.image('recordLoading','assets/Game7/recordLoading.png');
+    this.load.image('civaGold','assets/commonUI/civa_gold.png');
     this.load.multiatlas('icons','assets/Game7/imgsJson.json','assets/Game7');
     this.load.multiatlas('icons2','assets/Game7/imgsJson2.json','assets/Game7');
     this.load.on('complete',()=>{

@@ -21,6 +21,7 @@ export default class CreateBtnClass {
     private timerObj : Phaser.Tweens.Tween; //定时器
     public playRecordBtn : Phaser.GameObjects.Image; //播放录音按钮
     private previewBtn : Phaser.GameObjects.Image; //返回上一步按钮
+    private comment : Phaser.GameObjects.Image; //返回上一步按钮
     private timerNum : object = {
       d : 0
     }; //进度条角度
@@ -50,7 +51,7 @@ export default class CreateBtnClass {
         .setInteractive()
         .setData('isBtn',true)
         .setData('_s',true));
-        this.config.recordStartCallback && (this.recordStartBtn = this.scene.add.image(W / 2, H - 80 , 'icons2' , 'btn_luyin2.png')
+        this.config.recordStartCallback && (this.recordStartBtn = this.scene.add.image(W / 2, H - 80 , 'publicRecordBtn')
         .setDisplaySize(110, 110)
         .setAlpha(0)
         .setInteractive()
@@ -76,6 +77,7 @@ export default class CreateBtnClass {
         .setData('isBtn',true)
         .setData('_s',this.config.previewPosition._s)
         )
+        this.config.commentCallback && (this.comment = this.scene.add.image(W - 55 , H - 55 , 'game10icons2','btn_tishi.png').setOrigin(.5).setInteractive().setData('isBtn',true).setData('_s',true));
         this.bgmAnims = this.scene.tweens.add({
             targets : this.scene.musicBtn,
             duration : 2000,
@@ -118,6 +120,7 @@ export default class CreateBtnClass {
         this.config.recordEndCallback && this.recordEndBtn.on('pointerdown',this.recordEnd.bind(this));
         this.config.playRecordCallback && this.playRecordBtn.on('pointerdown',this.config.playRecordCallback.bind(this.scene));
         this.config.previewCallback && this.previewBtn.on('pointerdown',this.config.previewCallback.bind(this.scene));
+        this.config.commentCallback && this.comment.on('pointerdown',this.config.commentCallback.bind(this.scene));
     }
 
     private recordEnd () : void {
@@ -252,6 +255,7 @@ export default class CreateBtnClass {
     private loadImg () : void {
         this.scene.load.multiatlas('icons2','assets/Game7/imgsJson2.json','assets/Game7');
         this.scene.load.image('previewBtn','assets/Game8/previewBtn.png');
+        this.scene.load.image('publicRecordBtn','assets/commonUI/btn_record.png');
         this.scene.load.audio('clickMp3','assets/Game5/click.mp3');
         this.scene.load.on('complete',this.init.bind(this))
         this.scene.load.start();

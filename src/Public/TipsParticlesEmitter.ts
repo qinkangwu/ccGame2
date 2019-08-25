@@ -12,7 +12,7 @@ export default class TipsParticlesEmitter {
     private tips3 : Phaser.GameObjects.Sprite; //图片
     private particles : Phaser.GameObjects.Particles.ParticleEmitterManager ; // 粒子控制器
     private emitters  : Phaser.GameObjects.Particles.ParticleEmitter ;  //粒子发射器
-    private index : number = 0 ;//当前错误次数
+    public index : number = 0 ;//当前错误次数
     constructor(scene){
         this.scene = scene;
         this.loadImg();
