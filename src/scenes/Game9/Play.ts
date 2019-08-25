@@ -148,6 +148,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     let cookieIndex = 0;
 
     let bounceAni = ()=>{
+      let that = this;
       this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
         targets:this.cookies[cookieIndex],
         duration:300,
@@ -156,6 +157,9 @@ export default class Game9PlayScene extends Phaser.Scene {
         ease:"Bounce.easeOut",
         onComplete:function (){
           cookieIndex+=1;
+          if(cookieIndex===2){
+            that.wordSpeaker.play();
+          }
           if(cookieIndex>cookiesPool.length-1){
             return false;
           }else{
