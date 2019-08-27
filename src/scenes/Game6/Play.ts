@@ -107,10 +107,11 @@ export default class Game6PlayScene extends Phaser.Scene {
 
   create(): void {
     if (index === 0) {
-      this.scene.pause();
+      //this.scene.pause();
+      Fr.voice.init();
       this.createBgm();
-      this.cover = new Cover(this,"cover");
-      this.add.existing(this.cover);
+      //this.cover = new Cover(this,"cover");
+      //this.add.existing(this.cover);
       rotateTips.init();
     }
     //index = 6; //test
@@ -534,7 +535,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     function recordStartFuc() {
       originalBtn.setAlpha(0);
       backplayBtn.setAlpha(0);
-      Fr.voice.record();
+      //Fr.voice.record();
     }
 
     function aniPlay() {
@@ -646,10 +647,12 @@ export default class Game6PlayScene extends Phaser.Scene {
           ableStop = 2;
           console.log("已经停止");
           cirAni.complete();
-          //radian.value = Math.PI*1.9;
           return false;
       }
-      
+
+      Fr.voice.record(false,finishCallback,recordingCallback,errCallback);
+
+      function finishCallback(){
         setTimeout(()=>{
           ableStop = 1;
         },1000)
@@ -659,6 +662,17 @@ export default class Game6PlayScene extends Phaser.Scene {
         luyinBtn.setTexture("btn_luyin_progress");
         backplayBtn.setData("haveRecord", "no");
         cirAni.play();
+      }
+
+      function recordingCallback(){
+        console.log("音频正在录制中");
+      }
+
+      function errCallback(){
+        alert("没有麦克风输入或已被拒绝授权");
+      }
+
+        
     }
   }
 

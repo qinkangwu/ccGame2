@@ -70,9 +70,12 @@
 		/**
 		 * Start recording audio
 		 */
-		record: function(output, finishCallback, recordingCallback){
+		record: function(output, finishCallback, recordingCallback,errCallback){
 			var finishCallback = finishCallback || function(){};
 			var recordingCallback = recordingCallback || function(){};
+			var errCallback = errCallback || function (){
+				alert("没有麦克风输入");
+			}
 
 			if(this.init_called === false){
 				this.init();
@@ -98,9 +101,7 @@
 				$that.stream = stream;
 				$that.recorder.record();
 				finishCallback(stream);
-			}, function() {
-				alert('No live audio input');
-			});
+			}, errCallback);
 		},
 
 		/**
