@@ -25,9 +25,11 @@ export default class Cover extends Phaser.GameObjects.Container {
     bindClick(_cover: Phaser.GameObjects.Image, _scene: Phaser.Scene) {
          let that = this;
          var canvas = document.querySelector("canvas");
-        canvas.addEventListener("touchstart", touchstartHandler);
-        function touchstartHandler(){
-            canvas.removeEventListener("touchstart",touchstartHandler);
+        canvas.addEventListener("click", startHandler);
+        canvas.addEventListener("touchstart", startHandler);
+        function startHandler(){
+            canvas.removeEventListener("click",startHandler);
+            canvas.removeEventListener("touchstart",startHandler);
             that.destroy();
             _scene.scene.resume(); 
         }

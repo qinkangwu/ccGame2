@@ -29,36 +29,6 @@ const initPosition = {
 
 declare var Recorder: any; //声音录音
 
-/**
- * 坐标根据画布进行重排
- */
-var coordTranslate: Function = function (_x: number, _y: number): void {
-  let x = Math.floor((_x / W) * WIDTH);
-  let y = Math.floor((_y / H) * HEIGHT);
-  this.x = x;
-  this.y = y;
-}
-
-/**
- * 根据画布宽高返回一组相对宽高及坐标
- */
-
-var reactangleTranslate = function (_width: number, _height: number): any {
-  return {
-    width: Math.floor((_width / W) * WIDTH),
-    height: Math.floor((_height / H) * HEIGHT)
-  }
-}
-
-/**
- * 尺寸根据画布按照宽度进行重排
- */
-var scaleWidthTranslate: Function = function (_width: number) {
-  let width = Math.floor((_width / W) * WIDTH);
-  let xRatio = width / _width;
-  this.setScale(xRatio);
-}
-
 export default class Game6PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
   private recordTimes: number;
@@ -107,11 +77,11 @@ export default class Game6PlayScene extends Phaser.Scene {
 
   create(): void {
     if (index === 0) {
-      //this.scene.pause();
+      this.scene.pause();
       Fr.voice.init();
       this.createBgm();
-      //this.cover = new Cover(this,"cover");
-      //this.add.existing(this.cover);
+      this.cover = new Cover(this,"cover");
+      this.add.existing(this.cover);
       rotateTips.init();
     }
     //index = 6; //test
