@@ -73,13 +73,6 @@ export class TipsParticlesEmitterCallback {
                 this.goldAni(_gold,512.6,277.3,76/63,500,1,0);
             }
         }
-
-        //this.golds.list.forEach((v,i)=>{
-            // this.glodAni(v,405.8,277.3,500,1,0, 
-            //     );
-        //})
-
-        
     }
 
     private createBtn(x: number, y: number, texture: string, index: number): Phaser.GameObjects.Image {
@@ -112,7 +105,19 @@ export class TipsParticlesEmitterCallback {
         return glod;
     }
 
-    private goldAni(glod,x:number,y:number,scale:number,duration:number,alpha:number=1,delay:number=0,onCompleteHandler:Function=()=>{}):void{
+    private goldAni(glod,x:number,y:number,scale:number,duration:number,alpha:number=1,delay:number=0):void{
+        var onCompleteHandler = ()=>{
+            this.parentScene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+                targets:glod,
+                x:968.95,
+                y:149.75,
+                delay:1000,
+                alpha:0,
+                ease:"Linear",
+                duration:duration
+            })
+        }
+
         this.parentScene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
             targets:glod,
             x:x,
@@ -122,7 +127,7 @@ export class TipsParticlesEmitterCallback {
             scale:scale,
             ease:"Linear",
             duration:duration,
-            onCompleteHandler:onCompleteHandler
+            onComplete:onCompleteHandler
         })
     }
 
