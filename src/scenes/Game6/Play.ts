@@ -620,7 +620,12 @@ export default class Game6PlayScene extends Phaser.Scene {
           return false;
       }
 
-      Fr.voice.record(false,finishCallback,recordingCallback,errCallback);
+      Fr.voice.record(
+        false,  //非直播，false
+        finishCallback,  //成功打开录音功能的回调
+        recordingCallback,  //录音过程中的更新回调
+        errCallback    //错误回调
+        );
 
       function finishCallback(){
         setTimeout(()=>{
