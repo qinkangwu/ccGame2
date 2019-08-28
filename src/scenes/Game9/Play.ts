@@ -51,10 +51,10 @@ export default class Game9PlayScene extends Phaser.Scene {
 
   create(): void {
     if (index === 0) {
-      this.scene.pause();
+      //this.scene.pause();
       this.createStage();
-      this.cover = new Cover(this, "cover");
-      this.add.existing(this.cover);
+      //this.cover = new Cover(this, "cover");
+      //this.add.existing(this.cover);
       rotateTips.init();
     }
     this.createActors();

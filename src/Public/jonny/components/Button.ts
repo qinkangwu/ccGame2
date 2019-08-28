@@ -1,5 +1,5 @@
 import "phaser";
-import { StaticAni,TweenAni} from '../Animate';
+import { StaticAni, TweenAni } from '../Animate';
 
 /**
  * 初始化为0.7的透明度
@@ -65,7 +65,7 @@ export default class Button extends Phaser.GameObjects.Sprite {
 
     private pointeroverHandler(): void {
         StaticAni.prototype.alphaScaleFuc(this, 1, 1, 1);
-        TweenAni.prototype.alphaScaleYoyoFunc(this.scene,this,1.2,1.2,1);
+        TweenAni.prototype.alphaScaleYoyoFunc(this.scene, this, 1.2, 1.2, 1);
         if (this.pointeroutFunc !== undefined) {
             this.pointeroverFunc();
         }

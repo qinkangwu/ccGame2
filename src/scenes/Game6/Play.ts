@@ -29,36 +29,6 @@ const initPosition = {
 
 declare var Recorder: any; //声音录音
 
-/**
- * 坐标根据画布进行重排
- */
-var coordTranslate: Function = function (_x: number, _y: number): void {
-  let x = Math.floor((_x / W) * WIDTH);
-  let y = Math.floor((_y / H) * HEIGHT);
-  this.x = x;
-  this.y = y;
-}
-
-/**
- * 根据画布宽高返回一组相对宽高及坐标
- */
-
-var reactangleTranslate = function (_width: number, _height: number): any {
-  return {
-    width: Math.floor((_width / W) * WIDTH),
-    height: Math.floor((_height / H) * HEIGHT)
-  }
-}
-
-/**
- * 尺寸根据画布按照宽度进行重排
- */
-var scaleWidthTranslate: Function = function (_width: number) {
-  let width = Math.floor((_width / W) * WIDTH);
-  let xRatio = width / _width;
-  this.setScale(xRatio);
-}
-
 export default class Game6PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
   private recordTimes: number;
@@ -108,6 +78,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   create(): void {
     if (index === 0) {
       this.scene.pause();
+      Fr.voice.init();
       this.createBgm();
       this.cover = new Cover(this,"cover");
       this.add.existing(this.cover);
@@ -534,7 +505,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     function recordStartFuc() {
       originalBtn.setAlpha(0);
       backplayBtn.setAlpha(0);
-      Fr.voice.record();
+      //Fr.voice.record();
     }
 
     function aniPlay() {
@@ -646,10 +617,17 @@ export default class Game6PlayScene extends Phaser.Scene {
           ableStop = 2;
           console.log("已经停止");
           cirAni.complete();
-          //radian.value = Math.PI*1.9;
           return false;
       }
-      
+
+      Fr.voice.record(
+        false,  //非直播，false
+        finishCallback,  //成功打开录音功能的回调
+        recordingCallback,  //录音过程中的更新回调
+        errCallback    //错误回调
+        );
+
+      function finishCallback(){
         setTimeout(()=>{
           ableStop = 1;
         },1000)
@@ -659,6 +637,17 @@ export default class Game6PlayScene extends Phaser.Scene {
         luyinBtn.setTexture("btn_luyin_progress");
         backplayBtn.setData("haveRecord", "no");
         cirAni.play();
+      }
+
+      function recordingCallback(){
+        console.log("音频正在录制中");
+      }
+
+      function errCallback(){
+        alert("没有麦克风输入或已被拒绝授权");
+      }
+
+        
     }
   }
 
