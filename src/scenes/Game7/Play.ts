@@ -256,7 +256,6 @@ export default class Game7PlayScene extends Phaser.Scene {
       //@ts-ignore
       if(this.handleClick.clickLock) return;
       this.tips.success();
-      return;
       this.createBtnClass.startBtnAnimsHide();
       this.guideAnims.hideHandle();
       this.handle.play('begin');
