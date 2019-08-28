@@ -8,13 +8,14 @@ const H = 552;
  */
 export default class TipsParticlesEmitter_New {
     private scene :Phaser.Scene;
-    private config ; 
+    private config : config ; 
     private tips : Phaser.GameObjects.Sprite; //图片
     private particles : Phaser.GameObjects.Particles.ParticleEmitterManager ; // 粒子控制器
     private emitters  : Phaser.GameObjects.Particles.ParticleEmitter ;  //粒子发射器
     public index : number = 0 ;//当前错误次数
     private graphicsObj : Phaser.GameObjects.Graphics; //mask
     private tryAgainBtn : Phaser.GameObjects.Image; //再试一次按钮
+    private lock : boolean = false;  //节流锁
     constructor(scene : Phaser.Scene,config : config){
         this.scene = scene;
         this.config = config;
@@ -31,7 +32,7 @@ export default class TipsParticlesEmitter_New {
 
     private createEmitter () : void {
         //创建粒子效果发射器
-        this.particles = this.scene.add.particles('particles');
+        this.particles = this.scene.add.particles('particles').setDepth(99);
         this.emitters = this.particles.createEmitter({
           lifespan : 1000,
           speed : { min: 300, max: 400},
@@ -39,8 +40,8 @@ export default class TipsParticlesEmitter_New {
           scale: { start: 0.7, end: 0 },
           rotate: { start: 0, end: 360, ease: 'Power2' },
           blendMode: 'ADD',
-          on : false
-        })
+          on : false,
+        });
     }
 
     private tipsAnims () : void {
@@ -62,10 +63,13 @@ export default class TipsParticlesEmitter_New {
     }
 
     public success() : void {
+        if(this.lock) return;
+        this.lock = true;
         this.tips && this.tips.destroy();
         this.tips = this.scene.add.sprite(W / 2 , H / 2 ,'glodGoodJob')
                       .setOrigin(.5)
-                      .setScale(0);
+                      .setScale(0)
+                      .setDepth(100);
         this.playMusic('success');
         this.createMask();
         this.boom();
@@ -94,6 +98,8 @@ export default class TipsParticlesEmitter_New {
             this.tips.setScale(0);
             this.graphicsObj.destroy();
             this.graphicsObj = null;
+            this.lock = false;
+            this.config.successCb ();
           }
         })
     }
@@ -106,6 +112,16 @@ export default class TipsParticlesEmitter_New {
         this.index = this.index + 1 > 2 ? 1 : this.index + 1;
         
         return this.index === 2;
+    }
+
+    private tryAgain() : void {
+      if(this.lock) return;
+      this.lock = true;
+      this.tips && this.tips.destroy();
+      this.tips = this.scene.add.sprite(W / 2 , H / 2 ,'tipsTryagain')
+                    .setOrigin(.5)
+                    .setScale(0)
+                    .setDepth(100);
     }
 
     private loadImg () : void {
