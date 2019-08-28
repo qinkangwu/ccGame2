@@ -66,7 +66,7 @@ export default class TipsParticlesEmitter_New {
         if(this.lock) return;
         this.lock = true;
         this.tips && this.tips.destroy();
-        this.tips = this.scene.add.sprite(W / 2 , H / 2 ,'glodGoodJob')
+        this.tips = this.scene.add.sprite(W / 2 , 208 ,'glodGoodJob')
                       .setOrigin(.5)
                       .setScale(0)
                       .setDepth(100);
@@ -110,7 +110,7 @@ export default class TipsParticlesEmitter_New {
     public error() : boolean {
         this.playMusic('success');
         this.index = this.index + 1 > 2 ? 1 : this.index + 1;
-        
+        this.index === 1 && this.tryAgain();
         return this.index === 2;
     }
 
@@ -118,18 +118,65 @@ export default class TipsParticlesEmitter_New {
       if(this.lock) return;
       this.lock = true;
       this.tips && this.tips.destroy();
-      this.tips = this.scene.add.sprite(W / 2 , H / 2 ,'tipsTryagain')
+      this.tips = this.scene.add.sprite(W / 2 , 208 ,'tipsTryagain')
                     .setOrigin(.5)
                     .setScale(0)
                     .setDepth(100);
+      this.tryAgainBtn = this.scene.add.image(W / 2 , 421 , 'btnAgain' )
+                          .setOrigin(.5)
+                          .setAlpha(0)
+                          .setDepth(100);
+      this.createMask();
+      this.boom();
+      this.scene.tweens.add({
+        targets : this.tryAgainBtn,
+        alpha : 1,
+        ease : 'Sine.easeInOut',
+        duration : 300
+      });
+      this.scene.tweens.timeline({
+        targets : this.tips,
+        ease : 'Sine.easeInOut',
+        duration : 100,
+        tweens : [
+          {
+            scaleX : 1,
+            scaleY : 1,
+            angle : 10
+          },
+          {
+            scaleX : .8,
+            scaleY : .8,
+            angle : -10
+          },
+          {
+            scaleX : 1,
+            scaleY : 1,
+            angle : 0
+          }
+        ],
+        onComplete : ()=>{
+          this.tips.setScale(0);
+          this.graphicsObj.destroy();
+          this.graphicsObj = null;
+          this.lock = false;
+          this.tryAgainBtn.on('pointerdown',()=>{
+            console.log(1);
+          })
+        }
+      })
+      
     }
+    
 
     private loadImg () : void {
         this.scene.load.image('glodGoodJob','assets/commonUI/glodGoodJob.png');
         this.scene.load.image('tipsTryagain','assets/commonUI/tipsTryagain.png');
         this.scene.load.image('tipsNo','assets/commonUI/tipsNo.png');
         this.scene.load.image('particles','assets/Game5/particles.png');
+        this.scene.load.image('btnAgain','assets/commonUI/btnAgain.png');
         this.scene.load.audio('success','assets/Game5/success.mp3');
+        this.scene.load.audio('clickMp3','assets/sounds/clickMp3.mp3');
         this.scene.load.on('complete',this.init.bind(this));
         this.scene.load.start();
     }
