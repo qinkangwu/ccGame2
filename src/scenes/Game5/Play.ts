@@ -61,6 +61,7 @@ export default class Game5PlayScene extends Phaser.Scene {
       this.tips = new TipsParticlesEmitter(this,{
         successCb : ()=>{
           this.tryTimes = 0;
+          this.onHandle();
         },
         nextCb : ()=>{
           this.area.setDepth(899);
