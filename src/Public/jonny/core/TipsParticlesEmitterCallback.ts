@@ -4,13 +4,16 @@ import "phaser";
  */
 
 export class TipsParticlesEmitterCallback {
-    public parentScene:Phaser.Scene;
+    private parentScene:Phaser.Scene;
     private glodValue:number;
     private golds:Phaser.GameObjects.Container;
+    private callback:Phaser.Types.Tweens.TweenOnCompleteCallback;
 
-    constructor(parentScene:Phaser.Scene) {
+    constructor(parentScene:Phaser.Scene,callback:Phaser.Types.Tweens.TweenOnCompleteCallback) {
         this.parentScene = parentScene;
+        console.log(this.parentScene);
         this.glodValue = 3;
+        this.callback = callback;
     }
 
     /**
@@ -45,6 +48,7 @@ export class TipsParticlesEmitterCallback {
     }
 
     private goldAni(glod,x:number,y:number,scale:number,duration:number,alpha:number=1,delay:number=0):void{
+        let that = this;
         let factor = 0.4;
         var ease = function (t){
             return Math.pow(2, -10 * t) * Math.sin((t - factor / 4) * (2 * Math.PI) / factor) + 1;
@@ -58,7 +62,8 @@ export class TipsParticlesEmitterCallback {
                 delay:1000,
                 alpha:0,
                 ease:ease,
-                duration:duration
+                duration:duration,
+                onComplete:that.callback
             })
         }
 
