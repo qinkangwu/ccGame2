@@ -2,6 +2,9 @@ import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
 import 'phaser';
 
+const W = 1024;
+const H = 552;
+
 export default class Game10LoadScene extends Phaser.Scene {
   private centerText : Phaser.GameObjects.Text; //文本内容
   private DefaultLoadSeconds : number = 33; //每秒增加百分之多少
@@ -18,7 +21,7 @@ export default class Game10LoadScene extends Phaser.Scene {
 
   init(/*params: any*/): void {
     //初始化加载进度
-    this.centerText = this.add.text(window.innerWidth / 2 ,window.innerHeight /2 ,'0%',{
+    this.centerText = this.add.text(W / 2 ,H /2 ,'0%',{
       fill : '#fff',
       font: 'bold 60px Arial',
       bold : true,
@@ -36,6 +39,11 @@ export default class Game10LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
+    this.load.image('bgi','assets/Game10/bgi.png');
+    this.load.audio('bgm','assets/Game7/bgm.mp3');
+    this.load.multiatlas('game10icons2','assets/Game10/imgsJson2.json','assets/Game10');
+    this.load.multiatlas('game10icons3','assets/Game10/imgsJson3.json','assets/Game10');
+    this.load.multiatlas('game10icons1','assets/Game10/imgsJson.json','assets/Game10');
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;

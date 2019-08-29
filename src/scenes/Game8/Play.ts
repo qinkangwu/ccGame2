@@ -4,6 +4,9 @@ import CreateBtnClass from '../../Public/CreateBtnClass';
 import CreateMask from '../../Public/CreateMask';
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 
+const W = 1024;
+const H = 552;
+
 export default class Game8PlayScene extends Phaser.Scene {
     private bgm : Phaser.Sound.BaseSound ; //背景音乐
     private createBtnClass : CreateBtnClass ; //按钮组件返回
@@ -44,7 +47,7 @@ export default class Game8PlayScene extends Phaser.Scene {
         bgm : this.bgm,
         previewCallback : this.previewHandle.bind(this),
         playBtnPosition : {
-          y : window.innerHeight - 55,
+          y : H - 55,
           x : 55,
           alpha : 1
         }
@@ -53,13 +56,17 @@ export default class Game8PlayScene extends Phaser.Scene {
       this.renderCenterPop(); //渲染中间的泡泡
 
       this.renderLeftUI(); //渲染左边的ui
-      this.tips = new TipsParticlesEmitter(this); //tip组件
+      this.tips = new TipsParticlesEmitter(this,{
+        successCb : ()=>{},
+        tryAgainCb : ()=>{},
+        nextCb : ()=>{}
+      }); //tip组件
     }
 
     private renderLeftUI() : void {
       for(let i = 0 ; i < 4; i ++ ){
         this.leftPopArr.push(
-          this.add.image(55,window.innerHeight - 145 - ((i) * 65),'game8Icons2',`smallPop${i + 1}.png`)
+          this.add.image(55,H - 145 - ((i) * 65),'game8Icons2',`smallPop${i + 1}.png`)
             .setOrigin(.5)
             .setDisplaySize(60,60)
         )
@@ -197,11 +204,11 @@ export default class Game8PlayScene extends Phaser.Scene {
 
     private createBgi () : void {
       //背景
-      this.add.image(0,0,'bgi').setDisplaySize(window.innerWidth,window.innerHeight).setOrigin(0);
-      this.bait = this.add.sprite(window.innerWidth * 0.9086,window.innerHeight * 0.8324 ,'game8Icons','bait1.png')
+      this.add.image(0,0,'bgi').setDisplaySize(W,H).setOrigin(0);
+      this.bait = this.add.sprite(W * 0.9086,H * 0.8324 ,'game8Icons','bait1.png')
         .setOrigin(.5)
-        .setDisplaySize(window.innerWidth * 0.0166,window.innerHeight * 0.1177);
-      this.add.image(89,window.innerHeight - 118,'game8Icons2','playAgain.png').setOrigin(0).setDisplaySize(101,50);
+        .setDisplaySize(W * 0.0166,H * 0.1177);
+      this.add.image(89,H - 118,'game8Icons2','playAgain.png').setOrigin(0).setDisplaySize(101,50);
     }
 
     private baitAnims () : void {
@@ -219,12 +226,12 @@ export default class Game8PlayScene extends Phaser.Scene {
       //成功展示小鱼
       let graphicsObj : Phaser.GameObjects.Graphics = this.add.graphics();
       graphicsObj.fillStyle(0x000000,.5);
-      graphicsObj.fillRect(0,0,window.innerWidth,window.innerHeight).setDepth(1001);
-      let path1 : Phaser.GameObjects.Image = this.add.image(window.innerWidth / 2 , window.innerHeight / 2 , 'path1')
+      graphicsObj.fillRect(0,0,W,H).setDepth(1001);
+      let path1 : Phaser.GameObjects.Image = this.add.image(W / 2 , H / 2 , 'path1')
                                                   .setOrigin(.5)
                                                   .setDepth(1002)
                                                   .setScale(0);
-      let fish : Phaser.GameObjects.Image = this.add.image(window.innerWidth / 2 , window.innerHeight / 2 ,'game8Icons2' , 'bmf.png')
+      let fish : Phaser.GameObjects.Image = this.add.image(W / 2 , H / 2 ,'game8Icons2' , 'bmf.png')
                                                   .setOrigin(.5)
                                                   .setDepth(1003)
                                                   .setScale(0)
@@ -264,7 +271,7 @@ export default class Game8PlayScene extends Phaser.Scene {
       for (let i = 0 ; i < 9 ; i ++ ){
         if(i < 3){
           this.popArr.push(
-            this.add.image(window.innerWidth / 2 + (-185 + (i * 185)),window.innerHeight / 2 - 173 ,'game8Icons2','bigPop.png')
+            this.add.image(W / 2 + (-185 + (i * 185)),H / 2 - 173 ,'game8Icons2','bigPop.png')
               .setOrigin(.5)
               .setData('index',i)
               .setDisplaySize(0,0)
@@ -272,7 +279,7 @@ export default class Game8PlayScene extends Phaser.Scene {
           )
         }else if(i >= 3 && i < 6){
           this.popArr.push(
-            this.add.image(window.innerWidth / 2 + (-185 + ((i - 3) * 185)),window.innerHeight / 2,'game8Icons2','bigPop.png')
+            this.add.image(W / 2 + (-185 + ((i - 3) * 185)),H / 2,'game8Icons2','bigPop.png')
               .setOrigin(.5)
               .setData('index',i)
               .setDisplaySize(0,0)
@@ -280,7 +287,7 @@ export default class Game8PlayScene extends Phaser.Scene {
           )
         }else{
           this.popArr.push(
-            this.add.image(window.innerWidth / 2 + (-185 + ((i - 6) * 185)),window.innerHeight / 2 + 173,'game8Icons2','bigPop.png')
+            this.add.image(W / 2 + (-185 + ((i - 6) * 185)),H / 2 + 173,'game8Icons2','bigPop.png')
               .setOrigin(.5)
               .setData('index',i)
               .setDisplaySize(0,0)

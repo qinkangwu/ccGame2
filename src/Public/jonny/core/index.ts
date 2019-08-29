@@ -4,8 +4,8 @@ import {rotateTips} from "./rotateTips";
 import {TipsParticlesEmitterCallback} from "./TipsParticlesEmitterCallback";
 
 export {
-    Cover,
     resize,
+    Cover,
     rotateTips,
     TipsParticlesEmitterCallback
 }

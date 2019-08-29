@@ -3,6 +3,9 @@ import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import { game4DataItem , game4PhoneticSymbol , game4WordItem} from '../../interface/Game4';
 
+const W = 1024;
+const H = 552;
+
 export default class Game4PlayScene extends Phaser.Scene {
     private ccData : Array<game4DataItem> = [] ; //数据
     private civa : Phaser.GameObjects.Sprite ; //civa机器人
@@ -65,7 +68,7 @@ export default class Game4PlayScene extends Phaser.Scene {
     private createMask () : void {
       let graphicsObj : Phaser.GameObjects.Graphics = this.add.graphics();
       graphicsObj.fillStyle(0x000000,.5);
-      graphicsObj.fillRect(0,0,window.innerWidth,window.innerHeight).setDepth(500);
+      graphicsObj.fillRect(0,0,W,H).setDepth(500);
     }
 
     private loadBgm () : void {
@@ -104,7 +107,7 @@ export default class Game4PlayScene extends Phaser.Scene {
 
     private createQuiver () : void {
       //创建气泡跟箭筒
-      this.quiver = this.add.sprite(250,window.innerHeight - 100,'icons2',`jianshi${this.words.length}.png`).setScale(0.8);
+      this.quiver = this.add.sprite(250,H - 100,'icons2',`jianshi${this.words.length}.png`).setScale(0.8);
       this.quiverText = this.add.text(this.quiver.x,this.quiver.y + 40,this.words[0].name,{
         font: 'bold 37px Arial Rounded MT',
         fill : '#017dbd',
@@ -153,7 +156,7 @@ export default class Game4PlayScene extends Phaser.Scene {
 
     private createWord () : void {
       //创建胡萝卜单词
-      this.wordObj = this.add.sprite(window.innerWidth / 2 , window.innerHeight /  2 + window.innerHeight , 'icons', 'huluobo.png').setOrigin(.5).setAlpha(1).setInteractive();
+      this.wordObj = this.add.sprite(W / 2 , H /  2 + H , 'icons', 'huluobo.png').setOrigin(.5).setAlpha(1).setInteractive();
       this.currentWord = this.add.text(this.wordObj.x + 30, this.wordObj.y ,this.ccData[this.ccDataIndex].name,{
         font: 'bold 70px Arial Rounded MT',
         fill : '#fff',
@@ -234,7 +237,7 @@ export default class Game4PlayScene extends Phaser.Scene {
       //显示胡萝卜
       this.tweens.add({
         targets : [this.currentWord,this.wordObj],
-        y : `-=${window.innerHeight}`,
+        y : `-=${H}`,
         ease: 'Sine.easeInOut',
         duration : 500,
       })
@@ -252,7 +255,7 @@ export default class Game4PlayScene extends Phaser.Scene {
       this.shootLock = true;
       this.tweens.add({
         targets : this.wolfObj,
-        y : `+=${window.innerHeight}`,
+        y : `+=${H}`,
         ease: 'Sine.easeInOut',
         duration : 500,
         onComplete : ()=>{
@@ -324,7 +327,7 @@ export default class Game4PlayScene extends Phaser.Scene {
       //起始动画
       this.tweens.add({
         targets : [...this.ballonSprites,...this.lineSprites,...this.textArr,this.wolfObj],
-        y : `-=${window.innerHeight}`,
+        y : `-=${H}`,
         ease: 'Sine.easeInOut',
         duration : 1000,
         onComplete : ()=>{
@@ -440,7 +443,7 @@ export default class Game4PlayScene extends Phaser.Scene {
       //点击场景触发
       this.input.on('pointerdown',(...args)=>{
         //@ts-ignore
-        // this.game.renderer.snapshotArea(0,0,window.innerWidth,window.innerHeight,(img)=>{
+        // this.game.renderer.snapshotArea(0,0,W,H,(img)=>{
         //   //下载图像
         //   let aLink = document.createElement('a');
         //   let blob = this.base64ToBlob(img.src); //new Blob([content]);
@@ -457,9 +460,9 @@ export default class Game4PlayScene extends Phaser.Scene {
         if(args[1].length === 0 ) return;
         this.playMusic('shoot');
         this.currentClickIndex = args[1][0].getData('index');
-        if(this.wordObj.y < window.innerHeight){
-          this.wordObj.y += window.innerHeight;
-          this.currentWord.y += window.innerHeight;
+        if(this.wordObj.y < H){
+          this.wordObj.y += H;
+          this.currentWord.y += H;
           if(++this.ccDataIndex >= this.ccData.length){
             this.ccDataIndex = 0;
           }
@@ -516,14 +519,14 @@ export default class Game4PlayScene extends Phaser.Scene {
 
     private drawCivaAndWolf () : void{
       //渲染场景
-      this.civa = this.add.sprite(0,window.innerHeight - (240 + window.innerHeight * 0.15),'shoot','civa0001.png').setOrigin(0).setDepth(100);
+      this.civa = this.add.sprite(0,H - (240 + H * 0.15),'shoot','civa0001.png').setOrigin(0).setDepth(100);
       switch(this.words.length){
         case 2 :  
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 - 20 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu01.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',0));
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 140 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu02.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',1));
+          this.ballonSprites.push(this.physics.add.sprite(W / 2 - 20 , H / 2 - 150 + H, 'icons' , 'qiqiu01.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',0));
+          this.ballonSprites.push(this.physics.add.sprite(W / 2 + 140 , H / 2 - 150 + H, 'icons' , 'qiqiu02.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',1));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[0].x - 20, this.ballonSprites[0].y,'icons','line02.png').setOrigin(0));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[0].x + 48, this.ballonSprites[0].y,'icons','line03.png').setOrigin(0));
-          this.wolfObj = this.add.sprite(window.innerWidth / 2 + 50 , window.innerHeight / 2  + 100 + window.innerHeight,'icons' , 'dahuilang.png');
+          this.wolfObj = this.add.sprite(W / 2 + 50 , H / 2  + 100 + H,'icons' , 'dahuilang.png');
           for(let i = 0 ; i < this.ballonSprites.length ; i ++ ){
             let ballon = this.ballonSprites[i];
             this.textArr.push(this.add.text(ballon.x  , ballon.y , this.errorWords[i].name , {
@@ -534,13 +537,13 @@ export default class Game4PlayScene extends Phaser.Scene {
           }
           break;
         case 3 :
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 - 120 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu03.png').setScale(.5).setDepth(100).setAngle(-20).setImmovable().setInteractive().setData('index',0));
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 20, window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu01.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',1));
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 180 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu02.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',2));
+          this.ballonSprites.push(this.physics.add.sprite(W / 2 - 120 , H / 2 - 150 + H, 'icons' , 'qiqiu03.png').setScale(.5).setDepth(100).setAngle(-20).setImmovable().setInteractive().setData('index',0));
+          this.ballonSprites.push(this.physics.add.sprite(W / 2 + 20, H / 2 - 150 + H, 'icons' , 'qiqiu01.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',1));
+          this.ballonSprites.push(this.physics.add.sprite(W / 2 + 180 , H / 2 - 150 + H, 'icons' , 'qiqiu02.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',2));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[1].x - 205, this.ballonSprites[1].y,'icons','line01.png').setOrigin(0));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[1].x - 20, this.ballonSprites[1].y,'icons','line02.png').setOrigin(0));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[1].x + 48, this.ballonSprites[1].y,'icons','line03.png').setOrigin(0));
-          this.wolfObj = this.add.sprite(window.innerWidth / 2 + 50 , window.innerHeight / 2  + 100 + window.innerHeight,'icons' , 'dahuilang.png');
+          this.wolfObj = this.add.sprite(W / 2 + 50 , H / 2  + 100 + H,'icons' , 'dahuilang.png');
           for(let i : number = 0 ; i < this.ballonSprites.length ; i ++ ){
             let ballon = this.ballonSprites[i];
             this.textArr.push(this.add.text(ballon.x  , ballon.y , this.errorWords[i].name , {
@@ -551,15 +554,15 @@ export default class Game4PlayScene extends Phaser.Scene {
           }
           break;
         case 4 :
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 - 160 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu03.png').setScale(.5).setDepth(100).setAngle(-20).setImmovable().setInteractive().setData('index',0));
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 - 30, window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu01.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',1));
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 110 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu02.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',2));
-          this.ballonSprites.push(this.physics.add.sprite(window.innerWidth / 2 + 250 , window.innerHeight / 2 - 150 + window.innerHeight, 'icons' , 'qiqiu02.png').setScale(.5).setDepth(100).setAngle(20).setImmovable().setInteractive().setData('index',3));
+          this.ballonSprites.push(this.physics.add.sprite(W / 2 - 160 , H / 2 - 150 + H, 'icons' , 'qiqiu03.png').setScale(.5).setDepth(100).setAngle(-20).setImmovable().setInteractive().setData('index',0));
+          this.ballonSprites.push(this.physics.add.sprite(W / 2 - 30, H / 2 - 150 + H, 'icons' , 'qiqiu01.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',1));
+          this.ballonSprites.push(this.physics.add.sprite(W / 2 + 110 , H / 2 - 150 + H, 'icons' , 'qiqiu02.png').setScale(.5).setDepth(100).setImmovable().setInteractive().setData('index',2));
+          this.ballonSprites.push(this.physics.add.sprite(W / 2 + 250 , H / 2 - 150 + H, 'icons' , 'qiqiu02.png').setScale(.5).setDepth(100).setAngle(20).setImmovable().setInteractive().setData('index',3));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[1].x - 200, this.ballonSprites[1].y,'icons','line01.png').setOrigin(0));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[1].x - 20, this.ballonSprites[1].y,'icons','line02.png').setOrigin(0));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[1].x + 28, this.ballonSprites[1].y,'icons','line03.png').setOrigin(0));
           this.lineSprites.push(this.add.sprite(this.ballonSprites[1].x + 50, this.ballonSprites[1].y,'icons','line01.png').setOrigin(0).setFlip(true,false));
-          this.wolfObj = this.add.sprite(window.innerWidth / 2 + 50 , window.innerHeight / 2  + 100 + window.innerHeight,'icons' , 'dahuilang.png');
+          this.wolfObj = this.add.sprite(W / 2 + 50 , H / 2  + 100 + H,'icons' , 'dahuilang.png');
           for(let i : number = 0 ; i < this.ballonSprites.length ; i ++ ){
             let ballon = this.ballonSprites[i];
             this.textArr.push(this.add.text(ballon.x  , ballon.y , this.errorWords[i].name , {
@@ -577,8 +580,8 @@ export default class Game4PlayScene extends Phaser.Scene {
 
 
     private createBackgroundImage () :void {
-      let img : Phaser.GameObjects.Image = this.add.image(0,0,'game4Bgi').setOrigin(0).setDisplaySize(window.innerWidth,window.innerHeight);
-      this.wrongObj = this.add.sprite(0,0,'game4WrongImg').setOrigin(0).setDisplaySize(window.innerWidth,window.innerHeight).setDepth(1000).setAlpha(0);
+      let img : Phaser.GameObjects.Image = this.add.image(0,0,'game4Bgi').setOrigin(0).setDisplaySize(W,H);
+      this.wrongObj = this.add.sprite(0,0,'game4WrongImg').setOrigin(0).setDisplaySize(W,H).setDepth(1000).setAlpha(0);
     }
 
     private showWrongObjHandle() : void{

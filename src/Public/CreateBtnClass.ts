@@ -1,6 +1,9 @@
 import "phaser";
 import { config } from "../interface/CreateBtnClassInt";
 
+const W = 1024;
+const H = 552;
+
 /**
  * @class CreateBtnClass 按钮公共组件
  * @param scene 当前场景
@@ -18,9 +21,11 @@ export default class CreateBtnClass {
     private timerObj : Phaser.Tweens.Tween; //定时器
     public playRecordBtn : Phaser.GameObjects.Image; //播放录音按钮
     private previewBtn : Phaser.GameObjects.Image; //返回上一步按钮
+    private comment : Phaser.GameObjects.Image; //返回上一步按钮
     private timerNum : object = {
       d : 0
     }; //进度条角度
+    private recordStartAnims : Phaser.Tweens.Tween; //录音开始按钮动画引用
     constructor(scene,config : config){
         this.scene = scene;
         this.config = config;
@@ -34,44 +39,46 @@ export default class CreateBtnClass {
         .setDisplaySize(60 ,60)
         .setInteractive()
         .setData('isBtn',true);
-        this.scene.musicBtn = this.scene.add.image(window.innerWidth - 60,55,'icons2','btn_play2.png')
+        this.scene.musicBtn = this.scene.add.image(W - 60,55,'icons2','btn_play2.png')
         .setOrigin(.5)
         .setAlpha(.6)
         .setDisplaySize(60,60)
         .setInteractive()
         .setData('isBtn',true);
-        this.playBtn = this.scene.add.image(this.config.playBtnPosition && this.config.playBtnPosition.x || window.innerWidth / 2 - 150, this.config.playBtnPosition && this.config.playBtnPosition.y || window.innerHeight - 80 , 'icons2' , 'btn_last2.png')
+        this.config.playBtnCallback && (this.playBtn = this.scene.add.image(this.config.playBtnPosition && this.config.playBtnPosition.x || W / 2 - 150, this.config.playBtnPosition && this.config.playBtnPosition.y || H - 80 , 'icons2' , 'btn_last2.png')
         .setDisplaySize(60 , 60)
         .setOrigin(.5)
         .setAlpha(this.config.playBtnPosition && this.config.playBtnPosition.alpha || 0)
         .setInteractive()
         .setData('isBtn',true)
-        .setData('_s',true);
-        this.config.recordStartCallback && (this.recordStartBtn = this.scene.add.image(window.innerWidth / 2, window.innerHeight - 80 , 'icons2' , 'btn_luyin2.png')
+        .setData('_s',true));
+        this.config.recordStartCallback && (this.recordStartBtn = this.scene.add.image(W / 2, H - 80 , 'publicRecordBtn')
         .setDisplaySize(110, 110)
         .setAlpha(0)
         .setInteractive()
         .setData('isBtn',true)
         .setData('_s',true));
-        this.config.recordEndCallback && (this.recordEndBtn = this.scene.add.image(window.innerWidth / 2, window.innerHeight - 80 , 'recordIcon')
+        this.config.recordEndCallback && (this.recordEndBtn = this.scene.add.image(W / 2, H - 80 , 'recordIcon')
         .setDisplaySize(110 , 110 )
         .setAlpha(0)
         .setInteractive()
         .setData('_s',true));
-        this.config.playRecordCallback && (this.playRecordBtn = this.scene.add.image(window.innerWidth / 2 + 150 , window.innerHeight - 80 , 'icons2' , 'btn_last.png')
+        this.config.playRecordCallback && (this.playRecordBtn = this.scene.add.image(W / 2 + 150 , H - 80 , 'icons2' , 'btn_last.png')
         .setDisplaySize(60  , 60 )
         .setOrigin(.5)
         .setAlpha(0)
         .setInteractive()
         .setData('isBtn',true)
         .setData('_s',true));
-        this.config.previewCallback && (this.previewBtn = this.scene.add.image(window.innerWidth - 55 , window.innerHeight - 55 , 'previewBtn')
+        this.config.previewCallback && (this.previewBtn = this.scene.add.image(this.config.previewPosition.x || W - 55 , this.config.previewPosition.y || H - 55 , 'previewBtn')
         .setDisplaySize(60  , 60 )
         .setOrigin(.5)
-        .setAlpha(.6)
+        .setAlpha(this.config.previewPosition.alpha || .6)
         .setInteractive()
         .setData('isBtn',true)
+        .setData('_s',this.config.previewPosition._s)
         )
+        this.config.commentCallback && (this.comment = this.scene.add.image(W - 55 , H - 55 , 'game10icons2','btn_tishi.png').setOrigin(.5).setInteractive().setData('isBtn',true).setData('_s',true));
         this.bgmAnims = this.scene.tweens.add({
             targets : this.scene.musicBtn,
             duration : 2000,
@@ -79,6 +86,25 @@ export default class CreateBtnClass {
             angle : 360,
         });
         this.bindEventHandle();
+    }
+
+    public startBtnAnimsShow() : void {
+      this.recordStartAnims = this.scene.tweens.add({
+        targets : this.recordStartBtn,
+        displayWidth : 120,
+        displayHeight : 120,
+        ease : 'Sine.easeInOut',
+        duration : 300,
+        repeat : -1,
+        yoyo : true
+      });
+    }
+
+    public startBtnAnimsHide() : void {
+      this.recordStartAnims && this.recordStartAnims.stop();
+      this.recordStartAnims && (this.recordStartAnims = null);
+      this.recordStartBtn.displayHeight = 110;
+      this.recordStartBtn.displayWidth = 110;
     }
 
     private drawArc () : void {
@@ -89,7 +115,7 @@ export default class CreateBtnClass {
       this.recordGraphics.lineStyle(9,0xffffff,1);
       this.recordGraphics.beginPath();
       //@ts-ignore
-      this.recordGraphics.arc(this.recordEndBtn.x,this.recordEndBtn.y,52,Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(this.timerNum.d ++ ),true);
+      this.recordGraphics.arc(this.recordEndBtn.x,this.recordEndBtn.y,52,Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(this.timerNum.d ++ ),false);
       this.recordGraphics.strokePath();
     }
 
@@ -110,10 +136,11 @@ export default class CreateBtnClass {
         this.scene.musicBtn.on('pointerdown',this.switchMusic.bind(this,this.bgmFlag));
         this.scene.backToListBtn.on('pointerdown',this.backToListHandle.bind(this));
         this.config.recordStartCallback && this.recordStartBtn.on('pointerdown',this.recordStart.bind(this));
-        this.playBtn.on('pointerdown',this.config.playBtnCallback.bind(this.scene));
+        this.config.playBtnCallback && this.playBtn.on('pointerdown',this.config.playBtnCallback.bind(this.scene));
         this.config.recordEndCallback && this.recordEndBtn.on('pointerdown',this.recordEnd.bind(this));
         this.config.playRecordCallback && this.playRecordBtn.on('pointerdown',this.config.playRecordCallback.bind(this.scene));
         this.config.previewCallback && this.previewBtn.on('pointerdown',this.config.previewCallback.bind(this.scene));
+        this.config.commentCallback && this.comment.on('pointerdown',this.config.commentCallback.bind(this.scene));
     }
 
     private recordEnd () : void {
@@ -125,6 +152,7 @@ export default class CreateBtnClass {
       this.timerObj && this.timerObj.stop();
       this.recordGraphics && this.recordGraphics.clear();
       this.recordGraphics && (this.recordGraphics = null);
+      this.startBtnAnimsHide(); //停止录音按钮动画效果
     }
 
     private recordStart () : void {
@@ -248,6 +276,7 @@ export default class CreateBtnClass {
     private loadImg () : void {
         this.scene.load.multiatlas('icons2','assets/Game7/imgsJson2.json','assets/Game7');
         this.scene.load.image('previewBtn','assets/Game8/previewBtn.png');
+        this.scene.load.image('publicRecordBtn','assets/commonUI/btn_record.png');
         this.scene.load.audio('clickMp3','assets/Game5/click.mp3');
         this.scene.load.on('complete',this.init.bind(this))
         this.scene.load.start();

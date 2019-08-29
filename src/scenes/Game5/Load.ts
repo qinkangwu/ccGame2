@@ -3,6 +3,9 @@ import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
 import { game5DataItem } from '../../interface/Game5';
 
+const W = 1024;
+const H = 552;
+
 export default class Game5LoadScene extends Phaser.Scene {
   private ccData : game5DataItem[]; //数据
   private centerText : Phaser.GameObjects.Text; //文本内容
@@ -20,7 +23,7 @@ export default class Game5LoadScene extends Phaser.Scene {
 
   init(/*params: any*/): void {
     //初始化加载进度
-    this.centerText = this.add.text(window.innerWidth / 2 ,window.innerHeight /2 ,'0%',{
+    this.centerText = this.add.text(W / 2 ,H /2 ,'0%',{
       fill : '#fff',
       font: 'bold 60px Arial',
       bold : true,
@@ -39,7 +42,7 @@ export default class Game5LoadScene extends Phaser.Scene {
     this.load.image('pen','assets/Game5/pen.png');
     this.load.multiatlas('icons','assets/Game5/imgsJson.json','assets/Game5');
     // this.load.html('htmlDemo','assets/Game5/demo.html');
-    this.load.image('guiji','assets/Game5/guiji.png');
+    this.load.image('guiji','assets/Game5/guiji2.png');
     this.load.image('tips','assets/Game5/tips.png');
     this.load.image('particles','assets/Game5/particles.png');
     this.load.audio('bgm','assets/Game5/bgm.mp3');

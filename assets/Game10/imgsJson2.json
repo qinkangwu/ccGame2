@@ -1,0 +1,104 @@
+{
+	"textures": [
+		{
+			"image": "imgsJson2.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 176,
+				"h": 123
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "btn_tishi.png",
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 60,
+						"h": 60
+					},
+					"rotated": false,
+					"trimmed": false,
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 60,
+						"h": 60
+					},
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					}
+				},
+				{
+					"filename": "comment.png",
+					"frame": {
+						"x": 1,
+						"y": 63,
+						"w": 109,
+						"h": 50
+					},
+					"rotated": false,
+					"trimmed": false,
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 109,
+						"h": 50
+					},
+					"sourceSize": {
+						"w": 109,
+						"h": 50
+					}
+				},
+				{
+					"filename": "gold.png",
+					"frame": {
+						"x": 112,
+						"y": 1,
+						"w": 63,
+						"h": 66
+					},
+					"rotated": false,
+					"trimmed": false,
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 63,
+						"h": 66
+					},
+					"sourceSize": {
+						"w": 63,
+						"h": 66
+					}
+				},
+				{
+					"filename": "life.png",
+					"frame": {
+						"x": 112,
+						"y": 69,
+						"w": 63,
+						"h": 53
+					},
+					"rotated": false,
+					"trimmed": false,
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 63,
+						"h": 53
+					},
+					"sourceSize": {
+						"w": 63,
+						"h": 53
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:16886163eee985c7909bd08a539149ce:9732145e449df145a5c1e4e18b83a13d:92542590d6f80419c8dc07203c6a793b$"
+	}
+}

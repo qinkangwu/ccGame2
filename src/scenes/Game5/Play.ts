@@ -1,7 +1,11 @@
 import 'phaser';
-import {get} from '../../lib/http';
+import {get, post} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import { game5DataItem } from "../../interface/Game5";
+import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
+
+const W = 1024;
+const H = 552;
 
 export default class Game5PlayScene extends Phaser.Scene {
     private ccData : game5DataItem[] ; //数据
@@ -24,10 +28,12 @@ export default class Game5PlayScene extends Phaser.Scene {
     private dataIndex : number = 0 ; //数据当前索引
     private isDraw : boolean = false; //是否有绘画
     private sketchWords : Phaser.GameObjects.Text; //画板路径字符
-    private tips : Phaser.GameObjects.Sprite; //鼓励标语
     private particles : Phaser.GameObjects.Particles.ParticleEmitterManager ; // 粒子控制器
     private emitters  : Phaser.GameObjects.Particles.ParticleEmitter ;  //粒子发射器
     private playBtn : Phaser.GameObjects.Image ; //播放音频按钮
+    private lineObj : Phaser.GameObjects.Image ; //四线三格对象 
+    private tips : TipsParticlesEmitter; //tip组件
+    private tryTimes : number = 0; //尝试了几次
     constructor() {
       super({
         key: "Game5PlayScene"
@@ -52,6 +58,40 @@ export default class Game5PlayScene extends Phaser.Scene {
       this.createBgm(); //播放背景音乐
       this.createEmitter(); //创建粒子系统
       this.loadMusic(this.ccData);
+      this.tips = new TipsParticlesEmitter(this,{
+        successCb : ()=>{
+          this.tryTimes = 0;
+          this.onHandle();
+        },
+        nextCb : ()=>{
+          this.area.setDepth(899);
+          this.onHandle();
+          this.dataIndex = this.dataIndex + 1 > this.ccData.length - 1 ? 0 : this.dataIndex + 1;
+          this.tweens.add({
+            targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
+            duration : 500,
+            y : `-=${H}`,
+            ease : 'Sine.easeInOut',
+            onComplete : ()=>{
+              this.nextTipsHandle();
+              this.tweens.add({
+                targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
+                duration : 500,
+                y : `+=${H}`,
+                ease : 'Sine.easeInOut',
+              })
+            }
+          })
+        },
+        tryAgainCb : ()=>{
+          this.area.setDepth(899);
+          this.onHandle();
+        },
+        renderBefore : ()=>{
+          this.offHandle();
+          this.area.setDepth(0);
+        }
+      }); //tip组件
       // this.createDom(); //渲染html
     }
 
@@ -83,10 +123,6 @@ export default class Game5PlayScene extends Phaser.Scene {
       })
     }
 
-    private boom () : void {
-      this.emitters.explode(40,this.tips.x,this.tips.y);
-    }
-
     private createBgm () : void{
       this.bgm = this.sound.add('bgm');
       //@ts-ignore
@@ -100,70 +136,90 @@ export default class Game5PlayScene extends Phaser.Scene {
       //words展示动画
       this.tweens.add({
         targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
-        y : `+=${window.innerHeight}`,
+        y : `+=${H}`,
         ease: 'Sine.easeInOut',
         duration : 500,
       })
     }
 
     private createDom () : void {
-      let elem : Phaser.GameObjects.DOMElement = this.add.dom(window.innerWidth / 2 ,window.innerHeight / 2).createFromCache('htmlDemo');
+      let elem : Phaser.GameObjects.DOMElement = this.add.dom(W / 2 ,H / 2).createFromCache('htmlDemo');
       elem.setOrigin(.5);
       elem.setDepth(1000);
+    }
+
+    private downloadFile (blob : Blob) : void {
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download',`${this.ccData[this.dataIndex].name}-${this.dataIndex }.${blob.type.split('/')[1]}`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    private dataURItoBlob (dataURI : string ) : Blob {
+      let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]; // mime类型
+      let byteString = atob(dataURI.split(',')[1]); //base64 解码
+      let arrayBuffer = new ArrayBuffer(byteString.length); //创建缓冲数组
+      let intArray = new Uint8Array(arrayBuffer); //创建视图
+
+      for (var i = 0; i < byteString.length; i++) {
+          intArray[i] = byteString.charCodeAt(i);
+      }
+      return new Blob([intArray], {type: mimeString});
+    }
+
+    private success (flag : boolean) : void {
+      if(flag){
+        this.tips.success();
+      }else{
+        this.tryTimes = this.tryTimes + 1 > 2 ? 1 : this.tryTimes + 1;
+        this.tryTimes === 1 && this.tips.tryAgain();
+        this.tryTimes === 2 && this.tips.error();
+      }
+      this.area.clear();
+      this.isDraw = false;
+      this.clearDrawHandle(false);
+      if(flag){
+        this.dataIndex = this.dataIndex + 1 > this.ccData.length - 1 ? 0 : this.dataIndex + 1;
+        this.tweens.add({
+          targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
+          duration : 500,
+          y : `-=${H}`,
+          ease : 'Sine.easeInOut',
+          onComplete : ()=>{
+            this.nextTipsHandle();
+            this.tweens.add({
+              targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
+              duration : 500,
+              y : `+=${H}`,
+              ease : 'Sine.easeInOut',
+            })
+          }
+        })
+      }
     }
 
     private submitHandle () : void {
       //提交操作
       if(!this.isDraw) return this.playMusic('error');
-      this.playMusic('successMp3');
-      this.tipsAnims();
-      this.area.clear();
-      this.isDraw = false;
-      this.clearDrawHandle(false);
-      this.dataIndex = this.dataIndex + 1 > this.ccData.length - 1 ? 0 : this.dataIndex + 1;
-      this.tweens.add({
-        targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
-        duration : 500,
-        y : `-=${window.innerHeight}`,
-        ease : 'Sine.easeInOut',
-        onComplete : ()=>{
-          this.nextTipsHandle();
-          this.tweens.add({
-            targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
-            duration : 500,
-            y : `+=${window.innerHeight}`,
-            ease : 'Sine.easeInOut',
-          })
-        }
-      })
-    }
-
-    private tipsAnims () : void {
-      this.boom();
-      this.tweens.timeline({
-        targets : this.tips,
-        ease : 'Sine.easeInOut',
-        duration : 100,
-        tweens : [
-          {
-            scaleX : 1,
-            scaleY : 1
-          },
-          {
-            scaleX : .8,
-            scaleY : .8
-          },
-          {
-            scaleX : 1,
-            scaleY : 1
+      this.sketchWords.alpha = 0;
+      this.lineObj.alpha = 0;
+      this.game.renderer.snapshotArea(this.area.x,this.area.y,this.area.width,this.area.height,(res : HTMLImageElement)=>{
+        this.sketchWords.alpha = .1;
+        this.lineObj.alpha = 1;
+        let blob : Blob = this.dataURItoBlob(res.src);
+        // this.downloadFile(blob);
+        post(apiPath.picCompare,{
+          file : new File([blob], `${this.ccData[this.dataIndex].name}-${this.dataIndex }.${blob.type.split('/')[1]}` , {type: blob.type, lastModified: Date.now()})
+        },'json',true).then((res)=>{
+          if(+res.result >= 90){
+            this.success(true);//识别成功
+          }else{
+            this.success(false); //识别失败
           }
-        ]
-      });
-      this.time.addEvent({
-        delay : 1000,
-        callback : ()=>{
-          this.tips.setScale(0);
-        }
+        })
       })
     }
 
@@ -175,7 +231,7 @@ export default class Game5PlayScene extends Phaser.Scene {
     
     private createCiva () : void {
       //创建civa
-      this.civa = this.add.sprite(107 , -window.innerHeight ,'civa').setOrigin(0).setDisplaySize(267 , 528);
+      this.civa = this.add.sprite(107 , -H ,'civa').setOrigin(0).setDisplaySize(267 , 528);
       this.wordsObj = this.add.text(this.civa.x + this.civa.width / 2,this.civa.y + 230,this.ccData[this.dataIndex].name,{
         font: 'Bold 115px Arial Rounded MT',
         fill : '#856EB4',
@@ -189,14 +245,12 @@ export default class Game5PlayScene extends Phaser.Scene {
 
     private createSketch () : void {
       //创建画板
-      this.sketch = this.add.image(window.innerWidth - 347,window.innerHeight / 2,'sketch').setOrigin(.5).setDisplaySize(529,552);
+      this.sketch = this.add.image(W - 347,H / 2,'sketch').setOrigin(.5).setDisplaySize(529,552);
       this.submitBtn = this.add.image(this.sketch.x,this.sketch.y + 211,'icons','btn_tijiao.png').setOrigin(.5).setInteractive().setData('isBtn',true).setData('_s',true);
-      this.add.image(this.sketch.x,this.sketch.y,'line').setOrigin(.5).setDisplaySize(317,247);
+      this.lineObj = this.add.image(this.sketch.x,this.sketch.y,'line').setOrigin(.5).setDisplaySize(317,247);
       this.penObj = this.add.sprite(this.sketch.x,this.sketch.y,'pen').setOrigin(0).setDepth(900).setAlpha(0);
       this.area = this.add.renderTexture(this.sketch.x - this.sketch.width / 2 + 70,this.sketch.y - 150,400,300).setOrigin(0).setInteractive().setDepth(899);
       this.guijiObj = this.textures.getFrame('guiji');
-      this.guijiObj.width = 10;
-      this.guijiObj.height = 10;
       this.sketchWords = this.add.text(this.sketch.x,this.sketch.y,this.ccData[this.dataIndex].name.split('').join(' '),{
         font: '200px sxdc',
         fill : '#F98E56'
@@ -399,9 +453,9 @@ export default class Game5PlayScene extends Phaser.Scene {
     private createBtn () : void {
       //创建按钮
       this.backToListBtn = this.add.image(55,55,'icons','btn_exit.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);
-      this.clearDrawBtn = this.add.image(55,window.innerHeight - 145,'icons','btn_shangyibu.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);
-      this.playBtn = this.add.image(55,window.innerHeight - 55,'icons','btn_play.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);
-      this.musicBtn = this.add.image(window.innerWidth - 60,55,'icons','btn_music.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);
+      this.clearDrawBtn = this.add.image(55,H - 145,'icons','btn_shangyibu.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);
+      this.playBtn = this.add.image(55,H - 55,'icons','btn_play.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);
+      this.musicBtn = this.add.image(W - 60,55,'icons','btn_music.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);
       this.bgmAnims = this.tweens.add({
         targets : this.musicBtn,
         duration : 2000,
@@ -431,9 +485,9 @@ export default class Game5PlayScene extends Phaser.Scene {
       //创建开始游戏遮罩
       let graphicsObj : Phaser.GameObjects.Graphics = this.add.graphics();
       graphicsObj.fillStyle(0x000000,.5);
-      graphicsObj.fillRect(0,0,window.innerWidth,window.innerHeight).setDepth(1);
-      let mask : Phaser.GameObjects.Image = this.add.image(window.innerWidth / 2, window.innerHeight / 2 , 'mask').setDepth(100);
-      let zoneObj : Phaser.GameObjects.Zone = this.add.zone(window.innerWidth / 2 - 104.5,window.innerHeight / 2 + 138 ,209 , 53 ).setOrigin(0).setInteractive();
+      graphicsObj.fillRect(0,0,W,H).setDepth(1);
+      let mask : Phaser.GameObjects.Image = this.add.image(W / 2, H / 2 , 'mask').setDepth(100);
+      let zoneObj : Phaser.GameObjects.Zone = this.add.zone(W / 2 - 104.5,H / 2 + 138 ,209 , 53 ).setOrigin(0).setInteractive();
       let that : Game5PlayScene = this;
       zoneObj.on('pointerdown',function () {
         //点击开始游戏注销组件
@@ -446,8 +500,7 @@ export default class Game5PlayScene extends Phaser.Scene {
     }
 
     private createBgi () : void {
-      this.add.image(0,0,'game5Bgi').setDisplaySize(window.innerWidth,window.innerHeight).setOrigin(0);
-      this.tips = this.add.sprite(window.innerWidth / 2 , window.innerHeight / 2 , 'tips').setOrigin(.5).setDepth(1002).setScale(0);
+      this.add.image(0,0,'game5Bgi').setDisplaySize(W,H).setOrigin(0);
     }
 
     update(time: number , delta : number): void {

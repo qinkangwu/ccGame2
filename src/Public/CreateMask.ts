@@ -20,10 +20,10 @@ export default class CreateMask{
         //创建开始游戏遮罩
         let graphicsObj : Phaser.GameObjects.Graphics = this.scene.add.graphics();
         graphicsObj.fillStyle(0x000000,.5);
-        graphicsObj.fillRect(0,0,window.innerWidth,window.innerHeight).setDepth(1);
+        graphicsObj.fillRect(0,0,1024,552).setDepth(1);
         //@ts-ignore
-        let mask : Phaser.GameObjects.Image = this.scene.add.image(window.innerWidth / 2, window.innerHeight / 2 , `${window.currentGame}Mask`).setDepth(100);
-        let zoneObj : Phaser.GameObjects.Zone = this.scene.add.zone(window.innerWidth / 2 - 104.5,window.innerHeight / 2 + 138 ,209 , 53 ).setOrigin(0).setInteractive();
+        let mask : Phaser.GameObjects.Image = this.scene.add.image(1024 / 2, 552 / 2 , `${window.currentGame}Mask`).setDepth(100);
+        let zoneObj : Phaser.GameObjects.Zone = this.scene.add.zone(1024 / 2 - 104.5,552 / 2 + 138 ,209 , 53 ).setOrigin(0).setInteractive();
         zoneObj.on('pointerdown',()=>{
             //点击开始游戏注销组件
             zoneObj.destroy();

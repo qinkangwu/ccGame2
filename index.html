@@ -29,6 +29,9 @@
             top:0;
             font-family: 'sxdc';
         }
+        #content{
+            background:#000;
+        }
         #vBox{
             width:58.59%;
             height:54.34%;
@@ -63,6 +66,13 @@
             background-size:100% 100%;
             transform: translate(1285%,-650%);
         }
+        .dontRemove{
+            font-family: 'sxdc';
+            position: absolute;
+            left:200%;
+            top:0;
+            z-index: -100;
+        }
     </style>
 </head>
 
@@ -75,5 +85,6 @@
     <div id="masker">
         <div id="closeBtn"></div>
     </div>
+    <div class="dontRemove">a</div>
 <script type="text/javascript" src="./dist/vendor.bundle.js"></script><script type="text/javascript" src="./dist/bundle.js"></script></body>
 </html>

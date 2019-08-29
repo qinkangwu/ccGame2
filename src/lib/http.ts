@@ -73,12 +73,16 @@ export function post(url, data, type = 'json', withForm = true) {
   }
 	let _res : Promise<Response> = withForm ? _fetch(url, {
     method: 'POST',
-    body: formData
+    body: formData,
+    headers : {
+      'Access-Control-Allow-Origin' : '*'
+    }
   }) : _fetch(url, {
     method: 'POST',
     body: JSON.stringify(data),
     headers: {
-      "Content-Type":"application/json"
+      "Content-Type":"application/json",
+      'Access-Control-Allow-Origin' : '*'
     }
   });
   if (type == 'json')

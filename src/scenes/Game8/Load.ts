@@ -2,6 +2,9 @@ import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
 import 'phaser';
 
+const W = 1024;
+const H = 552;
+
 export default class Game8LoadScene extends Phaser.Scene {
   private centerText : Phaser.GameObjects.Text; //文本内容
   private DefaultLoadSeconds : number = 33; //每秒增加百分之多少
@@ -12,13 +15,13 @@ export default class Game8LoadScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: "Game4LoadScene"
+      key: "Game8LoadScene"
     });
   }
 
   init(/*params: any*/): void {
     //初始化加载进度
-    this.centerText = this.add.text(window.innerWidth / 2 ,window.innerHeight /2 ,'0%',{
+    this.centerText = this.add.text(W / 2 ,H /2 ,'0%',{
       fill : '#fff',
       font: 'bold 60px Arial',
       bold : true,

@@ -13,8 +13,8 @@ let sceneArr: Array<object> = [];
 const initHandle = (arr : object[]) : void=>{
   const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: 1024,
+    height: 552,
     parent: 'content',
     scale: {
       mode: Phaser.Scale.FIT,
