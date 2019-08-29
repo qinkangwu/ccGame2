@@ -2,7 +2,7 @@ import 'phaser';
 import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
-import {Cover,rotateTips} from '../../Public/jonny/core';
+import {Cover,rotateTips,TipsParticlesEmitterCallback} from '../../Public/jonny/core';
 import {Button,ButtonMusic,ButtonExit} from '../../Public/jonny/components'; 
 
 declare var Fr:any;
@@ -85,7 +85,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       rotateTips.init();
     }
     //index = 6; //test
-
+    console.log(this);
     this.createStaticScene();
     this.createAudio();
     this.createDynamicScene();
