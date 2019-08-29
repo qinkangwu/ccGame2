@@ -113,7 +113,7 @@ export class TipsParticlesEmitterCallback {
                 y:149.75,
                 delay:1000,
                 alpha:0,
-                ease:"Linear",
+                ease:"sine.easeInOut",
                 duration:duration
             })
         }
@@ -125,7 +125,7 @@ export class TipsParticlesEmitterCallback {
             delay:delay,
             alpha:alpha,
             scale:scale,
-            ease:"Linear",
+            ease:"sine.easeInOut",
             duration:duration,
             onComplete:onCompleteHandler
         })
