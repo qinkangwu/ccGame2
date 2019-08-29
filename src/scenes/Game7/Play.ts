@@ -69,9 +69,15 @@ export default class Game7PlayScene extends Phaser.Scene {
         bgm : this.bgm
       }); //按钮公共组件
       this.tips = new TipsParticlesEmitter(this,{
-        successCb : ()=>{},
-        tryAgainCb : ()=>{},
-        nextCb : ()=>{}
+        successCb : ()=>{
+          
+        },
+        tryAgainCb : ()=>{
+
+        },
+        nextCb : ()=>{
+
+        }
       }); //tip组件
       this.loadMusic(this.ccData);
     }
@@ -254,8 +260,6 @@ export default class Game7PlayScene extends Phaser.Scene {
       //点击摇杆
       //@ts-ignore
       if(this.handleClick.clickLock) return;
-      this.tips.error();
-      return;
       this.createBtnClass.startBtnAnimsHide();
       this.guideAnims.hideHandle();
       this.handle.play('begin');
@@ -316,7 +320,7 @@ export default class Game7PlayScene extends Phaser.Scene {
           totalCount += itemCount;
         }
       })
-      totalCount >= 50 ? this.tips.success() : this.tips.error();
+      totalCount >= 50 ? this.tips.success() : this.tips.tryAgain();
     }
 
     private uploadRecord (file : File) : void {
