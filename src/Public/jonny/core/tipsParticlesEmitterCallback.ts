@@ -1,53 +1,16 @@
 import "phaser";
 /**
- * @parame parentScene: Phaser.Scene; 
- * @parame currentIndex: number; 
- * @parame sceneName: string; 
- * @parame sceneData: any; 
- * @parame glodValue:number=3;暂时不作传递 
+ * @parame parentScene: Phaser.Scene; 传入场景
  */
 
 export class TipsParticlesEmitterCallback {
-    public parentScene: Phaser.Scene;
-    public currentIndex: number;
-    public sceneName: string;
-    public nextIndex: number;
-    public sceneData: any;
-    public glodValue:number;
-
-    private ohNoBtns:Phaser.GameObjects.Container;
+    public parentScene:Phaser.Scene;
+    private glodValue:number;
     private golds:Phaser.GameObjects.Container;
 
-    constructor(parentScene: Phaser.Scene, sceneName: string, currentIndex: number, sceneData: any,glodValue:number=3) {
+    constructor(parentScene:Phaser.Scene) {
         this.parentScene = parentScene;
-        this.sceneName = sceneName;
-        this.currentIndex = currentIndex;
-        this.nextIndex = this.currentIndex += 1;
-        this.sceneData = sceneData;
-        this.glodValue = glodValue;
-    }
-
-    /**
-     * 没有机会
-     */
-    public ohNo() {
-        var btnChange = this.createBtn(339 + 99 * 0.5, 371 + 46 * 0.5, "btnChange", this.nextIndex);
-        var btnAgainOnce = this.createBtn(572 + 132 * 0.5, 371 + 46 * 0.5, "btnAgainOnce", this.currentIndex);
-        this.ohNoBtns = this.parentScene.add.container(0,0,[btnChange,btnAgainOnce]);
-        this.ohNoBtns.y+=30;
-        this.parentScene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-            targets:this.ohNoBtns,
-            ease:'Linear',
-            y:0,
-            duration:500
-        });
-    }
-
-    /**
-     * 再试一次
-     */
-    public tryAgain() {
-        var btnAgain = this.createBtn(447 + 132 * 0.5, 395 + 46 * 0.5, "btnAgain", this.currentIndex);
+        this.glodValue = 3;
     }
 
     /**
@@ -73,30 +36,6 @@ export class TipsParticlesEmitterCallback {
                 this.goldAni(_gold,512.6,277.3,76/63,500,1,0);
             }
         }
-    }
-
-    private createBtn(x: number, y: number, texture: string, index: number): Phaser.GameObjects.Image {
-        let btn = this.parentScene.add.image(x, y, texture);
-        btn.name = texture;
-        this.btnBindEvent(btn, index);
-        return btn;
-    }
-
-    private btnBindEvent(btn: Phaser.GameObjects.Image, index: number): void {
-        let that = this;
-        btn.setInteractive();
-        btn.on("pointerdown", function () {
-            this.parentScene.scene.start(that.sceneName, {
-                data: that.sceneData,
-                index: index
-            });
-            btn.off("pointerdown");
-            if(btn.name === "btnChange" || btn.name === "btnAgainOnce"){
-                that.ohNoBtns.destroy();
-            }else{
-                btn.destroy();
-            }
-        })
     }
 
     private createGlod(x: number, y: number,width:number,height:number):Phaser.GameObjects.Image{
