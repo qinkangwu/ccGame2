@@ -57,7 +57,11 @@ export default class Game5PlayScene extends Phaser.Scene {
       this.createBgm(); //播放背景音乐
       this.createEmitter(); //创建粒子系统
       this.loadMusic(this.ccData);
-      this.tips = new TipsParticlesEmitter(this); //tip组件
+      this.tips = new TipsParticlesEmitter(this,{
+        successCb : ()=>{},
+        nextCb : ()=>{},
+        tryAgainCb : ()=>{}
+      }); //tip组件
       // this.createDom(); //渲染html
     }
 
@@ -141,7 +145,7 @@ export default class Game5PlayScene extends Phaser.Scene {
       this.area.clear();
       this.isDraw = false;
       this.clearDrawHandle(false);
-      if(flag || this.tips.index === 2 ){
+      if(flag){
         this.dataIndex = this.dataIndex + 1 > this.ccData.length - 1 ? 0 : this.dataIndex + 1;
         this.tweens.add({
           targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
@@ -174,6 +178,7 @@ export default class Game5PlayScene extends Phaser.Scene {
         post(apiPath.picCompare,{
           file : new File([blob], `${this.ccData[this.dataIndex].name}-${this.dataIndex }.${blob.type.split('/')[1]}` , {type: blob.type, lastModified: Date.now()})
         },'json',true).then((res)=>{
+          alert(JSON.stringify(res));
           if(+res >= 90){
             this.success(true);//识别成功
           }else{

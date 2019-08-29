@@ -3,7 +3,6 @@ import {get, post} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import CreateBtnClass from '../../Public/CreateBtnClass';
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
-import TipsParticlesEmitter_New from "../../Public/TipsParticlesEmitter_New";
 import CreateMask from '../../Public/CreateMask';
 import CreateGuideAnims from '../../Public/CreateGuideAnims';
 import { Game7DataItem } from "../../interface/Game7";
@@ -32,7 +31,7 @@ export default class Game7PlayScene extends Phaser.Scene {
       n : 0
     }; //金币数量文本
     private createBtnClass : CreateBtnClass ; //按钮组件返回
-    private tips : TipsParticlesEmitter_New; //tip组件
+    private tips : TipsParticlesEmitter; //tip组件
     private currentIndex : number = -1 ; //当前数据索引
     private guideAnims : CreateGuideAnims; //引导动画引用
     constructor() {
@@ -69,7 +68,7 @@ export default class Game7PlayScene extends Phaser.Scene {
         playRecordCallback : this.playRecord,
         bgm : this.bgm
       }); //按钮公共组件
-      this.tips = new TipsParticlesEmitter_New(this,{
+      this.tips = new TipsParticlesEmitter(this,{
         successCb : ()=>{},
         tryAgainCb : ()=>{},
         nextCb : ()=>{}
