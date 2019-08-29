@@ -45,6 +45,11 @@ export class TipsParticlesEmitterCallback {
     }
 
     private goldAni(glod,x:number,y:number,scale:number,duration:number,alpha:number=1,delay:number=0):void{
+        let factor = 0.4;
+        var ease = function (t){
+            return Math.pow(2, -10 * t) * Math.sin((t - factor / 4) * (2 * Math.PI) / factor) + 1;
+        }
+
         var onCompleteHandler = ()=>{
             this.parentScene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets:glod,
@@ -52,7 +57,7 @@ export class TipsParticlesEmitterCallback {
                 y:149.75,
                 delay:1000,
                 alpha:0,
-                ease:"sine.easeInOut",
+                ease:ease,
                 duration:duration
             })
         }
@@ -64,7 +69,7 @@ export class TipsParticlesEmitterCallback {
             delay:delay,
             alpha:alpha,
             scale:scale,
-            ease:"sine.easeInOut",
+            ease:ease,
             duration:duration,
             onComplete:onCompleteHandler
         })
