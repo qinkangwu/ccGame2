@@ -1,6 +1,7 @@
 import "phaser";
 /**
  * @parame parentScene: Phaser.Scene; 传入场景
+ * @parame callback:Phaser.Types.Tweens.TweenOnCompleteCallback  传入动画结束的回调
  */
 
 export class TipsParticlesEmitterCallback {
@@ -26,17 +27,17 @@ export class TipsParticlesEmitterCallback {
             if(i===0){
                 _gold = this.createGlod(465.15,188.5,63,63);
                 this.golds.add(_gold);    //左
-                this.goldAni(_gold,405.8,277.3,76/63,500,1,0);
+                this.goldAni(_gold,405.8,277.3,76/63,700,1,0);
             }
             if(i===1){
                 _gold = this.createGlod(567.65,188.5,63,63);
                 this.golds.add(_gold);    //右
-                this.goldAni(_gold,619.85,277.3,76/63,500,1,0);
+                this.goldAni(_gold,619.85,277.3,76/63,700,1,0);
             }
             if(i===2){
                 _gold = this.createGlod(517.35,174.5,63,63);
                 this.golds.add(_gold);    //上
-                this.goldAni(_gold,512.6,277.3,76/63,500,1,0);
+                this.goldAni(_gold,512.6,277.3,76/63,700,1,0);
             }
         }
     }
@@ -50,7 +51,7 @@ export class TipsParticlesEmitterCallback {
     private goldAni(glod,x:number,y:number,scale:number,duration:number,alpha:number=1,delay:number=0):void{
         let that = this;
         let factor = 0.4;
-        var ease = function (t){
+        var spring = function (t){
             return Math.pow(2, -10 * t) * Math.sin((t - factor / 4) * (2 * Math.PI) / factor) + 1;
         }
 
@@ -59,10 +60,10 @@ export class TipsParticlesEmitterCallback {
                 targets:glod,
                 x:968.95,
                 y:149.75,
-                delay:1000,
+                delay:500,
                 alpha:0,
-                ease:ease,
-                duration:duration,
+                ease:"Linear",
+                duration:700,
                 onComplete:that.callback
             })
         }
@@ -72,9 +73,16 @@ export class TipsParticlesEmitterCallback {
             x:x,
             y:y,
             delay:delay,
+            ease:"Sine.easeOut",
+            duration:duration
+        })
+
+        this.parentScene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+            targets:glod,
+            delay:delay,
             alpha:alpha,
             scale:scale,
-            ease:ease,
+            ease:spring,
             duration:duration,
             onComplete:onCompleteHandler
         })
