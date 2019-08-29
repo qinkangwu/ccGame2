@@ -33,6 +33,7 @@ export default class Game5PlayScene extends Phaser.Scene {
     private playBtn : Phaser.GameObjects.Image ; //播放音频按钮
     private lineObj : Phaser.GameObjects.Image ; //四线三格对象 
     private tips : TipsParticlesEmitter; //tip组件
+    private tryTimes : number = 0; //尝试了几次
     constructor() {
       super({
         key: "Game5PlayScene"
@@ -58,11 +59,28 @@ export default class Game5PlayScene extends Phaser.Scene {
       this.createEmitter(); //创建粒子系统
       this.loadMusic(this.ccData);
       this.tips = new TipsParticlesEmitter(this,{
-        successCb : ()=>{},
+        successCb : ()=>{
+          this.tryTimes = 0;
+        },
         nextCb : ()=>{
           this.area.setDepth(899);
           this.onHandle();
-          this.nextTipsHandle();
+          this.dataIndex = this.dataIndex + 1 > this.ccData.length - 1 ? 0 : this.dataIndex + 1;
+          this.tweens.add({
+            targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
+            duration : 500,
+            y : `-=${H}`,
+            ease : 'Sine.easeInOut',
+            onComplete : ()=>{
+              this.nextTipsHandle();
+              this.tweens.add({
+                targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
+                duration : 500,
+                y : `+=${H}`,
+                ease : 'Sine.easeInOut',
+              })
+            }
+          })
         },
         tryAgainCb : ()=>{
           this.area.setDepth(899);
@@ -152,7 +170,13 @@ export default class Game5PlayScene extends Phaser.Scene {
     }
 
     private success (flag : boolean) : void {
-      flag ? this.tips.success() : this.tips.error();
+      if(flag){
+        this.tips.success();
+      }else{
+        this.tryTimes = this.tryTimes + 1 > 2 ? 1 : this.tryTimes + 1;
+        this.tryTimes === 1 && this.tips.tryAgain();
+        this.tryTimes === 2 && this.tips.error();
+      }
       this.area.clear();
       this.isDraw = false;
       this.clearDrawHandle(false);
@@ -190,7 +214,6 @@ export default class Game5PlayScene extends Phaser.Scene {
           file : new File([blob], `${this.ccData[this.dataIndex].name}-${this.dataIndex }.${blob.type.split('/')[1]}` , {type: blob.type, lastModified: Date.now()})
         },'json',true).then((res)=>{
           if(+res.result >= 90){
-            console.log(1);
             this.success(true);//识别成功
           }else{
             this.success(false); //识别失败
