@@ -60,6 +60,7 @@ export default class TipsParticlesEmitter_New {
     public success() : void {
         if(this.lock) return;
         this.lock = true;
+        this.config.renderBefore && this.config.renderBefore();
         this.tips = this.scene.add.sprite(W / 2 , 208 ,'glodGoodJob')
                       .setOrigin(.5)
                       .setScale(0)
@@ -99,6 +100,7 @@ export default class TipsParticlesEmitter_New {
       if(this.lock) return;
       this.playMusic('success');
       this.lock = true;
+      this.config.renderBefore && this.config.renderBefore();
       this.tips = this.scene.add.sprite(W / 2 , 208 ,'tipsTryagain')
                     .setOrigin(.5)
                     .setScale(0)
@@ -147,6 +149,7 @@ export default class TipsParticlesEmitter_New {
       if(this.lock) return;
       this.playMusic('success');
       this.lock = true;
+      this.config.renderBefore && this.config.renderBefore();
       this.tips = this.scene.add.sprite(W / 2 , 208 - H ,'tipsNo')
                     .setOrigin(.5)
                     .setDepth(100);

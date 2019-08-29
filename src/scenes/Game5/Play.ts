@@ -59,8 +59,19 @@ export default class Game5PlayScene extends Phaser.Scene {
       this.loadMusic(this.ccData);
       this.tips = new TipsParticlesEmitter(this,{
         successCb : ()=>{},
-        nextCb : ()=>{},
-        tryAgainCb : ()=>{}
+        nextCb : ()=>{
+          this.area.setDepth(899);
+          this.onHandle();
+          this.nextTipsHandle();
+        },
+        tryAgainCb : ()=>{
+          this.area.setDepth(899);
+          this.onHandle();
+        },
+        renderBefore : ()=>{
+          this.offHandle();
+          this.area.setDepth(0);
+        }
       }); //tip组件
       // this.createDom(); //渲染html
     }
@@ -178,8 +189,8 @@ export default class Game5PlayScene extends Phaser.Scene {
         post(apiPath.picCompare,{
           file : new File([blob], `${this.ccData[this.dataIndex].name}-${this.dataIndex }.${blob.type.split('/')[1]}` , {type: blob.type, lastModified: Date.now()})
         },'json',true).then((res)=>{
-          alert(JSON.stringify(res));
-          if(+res >= 90){
+          if(+res.result >= 90){
+            console.log(1);
             this.success(true);//识别成功
           }else{
             this.success(false); //识别失败
