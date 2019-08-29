@@ -584,8 +584,6 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function checkoutResult(correctAnswer, result) {
-      console.log(that);
-      
       that.tipsParticlesEmitterConfig = {
         nextCb:that.nextLevel.bind(that,"next"),
         successCb:that.nextLevel.bind(that,"success"),
@@ -600,6 +598,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
       that.tipsParticlesEmitter = new TipsParticlesEmitter(that,that.tipsParticlesEmitterConfig);
 
+      correctAnswer = result; //测试状态
       if (correctAnswer === result) {     //正确
         that.tipsParticlesEmitter.success();
       } else {
@@ -609,6 +608,7 @@ export default class Game6PlayScene extends Phaser.Scene {
           that.tipsParticlesEmitter.tryAgain();   //再试一次
         }
       }
+
     }
 
     /*function alertBarEl(texture: string, callBack) {
@@ -724,7 +724,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       targets: arrowUpObj,
       x: _nullball.x + _nullball.width*0.5,
       y: _nullball.y + _nullball.height*0.5,
-      alpha: 0,··
+      alpha: 0,
       duration: 1000,
       repeat: -1,
       ease:'Sine.easeOut'
