@@ -2,6 +2,7 @@ import 'phaser';
 import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
+import {EASE} from '../../Public/jonny/Animate';
 import {Cover,rotateTips} from '../../Public/jonny/core';
 import {Button,ButtonMusic,ButtonExit,SellingGold} from '../../Public/jonny/components'; 
 import {config} from '../../interface/TipsParticlesEmitter';
@@ -15,6 +16,7 @@ const HEIGHT = window.innerHeight;
 const W = 1024;
 const H = 552;
 const vol = 0.3; //背景音乐的音量
+
 var ableStop:number = 0;  //0=>不能停止，1=>能停止,2=>已经停止
 var index: number; //题目的指针，默认为0
 
@@ -88,7 +90,6 @@ export default class Game6PlayScene extends Phaser.Scene {
       rotateTips.init();
     }
     //index = 6; //test
-    console.log(this);
     this.createStaticScene();
     this.createAudio();
     this.createDynamicScene();
@@ -96,9 +97,55 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.gameStart();
   }
 
+
   update(time: number, delta: number): void {
     this.btn_sound.mountUpdate();
   }
+
+
+  /**
+   * 游戏的开场动画
+   */
+  // private startAni():void{
+  //   let that = this;
+    // var tweenSet = (function (){
+    //   //(that.balls.list[0] as Phaser.GameObjects.Image).setAlpha(0).setScale(0);
+    //   that.balls.list.forEach(v=>{
+    //     //@ts-ignore
+    //     v.list[0].setScale(0);
+    //   })
+    //   that.nullballs.setAlpha(0);
+    //   that.arrows.setAlpha(0);
+    // })();
+
+    //that.balls.setScale(0);
+      //@ts-ignore
+    //that.balls.setScale(0);
+    // that.balls.list.forEach(v=>{
+    //   let img = (v as any).list[0];
+    //   let text = (v as any).list[1];
+    //   img.setScale(0); 
+    //   text.setScale(0); 
+    //   (v as any).list[1].setScale(0);
+    //   that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+    //     //@ts-ignore
+    //     targets:[img,text],
+    //     scale:1,
+    //     duration:500,
+    //     ease:EASE.spring
+    //   });
+    // })
+
+  //   that.nullballs.setAlpha(0);
+  //   that.arrows.setAlpha(0);
+  //   that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+  //     targets:[that.nullballs,that.arrows],
+  //     alpha:1,
+  //     delay:500,
+  //     duration:500, 
+  //     ease:"Linear"
+  //   })
+  // }
 
   /** * 游戏开始 */
   public gameStart(): void {
@@ -194,6 +241,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       ballImg.setData("name", v.name);
       ballImg.setData("arrowIndex", i);
       let ballText = new Phaser.GameObjects.Text(this,initPosition.x-5,initPosition.y+18, v.name, { align: "center", fontSize: "47px" ,fontFamily:"ArialRounded MT Bold",stroke:"#fff",strokeThickness:2}).setOrigin(0.5);
+
       /**
        * init work
        */
@@ -696,7 +744,7 @@ export default class Game6PlayScene extends Phaser.Scene {
           });
          }
       }
-     let sellingGold = new SellingGold(this,_config);
+    let sellingGold = new SellingGold(this,_config);
 
     this.recordTimes = 0;
     this.status = null;
