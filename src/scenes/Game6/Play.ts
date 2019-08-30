@@ -546,11 +546,11 @@ export default class Game6PlayScene extends Phaser.Scene {
       that.bgm.resume();
       backplayBtn.setData("haveRecord", "yes");
       Fr.voice.export(function (url) {
+      Fr.voice.stop();
        userRecoder.src = url;
        userRecoder.play(); 
       }, "base64");
       Fr.voice.export(function (blob){
-      Fr.voice.stop();
         let file:File = new File([blob],'aaa.wav',{
           type : blob.type
         });
@@ -584,12 +584,13 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function checkoutResult(correctAnswer, result) {
-      that.tipsParticlesEmitterConfig = {
+
+      that.tipsParticlesEmitterConfig = {   //反馈触发器的配置
         nextCb:that.nextLevel.bind(that,"next"),
         successCb:that.nextLevel.bind(that,"success"),
         tryAgainCb:()=>{
           that.cloudWord.setAlpha(1);
-          if(ableStop>=2||ableStop===1){
+          if(ableStop===2||ableStop===1){
           luyinBtn.on("pointerup", recordReady);
           }
           ableStop = 0; 
@@ -598,7 +599,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
       that.tipsParticlesEmitter = new TipsParticlesEmitter(that,that.tipsParticlesEmitterConfig);
 
-      correctAnswer = result; //测试状态
+      //correctAnswer = result; //测试状态
       if (correctAnswer === result) {     //正确
         that.tipsParticlesEmitter.success();
       } else {
@@ -644,13 +645,13 @@ export default class Game6PlayScene extends Phaser.Scene {
     function recordReady() {
       luyinTipsAni.remove();
       luyinBtn.scale = 1;
-      if(ableStop===1){
-          luyinBtn.off("pointerup", recordReady);
-          ableStop = 2;
-          console.log("已经停止");
-          cirAni.complete();
-          return false;
-      }
+      // if(ableStop===1){
+           luyinBtn.off("pointerup", recordReady);
+           ableStop = 2;
+      //     console.log("已经停止");
+      //     cirAni.complete();
+      //     return false;
+      // }
 
       Fr.voice.record(
         false,  //非直播，false
@@ -660,9 +661,9 @@ export default class Game6PlayScene extends Phaser.Scene {
         );
 
       function finishCallback(){
-        setTimeout(()=>{
-          ableStop = 1;
-        },1000)
+        // setTimeout(()=>{     =>暂时关闭停止功能
+        //   ableStop = 1;
+        // },1500)
         that.recordTimes += 1;
         console.log("this.recordTimes",that.recordTimes);
         that.bgm.pause();
@@ -699,7 +700,6 @@ export default class Game6PlayScene extends Phaser.Scene {
     ableStop = 0;
     index += 1;
     index = index % this.phoneticData.length;
-    //console.log(keyword);
     if(keyword==="success"){
      tipsParticlesEmitterCallback.goodJob();
     }
