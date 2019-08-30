@@ -47,7 +47,7 @@ export default class TipsParticlesEmitter_New {
     private createMask () : void {
       //创建开始游戏遮罩
       this.graphicsObj = this.scene.add.graphics();
-      this.graphicsObj.fillStyle(0x000000,.5);
+      this.graphicsObj.fillStyle(0x000000,.7);
       this.graphicsObj.fillRect(0,0,1024,552).setDepth(1);
     }
 
@@ -104,6 +104,7 @@ export default class TipsParticlesEmitter_New {
       this.tips = this.scene.add.sprite(W / 2 , 208 ,'tipsTryagain')
                     .setOrigin(.5)
                     .setScale(0)
+                    .setAngle(0)
                     .setDepth(100);
       this.tryAgainBtn = this.scene.add.image(W / 2 , 421 , 'btnAgain' )
                           .setOrigin(.5)
@@ -117,6 +118,20 @@ export default class TipsParticlesEmitter_New {
         ease : 'Sine.easeInOut',
         duration : 300
       });
+
+      // this.scene.tweens.add({
+      //   targets : this.tips,
+      //   ease : (x)=>{
+      //     let factor = .4 ;
+      //     let y = Math.pow(2, -10 * x) * Math.sin((x - factor / 4) * (2 * Math.PI) / factor) + 1
+      //     return y ;
+      //   },
+      //   angle : 0,
+      //   duration : 300,
+      //   onComplete : ()=>{
+      //     this.tryAgainBtn.on('pointerdown',this.tryAgainHandle.bind(this))
+      //   }
+      // })
       this.scene.tweens.timeline({
         targets : this.tips,
         ease : 'Sine.easeInOut',
@@ -125,12 +140,12 @@ export default class TipsParticlesEmitter_New {
           {
             scaleX : 1,
             scaleY : 1,
-            angle : 10
+            angle : 5
           },
           {
-            scaleX : .8,
-            scaleY : .8,
-            angle : -10
+            scaleX : 1,
+            scaleY : 1,
+            angle : -3
           },
           {
             scaleX : 1,
@@ -153,12 +168,12 @@ export default class TipsParticlesEmitter_New {
       this.tips = this.scene.add.sprite(W / 2 , 208 - H ,'tipsNo')
                     .setOrigin(.5)
                     .setDepth(100);
-      this.tryAgainBtn = this.scene.add.image(551 , 364 + 100 , 'btnAgainOnce')
+      this.tryAgainBtn = this.scene.add.image(551 , 364 + 20 , 'btnAgainOnce')
                           .setOrigin(0)
                           .setDepth(100)
                           .setInteractive()
                           .setAlpha(0);
-      this.nextBtn = this.scene.add.image(293.5 , 364 + 100 , 'btnChange')
+      this.nextBtn = this.scene.add.image(293.5 , 364 + 20 , 'btnChange')
                       .setOrigin(0)
                       .setDepth(100)
                       .setInteractive()
@@ -170,22 +185,18 @@ export default class TipsParticlesEmitter_New {
         ease : 'Sine.easeIn',
         duration : 700
       });
-      this.scene.time.addEvent({
+      this.scene.tweens.add({
+        targets : [this.tryAgainBtn , this.nextBtn],
+        alpha : 1,
         delay : 500,
-        callback : ()=>{
-          this.scene.tweens.add({
-            targets : [this.tryAgainBtn , this.nextBtn],
-            alpha : 1,
-            y : '-=100',
-            ease : 'Sine.easeInOut',
-            duration : 800,
-            onComplete : ()=>{
-              this.tryAgainBtn.on('pointerdown',this.tryAgainHandle.bind(this));
-              this.nextBtn.on('pointerdown',this.nextHandle.bind(this));
-            }
-          });
+        y : '-=20',
+        ease : 'Sine.easeInOut',
+        duration : 800,
+        onComplete : ()=>{
+          this.tryAgainBtn.on('pointerdown',this.tryAgainHandle.bind(this));
+          this.nextBtn.on('pointerdown',this.nextHandle.bind(this));
         }
-      })
+      });
     }
 
     private nextHandle() : void {

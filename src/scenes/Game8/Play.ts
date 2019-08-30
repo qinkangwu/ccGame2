@@ -46,6 +46,7 @@ export default class Game8PlayScene extends Phaser.Scene {
         playBtnCallback : ()=>{},
         bgm : this.bgm,
         previewCallback : this.previewHandle.bind(this),
+        previewPosition : {},
         playBtnPosition : {
           y : H - 55,
           x : 55,

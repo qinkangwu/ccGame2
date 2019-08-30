@@ -2,6 +2,7 @@ import 'phaser';
 import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import { game4DataItem , game4PhoneticSymbol , game4WordItem} from '../../interface/Game4';
+import PlanAnims from "../../Public/PlanAnims";
 
 const W = 1024;
 const H = 552;
@@ -29,6 +30,7 @@ export default class Game4PlayScene extends Phaser.Scene {
     private currentClickIndex : number ; //当前点击的气球索引
     private quiverNum : number ; //箭筒数量
     private wrongObj : Phaser.GameObjects.Sprite; //错误提示对象
+    private planAnims : PlanAnims; //飞机过长动画引用
     // private arrowCirObj : Phaser.GameObjects.Graphics; //箭上的圆圈
     // private arrowText : Phaser.GameObjects.Text; //箭头上面的文本
     constructor() {
@@ -47,6 +49,7 @@ export default class Game4PlayScene extends Phaser.Scene {
       //this.getData(); //获取数据
       this.setWords(); //mock数据
       this.loadBgm(); //加载背景音乐跟音效
+      PlanAnims.loadImg(this); //全局组件加载img
     }
     
   
@@ -62,6 +65,9 @@ export default class Game4PlayScene extends Phaser.Scene {
       this.createCollide(); //创建碰撞检测
       this.createQuiver(); //创建箭筒跟气泡
       this.createBgm(); //创建背景音乐
+      this.planAnims = new PlanAnims(this,13,()=>{
+
+      })
       // this.createMask() ; //创建遮罩层
     }
 
@@ -442,21 +448,9 @@ export default class Game4PlayScene extends Phaser.Scene {
     private clickHandle () : void {
       //点击场景触发
       this.input.on('pointerdown',(...args)=>{
+        this.planAnims.show();
+        return;
         //@ts-ignore
-        // this.game.renderer.snapshotArea(0,0,W,H,(img)=>{
-        //   //下载图像
-        //   let aLink = document.createElement('a');
-        //   let blob = this.base64ToBlob(img.src); //new Blob([content]);
-
-        //   let evt = document.createEvent("HTMLEvents");
-        //   evt.initEvent("click", true, true);//initEvent 不加后两个参数在FF下会报错  事件类型，是否冒泡，是否阻止浏览器的默认行为
-        //   aLink.download = 'aaa.png';
-        //   aLink.href = URL.createObjectURL(blob);
-
-        //   // aLink.dispatchEvent(evt);
-        //   //aLink.click()
-        //   aLink.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, view: window}));
-        // })
         if(args[1].length === 0 ) return;
         this.playMusic('shoot');
         this.currentClickIndex = args[1][0].getData('index');

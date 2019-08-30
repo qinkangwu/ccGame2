@@ -6,6 +6,7 @@ import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 import CreateMask from '../../Public/CreateMask';
 import CreateGuideAnims from '../../Public/CreateGuideAnims';
 import { Game7DataItem } from "../../interface/Game7";
+import PlanAnims from '../../Public/PlanAnims';
 
 declare var Fr:any;
 
@@ -45,7 +46,7 @@ export default class Game7PlayScene extends Phaser.Scene {
     }
   
     preload(): void {
-
+      
     }
     
   
