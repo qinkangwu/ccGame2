@@ -1,19 +1,26 @@
 import "phaser";
 /**
- * @parame parentScene: Phaser.Scene; 传入场景
- * @parame callback:Phaser.Types.Tweens.TweenOnCompleteCallback 可选 | 传入全部动画结束的回调函数
+ * @parame parentScene: Phaser.Scene; 
+ * @parame config; 可选
  */
+
+interface Config{
+    texture?:string;   //纹理,默认为 assets/commonUI/gold.png，须先载入纹理，
+    callback?:Phaser.Types.Tweens.TweenOnCompleteCallback;  //动画结束的回调函数，可选
+}
 
 export class TipsParticlesEmitterCallback {
     private parentScene:Phaser.Scene;
     private glodValue:number;
     private golds:Phaser.GameObjects.Container;
+    private texture:string;
     private callback:Phaser.Types.Tweens.TweenOnCompleteCallback;
 
-    constructor(parentScene:Phaser.Scene,callback:Phaser.Types.Tweens.TweenOnCompleteCallback=()=>{}) {
+    constructor(parentScene:Phaser.Scene,config?:Config){
         this.parentScene = parentScene;
         this.glodValue = 3;
-        this.callback = callback;
+        this.callback = config.callback || function (){};
+        this.texture = config.texture || "gold";
     }
 
     /**
@@ -24,26 +31,25 @@ export class TipsParticlesEmitterCallback {
         let _gold:Phaser.GameObjects.Image;
         for(let i = 0;i < this.glodValue;i++){
             if(i===0){
-                _gold = this.createGlod(465.15,188.5,63,63);
+                _gold = this.createGlod(465.15,188.5);
                 this.golds.add(_gold);    //左
-                this.goldAni(_gold,405.8,277.3,76/63,1,900);
+                this.goldAni(_gold,405.8,277.3,1,1,900);
             }
             if(i===1){
-                _gold = this.createGlod(567.65,188.5,63,63);
+                _gold = this.createGlod(567.65,188.5);
                 this.golds.add(_gold);    //右
-                this.goldAni(_gold,619.85,277.3,76/63,1,300);
+                this.goldAni(_gold,619.85,277.3,1,1,300);
             }
             if(i===2){
-                _gold = this.createGlod(517.35,174.5,63,63);
+                _gold = this.createGlod(517.35,174.5);
                 this.golds.add(_gold);    //上
-                this.goldAni(_gold,512.6,277.3,76/63,1,600);
+                this.goldAni(_gold,512.6,277.3,1,1,600);
             }
         }
     }
 
-    private createGlod(x: number, y: number,width:number,height:number):Phaser.GameObjects.Image{
-        let glod = this.parentScene.add.image(x,y,"glod").setScale(0);
-        glod.setDisplaySize(width,height);
+    private createGlod(x: number, y: number):Phaser.GameObjects.Image{
+        let glod = this.parentScene.add.image(x,y,this.texture).setScale(0);
         return glod;
     }
 
@@ -67,7 +73,10 @@ export class TipsParticlesEmitterCallback {
                         targets:glod,
                         delay:150,
                         alpha:0,
-                        duration:300
+                        duration:300,
+                        onComplete:()=>{
+                            glod.destroy();
+                        }
                     })
                 }
             })
@@ -85,14 +94,13 @@ export class TipsParticlesEmitterCallback {
 
         this.parentScene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
             targets:glod,
-            alpha:alpha,
             scale:scale,
             ease:spring,
             duration:800,
             onComplete:onCompleteHandler
         })
 
-        setTimeout(that.callback,2500);
+        setTimeout(this.callback,2500);
 
     }
 
