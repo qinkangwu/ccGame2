@@ -6,6 +6,7 @@ interface Config{
 }
 
 /**
+ * src/Public/jonny/components/SellingGold.ts
  * @parame parentScene: Phaser.Scene; 
  * @parame config?:{
  * texture:string,  默认为 assets/commonUI/gold.png，须先载入纹理,否则需要重新传递此参数 | 可选

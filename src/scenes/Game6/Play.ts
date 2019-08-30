@@ -599,7 +599,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
       that.tipsParticlesEmitter = new TipsParticlesEmitter(that,that.tipsParticlesEmitterConfig);
 
-      correctAnswer = result; //测试状态
+      //correctAnswer = result; //test
       if (correctAnswer === result) {     //正确
         that.tipsParticlesEmitter.success();
       } else {
