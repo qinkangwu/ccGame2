@@ -4,6 +4,7 @@ import apiPath from '../../lib/apiPath';
 import { game4DataItem , game4PhoneticSymbol , game4WordItem} from '../../interface/Game4';
 import PlanAnims from "../../Public/PlanAnims";
 import CreateGuideAnims from "../../Public/CreateGuideAnims";
+import { SellingGold } from "../../Public/jonny/components/SellingGold";
 
 const W = 1024;
 const H = 552;
@@ -465,20 +466,36 @@ export default class Game4PlayScene extends Phaser.Scene {
         !this.drawAnimsHandle.lock && (this.drawAnimsHandle.lock = true); //第二次不展示引导动画
         this.currentClickIndex = args[1][0].getData('index');
         if(this.wordObj.y < H){
-          this.wordObj.y += H;
-          this.currentWord.y += H;
-          if(++this.ccDataIndex >= this.ccData.length){
-            this.ccDataIndex = 0;
-          }
-          this.popText.setText(this.ccData[this.ccDataIndex].name);
-          this.index = -1;
-          this.civa.destroy();
-          this.setWords();
-          this.createWord();
-          this.drawCivaAndWolf();
-          this.drawAnimsHandle();
-          this.setPopAndQuiver();
-          this.changeQuiverNums(this.quiverNum);
+          this.tweens.add({
+            targets : [this.wordObj , this.currentWord],
+            scaleX : 0,
+            scaleY : 0,
+            duration : 300,
+            ease : 'Sine.easeInOut',
+            onComplete : ()=>{
+              let goldAnims = new SellingGold(this,{
+                callback : ()=>{
+                  this.wordObj.setScale(1);
+                  this.currentWord.setScale(1);
+                  this.wordObj.y += H;
+                  this.currentWord.y += H;
+                  if(++this.ccDataIndex >= this.ccData.length){
+                    this.ccDataIndex = 0;
+                  }
+                  this.popText.setText(this.ccData[this.ccDataIndex].name);
+                  this.index = -1;
+                  this.civa.destroy();
+                  this.setWords();
+                  this.createWord();
+                  this.drawCivaAndWolf();
+                  this.drawAnimsHandle();
+                  this.setPopAndQuiver();
+                  this.changeQuiverNums(this.quiverNum);  
+                }
+              });
+              goldAnims.goodJob();
+            }
+          })
         }
         if(this.shootLock) return;
         this.tweens.add({
