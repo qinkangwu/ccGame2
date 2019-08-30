@@ -19,6 +19,7 @@ const vol = 0.3; //背景音乐的音量
 
 var ableStop: number = 0;  //0=>不能停止，1=>能停止,2=>已经停止
 var index: number; //题目的指针，默认为0
+var goldValue: number = 0; //金币的值
 
 var arrowUpObj: any = null;
 var arrowUpAni: any = null;
@@ -47,6 +48,8 @@ export default class Game6PlayScene extends Phaser.Scene {
   private bg: Phaser.GameObjects.Image; //背景图片
   private btn_exit: Button;  //退出按钮
   private btn_sound: ButtonMusic; //音乐按钮
+  private goldImg: Phaser.GameObjects.Image; //金币
+  private goldText: Phaser.GameObjects.Text; //金币
   private staticScene: Phaser.GameObjects.Container; // 静态组
 
   private balls: Phaser.GameObjects.Container; //药品序列
@@ -203,39 +206,39 @@ export default class Game6PlayScene extends Phaser.Scene {
       ballText.setScale(0);
       let ball = new Phaser.GameObjects.Container(this, 0, 0, [ballImg, ballText]);
       this.balls.add(ball);
-      initAni([ballImg,ballText]);
+      initAni([ballImg, ballText]);
     });
 
     //@ts-ignore
     // setTimeout(initAni.bind(this,this.balls.list[2].list[0]),3000);
     let count = 0;
-    let delay:number;
-    if(index===0){
+    let delay: number;
+    if (index === 0) {
       delay = 1000;
-    }else{
-      delay = 0; 
+    } else {
+      delay = 0;
     }
-    function initAni(objs){
+    function initAni(objs) {
       that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
         //@ts-ignore
         targets: objs,
         scale: 1,
-        delay:delay,
+        delay: delay,
         duration: 1000,
         ease: EASE.spring,
-        onComplete:()=>{
+        onComplete: () => {
           that.physics.world.enable(objs[0]);
           objs[0].body.setCircle(71.5, 71.5 * 0.5 + 15, 71.5 * 0.5 + 23);
-          if(count===0){
+          if (count === 0) {
             that.createUpArrow();
-            that.ballEvents(ballIndex, nullballIndex); 
+            that.ballEvents(ballIndex, nullballIndex);
           }
-          count+=1;
+          count += 1;
         }
       });
     }
 
-   
+
 
   }
 
@@ -725,10 +728,16 @@ export default class Game6PlayScene extends Phaser.Scene {
   private nextLevel(keyword): void {
     let _config = {
       callback: () => {
-        this.scene.start('Game6PlayScene', {
-          data: this.phoneticData,
-          index: index
-        });
+        goldValue += 3;
+        this.goldText.setText(goldValue.toString());
+        setTimeout(() => {
+          this.scene.start('Game6PlayScene', {
+            data: this.phoneticData,
+            index: index
+          });
+        }, 1000)
+        /** work init */
+
       }
     }
     let sellingGold = new SellingGold(this, _config);
@@ -884,10 +893,15 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.btn_exit = new ButtonExit(this);
     this.btn_sound = new ButtonMusic(this);
 
+    this.goldImg = this.add.image(968.95, 149.75, "goldValue");
+    this.goldText = this.add.text(981.45, 167.45, "0", <Phaser.Types.GameObjects.Text.TextSyle>{ align: "center", fontSize: "12px", fontFamily: "Arial", stroke: "#fff", strokeThickness: 1 }).setOrigin(0.5);
+
     this.staticScene = new Phaser.GameObjects.Container(this, 0, 0, [
       this.bg,
       this.btn_exit,
       this.btn_sound,
+      this.goldImg,
+      this.goldText
     ]);
 
     this.add.existing(this.staticScene);
