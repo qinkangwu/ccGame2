@@ -31,29 +31,29 @@ export class TipsParticlesEmitterCallback {
         let _gold:Phaser.GameObjects.Image;
         for(let i = 0;i < this.glodValue;i++){
             if(i===0){
-                _gold = this.createGlod(465.15,188.5);
+                _gold = this.createGlod().setPosition(400,276).setScale(0);
                 this.golds.add(_gold);    //左
-                this.goldAni(_gold,405.8,277.3,1,1,900);
+                this.goldAni(_gold,900);
             }
             if(i===1){
-                _gold = this.createGlod(567.65,188.5);
+                _gold = this.createGlod().setPosition(624,276).setScale(0);
                 this.golds.add(_gold);    //右
-                this.goldAni(_gold,619.85,277.3,1,1,300);
+                this.goldAni(_gold,300);
             }
             if(i===2){
-                _gold = this.createGlod(517.35,174.5);
+                _gold = this.createGlod().setPosition(512,276).setScale(0);
                 this.golds.add(_gold);    //上
-                this.goldAni(_gold,512.6,277.3,1,1,600);
+                this.goldAni(_gold,600);
             }
         }
     }
 
-    private createGlod(x: number, y: number):Phaser.GameObjects.Image{
-        let glod = this.parentScene.add.image(x,y,this.texture).setScale(0);
+    private createGlod():Phaser.GameObjects.Image{
+        let glod = this.parentScene.add.image(0,0,this.texture);
         return glod;
     }
 
-    private goldAni(glod,x:number,y:number,scale:number,alpha:number=1,delay:number=0):void{
+    private goldAni(glod,delay:number=0):void{
         let that = this;
         let factor = 0.45;
         var spring = function (t){
@@ -84,17 +84,17 @@ export class TipsParticlesEmitterCallback {
 
         }
 
-        this.parentScene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-            targets:glod,
-            x:x,
-            y:y,
-            ease:"Sine.easeInOut",
-            duration:600
-        })
+        // this.parentScene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+        //     targets:glod,
+        //     x:x,
+        //     y:y,
+        //     ease:"Sine.easeInOut",
+        //     duration:600
+        // })
 
         this.parentScene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
             targets:glod,
-            scale:scale,
+            scale:1,
             ease:spring,
             duration:800,
             onComplete:onCompleteHandler

@@ -688,12 +688,15 @@ export default class Game6PlayScene extends Phaser.Scene {
    * 下一关
    */
   private nextLevel(keyword): void {
-     let tipsParticlesEmitterCallback = new TipsParticlesEmitterCallback(this,()=>{
-      this.scene.start('Game6PlayScene', {
-        data: this.phoneticData,
-        index: index
-      });
-     });
+      let _config = {
+        callback:()=>{
+          this.scene.start('Game6PlayScene', {
+            data: this.phoneticData,
+            index: index
+          });
+         }
+      }
+     let tipsParticlesEmitterCallback = new TipsParticlesEmitterCallback(this,_config);
 
     this.recordTimes = 0;
     this.status = null;
