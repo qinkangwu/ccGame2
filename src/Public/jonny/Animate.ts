@@ -21,3 +21,10 @@ export class TweenAni{
          })
     }
 }
+
+export const EASE = {
+    spring:function (t){
+        let factor = 0.45;
+        return Math.pow(2, -10 * t) * Math.sin((t - factor / 4) * (2 * Math.PI) / factor) + 1;
+    }
+}
