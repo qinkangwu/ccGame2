@@ -1,15 +1,18 @@
 import "phaser";
-/**
- * @parame parentScene: Phaser.Scene; 
- * @parame config; 可选
- */
 
 interface Config{
     texture?:string;   //纹理,默认为 assets/commonUI/gold.png，须先载入纹理，
     callback?:Phaser.Types.Tweens.TweenOnCompleteCallback;  //动画结束的回调函数，可选
 }
 
-export class TipsParticlesEmitterCallback {
+/**
+ * @parame parentScene: Phaser.Scene; 
+ * @parame config?:{
+ * texture:string,  默认为 assets/commonUI/gold.png，须先载入纹理,否则需要重新传递此参数 | 可选
+ * callback:Phaser.Types.Tweens.TweenOnCompleteCallback    动画结束的回调函数 | 可选
+ * } 
+ */
+export class SellingGold{
     private parentScene:Phaser.Scene;
     private glodValue:number;
     private golds:Phaser.GameObjects.Container;
@@ -66,7 +69,7 @@ export class TipsParticlesEmitterCallback {
                 x:968.95,
                 y:149.75,
                 delay:delay,
-                ease:"Linear",
+                ease:"Sine.easeOut",
                 duration:500,
                 onComplete:()=>{
                     this.parentScene.tweens.add({
@@ -83,14 +86,6 @@ export class TipsParticlesEmitterCallback {
 
 
         }
-
-        // this.parentScene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-        //     targets:glod,
-        //     x:x,
-        //     y:y,
-        //     ease:"Sine.easeInOut",
-        //     duration:600
-        // })
 
         this.parentScene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
             targets:glod,

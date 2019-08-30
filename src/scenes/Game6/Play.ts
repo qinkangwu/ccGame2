@@ -2,8 +2,8 @@ import 'phaser';
 import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
-import {Cover,rotateTips,TipsParticlesEmitterCallback} from '../../Public/jonny/core';
-import {Button,ButtonMusic,ButtonExit} from '../../Public/jonny/components'; 
+import {Cover,rotateTips} from '../../Public/jonny/core';
+import {Button,ButtonMusic,ButtonExit,SellingGold} from '../../Public/jonny/components'; 
 import {config} from '../../interface/TipsParticlesEmitter';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
@@ -696,7 +696,7 @@ export default class Game6PlayScene extends Phaser.Scene {
           });
          }
       }
-     let tipsParticlesEmitterCallback = new TipsParticlesEmitterCallback(this,_config);
+     let sellingGold = new SellingGold(this,_config);
 
     this.recordTimes = 0;
     this.status = null;
@@ -704,7 +704,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     index += 1;
     index = index % this.phoneticData.length;
     if(keyword==="success"){
-     tipsParticlesEmitterCallback.goodJob();
+      sellingGold.goodJob();
     }
     if(keyword==="next"){
     this.scene.start('Game6PlayScene', {
