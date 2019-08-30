@@ -85,7 +85,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       this.scene.pause();
       Fr.voice.init();
       this.createBgm();
-      this.cover = new Cover(this,"cover");
+      //this.cover = new Cover(this,"cover");
       this.add.existing(this.cover);
       rotateTips.init();
     }

@@ -100,4 +100,8 @@ export class SellingGold{
 
     }
 
+    public static loadImg(scene:Phaser.Scene):void{
+        scene.load.image("gold","assets/commonUI/gold.png");
+    }
+
 }
