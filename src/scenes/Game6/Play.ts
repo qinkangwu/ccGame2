@@ -2,8 +2,11 @@ import 'phaser';
 import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
-import {Cover,rotateTips,TipsParticlesEmitterCallback} from '../../Public/jonny/core';
-import {Button,ButtonMusic,ButtonExit} from '../../Public/jonny/components'; 
+import {Cover,rotateTips} from '../../Public/jonny/core';
+import {Button,ButtonMusic,ButtonExit,SellingGold} from '../../Public/jonny/components'; 
+import {config} from '../../interface/TipsParticlesEmitter';
+import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
+
 
 declare var Fr:any;
 
@@ -26,8 +29,6 @@ const initPosition = {
   y:410
 }
 
-
-declare var Recorder: any; //声音录音
 
 export default class Game6PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
@@ -55,6 +56,8 @@ export default class Game6PlayScene extends Phaser.Scene {
 
   private particles: Phaser.GameObjects.Particles.ParticleEmitterManager; // 粒子控制器
   private emitters: Phaser.GameObjects.Particles.ParticleEmitter;  //粒子发射器
+  private tipsParticlesEmitterConfig:config;  //成功、失败触发器
+  private tipsParticlesEmitter:TipsParticlesEmitter; //成功、失败触发器
 
   constructor() {
     super({
@@ -118,6 +121,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
   /**
    * 创建粒子效果发射器
+   * 创建成功失败触发器
    */
   private createEmitter(): void {
     this.particles = this.add.particles('particles');
@@ -130,6 +134,24 @@ export default class Game6PlayScene extends Phaser.Scene {
       blendMode: 'ADD',
       on: false
     })
+
+    this.tipsParticlesEmitterConfig = {
+      nextCb:()=>{
+
+      },
+      renderBefore:()=>{
+
+      },
+      successCb:()=>{
+
+      },
+      tryAgainCb:()=>{
+
+      }
+    }
+
+    this.tipsParticlesEmitter = new TipsParticlesEmitter(this,this.tipsParticlesEmitterConfig);
+
   }
 
   /**
@@ -524,11 +546,11 @@ export default class Game6PlayScene extends Phaser.Scene {
       that.bgm.resume();
       backplayBtn.setData("haveRecord", "yes");
       Fr.voice.export(function (url) {
+      Fr.voice.stop();
        userRecoder.src = url;
        userRecoder.play(); 
       }, "base64");
       Fr.voice.export(function (blob){
-      Fr.voice.stop();
         let file:File = new File([blob],'aaa.wav',{
           type : blob.type
         });
@@ -562,24 +584,35 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function checkoutResult(correctAnswer, result) {
-      if (correctAnswer === result) {
-        alertBarEl("tips_goodjob", that.nextLevel.bind(that));
-      } else {
-        if (that.recordTimes >= 2) {
-          alertBarEl("tips_no", that.nextLevel.bind(that));
-        } else {
-          alertBarEl("tips_tryagain", () => {
-            that.cloudWord.setAlpha(1);
-            if(ableStop>=2||ableStop===1){
-            luyinBtn.on("pointerup", recordReady);
-            }
-            ableStop = 0;
-          });
+
+      that.tipsParticlesEmitterConfig = {   //反馈触发器的配置
+        nextCb:that.nextLevel.bind(that,"next"),
+        successCb:that.nextLevel.bind(that,"success"),
+        tryAgainCb:()=>{
+          that.cloudWord.setAlpha(1);
+          if(ableStop===2||ableStop===1){
+          luyinBtn.on("pointerup", recordReady);
+          }
+          ableStop = 0; 
         }
       }
+
+      that.tipsParticlesEmitter = new TipsParticlesEmitter(that,that.tipsParticlesEmitterConfig);
+
+      //correctAnswer = result; //test
+      if (correctAnswer === result) {     //正确
+        that.tipsParticlesEmitter.success();
+      } else {
+        if (that.recordTimes >= 2) {    //没有机会
+          that.tipsParticlesEmitter.error();
+        } else {              
+          that.tipsParticlesEmitter.tryAgain();   //再试一次
+        }
+      }
+
     }
 
-    function alertBarEl(texture: string, callBack) {
+    /*function alertBarEl(texture: string, callBack) {
       if (texture === "tips_goodjob") {
         that.correctSound.play();
       }
@@ -600,7 +633,7 @@ export default class Game6PlayScene extends Phaser.Scene {
           callBack();
         }
       });
-    }
+    }*/
 
     function resetStart() {
       radian.value = 0;
@@ -612,13 +645,13 @@ export default class Game6PlayScene extends Phaser.Scene {
     function recordReady() {
       luyinTipsAni.remove();
       luyinBtn.scale = 1;
-      if(ableStop===1){
-          luyinBtn.off("pointerup", recordReady);
-          ableStop = 2;
-          console.log("已经停止");
-          cirAni.complete();
-          return false;
-      }
+      // if(ableStop===1){
+           luyinBtn.off("pointerup", recordReady);
+           ableStop = 2;
+      //     console.log("已经停止");
+      //     cirAni.complete();
+      //     return false;
+      // }
 
       Fr.voice.record(
         false,  //非直播，false
@@ -628,9 +661,9 @@ export default class Game6PlayScene extends Phaser.Scene {
         );
 
       function finishCallback(){
-        setTimeout(()=>{
-          ableStop = 1;
-        },1000)
+        // setTimeout(()=>{     =>暂时关闭停止功能
+        //   ableStop = 1;
+        // },1500)
         that.recordTimes += 1;
         console.log("this.recordTimes",that.recordTimes);
         that.bgm.pause();
@@ -654,16 +687,33 @@ export default class Game6PlayScene extends Phaser.Scene {
   /**
    * 下一关
    */
-  private nextLevel(): void {
+  private nextLevel(keyword): void {
+      let _config = {
+        callback:()=>{
+          this.scene.start('Game6PlayScene', {
+            data: this.phoneticData,
+            index: index
+          });
+         }
+      }
+     let sellingGold = new SellingGold(this,_config);
+
     this.recordTimes = 0;
     this.status = null;
     ableStop = 0;
     index += 1;
     index = index % this.phoneticData.length;
+    if(keyword==="success"){
+      sellingGold.goodJob();
+    }
+    if(keyword==="next"){
     this.scene.start('Game6PlayScene', {
       data: this.phoneticData,
       index: index
     });
+    }
+
+
   }
 
   /**
