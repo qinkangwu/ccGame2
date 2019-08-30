@@ -215,7 +215,7 @@ export default class Game6PlayScene extends Phaser.Scene {
         targets: objs,
         scale: 1,
         delay:1000,
-        duration: 3000,
+        duration: 1000,
         ease: EASE.spring,
         onComplete:()=>{
           that.physics.world.enable(objs[0]);
@@ -426,7 +426,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       that.correctSound.play();
       args[0].alpha = 0;
       args[0].parentContainer.list[1].alpha = 0;
-      <Phaser.Physics.Arcade.Image>args[0].disableBody(true, true);
+      args[0].body.destroy();
       hits += 1;
       that.status = "一轮左或右拖拽结束";
       that.scaleMaxAni(args[1]);
