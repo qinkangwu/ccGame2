@@ -47,7 +47,7 @@ export default class TipsParticlesEmitter_New {
     private createMask () : void {
       //创建开始游戏遮罩
       this.graphicsObj = this.scene.add.graphics();
-      this.graphicsObj.fillStyle(0x000000,.7);
+      this.graphicsObj.fillStyle(0x000000,.8);
       this.graphicsObj.fillRect(0,0,1024,552).setDepth(1);
     }
 

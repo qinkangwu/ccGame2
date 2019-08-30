@@ -19,7 +19,7 @@ export default class CreateMask{
     private createMask () : void {
         //创建开始游戏遮罩
         let graphicsObj : Phaser.GameObjects.Graphics = this.scene.add.graphics();
-        graphicsObj.fillStyle(0x000000,.7);
+        graphicsObj.fillStyle(0x000000,.8);
         graphicsObj.fillRect(0,0,1024,552).setDepth(1);
         //@ts-ignore
         let mask : Phaser.GameObjects.Image = this.scene.add.image(1024 / 2, 552 / 2 , `${window.currentGame}Mask`).setDepth(100);

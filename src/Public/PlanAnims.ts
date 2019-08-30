@@ -5,28 +5,27 @@ const H = 552;
 /**
  * @param scene 场景
  * @param total 总的单词数
- * @param cb 展示动画完成回调
  */
 export default class PlanAnims {
     private scene : Phaser.Scene;
     private total : number ; 
-    private cb : Function ;
     private planObj : Phaser.GameObjects.Image; //飞机
     private current : number = 1 ; //当前的索引 最小为1 
     private currentText : Phaser.GameObjects.Text; //当前文本
+    private totalText : Phaser.GameObjects.Text; //总的文本
     private graphicsObj : Phaser.GameObjects.Graphics; //遮罩
     private planTween : Phaser.Tweens.Tween ; //飞机动画tween
     private cloud : Phaser.GameObjects.Image ; //云
     private splitIcon : Phaser.GameObjects.Image; //分隔符
     private lock : boolean ; //节流锁
-    constructor(scene : Phaser.Scene , total : number,cb? : Function){
+    constructor(scene : Phaser.Scene , total : number){
         this.scene = scene;
         this.total = total;
-        this.cb = cb || null;
     }
 
-    public show () : void {
+    public show (current : number,cb? : Function) : void {
         if(this.lock ) return;
+        current > 0 && (this.current = current);
         this.lock = true;
         this.createMask();
         this.planObj = this.scene.add.image(W - 111, H/2 - 20 , 'plan')
@@ -35,11 +34,21 @@ export default class PlanAnims {
         this.cloud = this.scene.add.image(W / 2 , H / 2 , 'cloud')
             .setOrigin(.5)
             .setDepth(999)
-            .setScale(1);
-        this.splitIcon = this.scene.add.image(this.cloud.x + 5 , this.cloud.y + 5 , 'splitIcon')
-            .setOrigin(.5)
+            .setScale(0);
+        this.splitIcon = this.scene.add.image(this.cloud.x + (this.current > 9 && 15 || -5), this.cloud.y + 25 , 'splitIcon')
+            .setOrigin(.5,1)
             .setDepth(999)
-            .setScale(1)
+            .setScale(0)
+        this.currentText = this.scene.add.text(this.splitIcon.x - 10 , this.splitIcon.y - 20,this.current + '' , {
+            fontSize: "56px",
+            fontFamily:"Arial Rounded MT Bold",
+            fill : '#FF8D39',
+        }).setOrigin(1,.5).setDepth(1000).setScale(0);
+        this.totalText = this.scene.add.text(this.splitIcon.x + 10 , this.splitIcon.y - 15 , this.total + '', {
+            fontSize: "32px",
+            fontFamily:"Arial Rounded MT Bold",
+            fill : '#63BFFF',
+        }).setOrigin(0,.5).setDepth(1000).setScale(0);
         this.planTween = this.scene.tweens.add({
             targets : this.planObj,
             ease : 'Sine.easeInOut',
@@ -62,31 +71,48 @@ export default class PlanAnims {
             x : `-=200`
         });
         this.scene.tweens.add({
+            targets : [this.cloud,this.splitIcon,this.currentText,this.totalText],
+            delay : 1300,
+            scaleX : 1,
+            scaleY : 1 ,
+            ease : 'Sine.easeInOut',
+            duration : 300
+        });
+        this.scene.tweens.add({
             targets : this.planObj,
             delay : 1200,
             x : `-=${W}`,
             ease : 'Sine.easeInOut',
             duration : 1000,
-            onComplete : this.animsStop.bind(this)
+            onComplete : this.animsStop.bind(this,cb)
         })
     }
 
-    private animsStop () : void {
-        this.planTween && this.planTween.stop && this.planTween.stop();
-        this.scene.tweens.remove(this.planTween);
-        this.graphicsObj && this.graphicsObj.clear();
-        this.graphicsObj && this.graphicsObj.destroy();
-        this.graphicsObj = null;
-        this.planObj && this.planObj.destroy();
-        this.planObj = null;
-        this.lock = false;
-        this.cb && this.cb.call(this);
+    private animsStop (cb : Function) : void {
+        this.scene.tweens.add({
+            targets : [this.cloud,this.splitIcon,this.currentText,this.totalText],
+            alpha : 0 ,
+            x : `+=50`,
+            duration : 500,
+            ease : 'Sine.easeInOut',
+            onComplete : ()=>{
+                this.planTween && this.planTween.stop && this.planTween.stop();
+                this.scene.tweens.remove(this.planTween);
+                this.graphicsObj && this.graphicsObj.clear();
+                this.graphicsObj && this.graphicsObj.destroy();
+                this.graphicsObj = null;
+                this.planObj && this.planObj.destroy();
+                this.planObj = null;
+                this.lock = false;
+                cb && cb.call(this.scene);
+            }
+        })
     }
 
     private createMask () : void {
         //创建开始游戏遮罩
         this.graphicsObj = this.scene.add.graphics();
-        this.graphicsObj.fillStyle(0x000000,.7);
+        this.graphicsObj.fillStyle(0x000000,.8);
         this.graphicsObj.fillRect(0,0,1024,552).setDepth(998);
     }
 
