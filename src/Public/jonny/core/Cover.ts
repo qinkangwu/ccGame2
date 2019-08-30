@@ -2,49 +2,44 @@ import "phaser";
 
 /**
  * @param scene is Phaser.Scene
- * @param texture is string
+ * @param texture is string 
+ * 动画的时间会延续1000ms
  */
 
-export cover
+export var cover = function (scene: Phaser.Scene, texture: string,callback:Function=()=>{}) {
+    let bg = scene.add.graphics().setDepth(1999);
+    bg.fillStyle(0x000000);
+    bg.fillRect(0, 0, scene.game.renderer.width, scene.game.renderer.height);
+    bg.setAlpha(0.6);
 
-// export default class Cover{
-//     init(scene: Phaser.Scene, texture: string) {
-//         let _bg = this.scene.add.graphics();
-//         _bg.fillStyle(0x000000);
-//         _bg.fillRect(0, 0, scene.game.renderer.width, scene.game.renderer.height);
-//         _bg.setAlpha(0.6);
+    var image = scene.add.image(scene.game.renderer.width * 0.5, scene.game.renderer.height * 0.5,texture).setDepth(2000);
+    //@ts-ignore
+    var bitmapshape = scene.make.graphics();
+    bitmapshape.fillStyle(0xffffff);
+    bitmapshape.fillCircle(0, 0, scene.game.renderer.width * 0.7);
+    bitmapshape.setPosition(scene.game.renderer.width * 0.5, 440);
 
-//         let _cover = this.scene.add.image(scene.game.renderer.width * 0.5, scene.game.renderer.height * 0.5, texture).setOrigin(0.5);
-//         this.add([_bg, _cover]);
+    var bitmapMask = bitmapshape.createGeometryMask();
+    image.setMask(bitmapMask);
+    bg.setMask(bitmapMask);
 
-//         //@ts-ignore
-//         let _maskShape = this.scene.make.graphics();
-//         //let _maskShape = new Phaser.GameObjects.Graphics();
-//         _maskShape.fillStyle(0xffffff);
-//         _maskShape.fillCircle(1024*0.5,552*0.5,2024*0.5*0.1);
-//         let _mask = _maskShape.createBitmapMask();
-//         _cover.setMask(_mask);
+    var canvas = document.querySelector("canvas");
+    canvas.addEventListener("click", startHandler);
+    canvas.addEventListener("touchstart", startHandler);
+    function startHandler() {
+        canvas.removeEventListener("click", startHandler);
+        canvas.removeEventListener("touchstart", startHandler);
+        scene.scene.resume();
+        scene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+            targets: bitmapshape,
+            duration: 1000,
+            scale: 0,
+            onComplete: () => {
+                bg.destroy();
+                image.destroy();
+                callback();
+            }
+        });
+    }
+}
 
-//         //this.add(_maskShape);
-
-//         this.setDepth(100);
-//         this.bindClick(_cover, scene);
-//     }
-
-//     bindClick(_cover: Phaser.GameObjects.Image, _scene: Phaser.Scene) {
-//          let that = this;
-//          var canvas = document.querySelector("canvas");
-//         canvas.addEventListener("click", startHandler);
-//         canvas.addEventListener("touchstart", startHandler);
-//         function startHandler(){
-//             canvas.removeEventListener("click",startHandler);
-//             canvas.removeEventListener("touchstart",startHandler);
-//             //that.destroy();
-//             _scene.scene.resume(); 
-//         }
-//     }
-
-//     start():void{
-
-//     }
-// }
