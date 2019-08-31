@@ -13,12 +13,14 @@ interface Config{
  * texture:string,  默认为 assets/commonUI/gold.png，须先载入纹理,否则需要重新传递此参数 | 可选
  * callback:Phaser.Types.Tweens.TweenOnCompleteCallback    动画结束的回调函数 | 可选
  * } 
+ * 
+ * 子对象golds的深度自己设置
  */
 
 export class SellingGold{
     private parentScene:Phaser.Scene;
     private glodValue:number;
-    private golds:Phaser.GameObjects.Container;
+    public golds:Phaser.GameObjects.Container;
     private texture:string;
     private callback:Function;
     private count:number = 0;
@@ -28,13 +30,13 @@ export class SellingGold{
         this.glodValue = 3;
         this.callback = config.callback || function (){};
         this.texture = config.texture || "gold";
+        this.golds = this.parentScene.add.container(0,0);
     }
 
     /**
      *  正确
      */
     public goodJob() {
-        this.golds = this.parentScene.add.container(0,0);
         let _gold:Phaser.GameObjects.Image;
         for(let i = 0;i < this.glodValue;i++){
             if(i===0){
