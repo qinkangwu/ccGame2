@@ -80,7 +80,7 @@ export default class Game4PlayScene extends Phaser.Scene {
         new CreateBtnClass(this,{
           bgm : this.bgm
         });
-        this.goldObj = new Gold(this,0).setDepth(100);
+        this.goldObj = new Gold(this,0);
         this.add.existing(this.goldObj);
       })
       this.createBackgroundImage(); //背景图
