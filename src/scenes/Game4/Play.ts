@@ -3,6 +3,7 @@ import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import { game4DataItem , game4PhoneticSymbol , game4WordItem} from '../../interface/Game4';
 import PlanAnims from "../../Public/PlanAnims";
+import CreateBtnClass from "../../Public/CreateBtnClass";
 import CreateGuideAnims from "../../Public/CreateGuideAnims";
 import { SellingGold } from "../../Public/jonny/components/SellingGold";
 
@@ -25,6 +26,7 @@ export default class Game4PlayScene extends Phaser.Scene {
     private clickLock : boolean = true; //点击锁
     private shootLock : boolean = true; //射箭锁
     private ccDataIndex : number = 0 ; //当前单词索引
+    private bgm : Phaser.Sound.BaseSound ; //bgm
     private quiver : Phaser.GameObjects.Sprite ; //箭筒
     private quiverText : Phaser.GameObjects.Text;  // 箭筒文本
     private popObj : Phaser.GameObjects.Sprite ; //气泡
@@ -34,6 +36,9 @@ export default class Game4PlayScene extends Phaser.Scene {
     private wrongObj : Phaser.GameObjects.Sprite; //错误提示对象
     private planAnims : PlanAnims; //飞机过长动画引用
     private createGuideAnims : CreateGuideAnims; //引导动画引用
+    private goldIcon : Phaser.GameObjects.Image; //金币数量
+    private goldText : Phaser.GameObjects.Text; //金币文本
+    private goldNum : number = 0 ; //金币数量
     // private arrowCirObj : Phaser.GameObjects.Graphics; //箭上的圆圈
     // private arrowText : Phaser.GameObjects.Text; //箭头上面的文本
     constructor() {
@@ -53,6 +58,7 @@ export default class Game4PlayScene extends Phaser.Scene {
       this.setWords(); //mock数据
       this.loadBgm(); //加载背景音乐跟音效
       PlanAnims.loadImg(this); //全局组件加载img
+      SellingGold.loadImg(this); //全局组件加载Img
     }
     
   
@@ -69,7 +75,25 @@ export default class Game4PlayScene extends Phaser.Scene {
       this.createCollide(); //创建碰撞检测
       this.createQuiver(); //创建箭筒跟气泡
       this.createBgm(); //创建背景音乐
+      new CreateBtnClass(this,{
+        bgm : this.bgm
+      })
+      this.createGold();
       // this.createMask() ; //创建遮罩层
+    }
+
+    private createGold () : void {
+      //创建按钮
+      this.goldIcon = this.add.image(W - 55,149.75,'goldValue')
+        .setOrigin(.5)
+        .setDisplaySize(60,60)
+        .setInteractive()
+      //@ts-ignore
+      this.goldText = this.add.text(this.goldIcon.x + 14,this.goldIcon.y + 17,this.goldNum + '',{
+        fontSize: "14px",
+        fontFamily:"Arial Rounded MT Bold",
+        fill : '#fff',
+      }).setOrigin(.5);
     }
 
     private createMask () : void {
@@ -83,17 +107,17 @@ export default class Game4PlayScene extends Phaser.Scene {
     }
 
     private createBgm () : void {
-      let bgm : Phaser.Sound.BaseSound = this.sound.add('bgm');
+      this.bgm = this.sound.add('bgm');
       //@ts-ignore
-      bgm.play({
+      this.bgm.play({
         loop : true,
         volume : .3
       })
     }
 
-    private setPopAndQuiver () : void {
+    private setPopAndQuiver (isWrong? : boolean) : void {
       this.quiverText.setScale(0);
-      this.quiverText.setText(this.words[this.index + 1 >= this.words.length ? this.words.length - 1 : this.index + 1].name);
+      !isWrong && this.quiverText.setText(this.words[this.index + 1 >= this.words.length ? this.words.length - 1 : this.index + 1].name);
       this.tweens.add({
         targets : this.quiverText,
         scaleX : 1.5,
@@ -114,12 +138,12 @@ export default class Game4PlayScene extends Phaser.Scene {
 
     private createQuiver () : void {
       //创建气泡跟箭筒
-      this.quiver = this.add.sprite(250,H - 100,'icons2',`jianshi${this.words.length}.png`).setScale(0.8);
+      this.quiver = this.add.sprite(250,H - 100,'game4Icons2',`jianshi${this.words.length}.png`).setScale(0.8);
       this.quiverText = this.add.text(this.quiver.x,this.quiver.y + 40,this.words[0].name,{
         font: 'bold 37px Arial Rounded MT',
         fill : '#017dbd',
       }).setOrigin(.5);
-      this.popObj = this.add.sprite(this.civa.x + 150,this.civa.y - 50,'icons2','talk.png').setScale(.5).setOrigin(.5);
+      this.popObj = this.add.sprite(this.civa.x + 150,this.civa.y - 50,'game4Icons2','talk.png').setScale(.5).setOrigin(.5);
       this.popText = this.add.text(this.popObj.x,this.popObj.y - 10,this.ccData[this.ccDataIndex].name,{
         font: 'bold 50px Arial Rounded MT',
         fill : '#ff5054',
@@ -153,12 +177,6 @@ export default class Game4PlayScene extends Phaser.Scene {
         })
       })
       this.load.start(); //preload自动运行，其他地方加载资源必须手动启动，不然加载失效
-    }
-
-    private getData () : void{
-      get(apiPath.getWordsData).then((res)=>{
-        console.log(res);
-      })
     }
 
     private createWord () : void {
@@ -208,6 +226,7 @@ export default class Game4PlayScene extends Phaser.Scene {
             this.allBallonIsFinish();
           }
         }else{
+          this.setPopAndQuiver(true);
           this.showWrongObjHandle();
           this.playMusic('wrong');
           this.shootLock = false;
@@ -247,6 +266,9 @@ export default class Game4PlayScene extends Phaser.Scene {
         y : `-=${H}`,
         ease: 'Sine.easeInOut',
         duration : 500,
+        onComplete : ()=>{
+          this.createGuideAnims = new CreateGuideAnims(this,this.wordObj.x + 200, this.wordObj.y);
+        }
       })
     }
 
@@ -352,7 +374,7 @@ export default class Game4PlayScene extends Phaser.Scene {
             if(!this.drawAnimsHandle.lock){
               let firstIndex : number = this.errorWords.findIndex((r)=>r === this.words[0]);
               let firstItem : Phaser.Physics.Arcade.Sprite = this.ballonSprites[firstIndex];
-              this.createGuideAnims = new CreateGuideAnims(this,firstItem.x + 50,firstItem.y);
+              this.createGuideAnims = new CreateGuideAnims(this,firstItem.x + 50,firstItem.y + 50);
             }
           }
         })   
@@ -414,6 +436,7 @@ export default class Game4PlayScene extends Phaser.Scene {
       }) || this.transDataHandle(currentItem);
       this.quiverNum = this.words.length ; //箭筒箭矢数量初始化
       this.errorWords = this.shuffle([...this.words]); //打乱原始数据
+      this.ballonSprites.length = 0;
     }
 
     private playMusic (sourceKey : string) : void {
@@ -458,7 +481,7 @@ export default class Game4PlayScene extends Phaser.Scene {
       //点击场景触发
       this.input.on('pointerdown',(...args)=>{
         //@ts-ignore
-        if(args[1].length === 0 ) return;
+        if(args[1].length === 0 || args[1][0] instanceof Phaser.GameObjects.Image ) return;
         this.playMusic('shoot');
         this.createGuideAnims && this.createGuideAnims.hideHandle(); //隐藏引导动画
         this.createGuideAnims = null;
@@ -490,7 +513,7 @@ export default class Game4PlayScene extends Phaser.Scene {
                   this.drawCivaAndWolf();
                   this.drawAnimsHandle();
                   this.setPopAndQuiver();
-                  this.changeQuiverNums(this.quiverNum);  
+                  this.changeQuiverNums(this.quiverNum);   
                 }
               });
               goldAnims.goodJob();

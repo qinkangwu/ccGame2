@@ -33,13 +33,14 @@ export default class CreateBtnClass {
     }
 
     private init () : void {
+        if(this.scene.musicBtn) return;
         this.scene.backToListBtn = this.scene.add.image(55, 55,'icons2','btn_exit.png')
         .setOrigin(.5)
         .setAlpha(.6)
         .setDisplaySize(60 ,60)
         .setInteractive()
         .setData('isBtn',true);
-        this.scene.musicBtn = this.scene.add.image(W - 60,55,'icons2','btn_play2.png')
+        this.scene.musicBtn = this.scene.add.image(W - 55,55,'icons2','btn_play2.png')
         .setOrigin(.5)
         .setAlpha(.6)
         .setDisplaySize(60,60)

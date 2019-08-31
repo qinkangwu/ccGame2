@@ -35,8 +35,9 @@ export default class Game4LoadScene extends Phaser.Scene {
   preload(): void {
     this.load.image('game4Bgi','assets/Game4/bgi.png'); 
     this.load.image('game4WrongImg','assets/Game4/wrong.png'); 
+    this.load.image('goldValue','assets/commonUI/goldValue.png');
     this.load.multiatlas('icons','assets/Game4/imgsJson.json','assets/Game4');
-    this.load.multiatlas('icons2','assets/Game4/imgsJson2.json','assets/Game4');
+    this.load.multiatlas('game4Icons2','assets/Game4/imgsJson2.json','assets/Game4');
     this.load.multiatlas('shoot','assets/Game4/shoot.json','assets/Game4');
     this.load.audio('bgm','assets/Game4/bgm.mp3');
     this.load.audio('shoot','assets/Game4/shoot.mp3');

@@ -67,12 +67,12 @@ export default class PlanAnims {
             targets : this.planObj,
             delay : 300,
             ease : 'Sine.easeInOut',
-            duration : 1000,
+            duration : 500,
             x : `-=200`
         });
         this.scene.tweens.add({
             targets : [this.cloud,this.splitIcon,this.currentText,this.totalText],
-            delay : 1300,
+            delay : 1000,
             scaleX : 1,
             scaleY : 1 ,
             ease : 'Sine.easeInOut',
@@ -80,7 +80,7 @@ export default class PlanAnims {
         });
         this.scene.tweens.add({
             targets : this.planObj,
-            delay : 1200,
+            delay : 800,
             x : `-=${W}`,
             ease : 'Sine.easeInOut',
             duration : 1000,
