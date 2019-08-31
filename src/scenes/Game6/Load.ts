@@ -40,6 +40,7 @@ export default class Game6LoadScene extends Phaser.Scene {
       this.load.image(v.key, v.url);
     })
     PlanAnims.loadImg(this);
+    TipsParticlesEmitter.loadImg(this);
     this.load.on("progress", (e: any) => {
       e = Math.floor(e * 50);
       this.centerText.setText(`${e}%`);

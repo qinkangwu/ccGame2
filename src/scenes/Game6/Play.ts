@@ -97,7 +97,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       this.createBgm();
       rotateTips.init();
       cover(this, "cover",()=>{
-        this.planAnims.show(index)
+        this.planAnims.show(index+1)
       });
     }
   }
@@ -111,7 +111,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   /** * 游戏开始 */
   public gameStart(): void {
     if(index!==0){
-      this.planAnims.show(index,this.createBalls);
+      this.planAnims.show(index+1,this.createBalls);
     }else{
       this.createBalls(); 
     }
