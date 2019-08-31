@@ -4,7 +4,7 @@ import apiPath from '../../lib/apiPath';
 import { game4DataItem , game4PhoneticSymbol , game4WordItem} from '../../interface/Game4';
 import PlanAnims from "../../Public/PlanAnims";
 import CreateBtnClass from "../../Public/CreateBtnClass";
-import { cover } from "../../Public/jonny/core/Cover";
+import { cover } from "../../Public/jonny/core/cover";
 import { Gold } from "../../Public/jonny/components/Gold";
 import CreateGuideAnims from "../../Public/CreateGuideAnims";
 import { SellingGold } from "../../Public/jonny/components/SellingGold";
