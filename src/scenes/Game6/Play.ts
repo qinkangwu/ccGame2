@@ -7,6 +7,7 @@ import { cover, rotateTips } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import { config } from '../../interface/TipsParticlesEmitter';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
+import PlanAnims from '../../Public/PlanAnims';
 
 
 declare var Fr: any;
@@ -62,6 +63,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   private emitters: Phaser.GameObjects.Particles.ParticleEmitter;  //粒子发射器
   private tipsParticlesEmitterConfig: config;  //成功、失败触发器
   private tipsParticlesEmitter: TipsParticlesEmitter; //成功、失败触发器
+  private planAnims:PlanAnims; //专场动画
 
   constructor() {
     super({
@@ -83,6 +85,12 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   create(): void {
+    //index = 6; //test
+    this.createStaticScene();
+    this.createAudio();
+    this.createDynamicScene();
+    this.createEmitter();
+    this.gameStart();
     if (index === 0) {
       this.scene.pause();
       Fr.voice.init();
@@ -90,12 +98,6 @@ export default class Game6PlayScene extends Phaser.Scene {
       rotateTips.init();
       cover(this, "cover");
     }
-    //index = 6; //test
-    this.createStaticScene();
-    this.createAudio();
-    this.createDynamicScene();
-    this.createEmitter();
-    this.gameStart();
   }
 
 
@@ -106,7 +108,12 @@ export default class Game6PlayScene extends Phaser.Scene {
 
   /** * 游戏开始 */
   public gameStart(): void {
-    this.createBalls();
+    if(index===0){
+      this.planAnims.show(index,this.createBalls);
+    }else{
+      
+    }
+    
   }
 
   /* 建立动态场景 */
@@ -116,6 +123,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.arrows = new Phaser.GameObjects.Container(this);
     this.cloudWord = new Phaser.GameObjects.Container(this);
     this.voiceBtns = new Phaser.GameObjects.Container(this);
+    this.planAnims = new PlanAnims(this,this.phoneticData.length);
     this.add.existing(this.balls);
     this.add.existing(this.nullballs);
     this.add.existing(this.arrows);
