@@ -21,7 +21,7 @@ export default class CreateGuideAnims {
         //引导动画
         if(this.guideCircle || this.guideHands) return;
         this.guideHands = this.scene.add.image(this.x,this.y,'hands').setDisplaySize(94,72).setOrigin(.5).setDepth(1000);
-        this.guideCircle = this.scene.add.image(this.guideHands.x - 50 , this.guideHands.y  , 'circle').setScale(.4).setOrigin(.5).setDepth(1001);
+        this.guideCircle = this.scene.add.image(this.guideHands.x - 50 , this.guideHands.y  , 'circle').setScale(.4).setOrigin(.5).setDepth(999);
         this.scene.tweens.add({
             targets : this.guideHands,
             y : '+=16',
