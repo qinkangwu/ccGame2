@@ -3,6 +3,7 @@ import apiPath from '../../lib/apiPath';
 import { get, makeParams } from '../../lib/http';
 import { Game6DataItem, game6asset } from '../../interface/Game6';
 import {resize} from '../../Public/jonny/core'; 
+import PlanAnims from '../../Public/PlanAnims';
  
 const W = 1024;
 const H = 552;
@@ -38,6 +39,7 @@ export default class Game6LoadScene extends Phaser.Scene {
     this.assets.forEach((v) => {
       this.load.image(v.key, v.url);
     })
+    PlanAnims.loadImg(this);
     this.load.on("progress", (e: any) => {
       e = Math.floor(e * 50);
       this.centerText.setText(`${e}%`);
