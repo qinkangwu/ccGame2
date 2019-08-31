@@ -125,7 +125,7 @@ export default class Game4PlayScene extends Phaser.Scene {
             duration : 100,
           })
         }
-      })
+      });
     }
 
     private createQuiver () : void {
