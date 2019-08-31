@@ -4,6 +4,7 @@ import apiPath from '../../lib/apiPath';
 import { game4DataItem , game4PhoneticSymbol , game4WordItem} from '../../interface/Game4';
 import PlanAnims from "../../Public/PlanAnims";
 import CreateBtnClass from "../../Public/CreateBtnClass";
+import { cover } from "../../Public/jonny/core/Cover";
 import CreateGuideAnims from "../../Public/CreateGuideAnims";
 import { SellingGold } from "../../Public/jonny/components/SellingGold";
 
@@ -64,21 +65,24 @@ export default class Game4PlayScene extends Phaser.Scene {
   
     create(): void {
       //初始化渲染
-      this.planAnims = new PlanAnims(this,this.ccData.length);
-      this.createBackgroundImage(); //背景图
-      this.drawCivaAndWolf(); //渲染civa跟狼
-      this.createArrow();  //渲染箭头
-      this.clickHandle(); //绑定点击事件
-      this.createWord(); //渲染🥕
-      this.createAnims(); //创建动画
-      this.drawAnimsHandle(); //初始化动画
-      this.createCollide(); //创建碰撞检测
-      this.createQuiver(); //创建箭筒跟气泡
-      this.createBgm(); //创建背景音乐
-      new CreateBtnClass(this,{
-        bgm : this.bgm
+      //@ts-ignore
+      cover(this,'game4Mask',()=>{
+        this.planAnims = new PlanAnims(this,this.ccData.length);
+        this.drawCivaAndWolf(); //渲染civa跟狼
+        this.createArrow();  //渲染箭头
+        this.clickHandle(); //绑定点击事件
+        this.createWord(); //渲染🥕
+        this.createAnims(); //创建动画
+        this.drawAnimsHandle(); //初始化动画
+        this.createCollide(); //创建碰撞检测
+        this.createQuiver(); //创建箭筒跟气泡
+        this.createBgm(); //创建背景音乐
+        new CreateBtnClass(this,{
+          bgm : this.bgm
+        })
+        this.createGold();
       })
-      this.createGold();
+      this.createBackgroundImage(); //背景图
       // this.createMask() ; //创建遮罩层
     }
 

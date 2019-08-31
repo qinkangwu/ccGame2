@@ -3,6 +3,7 @@ import {get, post} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import { game5DataItem } from "../../interface/Game5";
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
+import { cover } from "../../Public/jonny/core/Cover";
 
 const W = 1024;
 const H = 552;
@@ -49,49 +50,53 @@ export default class Game5PlayScene extends Phaser.Scene {
     }
     
   
-    create(): void {
+    create(): void { 
       this.createBgi(); //背景
-      this.createBtn(); //按钮
-      this.createSketch(); //创建画板
-      this.createCiva() ; //创建civa
-      this.createMask(); //展示遮罩
-      this.createBgm(); //播放背景音乐
-      this.createEmitter(); //创建粒子系统
-      this.loadMusic(this.ccData);
-      this.tips = new TipsParticlesEmitter(this,{
-        successCb : ()=>{
-          this.tryTimes = 0;
-          this.onHandle();
-        },
-        nextCb : ()=>{
-          this.area.setDepth(899);
-          this.onHandle();
-          this.dataIndex = this.dataIndex + 1 > this.ccData.length - 1 ? 0 : this.dataIndex + 1;
-          this.tweens.add({
-            targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
-            duration : 500,
-            y : `-=${H}`,
-            ease : 'Sine.easeInOut',
-            onComplete : ()=>{
-              this.nextTipsHandle();
-              this.tweens.add({
-                targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
-                duration : 500,
-                y : `+=${H}`,
-                ease : 'Sine.easeInOut',
-              })
-            }
-          })
-        },
-        tryAgainCb : ()=>{
-          this.area.setDepth(899);
-          this.onHandle();
-        },
-        renderBefore : ()=>{
-          this.offHandle();
-          this.area.setDepth(0);
-        }
-      }); //tip组件
+      cover(this,'mask',()=>{
+        this.createBtn(); //按钮
+        this.createSketch(); //创建画板
+        this.createCiva() ; //创建civa
+        this.createBgm(); //播放背景音乐
+        this.createEmitter(); //创建粒子系统
+        this.loadMusic(this.ccData);
+        this.tips = new TipsParticlesEmitter(this,{
+          successCb : ()=>{
+            this.tryTimes = 0;
+            this.onHandle();
+          },
+          nextCb : ()=>{
+            this.area.setDepth(899);
+            this.onHandle();
+            this.dataIndex = this.dataIndex + 1 > this.ccData.length - 1 ? 0 : this.dataIndex + 1;
+            this.tweens.add({
+              targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
+              duration : 500,
+              y : `-=${H}`,
+              ease : 'Sine.easeInOut',
+              onComplete : ()=>{
+                this.nextTipsHandle();
+                this.tweens.add({
+                  targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
+                  duration : 500,
+                  y : `+=${H}`,
+                  ease : 'Sine.easeInOut',
+                })
+              }
+            })
+          },
+          tryAgainCb : ()=>{
+            this.area.setDepth(899);
+            this.onHandle();
+          },
+          renderBefore : ()=>{
+            this.offHandle();
+            this.area.setDepth(0);
+          }
+        }); //tip组件
+        this.wordsAnims();//开始游戏展示word
+        this.initEmitHandle(); //初始化事件
+      });
+      
       // this.createDom(); //渲染html
     }
 
@@ -479,24 +484,6 @@ export default class Game5PlayScene extends Phaser.Scene {
         ease: 'Sine.easeInOut',
         duration : 500
       })
-    }
-
-    private createMask () : void {
-      //创建开始游戏遮罩
-      let graphicsObj : Phaser.GameObjects.Graphics = this.add.graphics();
-      graphicsObj.fillStyle(0x000000,.5);
-      graphicsObj.fillRect(0,0,W,H).setDepth(1);
-      let mask : Phaser.GameObjects.Image = this.add.image(W / 2, H / 2 , 'mask').setDepth(100);
-      let zoneObj : Phaser.GameObjects.Zone = this.add.zone(W / 2 - 104.5,H / 2 + 138 ,209 , 53 ).setOrigin(0).setInteractive();
-      let that : Game5PlayScene = this;
-      zoneObj.on('pointerdown',function () {
-        //点击开始游戏注销组件
-        zoneObj.destroy();
-        graphicsObj.destroy();
-        mask.destroy();
-        that.wordsAnims();//开始游戏展示word
-        that.initEmitHandle(); //初始化事件
-      });
     }
 
     private createBgi () : void {
