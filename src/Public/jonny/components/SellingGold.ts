@@ -80,7 +80,6 @@ export class SellingGold{
                 onComplete:()=>{
                     this.parentScene.tweens.add({
                         targets:glod,
-                        delay:150,
                         alpha:0,
                         duration:300,
                         onComplete:()=>{
@@ -103,8 +102,6 @@ export class SellingGold{
             duration:800,
             onComplete:onCompleteHandler
         })
-
-        //setTimeout(this.callback,2500);
 
     }
 
