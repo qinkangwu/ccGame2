@@ -632,7 +632,6 @@ export default class Game6PlayScene extends Phaser.Scene {
 
       that.tipsParticlesEmitter = new TipsParticlesEmitter(that, that.tipsParticlesEmitterConfig);
 
-      //correctAnswer = result; //test
       if (correctAnswer === result) {     //正确
         that.tipsParticlesEmitter.success();
       } else {
@@ -644,29 +643,6 @@ export default class Game6PlayScene extends Phaser.Scene {
       }
 
     }
-
-    /*function alertBarEl(texture: string, callBack) {
-      if (texture === "tips_goodjob") {
-        that.correctSound.play();
-      }
-      if (texture === "tips_tryagain" || texture === "tips_no") {
-        that.wrongSound.play();
-      }
-      let alertBar = that.add.image(242 + 521 * 0.5, 0 + 338 * 0.5, texture);
-      that.boom();
-      that.scaleMaxAni(alertBar);
-      that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{    //退场动画
-        targets: alertBar,
-        scale: 0.5,
-        alpha: 0,
-        duration: 300,
-        delay: 1000,
-        onComplete: () => {
-          alertBar.destroy();
-          callBack();
-        }
-      });
-    }*/
 
     function resetStart() {
       radian.value = 0;
@@ -724,7 +700,6 @@ export default class Game6PlayScene extends Phaser.Scene {
     let _config = {
       callback: () => {
         goldValue += 3;
-        alert(1);
         this.goldText.setText(goldValue.toString());
         setTimeout(() => {
           this.scene.start('Game6PlayScene', {
