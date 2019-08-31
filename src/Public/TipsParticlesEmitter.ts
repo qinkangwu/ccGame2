@@ -226,17 +226,15 @@ export default class TipsParticlesEmitter_New {
     }
     
 
-    private loadImg () : void {
-        this.scene.load.image('glodGoodJob','assets/commonUI/glodGoodJob.png');
-        this.scene.load.image('tipsTryagain','assets/commonUI/tipsTryagain.png');
-        this.scene.load.image('tipsNo','assets/commonUI/tipsNo.png');
-        this.scene.load.image('particles','assets/Game5/particles.png');
-        this.scene.load.image('btnAgain','assets/commonUI/btnAgain.png');
-        this.scene.load.image('btnAgainOnce','assets/commonUI/btnAgainOnce.png');
-        this.scene.load.image('btnChange','assets/commonUI/btnChange.png');
-        this.scene.load.audio('success','assets/Game5/success.mp3');
-        this.scene.load.audio('clickMp3','assets/sounds/clickMp3.mp3');
-        this.scene.load.on('complete',this.init.bind(this));
-        this.scene.load.start();
+    public static loadImg (scene:Phaser.Scene) : void {
+        scene.load.image('glodGoodJob','assets/commonUI/glodGoodJob.png');
+        scene.load.image('tipsTryagain','assets/commonUI/tipsTryagain.png');
+        scene.load.image('tipsNo','assets/commonUI/tipsNo.png');
+        scene.load.image('particles','assets/Game5/particles.png');
+        scene.load.image('btnAgain','assets/commonUI/btnAgain.png');
+        scene.load.image('btnAgainOnce','assets/commonUI/btnAgainOnce.png');
+        scene.load.image('btnChange','assets/commonUI/btnChange.png');
+        scene.load.audio('success','assets/Game5/success.mp3');
+        scene.load.audio('clickMp3','assets/sounds/clickMp3.mp3');
     }
 }

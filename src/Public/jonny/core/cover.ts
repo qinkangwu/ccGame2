@@ -30,7 +30,6 @@ export var cover = function (scene: Phaser.Scene,texture: string,callback:Functi
         canvas.removeEventListener("click", startHandler);
         canvas.removeEventListener("touchstart", startHandler);
         scene.scene.resume();
-        console.log(scene);
         if(scene.scene.key==="Game6PlayScene"){
             scene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: bitmapshape,

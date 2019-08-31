@@ -4,6 +4,7 @@ import { get, makeParams } from '../../lib/http';
 import { Game6DataItem, game6asset } from '../../interface/Game6';
 import {resize} from '../../Public/jonny/core'; 
 import PlanAnims from '../../Public/PlanAnims';
+import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
  
 const W = 1024;
 const H = 552;
@@ -33,9 +34,8 @@ export default class Game6LoadScene extends Phaser.Scene {
 
   preload(): void {
     this.load.audio('bgm', 'assets/sounds/bgm-01.mp3');
-    this.load.audio('correct', 'assets/sounds/successMp3.mp3');
-    this.load.audio('click', 'assets/sounds/clickMp3.mp3');
-    this.load.audio('wrong', 'assets/sounds/successMp3.mp3');
+     this.load.audio('correct', 'assets/sounds/successMp3.mp3');
+     this.load.audio('click', 'assets/sounds/clickMp3.mp3');
     this.assets.forEach((v) => {
       this.load.image(v.key, v.url);
     })
