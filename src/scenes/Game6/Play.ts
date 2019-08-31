@@ -109,9 +109,9 @@ export default class Game6PlayScene extends Phaser.Scene {
   /** * 游戏开始 */
   public gameStart(): void {
     if(index===0){
-      this.planAnims.show(index,this.createBalls);
+      this.createBalls();
     }else{
-      
+      this.planAnims.show(index,this.createBalls);
     }
     
   }
