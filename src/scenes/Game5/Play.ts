@@ -46,7 +46,7 @@ export default class Game5PlayScene extends Phaser.Scene {
     }
   
     preload(): void {
-      
+      TipsParticlesEmitter.loadImg(this);
     }
     
   

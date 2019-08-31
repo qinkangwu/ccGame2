@@ -6,7 +6,7 @@ const H = 552;
  * @param scene 当前场景
  * @param config 回调函数对象
  */
-export default class TipsParticlesEmitter_New {
+export default class TipsParticlesEmitter {
     private scene :Phaser.Scene;
     private config : config ; 
     private tips : Phaser.GameObjects.Sprite; //图片
@@ -19,7 +19,6 @@ export default class TipsParticlesEmitter_New {
     constructor(scene : Phaser.Scene,config : config){
         this.scene = scene;
         this.config = config;
-        this.loadImg();
     }
 
     private init () : void {
