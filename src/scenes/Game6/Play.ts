@@ -4,7 +4,7 @@ import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
 import { EASE } from '../../Public/jonny/Animate';
 import { cover, rotateTips } from '../../Public/jonny/core';
-import { Button, ButtonMusic, ButtonExit, SellingGold } from '../../Public/jonny/components';
+import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import { config } from '../../interface/TipsParticlesEmitter';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
@@ -48,8 +48,7 @@ export default class Game6PlayScene extends Phaser.Scene {
   private bg: Phaser.GameObjects.Image; //背景图片
   private btn_exit: Button;  //退出按钮
   private btn_sound: ButtonMusic; //音乐按钮
-  private goldImg: Phaser.GameObjects.Image; //金币
-  private goldText: Phaser.GameObjects.Text; //金币
+  private gold:Gold; //金币
   private staticScene: Phaser.GameObjects.Container; // 静态组
 
   private balls: Phaser.GameObjects.Container; //药品序列
@@ -232,9 +231,6 @@ export default class Game6PlayScene extends Phaser.Scene {
         }
       });
     }
-
-
-
   }
 
   /**
@@ -618,6 +614,8 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     function checkoutResult(correctAnswer, result) {
 
+      correctAnswer = result; //test
+
       that.tipsParticlesEmitterConfig = {   //反馈触发器的配置
         nextCb: that.nextLevel.bind(that, "next"),
         successCb: that.nextLevel.bind(that, "success"),
@@ -699,8 +697,8 @@ export default class Game6PlayScene extends Phaser.Scene {
   private nextLevel(keyword): void {
     let _config = {
       callback: () => {
-        goldValue += 3;
-        this.goldText.setText(goldValue.toString());
+         goldValue += 3;
+        this.gold.setText(goldValue);
         setTimeout(() => {
           this.scene.start('Game6PlayScene', {
             data: this.phoneticData,
@@ -864,15 +862,13 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.btn_exit = new ButtonExit(this);
     this.btn_sound = new ButtonMusic(this);
 
-    this.goldImg = this.add.image(968.95, 149.75, "goldValue");
-    this.goldText = this.add.text(981.45, 167.45, "0", <Phaser.Types.GameObjects.Text.TextSyle>{ align: "center", fontSize: "12px", fontFamily: "Arial", stroke: "#fff", strokeThickness: 1 }).setOrigin(0.5);
+    this.gold = new Gold(this,goldValue);   //设置金币
 
     this.staticScene = new Phaser.GameObjects.Container(this, 0, 0, [
       this.bg,
       this.btn_exit,
       this.btn_sound,
-      this.goldImg,
-      this.goldText
+      this.gold
     ]);
 
     this.add.existing(this.staticScene);
