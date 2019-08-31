@@ -2,7 +2,7 @@ import "phaser";
 
 interface Config{
     texture?:string;   //纹理,默认为 assets/commonUI/gold.png，须先载入纹理，
-    callback?:Phaser.Types.Tweens.TweenOnCompleteCallback;  //动画结束的回调函数，可选
+    callback?:Function;  //动画结束的回调函数，可选
 }
 
 /**
@@ -13,12 +13,14 @@ interface Config{
  * callback:Phaser.Types.Tweens.TweenOnCompleteCallback    动画结束的回调函数 | 可选
  * } 
  */
+
 export class SellingGold{
     private parentScene:Phaser.Scene;
     private glodValue:number;
     private golds:Phaser.GameObjects.Container;
     private texture:string;
-    private callback:Phaser.Types.Tweens.TweenOnCompleteCallback;
+    private callback:Function;
+    private count:number = 0;
 
     constructor(parentScene:Phaser.Scene,config?:Config){
         this.parentScene = parentScene;
@@ -80,6 +82,11 @@ export class SellingGold{
                         duration:300,
                         onComplete:()=>{
                             glod.destroy();
+                            this.count+=1;
+                            if(this.count===this.glodValue-1){
+                                this.count=0;
+                                this.callback(); 
+                            }
                         }
                     })
                 }
@@ -96,7 +103,7 @@ export class SellingGold{
             onComplete:onCompleteHandler
         })
 
-        setTimeout(this.callback,2500);
+        //setTimeout(this.callback,2500);
 
     }
 
