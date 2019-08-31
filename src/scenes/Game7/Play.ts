@@ -6,6 +6,7 @@ import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 import CreateMask from '../../Public/CreateMask';
 import CreateGuideAnims from '../../Public/CreateGuideAnims';
 import { Game7DataItem } from "../../interface/Game7";
+import { cover } from "../../Public/jonny/core";
 import PlanAnims from '../../Public/PlanAnims';
 
 declare var Fr:any;
@@ -52,35 +53,35 @@ export default class Game7PlayScene extends Phaser.Scene {
   
     create(): void {
       this.createBgi(); //背景图
-      this.createMachine(); //创建机器
-      this.createBgm(); //背景音乐
-      new CreateMask(this,()=>{
+      cover(this,'mask',()=>{
+        this.createMachine(); //创建机器
+        this.createBgm(); //背景音乐
+        this.renderSuccess([],true); //初始化渲染
+        this.createGold(); //创建金币
+        this.createBtnClass = new CreateBtnClass(this,{
+          recordStartCallback : this.recordStartHandle,
+          recordEndCallback : this.recordEndHandle,
+          playBtnCallback : ()=>{
+            this.playMusic(this.ccData[this.currentIndex].id);
+          },
+          playRecordCallback : this.playRecord,
+          bgm : this.bgm
+        }); //按钮公共组件
+        this.tips = new TipsParticlesEmitter(this,{
+          successCb : ()=>{
+            
+          },
+          tryAgainCb : ()=>{
+
+          },
+          nextCb : ()=>{
+
+          }
+        }); //tip组件
+        this.loadMusic(this.ccData);
         this.initEmitHandle(); //初始化事件
         this.handleAnims(); //初始化动画
       })
-      this.renderSuccess([],true); //初始化渲染
-      this.createGold(); //创建金币
-      this.createBtnClass = new CreateBtnClass(this,{
-        recordStartCallback : this.recordStartHandle,
-        recordEndCallback : this.recordEndHandle,
-        playBtnCallback : ()=>{
-          this.playMusic(this.ccData[this.currentIndex].id);
-        },
-        playRecordCallback : this.playRecord,
-        bgm : this.bgm
-      }); //按钮公共组件
-      this.tips = new TipsParticlesEmitter(this,{
-        successCb : ()=>{
-          
-        },
-        tryAgainCb : ()=>{
-
-        },
-        nextCb : ()=>{
-
-        }
-      }); //tip组件
-      this.loadMusic(this.ccData);
     }
 
     private createGold () : void {

@@ -4,7 +4,8 @@ import apiPath from '../../lib/apiPath';
 import { game4DataItem , game4PhoneticSymbol , game4WordItem} from '../../interface/Game4';
 import PlanAnims from "../../Public/PlanAnims";
 import CreateBtnClass from "../../Public/CreateBtnClass";
-import { cover } from "../../Public/jonny/core/Cover";
+import { cover } from "../../Public/jonny/core/cover";
+import { Gold } from "../../Public/jonny/components/Gold";
 import CreateGuideAnims from "../../Public/CreateGuideAnims";
 import { SellingGold } from "../../Public/jonny/components/SellingGold";
 
@@ -37,9 +38,8 @@ export default class Game4PlayScene extends Phaser.Scene {
     private wrongObj : Phaser.GameObjects.Sprite; //错误提示对象
     private planAnims : PlanAnims; //飞机过长动画引用
     private createGuideAnims : CreateGuideAnims; //引导动画引用
-    private goldIcon : Phaser.GameObjects.Image; //金币数量
-    private goldText : Phaser.GameObjects.Text; //金币文本
-    private goldNum : number = 0 ; //金币数量
+    private goldObj : Gold ; //金币组件引用
+    private goldNum : number = 0;
     // private arrowCirObj : Phaser.GameObjects.Graphics; //箭上的圆圈
     // private arrowText : Phaser.GameObjects.Text; //箭头上面的文本
     constructor() {
@@ -79,26 +79,14 @@ export default class Game4PlayScene extends Phaser.Scene {
         this.createBgm(); //创建背景音乐
         new CreateBtnClass(this,{
           bgm : this.bgm
-        })
-        this.createGold();
+        });
+        this.goldObj = new Gold(this,0).setDepth(100);
+        this.add.existing(this.goldObj);
       })
       this.createBackgroundImage(); //背景图
       // this.createMask() ; //创建遮罩层
     }
 
-    private createGold () : void {
-      //创建按钮
-      this.goldIcon = this.add.image(W - 55,149.75,'goldValue')
-        .setOrigin(.5)
-        .setDisplaySize(60,60)
-        .setInteractive()
-      //@ts-ignore
-      this.goldText = this.add.text(this.goldIcon.x + 14,this.goldIcon.y + 17,this.goldNum + '',{
-        fontSize: "14px",
-        fontFamily:"Arial Rounded MT Bold",
-        fill : '#fff',
-      }).setOrigin(.5);
-    }
 
     private createMask () : void {
       let graphicsObj : Phaser.GameObjects.Graphics = this.add.graphics();
@@ -137,7 +125,7 @@ export default class Game4PlayScene extends Phaser.Scene {
             duration : 100,
           })
         }
-      })
+      });
     }
 
     private createQuiver () : void {
@@ -271,7 +259,10 @@ export default class Game4PlayScene extends Phaser.Scene {
         ease: 'Sine.easeInOut',
         duration : 500,
         onComplete : ()=>{
-          this.createGuideAnims = new CreateGuideAnims(this,this.wordObj.x + 200, this.wordObj.y);
+          //@ts-ignore
+          !this.showWordHandle.lock && (this.createGuideAnims = new CreateGuideAnims(this,this.wordObj.x + 200, this.wordObj.y));
+          //@ts-ignore
+          this.showWordHandle.lock = true;
         }
       })
     }
@@ -502,6 +493,7 @@ export default class Game4PlayScene extends Phaser.Scene {
             onComplete : ()=>{
               let goldAnims = new SellingGold(this,{
                 callback : ()=>{
+                  this.goldObj.setText(this.goldNum += 3);
                   this.wordObj.setScale(1);
                   this.currentWord.setScale(1);
                   this.wordObj.y += H;
