@@ -213,17 +213,12 @@ export default class Game6PlayScene extends Phaser.Scene {
     // setTimeout(initAni.bind(this,this.balls.list[2].list[0]),3000);
     let count = 0;
     let delay: number;
-    if (index === 0) {
-      delay = 1000;
-    } else {
-      delay = 0;
-    }
     function initAni(objs) {
       that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
         //@ts-ignore
         targets: objs,
         scale: 1,
-        delay: delay,
+        delay: 1000,
         duration: 1000,
         ease: EASE.spring,
         onComplete: () => {
@@ -729,6 +724,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     let _config = {
       callback: () => {
         goldValue += 3;
+        alert(1);
         this.goldText.setText(goldValue.toString());
         setTimeout(() => {
           this.scene.start('Game6PlayScene', {
