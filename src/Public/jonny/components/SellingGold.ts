@@ -74,7 +74,7 @@ export class SellingGold{
                 y:Gold.imgPosition.y,
                 delay:delay,
                 ease:"Sine.easeOut",
-                duration:500,
+                duration:400,
                 onComplete:()=>{
                     this.parentScene.tweens.add({
                         targets:glod,
@@ -92,8 +92,6 @@ export class SellingGold{
                     })
                 }
             })
-
-
         }
 
         this.parentScene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
