@@ -1,4 +1,5 @@
 import "phaser";
+import {Gold} from "./Gold";
 
 interface Config{
     texture?:string;   //纹理,默认为 assets/commonUI/gold.png，须先载入纹理，
@@ -69,8 +70,8 @@ export class SellingGold{
         var onCompleteHandler = ()=>{
             this.parentScene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets:glod,
-                x:968.95,
-                y:149.75,
+                x:Gold.imgPosition.x,
+                y:Gold.imgPosition.y,
                 delay:delay,
                 ease:"Sine.easeOut",
                 duration:500,
