@@ -19,6 +19,7 @@ export default class TipsParticlesEmitter {
     constructor(scene : Phaser.Scene,config : config){
         this.scene = scene;
         this.config = config;
+        this.init();
     }
 
     private init () : void {
