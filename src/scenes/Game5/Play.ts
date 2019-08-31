@@ -3,7 +3,7 @@ import {get, post} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import { game5DataItem } from "../../interface/Game5";
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
-import { cover } from "../../Public/jonny/core/Cover";
+import { cover } from "../../Public/jonny/core";
 
 const W = 1024;
 const H = 552;
@@ -417,6 +417,7 @@ export default class Game5PlayScene extends Phaser.Scene {
       this.isDraw = true;
       this.penObj.setAlpha(1).setX(pointer.x - 30).setY(pointer.y);
       this.drawHandle(pointer,handle); //绘制 
+      //@ts-ignore
       this.timer = setTimeout(()=>{
         this.penObj.setAlpha(0);
       },500);

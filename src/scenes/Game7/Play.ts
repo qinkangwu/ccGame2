@@ -6,7 +6,7 @@ import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 import CreateMask from '../../Public/CreateMask';
 import CreateGuideAnims from '../../Public/CreateGuideAnims';
 import { Game7DataItem } from "../../interface/Game7";
-import { cover } from "../../Public/jonny/core/Cover";
+import { cover } from "../../Public/jonny/core";
 import PlanAnims from '../../Public/PlanAnims';
 
 declare var Fr:any;
