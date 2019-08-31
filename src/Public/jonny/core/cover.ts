@@ -6,7 +6,7 @@ import "phaser";
  * 动画的时间会延续1000ms
  */
 
-export var cover = function (scene: Phaser.Scene, texture: string,callback:Function=()=>{}) {
+export var cover = function (scene: Phaser.Scene,texture: string,callback:Function=()=>{}) {
     let bg = scene.add.graphics().setDepth(1999);
     bg.fillStyle(0x000000);
     bg.fillRect(0, 0, scene.game.renderer.width, scene.game.renderer.height);
@@ -30,16 +30,24 @@ export var cover = function (scene: Phaser.Scene, texture: string,callback:Funct
         canvas.removeEventListener("click", startHandler);
         canvas.removeEventListener("touchstart", startHandler);
         scene.scene.resume();
-        scene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-            targets: bitmapshape,
-            duration: 1000,
-            scale: 0,
-            onComplete: () => {
-                bg.destroy();
-                image.destroy();
-                callback();
-            }
-        });
+        console.log(scene);
+        if(scene.scene.key==="Game6PlayScene"){
+            scene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+                targets: bitmapshape,
+                duration: 1000,
+                scale: 0,
+                onComplete: () => {
+                    bg.destroy();
+                    image.destroy();
+                    callback();
+                }
+            });
+        }else{
+            bg.destroy();
+            image.destroy();
+            callback(); 
+        }
+
     }
 }
 
