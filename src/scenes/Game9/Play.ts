@@ -1,6 +1,6 @@
 import 'phaser';
 import { Game9DataItem } from '../../interface/Game9';
-import { Cover,rotateTips } from '../../Public/jonny/core';
+import { cover,rotateTips } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit } from '../../Public/jonny/components';
 
 const vol = 0.3; //背景音乐的音量
