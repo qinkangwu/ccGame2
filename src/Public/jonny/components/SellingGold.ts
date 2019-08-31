@@ -42,17 +42,17 @@ export class SellingGold{
             if(i===0){
                 _gold = this.createGlod().setPosition(400,276).setScale(0);
                 this.golds.add(_gold);    //左
-                this.goldAni(_gold,900);
+                this.goldAni(_gold,600);
             }
             if(i===1){
                 _gold = this.createGlod().setPosition(624,276).setScale(0);
                 this.golds.add(_gold);    //右
-                this.goldAni(_gold,300);
+                this.goldAni(_gold,200);
             }
             if(i===2){
                 _gold = this.createGlod().setPosition(512,276).setScale(0);
                 this.golds.add(_gold);    //上
-                this.goldAni(_gold,600);
+                this.goldAni(_gold,400);
             }
         }
     }
