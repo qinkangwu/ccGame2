@@ -522,7 +522,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       luyinTipsAni.remove();
     });
 
-    luyinBtn.on("pointerdown", recordReady);
+    luyinBtn.on("pointerup", recordReady);
 
     backplayBtn.setInteractive();
     backplayBtn.setData("haveRecord", "no");
