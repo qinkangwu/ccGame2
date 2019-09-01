@@ -19,7 +19,7 @@ interface Config{
 
 export class SellingGold{
     private parentScene:Phaser.Scene;
-    private glodValue:number;
+    private goldValue:number;
     public golds:Phaser.GameObjects.Container;
     private texture:string;
     private callback:Function;
@@ -27,7 +27,7 @@ export class SellingGold{
 
     constructor(parentScene:Phaser.Scene,config?:Config){
         this.parentScene = parentScene;
-        this.glodValue = 3;
+        this.goldValue = 3;
         this.callback = config.callback || function (){};
         this.texture = config.texture || "gold";
         this.golds = this.parentScene.add.container(0,0);
@@ -36,26 +36,46 @@ export class SellingGold{
     /**
      *  正确
      */
-    public goodJob() {
+    public goodJob(_goldValue:number=3) {
+        this.goldValue = _goldValue;
         let _gold:Phaser.GameObjects.Image;
-        for(let i = 0;i < this.glodValue;i++){
-            if(i===0){
-                _gold = this.createGlod().setPosition(400,276).setScale(0);
-                this.golds.add(_gold);    //左
-                this.goldAni(_gold,600);
+        for(let i = 0;i < this.goldValue;i++){
+            if(this.goldValue===3){
+                if(i===0){
+                    _gold = this.createGlod().setPosition(400,276).setScale(0);
+                    this.golds.add(_gold);    //左
+                    this.goldAni(_gold,600);
+                }
+                if(i===1){
+                    _gold = this.createGlod().setPosition(624,276).setScale(0);
+                    this.golds.add(_gold);    //右
+                    this.goldAni(_gold,200);
+                }
+                if(i===2){
+                    _gold = this.createGlod().setPosition(512,276).setScale(0);
+                    this.golds.add(_gold);    //上
+                    this.goldAni(_gold,400);
+                }
+            }else if(this.goldValue===2){
+                if(i===0){
+                    _gold = this.createGlod().setPosition(400,276).setScale(0);
+                    this.golds.add(_gold);    //左
+                    this.goldAni(_gold,600);
+                }
+                if(i===1){
+                    _gold = this.createGlod().setPosition(624,276).setScale(0);
+                    this.golds.add(_gold);    //右
+                    this.goldAni(_gold,200);
+                }
+            }else if(this.goldValue===1){
+                    _gold = this.createGlod().setPosition(512,276).setScale(0);
+                    this.golds.add(_gold);    //上
+                    this.goldAni(_gold,400);
             }
-            if(i===1){
-                _gold = this.createGlod().setPosition(624,276).setScale(0);
-                this.golds.add(_gold);    //右
-                this.goldAni(_gold,200);
-            }
-            if(i===2){
-                _gold = this.createGlod().setPosition(512,276).setScale(0);
-                this.golds.add(_gold);    //上
-                this.goldAni(_gold,400);
-            }
+            
         }
     }
+
 
     private createGlod():Phaser.GameObjects.Image{
         let glod = this.parentScene.add.image(0,0,this.texture);
@@ -85,7 +105,7 @@ export class SellingGold{
                         onComplete:()=>{
                             glod.destroy();
                             this.count+=1;
-                            if(this.count===this.glodValue-1){
+                            if(this.count===this.goldValue-1){
                                 this.count=0;
                                 this.callback(); 
                             }
