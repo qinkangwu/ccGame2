@@ -476,7 +476,7 @@ export default class Game7PlayScene extends Phaser.Scene {
       //@ts-ignore
       this.bgm.play({
         loop : true,
-        volume : .3
+        volume : .2
       })
     }
 

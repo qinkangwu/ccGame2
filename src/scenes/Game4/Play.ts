@@ -40,6 +40,7 @@ export default class Game4PlayScene extends Phaser.Scene {
     private createGuideAnims : CreateGuideAnims; //引导动画引用
     private goldObj : Gold ; //金币组件引用
     private goldNum : number = 20;
+    private errorNum : number = 0;
     // private arrowCirObj : Phaser.GameObjects.Graphics; //箭上的圆圈
     // private arrowText : Phaser.GameObjects.Text; //箭头上面的文本
     constructor() {
@@ -103,7 +104,7 @@ export default class Game4PlayScene extends Phaser.Scene {
       //@ts-ignore
       this.bgm.play({
         loop : true,
-        volume : .3
+        volume : .2
       })
     }
 
@@ -218,6 +219,8 @@ export default class Game4PlayScene extends Phaser.Scene {
             this.allBallonIsFinish();
           }
         }else{
+          this.errorNum = this.errorNum + 1 > this.words.length && this.words.length || this.errorNum + 1; //错误次数 错一次金币少一颗
+          console.log(this.errorNum);
           this.setPopAndQuiver(true);
           this.showWrongObjHandle();
           this.playMusic('wrong');
@@ -431,7 +434,7 @@ export default class Game4PlayScene extends Phaser.Scene {
       }) || this.transDataHandle(currentItem);
       this.quiverNum = this.words.length ; //箭筒箭矢数量初始化
       this.errorWords = this.shuffle([...this.words]); //打乱原始数据
-      this.ballonSprites.length = 0;
+      this.errorNum = 0; //清空错误次数
     }
 
     private playMusic (sourceKey : string) : void {
@@ -493,7 +496,7 @@ export default class Game4PlayScene extends Phaser.Scene {
             onComplete : ()=>{
               let goldAnims = new SellingGold(this,{
                 callback : ()=>{
-                  this.goldObj.setText(this.goldNum += 3);
+                  this.goldObj.setText(this.goldNum += (this.words.length - this.errorNum));
                   this.wordObj.setScale(1);
                   this.currentWord.setScale(1);
                   this.wordObj.y += H;
@@ -625,13 +628,17 @@ export default class Game4PlayScene extends Phaser.Scene {
     }
 
     private showWrongObjHandle() : void{
+      this.clickLock = true;
       this.tweens.add({
         targets : this.wrongObj,
         alpha : 1,
         ease: 'Sine.easeInOut',
         duration : 300,
         yoyo : true,
-        repeat : 2
+        repeat : 2,
+        onComplete : ()=>{
+          this.clickLock = false;
+        }
       })
     }
   
