@@ -720,7 +720,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     index += 1;
     index = index % this.phoneticData.length;
     if (keyword === "success") {
-      sellingGold.goodJob(2);
+      sellingGold.goodJob(3);
     }
     if (keyword === "next") {
       this.scene.start('Game6PlayScene', {
