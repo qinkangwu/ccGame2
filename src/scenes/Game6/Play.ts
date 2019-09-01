@@ -21,6 +21,7 @@ const vol = 0.3; //背景音乐的音量
 var ableStop: number = 0;  //0=>不能停止，1=>能停止,2=>已经停止
 var index: number; //题目的指针，默认为0
 var goldValue: number = 0; //金币的值
+var isMicrophone:boolean = true; //查看是否有麦克风
 
 var arrowUpObj: any = null;
 var arrowUpAni: any = null;
@@ -719,7 +720,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     index += 1;
     index = index % this.phoneticData.length;
     if (keyword === "success") {
-      sellingGold.goodJob();
+      sellingGold.goodJob(2);
     }
     if (keyword === "next") {
       this.scene.start('Game6PlayScene', {

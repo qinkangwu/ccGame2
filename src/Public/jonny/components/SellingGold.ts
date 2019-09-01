@@ -104,9 +104,8 @@ export class SellingGold{
                         duration:300,
                         onComplete:()=>{
                             glod.destroy();
-                            this.count+=1;
-                            if(this.count===this.goldValue-1){
-                                this.count=0;
+                            if(this.count===0){
+                                this.count=1;
                                 this.callback(); 
                             }
                         }
