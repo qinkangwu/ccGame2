@@ -35,48 +35,56 @@ export default class PlanAnims {
             .setOrigin(.5)
             .setDepth(999)
             .setScale(0);
-        this.splitIcon = this.scene.add.image(this.cloud.x + (this.current > 9 && 15 || -5), this.cloud.y + 25 , 'splitIcon')
-            .setOrigin(.5,1)
+        this.splitIcon = this.scene.add.image(this.cloud.x - (this.current > 9 && -10 || 10), this.cloud.y + 15 , 'splitIcon')
+            .setOrigin(.5)
             .setDepth(999)
-            .setScale(0)
-        this.currentText = this.scene.add.text(this.splitIcon.x - 10 , this.splitIcon.y - 20,this.current + '' , {
+            .setAlpha(0)
+        this.currentText = this.scene.add.text(this.splitIcon.x - (this.current > 9 && 40 || 25 ) , this.splitIcon.y - 7,this.current + '' , {
             fontSize: "56px",
             fontFamily:"Arial Rounded MT Bold",
             fill : '#FF8D39',
-        }).setOrigin(1,.5).setDepth(1000).setScale(0);
-        this.totalText = this.scene.add.text(this.splitIcon.x + 10 , this.splitIcon.y - 15 , this.total + '', {
+        }).setOrigin(.5).setDepth(1000).setAlpha(0);
+        this.totalText = this.scene.add.text(this.splitIcon.x + 30 , this.splitIcon.y , this.total + '', {
             fontSize: "32px",
             fontFamily:"Arial Rounded MT Bold",
             fill : '#63BFFF',
-        }).setOrigin(0,.5).setDepth(1000).setScale(0);
+        }).setOrigin(.5).setDepth(1000).setAlpha(0);
         this.planTween = this.scene.tweens.add({
             targets : this.planObj,
             ease : 'Sine.easeInOut',
             duration : 300,
             repeat : -1,
-            y : `+=20`,
+            y : `+=14`,
             yoyo : true
         });
         this.scene.tweens.add({
             targets : this.planObj,
-            ease : 'Sine.easeInOut',
+            ease : 'Sine.easeOut',
             duration : 300,
             x : W / 2 + 150
         });
         this.scene.tweens.add({
             targets : this.planObj,
             delay : 300,
-            ease : 'Sine.easeInOut',
+            ease : 'Linear',
             duration : 500,
             x : `-=200`
         });
         this.scene.tweens.add({
-            targets : [this.cloud,this.splitIcon,this.currentText,this.totalText],
+            targets : [this.cloud],
             delay : 1000,
             scaleX : 1,
             scaleY : 1 ,
-            ease : 'Sine.easeInOut',
-            duration : 300
+            ease : 'Sine.easeIn',
+            duration : 300,
+            onComplete : ()=>{
+                this.scene.tweens.add({
+                    targets : [this.splitIcon,this.currentText,this.totalText],
+                    duration : 150,
+                    alpha : 1,
+                    ease : 'Sine.easeIn'
+                })
+            }
         });
         this.scene.tweens.add({
             targets : this.planObj,
