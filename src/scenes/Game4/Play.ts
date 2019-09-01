@@ -39,7 +39,7 @@ export default class Game4PlayScene extends Phaser.Scene {
     private planAnims : PlanAnims; //飞机过长动画引用
     private createGuideAnims : CreateGuideAnims; //引导动画引用
     private goldObj : Gold ; //金币组件引用
-    private goldNum : number = 0;
+    private goldNum : number = 20;
     // private arrowCirObj : Phaser.GameObjects.Graphics; //箭上的圆圈
     // private arrowText : Phaser.GameObjects.Text; //箭头上面的文本
     constructor() {
@@ -80,7 +80,7 @@ export default class Game4PlayScene extends Phaser.Scene {
         new CreateBtnClass(this,{
           bgm : this.bgm
         });
-        this.goldObj = new Gold(this,0);
+        this.goldObj = new Gold(this,20);
         this.add.existing(this.goldObj);
       })
       this.createBackgroundImage(); //背景图
