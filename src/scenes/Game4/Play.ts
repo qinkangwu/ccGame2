@@ -435,6 +435,7 @@ export default class Game4PlayScene extends Phaser.Scene {
       this.quiverNum = this.words.length ; //箭筒箭矢数量初始化
       this.errorWords = this.shuffle([...this.words]); //打乱原始数据
       this.errorNum = 0; //清空错误次数
+      this.ballonSprites.length = 0 ;
     }
 
     private playMusic (sourceKey : string) : void {
@@ -515,7 +516,7 @@ export default class Game4PlayScene extends Phaser.Scene {
                   this.changeQuiverNums(this.quiverNum);   
                 }
               });
-              goldAnims.goodJob();
+              goldAnims.goodJob(this.words.length - this.errorNum);
             }
           })
         }
@@ -628,7 +629,6 @@ export default class Game4PlayScene extends Phaser.Scene {
     }
 
     private showWrongObjHandle() : void{
-      this.clickLock = true;
       this.tweens.add({
         targets : this.wrongObj,
         alpha : 1,
@@ -636,9 +636,6 @@ export default class Game4PlayScene extends Phaser.Scene {
         duration : 300,
         yoyo : true,
         repeat : 2,
-        onComplete : ()=>{
-          this.clickLock = false;
-        }
       })
     }
   
