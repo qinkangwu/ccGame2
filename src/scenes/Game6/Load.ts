@@ -36,6 +36,7 @@ export default class Game6LoadScene extends Phaser.Scene {
     this.load.audio('bgm', 'assets/sounds/bgm-01.mp3');
      this.load.audio('correct', 'assets/sounds/successMp3.mp3');
      this.load.audio('click', 'assets/sounds/clickMp3.mp3');
+     this.load.bitmapFont('ArialRoundedBold', 'assets/font/ArialRoundedBold/font.png','assets/font/ArialRoundedBold/font.xml');
     this.assets.forEach((v) => {
       this.load.image(v.key, v.url);
     })

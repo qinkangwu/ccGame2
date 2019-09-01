@@ -460,14 +460,8 @@ export default class Game6PlayScene extends Phaser.Scene {
     let cloud = new Phaser.GameObjects.Image(this, 242 + 521 * 0.5, 0 + 338 * 0.5, "img_cloud").setOrigin(0.5);
     cloud.displayWidth = 521;
     cloud.displayHeight = 338;
-    let word = new Phaser.GameObjects.Text(this, 1024 * 0.5, 150, `${this.phoneticData[index].name}`, {
-      align: "center",
-      color: "rgb(178,90,176)",
-      fontSize: "120px",
-      fontFamily: "Arial Rounded MT Bold",
-      stroke: "#fff",
-      strokeThickness: 2
-    } as Phaser.Types.GameObjects.Text.TextSyle).setOrigin(0.5);
+    let word = new Phaser.GameObjects.BitmapText(this, 1024 * 0.5, 150,"ArialRoundedBold",`${this.phoneticData[index].name}`,120,0.5).setOrigin(0.5);
+    word.tint = 0xb25ab0;
     this.cloudWord.add([cloud, word]);
     this.scaleMaxAni(cloud);
     this.scaleMaxAni(word);
