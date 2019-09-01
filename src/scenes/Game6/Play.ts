@@ -199,6 +199,8 @@ export default class Game6PlayScene extends Phaser.Scene {
      */
     //index = 6;
     let that = this;
+    let count = 0;
+    let _delay = index===0 ? 2300 : 0;
 
     let ballImgTexures: Array<string> = ["img_ballgreen", "img_ballpurple", "img_ballyellow"];
     let phoneticSymbols = this.phoneticData[index].phoneticSymbols.reverse();
@@ -218,11 +220,11 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     //@ts-ignore
     // setTimeout(initAni.bind(this,this.balls.list[2].list[0]),3000);
-    let count = 0;
     function initAni(objs) {
       that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
         //@ts-ignore
         targets: objs,
+        delay:_delay,
         scale: 1,
         duration: 1000,
         ease: EASE.spring,
