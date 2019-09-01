@@ -97,7 +97,7 @@ export class SellingGold{
                 y:Gold.imgPosition.y,
                 delay:delay,
                 ease:"Sine.easeOut",
-                duration:400,
+                duration:300,
                 onComplete:()=>{
                     this.parentScene.tweens.add({
                         targets:glod,
