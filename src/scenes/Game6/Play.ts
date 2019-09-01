@@ -205,12 +205,11 @@ export default class Game6PlayScene extends Phaser.Scene {
     let ballIndex = phoneticSymbols.length - 1;
     let nullballIndex = 0;
     phoneticSymbols.forEach((v, i) => {
-      //let ballImg = this.physics.add.image(initPosition.x, initPosition.y, `${ballImgTexures[i]}`).setCircle(71.5, 71.5 * 0.5 + 15, 71.5 * 0.5 + 23);
       let ballImg = this.add.image(initPosition.x, initPosition.y, `${ballImgTexures[i]}`);
       ballImg.setData("name", v.name);
       ballImg.setData("arrowIndex", i);
       ballImg.setScale(0);
-      let ballText = new Phaser.GameObjects.Text(this, initPosition.x - 5, initPosition.y + 18, v.name, { align: "center", fontSize: "47px", fontFamily: "ArialRounded MT Bold", stroke: "#fff", strokeThickness: 2 }).setOrigin(0.5);
+      let ballText = new Phaser.GameObjects.BitmapText(this, initPosition.x - 5, initPosition.y + 18,"GenJyuuGothic",v.name,47,0.5).setOrigin(0.5);
       ballText.setScale(0);
       let ball = new Phaser.GameObjects.Container(this, 0, 0, [ballImg, ballText]);
       this.balls.add(ball);
@@ -460,7 +459,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     let cloud = new Phaser.GameObjects.Image(this, 242 + 521 * 0.5, 0 + 338 * 0.5, "img_cloud").setOrigin(0.5);
     cloud.displayWidth = 521;
     cloud.displayHeight = 338;
-    let word = new Phaser.GameObjects.BitmapText(this, 1024 * 0.5, 150,"ArialRoundedBold",`${this.phoneticData[index].name}`,120,0.5).setOrigin(0.5);
+    let word = new Phaser.GameObjects.BitmapText(this, 1024 * 0.5, 150,"GenJyuuGothic",`${this.phoneticData[index].name}`,120,0.5).setOrigin(0.5);
     word.tint = 0xb25ab0;
     this.cloudWord.add([cloud, word]);
     this.scaleMaxAni(cloud);
