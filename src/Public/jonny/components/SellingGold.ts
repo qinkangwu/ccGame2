@@ -37,6 +37,7 @@ export class SellingGold{
      *  正确
      */
     public goodJob(_goldValue:number=3) {
+        if(_goldValue === 0)  return this.callback.call(this.parentScene);
         this.goldValue = _goldValue;
         let _gold:Phaser.GameObjects.Image;
         for(let i = 0;i < this.goldValue;i++){
