@@ -20,7 +20,7 @@ const vol = 0.3; //背景音乐的音量
 
 var ableStop: number = 0;  //0=>不能停止，1=>能停止,2=>已经停止
 var index: number; //题目的指针，默认为0
-var goldValue: number = 3; //金币的值
+var goldValue: number = 20; //金币的值
 var isMicrophone: boolean = true; //查看是否有麦克风
 
 var arrowUpObj: any = null;
@@ -107,9 +107,6 @@ export default class Game6PlayScene extends Phaser.Scene {
 
   update(time: number, delta: number): void {
     this.btn_sound.mountUpdate();
-    // if(this.checkoutGoldValue()){
-    //     this.scene.pause();
-    // }
   }
 
 
@@ -638,14 +635,21 @@ export default class Game6PlayScene extends Phaser.Scene {
       if (correctAnswer === result) {     //正确
         that.tipsParticlesEmitter.success();
       } else {
+        if (goldValue === 0) {
+          alert("啊哦，你又错啦！金币不足，一起去赚金币吧");
+          that.scene.pause();
+          return false;
+        }
         if (that.recordTimes >= 2) {    //没有机会
           that.tipsParticlesEmitter.error();
         } else {
           that.tipsParticlesEmitter.tryAgain();   //再试一次
         }
+        
       }
-
     }
+
+
 
     function resetStart() {
       radian.value = 0;
@@ -715,8 +719,8 @@ export default class Game6PlayScene extends Phaser.Scene {
   /**
    * 检查金币是否为0
    */
-  private checkoutGoldValue():boolean{
-      return goldValue < 0 ? true : false;
+  private checkoutGoldValue(): boolean {
+    return goldValue < 0 ? true : false;
   }
 
   /**
