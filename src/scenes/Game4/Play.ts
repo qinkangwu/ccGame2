@@ -39,8 +39,9 @@ export default class Game4PlayScene extends Phaser.Scene {
     private planAnims : PlanAnims; //飞机过长动画引用
     private createGuideAnims : CreateGuideAnims; //引导动画引用
     private goldObj : Gold ; //金币组件引用
-    private goldNum : number = 20;
-    private errorNum : number = 0;
+    private goldNum : number = 20; //初始金币
+    private errorNum : number = 0; //错误次数
+    private lockLifeHandle : boolean = false ; //锁血
     // private arrowCirObj : Phaser.GameObjects.Graphics; //箭上的圆圈
     // private arrowText : Phaser.GameObjects.Text; //箭头上面的文本
     constructor() {
@@ -436,6 +437,7 @@ export default class Game4PlayScene extends Phaser.Scene {
       this.errorWords = this.shuffle([...this.words]); //打乱原始数据
       this.errorNum = 0; //清空错误次数
       this.ballonSprites.length = 0 ;
+      this.lockLifeHandle = false ; //解除锁血
     }
 
     private playMusic (sourceKey : string) : void {
@@ -481,6 +483,9 @@ export default class Game4PlayScene extends Phaser.Scene {
       this.input.on('pointerdown',(...args)=>{
         //@ts-ignore
         if(args[1].length === 0 || args[1][0] instanceof Phaser.GameObjects.Image ) return;
+        if(this.goldNum === 0 ) return alert('啊哦，金币不足，一起去赚金币吧');
+        !this.lockLifeHandle && this.goldObj.setText(this.goldNum -= 1);
+        this.lockLifeHandle = true;
         this.playMusic('shoot');
         this.createGuideAnims && this.createGuideAnims.hideHandle(); //隐藏引导动画
         this.createGuideAnims = null;
