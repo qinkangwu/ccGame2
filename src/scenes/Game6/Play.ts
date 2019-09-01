@@ -616,9 +616,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function checkoutResult(correctAnswer, result) {
-
       correctAnswer = result; //test
-
       that.tipsParticlesEmitterConfig = {   //反馈触发器的配置
         nextCb: that.nextLevel.bind(that, "next"),
         successCb: that.nextLevel.bind(that, "success"),
@@ -653,6 +651,10 @@ export default class Game6PlayScene extends Phaser.Scene {
 
 
     function recordReady() {
+      if(!isMicrophone){
+          errCallback();
+          return false;
+      }
       luyinTipsAni.remove();
       luyinBtn.scale = 1;
       // if(ableStop===1){
@@ -687,7 +689,9 @@ export default class Game6PlayScene extends Phaser.Scene {
       }
 
       function errCallback() {
-        alert("没有麦克风输入或已被拒绝授权");
+        alert("没有麦克风输入或已被拒绝授权,插入麦克风后，请刷新页面继续游戏");
+        isMicrophone = false;
+        luyinBtn.on("pointerup", recordReady);
       }
 
 
