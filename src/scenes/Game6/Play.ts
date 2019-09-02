@@ -583,28 +583,28 @@ export default class Game6PlayScene extends Phaser.Scene {
       let analysisMask: Phaser.GameObjects.Container = createMaskAnalysis();
       that.bgm.resume();
       backplayBtn.setData("haveRecord", "yes");
-      Fr.voice.export(function (url) {
-        console.log(url);
-        Fr.voice.stop();
-        that.userRecoder.setAttribute("src", url);
-        //that.userRecoder.play();
-      }, "base64");
       Fr.voice.export(function (blob) {
+        Fr.voice.stop();
         let file: File = new File([blob], 'aaa.wav', {
           type: blob.type
         });
         post(apiPath.uploadRecord, { file }, 'json', true)
           .then(res => {
             analysisMask.destroy();
-            analysisMask.destroy();
             luyinBtn.setTexture("btn_luyin");
-            originalBtn.setAlpha(1);
-            backplayBtn.setAlpha(1);
-            originalBtn.off("pointerdown");
-            backplayBtn.off("pointerdown");
+            originalBtn.setAlpha(1); backplayBtn.setAlpha(1);
+            originalBtn.interactive = false; backplayBtn.interactive = false;
             let correctAnswer = that.phoneticData[index].name;
             let result = res.result;
             checkoutResult(correctAnswer, result);
+          })
+          .then(()=>{
+            let reader = new (window as any).FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = function () {
+              let base64data = reader.result;
+              that.userRecoder.setAttribute("src",base64data);
+            };
           })
           .catch(error => {
             console.log(error);
@@ -629,8 +629,8 @@ export default class Game6PlayScene extends Phaser.Scene {
         nextCb: that.nextLevel.bind(that, "next"),
         successCb: that.nextLevel.bind(that, "success"),
         tryAgainCb: () => {
-          originalBtn.on("pointerdown", originalBtn.pointerdownHandler);
-          backplayBtn.on("pointerdown", backplayBtn.pointerdownHandler);
+            originalBtn.interactive = true;
+            backplayBtn.interactive = true;
           that.voiceBtns.setAlpha(1);
           that.cloudWord.setAlpha(1);
           if (ableStop === 2 || ableStop === 1) {
