@@ -2,7 +2,7 @@ import 'phaser';
 import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
-import { EASE,StaticAni } from '../../Public/jonny/Animate';
+import { EASE, StaticAni } from '../../Public/jonny/Animate';
 import { cover, rotateTips } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import { config } from '../../interface/TipsParticlesEmitter';
@@ -57,6 +57,8 @@ export default class Game6PlayScene extends Phaser.Scene {
   private cloudWord: Phaser.GameObjects.Container; //单词容器
   private voiceBtns: Phaser.GameObjects.Container; //语音按钮组
   private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
+  private userRecoder: HTMLAudioElement = document.createElement("audio");
+
 
   private particles: Phaser.GameObjects.Particles.ParticleEmitterManager; // 粒子控制器
   private emitters: Phaser.GameObjects.Particles.ParticleEmitter;  //粒子发射器
@@ -269,7 +271,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     ball.list[0].on("dragstart", ballOnDragStart);
     ball.list[0].on("dragend", ballOnDragEnd);
     function ballImgOnDrag(pointer, dragX, dragY): void {
-      StaticAni.alphaScaleFuc(this,1,1,1);
+      StaticAni.alphaScaleFuc(this, 1, 1, 1);
       (<Phaser.GameObjects.Image>ball.list[0]).setPosition(dragX, dragY);
       (<Phaser.GameObjects.Text>ball.list[1]).setPosition(dragX - 5, dragY + 18);
     }
@@ -281,12 +283,12 @@ export default class Game6PlayScene extends Phaser.Scene {
       that.clickSound.play();
       that.status = "一轮上下拖拽开始";
       //that.scaleMaxAni(this);
-      StaticAni.alphaScaleFuc(this,1.2,1.2,1);
+      StaticAni.alphaScaleFuc(this, 1.2, 1.2, 1);
       that.arrowAgainHide();
     }
 
     function ballOnDragEnd() {
-      StaticAni.alphaScaleFuc(this,1,1,1);
+      StaticAni.alphaScaleFuc(this, 1, 1, 1);
       console.log(that.status);
       if (that.status === "一轮上下拖拽结束") {
         return false;
@@ -477,10 +479,10 @@ export default class Game6PlayScene extends Phaser.Scene {
     });
     word.on("pointerdown", () => {
       that.wordSpeaker.play();
-      StaticAni.alphaScaleFuc(word,1.2,1.2,1);
+      StaticAni.alphaScaleFuc(word, 1.2, 1.2, 1);
     });
     word.on("pointerup", () => {
-      StaticAni.alphaScaleFuc(word,1,1,1);
+      StaticAni.alphaScaleFuc(word, 1, 1, 1);
     });
   }
 
@@ -498,7 +500,6 @@ export default class Game6PlayScene extends Phaser.Scene {
     originalBtn.minAlpha = 1;
 
 
-    let userRecoder: HTMLAudioElement = new Audio();
 
     let cir = new Phaser.GameObjects.Graphics(this);
     cir.fillStyle(0xffffff, 1);
@@ -538,7 +539,7 @@ export default class Game6PlayScene extends Phaser.Scene {
         return false;
       }
       that.clickSound.play();
-      userRecoder.play();
+      that.userRecoder.play();
     }
 
 
@@ -574,7 +575,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     function recordEndFuc() {
       that.cloudWord.setAlpha(0);
-      that.voiceBtns.setAlpha(0);
+      //that.voiceBtns.setAlpha(0);
       if (ableStop === 1) {
         luyinBtn.off("pointerdown", recordReady);
       }
@@ -583,9 +584,10 @@ export default class Game6PlayScene extends Phaser.Scene {
       that.bgm.resume();
       backplayBtn.setData("haveRecord", "yes");
       Fr.voice.export(function (url) {
+        console.log(url);
         Fr.voice.stop();
-        userRecoder.src = url;
-        userRecoder.play();
+        that.userRecoder.setAttribute("src", url);
+        //that.userRecoder.play();
       }, "base64");
       Fr.voice.export(function (blob) {
         let file: File = new File([blob], 'aaa.wav', {
@@ -596,8 +598,10 @@ export default class Game6PlayScene extends Phaser.Scene {
             analysisMask.destroy();
             analysisMask.destroy();
             luyinBtn.setTexture("btn_luyin");
-            // originalBtn.setAlpha(1);
-            // backplayBtn.setAlpha(1);
+            originalBtn.setAlpha(1);
+            backplayBtn.setAlpha(1);
+            originalBtn.off("pointerdown");
+            backplayBtn.off("pointerdown");
             let correctAnswer = that.phoneticData[index].name;
             let result = res.result;
             checkoutResult(correctAnswer, result);
@@ -625,6 +629,8 @@ export default class Game6PlayScene extends Phaser.Scene {
         nextCb: that.nextLevel.bind(that, "next"),
         successCb: that.nextLevel.bind(that, "success"),
         tryAgainCb: () => {
+          originalBtn.on("pointerdown", originalBtn.pointerdownHandler);
+          backplayBtn.on("pointerdown", backplayBtn.pointerdownHandler);
           that.voiceBtns.setAlpha(1);
           that.cloudWord.setAlpha(1);
           if (ableStop === 2 || ableStop === 1) {
@@ -649,7 +655,7 @@ export default class Game6PlayScene extends Phaser.Scene {
         } else {
           that.tipsParticlesEmitter.tryAgain();   //再试一次
         }
-        
+
       }
     }
 
@@ -839,9 +845,9 @@ export default class Game6PlayScene extends Phaser.Scene {
    * 放大且Q弹的动效
    */
   private scaleMaxAni(obj): void {
-    let ani:Phaser.Tweens.Tween;
-    if(ani!==undefined){
-    ani.remove();
+    let ani: Phaser.Tweens.Tween;
+    if (ani !== undefined) {
+      ani.remove();
     }
     ani = this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
       targets: obj,
