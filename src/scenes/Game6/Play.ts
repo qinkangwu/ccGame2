@@ -269,6 +269,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     ball.list[0].on("dragstart", ballOnDragStart);
     ball.list[0].on("dragend", ballOnDragEnd);
     function ballImgOnDrag(pointer, dragX, dragY): void {
+      StaticAni.alphaScaleFuc(this,1,1,1);
       (<Phaser.GameObjects.Image>ball.list[0]).setPosition(dragX, dragY);
       (<Phaser.GameObjects.Text>ball.list[1]).setPosition(dragX - 5, dragY + 18);
     }
@@ -279,11 +280,13 @@ export default class Game6PlayScene extends Phaser.Scene {
     function ballOnDragStart() {
       that.clickSound.play();
       that.status = "一轮上下拖拽开始";
-      that.scaleMaxAni(this);
+      //that.scaleMaxAni(this);
+      StaticAni.alphaScaleFuc(this,1.2,1.2,1);
       that.arrowAgainHide();
     }
 
     function ballOnDragEnd() {
+      StaticAni.alphaScaleFuc(this,1,1,1);
       console.log(that.status);
       if (that.status === "一轮上下拖拽结束") {
         return false;
