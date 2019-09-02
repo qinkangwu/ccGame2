@@ -189,7 +189,6 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.bgm.play("start", config);
     this.clickSound = this.sound.add('click');
     this.correctSound = this.sound.add('correct');
-    this.wrongSound = this.sound.add('wrong');
   }
 
   /* 创建药瓶 */
