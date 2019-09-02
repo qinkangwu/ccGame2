@@ -25,7 +25,7 @@
 '---------------------------------------------------------------------------'
 */
 
-(function(window){
+(function (window) {
 	window.Fr = window.Fr || {};
 	Fr.voice = {
 
@@ -50,19 +50,19 @@
 		/**
 		 * Initialize. Set up variables.
 		 */
-		init: function(){
+		init: function () {
 			try {
 				// Fix up for prefixing
-				window.AudioContext = window.AudioContext||window.webkitAudioContext;
+				window.AudioContext = window.AudioContext || window.webkitAudioContext;
 				navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia
 					|| navigator.mozGetUserMedia || navigator.msGetUserMedia;
 				window.URL = window.URL || window.webkitURL;
 
-				if(navigator.getUserMedia === false){
+				if (navigator.getUserMedia === false) {
 					alert('getUserMedia() is not supported in your browser');
 				}
 				this.context = new AudioContext();
-			}catch(e) {
+			} catch (e) {
 				alert('Web Audio API is not supported in this browser');
 			}
 		},
@@ -70,48 +70,67 @@
 		/**
 		 * Start recording audio
 		 */
-		record: function(output, finishCallback, recordingCallback,errCallback){
-			var finishCallback = finishCallback || function(){};
-			var recordingCallback = recordingCallback || function(){};
-			var errCallback = errCallback || function (){
+		record: function (output, finishCallback, recordingCallback, errCallback) {
+			var finishCallback = finishCallback || function () { };
+			var recordingCallback = recordingCallback || function () { };
+			var errCallback = errCallback || function () {
 				alert("没有麦克风输入");
 			}
 
-			if(this.init_called === false){
+			if (this.init_called === false) {
 				this.init();
 				this.init_called = true;
 			}
 
 			var $that = this;
-			navigator.getUserMedia({audio: true}, function(stream){
+			// navigator.getUserMedia({audio: true}, function(stream){
 
-			/**
-			 * Live Output
-			 */
-			$that.input = $that.context.createMediaStreamSource(stream);
-				if(output === true){
-					$that.input.connect($that.context.destination);
-				}
+			// /**
+			//  * Live Output
+			//  */
+			// $that.input = $that.context.createMediaStreamSource(stream);
+			// 	if(output === true){
+			// 		$that.input.connect($that.context.destination);
+			// 	}
 
-				$that.recorder = new Recorder($that.input, {
-					'mp3WorkerPath': $that.mp3WorkerPath,
-					'recordingCallback': recordingCallback
-				});
+			// 	$that.recorder = new Recorder($that.input, {
+			// 		'mp3WorkerPath': $that.mp3WorkerPath,
+			// 		'recordingCallback': recordingCallback
+			// 	});
 
-				$that.stream = stream;
-				$that.recorder.record();
-				finishCallback(stream);
-			}, errCallback);
+			// 	$that.stream = stream;
+			// 	$that.recorder.record();
+			// 	finishCallback(stream);
+			// }, errCallback);
+
+			navigator.mediaDevices.getUserMedia({ audio: true })
+				.then(stream => {
+					$that.input = $that.context.createMediaStreamSource(stream);
+					if (output === true) {
+						$that.input.connect($that.context.destination);
+					}
+
+					$that.recorder = new Recorder($that.input, {
+						'mp3WorkerPath': $that.mp3WorkerPath,
+						'recordingCallback': recordingCallback
+					});
+
+					$that.stream = stream;
+					$that.recorder.record();
+					finishCallback(stream);
+				})
+				.catch(errCallback);
+
 		},
 
 		/**
 		 * Pause the recording
 		 */
-		pause: function(){
+		pause: function () {
 			this.recorder.stop();
 		},
 
-		resume: function(){
+		resume: function () {
 			this.recorder.record();
 		},
 
@@ -121,7 +140,7 @@
 		 * recorded audio can't be played or exported after.
 		 * @return {Fr.voice}
 		 */
-		stop: function(){
+		stop: function () {
 			this.recorder.stop();
 			this.recorder.clear();
 			this.stream.getTracks().forEach(function (track) {
@@ -134,14 +153,14 @@
 		 * Export the recorded audio as WAV in different formats
 		 * @param {[type]} [varname] [description]
 		 */
-		export: function(callback, type){
-			this.recorder.exportWAV(function(blob){
+		export: function (callback, type) {
+			this.recorder.exportWAV(function (blob) {
 				Fr.voice.callExportCallback(blob, callback, type);
 			});
 		},
 
-		exportMP3: function(callback, type){
-			this.recorder.exportMP3(function(blob){
+		exportMP3: function (callback, type) {
+			this.recorder.exportMP3(function (blob) {
 				Fr.voice.callExportCallback(blob, callback, type);
 			});
 		},
@@ -152,17 +171,17 @@
 		 * @param  {string}   type     Type of data to export
 		 * @param  {Function} callback Export callback
 		 */
-		callExportCallback: function(blob, callback, type) {
-			if(typeof type === "undefined" || type == "blob"){
+		callExportCallback: function (blob, callback, type) {
+			if (typeof type === "undefined" || type == "blob") {
 				callback(blob);
-			}else if (type === "base64"){
+			} else if (type === "base64") {
 				var reader = new window.FileReader();
 				reader.readAsDataURL(blob);
-				reader.onloadend = function() {
+				reader.onloadend = function () {
 					base64data = reader.result;
 					callback(base64data);
 				};
-			}else if(type === "URL"){
+			} else if (type === "URL") {
 				var url = URL.createObjectURL(blob);
 				callback(url);
 			}
@@ -173,11 +192,11 @@
 		 * @param  integer time Time in milliseconds
 		 * @return void
 		 */
-		stopRecordingAfter: function(time, callback){
-			var callback = callback || function(){};
+		stopRecordingAfter: function (time, callback) {
+			var callback = callback || function () { };
 
 			clearTimeout(this.stopRecordingTimeout);
-			this.stopRecordingTimeout = setTimeout(function(){
+			this.stopRecordingTimeout = setTimeout(function () {
 				Fr.voice.pause();
 				callback();
 			}, time);
