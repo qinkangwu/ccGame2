@@ -39,11 +39,9 @@ export default class Game6PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
   private recordTimes: number;
 
-  private cover: Phaser.GameObjects.Container;
   private bgm: Phaser.Sound.BaseSound; //背景音乐
   private clickSound: Phaser.Sound.BaseSound;
   private correctSound: Phaser.Sound.BaseSound;
-  private wrongSound: Phaser.Sound.BaseSound;
 
 
   private phoneticData: Game6DataItem[] = []; //音标数据
@@ -525,7 +523,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       luyinTipsAni.remove();
     });
 
-    luyinBtn.on("pointerup", recordReady);
+    luyinBtn.on("pointerdown", recordReady);
 
     backplayBtn.setInteractive();
     backplayBtn.setData("haveRecord", "no");
@@ -561,8 +559,8 @@ export default class Game6PlayScene extends Phaser.Scene {
     }))
 
     function recordStartFuc() {
-      originalBtn.setAlpha(0);
-      backplayBtn.setAlpha(0);
+      // originalBtn.setAlpha(0);
+      // backplayBtn.setAlpha(0);
       //Fr.voice.record();
     }
 
@@ -574,8 +572,9 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     function recordEndFuc() {
       that.cloudWord.setAlpha(0);
+      that.voiceBtns.setAlpha(0);
       if (ableStop === 1) {
-        luyinBtn.off("pointerup", recordReady);
+        luyinBtn.off("pointerdown", recordReady);
       }
       resetStart();
       let analysisMask: Phaser.GameObjects.Container = createMaskAnalysis();
@@ -593,10 +592,10 @@ export default class Game6PlayScene extends Phaser.Scene {
         post(apiPath.uploadRecord, { file }, 'json', true)
           .then(res => {
             analysisMask.destroy();
-            luyinBtn.setTexture("btn_luyin");
             analysisMask.destroy();
-            originalBtn.setAlpha(1);
-            backplayBtn.setAlpha(1);
+            luyinBtn.setTexture("btn_luyin");
+            // originalBtn.setAlpha(1);
+            // backplayBtn.setAlpha(1);
             let correctAnswer = that.phoneticData[index].name;
             let result = res.result;
             checkoutResult(correctAnswer, result);
@@ -620,14 +619,14 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function checkoutResult(correctAnswer, result) {
-      //correctAnswer = result; //test
       that.tipsParticlesEmitterConfig = {   //反馈触发器的配置
         nextCb: that.nextLevel.bind(that, "next"),
         successCb: that.nextLevel.bind(that, "success"),
         tryAgainCb: () => {
+          that.voiceBtns.setAlpha(1);
           that.cloudWord.setAlpha(1);
           if (ableStop === 2 || ableStop === 1) {
-            luyinBtn.on("pointerup", recordReady);
+            luyinBtn.on("pointerdown", recordReady);
           }
           ableStop = 0;
         }
@@ -670,7 +669,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       luyinTipsAni.remove();
       luyinBtn.scale = 1;
       // if(ableStop===1){
-      luyinBtn.off("pointerup", recordReady);
+      luyinBtn.off("pointerdown", recordReady);
       ableStop = 2;
       //     console.log("已经停止");
       //     cirAni.complete();
@@ -704,7 +703,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       function errCallback() {
         alert("没有麦克风输入或已被拒绝授权,插入麦克风后，请刷新页面继续游戏");
         isMicrophone = false;
-        luyinBtn.on("pointerup", recordReady);
+        luyinBtn.on("pointerdown", recordReady);
       }
 
 

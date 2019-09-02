@@ -43,29 +43,29 @@ export default class Button extends Phaser.GameObjects.Sprite {
     }
 
     private pointerupHandler(): void {
-        StaticAni.prototype.alphaScaleFuc(this, 1, 1, this.minAlpha);
+        StaticAni.alphaScaleFuc(this, 1, 1, this.minAlpha);
         if (this.pointerupFunc !== undefined) {
             this.pointerupFunc();
         }
     }
 
     private pointerdownHandler(): void {
-        StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
+        StaticAni.alphaScaleFuc(this, 1.2, 1.2, 1);
         if (this.pointerdownFunc !== undefined) {
             this.pointerdownFunc();
         }
     }
 
     private pointeroutHandler(): void {
-        StaticAni.prototype.alphaScaleFuc(this, 1, 1, this.minAlpha);
+        StaticAni.alphaScaleFuc(this, 1, 1, this.minAlpha);
         if (this.pointeroverFunc !== undefined) {
             this.pointeroverFunc();
         }
     }
 
     private pointeroverHandler(): void {
-        StaticAni.prototype.alphaScaleFuc(this, 1, 1, 1);
-        TweenAni.prototype.alphaScaleYoyoFunc(this.scene, this, 1.2, 1.2, 1);
+        StaticAni.alphaScaleFuc(this, 1, 1, 1);
+        TweenAni.alphaScaleYoyoFunc(this.scene, this, 1.2, 1.2, 1);
         if (this.pointeroutFunc !== undefined) {
             this.pointeroverFunc();
         }
