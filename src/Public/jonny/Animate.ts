@@ -1,7 +1,7 @@
 import 'phaser';
 
 export class StaticAni{
-    public alphaScaleFuc(obj, _scaleX: number, _scaleY: number, _alpha: number):void {
+    public static alphaScaleFuc(obj, _scaleX: number, _scaleY: number, _alpha: number):void {
         obj.scaleX = _scaleX;
         obj.scaleY = _scaleY;
         obj.alpha = _alpha;
@@ -9,7 +9,7 @@ export class StaticAni{
 }
 
 export class TweenAni{
-    public alphaScaleYoyoFunc(scene:Phaser.Scene,obj:Phaser.GameObjects.Image,scaleX:number,scaleY:number,alpha:number){
+    public static alphaScaleYoyoFunc(scene:Phaser.Scene,obj:Phaser.GameObjects.Image,scaleX:number,scaleY:number,alpha:number){
         scene.tweens.add({
             targets : obj,
             scaleX : scaleX,

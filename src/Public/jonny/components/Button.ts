@@ -3,13 +3,15 @@ import { StaticAni, TweenAni } from '../Animate';
 
 /**
  * 初始化为0.7的透明度
- * @scene scene Phaser.Scene
+ * @param scene Phaser.Scene
  * @param x number  setOrigin(0.5)
  * @param y number  setOrigin(0.5)
  * @param texture string
  * @param shape option Phaser.Geom.Circle | Phaser.Geom.Rectangle 交互的形状 
  * @param callback option Phaser.Types.Input.HitAreaCallback
+ * @member interactive boolean 设置这个按钮是否可以交互
  */
+
 
 export default class Button extends Phaser.GameObjects.Sprite {
     public pointeroverFunc: Function;
@@ -17,6 +19,7 @@ export default class Button extends Phaser.GameObjects.Sprite {
     public pointerdownFunc: Function;
     public pointerupFunc: Function;
     public minAlpha: number;
+    public interactive: boolean;
 
     constructor(scene: Phaser.Scene, x: number = 0, y: number = 0, texture: string, shape?: any, callback?: Phaser.Types.Input.HitAreaCallback) {
         super(scene, x, y, texture);
@@ -36,36 +39,48 @@ export default class Button extends Phaser.GameObjects.Sprite {
         } else {
             this.setInteractive();
         }
+        this.interactive = true;
         this.on("pointerover", this.pointeroverHandler);
         this.on("pointerout", this.pointeroutHandler);
         this.on("pointerdown", this.pointerdownHandler)
         this.on("pointerup", this.pointerupHandler)
     }
 
-    private pointerupHandler(): void {
-        StaticAni.prototype.alphaScaleFuc(this, 1, 1, this.minAlpha);
+    public pointerupHandler(): void | boolean {
+        if (!this.interactive) {
+            return false;
+        }
+        StaticAni.alphaScaleFuc(this, 1, 1, this.minAlpha);
         if (this.pointerupFunc !== undefined) {
             this.pointerupFunc();
         }
     }
 
-    private pointerdownHandler(): void {
-        StaticAni.prototype.alphaScaleFuc(this, 1.2, 1.2, 1);
+    public pointerdownHandler(): void | boolean {
+        if (!this.interactive) {
+            return false;
+        }
+        StaticAni.alphaScaleFuc(this, 1.2, 1.2, 1);
         if (this.pointerdownFunc !== undefined) {
             this.pointerdownFunc();
         }
     }
 
-    private pointeroutHandler(): void {
-        StaticAni.prototype.alphaScaleFuc(this, 1, 1, this.minAlpha);
+    public pointeroutHandler(): void | boolean {
+        if (!this.interactive) {
+            return false;
+        }
         if (this.pointeroverFunc !== undefined) {
             this.pointeroverFunc();
         }
     }
 
-    private pointeroverHandler(): void {
-        StaticAni.prototype.alphaScaleFuc(this, 1, 1, 1);
-        TweenAni.prototype.alphaScaleYoyoFunc(this.scene, this, 1.2, 1.2, 1);
+    public pointeroverHandler(): void | boolean {
+        if (!this.interactive) {
+            return false;
+        }
+        StaticAni.alphaScaleFuc(this, 1, 1, 1);
+        TweenAni.alphaScaleYoyoFunc(this.scene, this, 1.2, 1.2, 1);
         if (this.pointeroutFunc !== undefined) {
             this.pointeroverFunc();
         }
