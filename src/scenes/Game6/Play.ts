@@ -2,7 +2,7 @@ import 'phaser';
 import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
-import { EASE } from '../../Public/jonny/Animate';
+import { EASE,StaticAni } from '../../Public/jonny/Animate';
 import { cover, rotateTips } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import { config } from '../../interface/TipsParticlesEmitter';
@@ -477,7 +477,10 @@ export default class Game6PlayScene extends Phaser.Scene {
     });
     word.on("pointerdown", () => {
       that.wordSpeaker.play();
-      that.scaleMaxAni(word);
+      StaticAni.alphaScaleFuc(word,1.2,1.2,1);
+    });
+    word.on("pointerup", () => {
+      StaticAni.alphaScaleFuc(word,1,1,1);
     });
   }
 
@@ -835,7 +838,11 @@ export default class Game6PlayScene extends Phaser.Scene {
    * 放大且Q弹的动效
    */
   private scaleMaxAni(obj): void {
-    let ani: Phaser.Tweens.Tween = this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+    let ani:Phaser.Tweens.Tween;
+    if(ani!==undefined){
+    ani.remove();
+    }
+    ani = this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
       targets: obj,
       scale: 1.2,
       duration: 100,
