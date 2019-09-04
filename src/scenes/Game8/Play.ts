@@ -58,11 +58,7 @@ export default class Game8PlayScene extends Phaser.Scene {
       this.renderCenterPop(); //渲染中间的泡泡
 
       this.renderLeftUI(); //渲染左边的ui
-      this.tips = new TipsParticlesEmitter(this,{
-        successCb : ()=>{},
-        tryAgainCb : ()=>{},
-        nextCb : ()=>{}
-      }); //tip组件
+      this.tips = new TipsParticlesEmitter(this); //tip组件
     }
 
     private renderLeftUI() : void {

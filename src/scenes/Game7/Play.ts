@@ -67,17 +67,7 @@ export default class Game7PlayScene extends Phaser.Scene {
           playRecordCallback : this.playRecord,
           bgm : this.bgm
         }); //按钮公共组件
-        this.tips = new TipsParticlesEmitter(this,{
-          successCb : ()=>{
-            
-          },
-          tryAgainCb : ()=>{
-
-          },
-          nextCb : ()=>{
-
-          }
-        }); //tip组件
+        this.tips = new TipsParticlesEmitter(this); //tip组件
         this.loadMusic(this.ccData);
         this.initEmitHandle(); //初始化事件
         this.handleAnims(); //初始化动画
@@ -322,7 +312,7 @@ export default class Game7PlayScene extends Phaser.Scene {
           totalCount += itemCount;
         }
       })
-      totalCount >= 50 ? this.tips.success() : this.tips.tryAgain();
+      totalCount >= 50 ? this.tips.success(()=>{}) : this.tips.tryAgain(()=>{});
     }
 
     private uploadRecord (file : File) : void {
