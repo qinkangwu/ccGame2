@@ -60,34 +60,6 @@ export default class Game5PlayScene extends Phaser.Scene {
         this.createEmitter(); //创建粒子系统
         this.loadMusic(this.ccData);
         this.tips = new TipsParticlesEmitter(this,{
-          successCb : ()=>{
-            this.tryTimes = 0;
-            this.onHandle();
-          },
-          nextCb : ()=>{
-            this.area.setDepth(899);
-            this.onHandle();
-            this.dataIndex = this.dataIndex + 1 > this.ccData.length - 1 ? 0 : this.dataIndex + 1;
-            this.tweens.add({
-              targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
-              duration : 500,
-              y : `-=${H}`,
-              ease : 'Sine.easeInOut',
-              onComplete : ()=>{
-                this.nextTipsHandle();
-                this.tweens.add({
-                  targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
-                  duration : 500,
-                  y : `+=${H}`,
-                  ease : 'Sine.easeInOut',
-                })
-              }
-            })
-          },
-          tryAgainCb : ()=>{
-            this.area.setDepth(899);
-            this.onHandle();
-          },
           renderBefore : ()=>{
             this.offHandle();
             this.area.setDepth(0);
@@ -177,11 +149,39 @@ export default class Game5PlayScene extends Phaser.Scene {
 
     private success (flag : boolean) : void {
       if(flag){
-        this.tips.success();
+        this.tips.success(()=>{
+          this.tryTimes = 0;
+          this.onHandle();
+        });
       }else{
         this.tryTimes = this.tryTimes + 1 > 2 ? 1 : this.tryTimes + 1;
-        this.tryTimes === 1 && this.tips.tryAgain();
-        this.tryTimes === 2 && this.tips.error();
+        this.tryTimes === 1 && this.tips.tryAgain(()=>{
+          this.area.setDepth(899);
+          this.onHandle();
+        });
+        this.tryTimes === 2 && this.tips.error(()=>{
+          this.area.setDepth(899);
+          this.onHandle();
+          this.dataIndex = this.dataIndex + 1 > this.ccData.length - 1 ? 0 : this.dataIndex + 1;
+          this.tweens.add({
+            targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
+            duration : 500,
+            y : `-=${H}`,
+            ease : 'Sine.easeInOut',
+            onComplete : ()=>{
+              this.nextTipsHandle();
+              this.tweens.add({
+                targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
+                duration : 500,
+                y : `+=${H}`,
+                ease : 'Sine.easeInOut',
+              })
+            }
+          })
+        },()=>{
+          this.area.setDepth(899);
+          this.onHandle();
+        });
       }
       this.area.clear();
       this.isDraw = false;

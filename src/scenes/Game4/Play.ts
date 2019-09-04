@@ -8,6 +8,7 @@ import { cover } from "../../Public/jonny/core/cover";
 import { Gold } from "../../Public/jonny/components/Gold";
 import CreateGuideAnims from "../../Public/CreateGuideAnims";
 import { SellingGold } from "../../Public/jonny/components/SellingGold";
+import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 
 const W = 1024;
 const H = 552;
@@ -40,8 +41,9 @@ export default class Game4PlayScene extends Phaser.Scene {
     private createGuideAnims : CreateGuideAnims; //引导动画引用
     private goldObj : Gold ; //金币组件引用
     private goldNum : number = 20; //初始金币
-    private errorNum : number = 0; //错误次数
-    private lockLifeHandle : boolean = false ; //锁血
+    private isCheck : boolean = false; //是否结算
+    private tips : TipsParticlesEmitter; //游戏结果
+    // private lockLifeHandle : boolean = false ; //锁血
     // private arrowCirObj : Phaser.GameObjects.Graphics; //箭上的圆圈
     // private arrowText : Phaser.GameObjects.Text; //箭头上面的文本
     constructor() {
@@ -62,6 +64,7 @@ export default class Game4PlayScene extends Phaser.Scene {
       this.loadBgm(); //加载背景音乐跟音效
       PlanAnims.loadImg(this); //全局组件加载img
       SellingGold.loadImg(this); //全局组件加载Img
+      TipsParticlesEmitter.loadImg(this);
     }
     
   
@@ -84,6 +87,8 @@ export default class Game4PlayScene extends Phaser.Scene {
         });
         this.goldObj = new Gold(this,20);
         this.add.existing(this.goldObj);
+        this.tips = new TipsParticlesEmitter(this)
+        this.goldObj.setText(this.goldNum -= 1);
       })
       this.createBackgroundImage(); //背景图
       // this.createMask() ; //创建遮罩层
@@ -132,12 +137,12 @@ export default class Game4PlayScene extends Phaser.Scene {
 
     private createQuiver () : void {
       //创建气泡跟箭筒
-      this.quiver = this.add.sprite(250,H - 100,'game4Icons2',`jianshi${this.words.length}.png`).setScale(0.8);
+      this.quiver = this.add.sprite(250,H - 100,'game4Icons2',`jianshi${this.quiverNum}.png`).setScale(0.8);
       this.quiverText = this.add.text(this.quiver.x,this.quiver.y + 40,this.words[0].name,{
         font: 'bold 37px Arial Rounded MT',
         fill : '#017dbd',
       }).setOrigin(.5);
-      this.popObj = this.add.sprite(this.civa.x + 150,this.civa.y - 50,'game4Icons2','talk.png').setScale(.5).setOrigin(.5);
+      this.popObj = this.add.sprite(this.civa.x + 150,this.civa.y - 50,'talk').setScale(.5).setOrigin(.5);
       this.popText = this.add.text(this.popObj.x,this.popObj.y - 10,this.ccData[this.ccDataIndex].name,{
         font: 'bold 50px Arial Rounded MT',
         fill : '#ff5054',
@@ -185,7 +190,7 @@ export default class Game4PlayScene extends Phaser.Scene {
 
     private createArrow () : void {
       //创建箭矢
-      this.arrowObj = this.physics.add.sprite(this.civa.x + this.civa.width / 2,this.civa.y + this.civa.height / 2 + 60,'icons','jian.png').setOrigin(0.5).setAlpha(0);
+      this.arrowObj = this.physics.add.sprite(this.civa.x + this.civa.width / 2,this.civa.y + this.civa.height / 2 + 60,'jian').setOrigin(0.5).setAlpha(0);
       // this.arrowCirObj = this.add.graphics();
       // this.arrowCirObj.fillStyle(0xffffff, 0.8);
       // this.arrowCirObj.fillCircle(this.arrowObj.x,this.arrowObj.y,20);
@@ -220,10 +225,8 @@ export default class Game4PlayScene extends Phaser.Scene {
             this.allBallonIsFinish();
           }
         }else{
-          this.errorNum = this.errorNum + 1 > this.words.length && this.words.length || this.errorNum + 1; //错误次数 错一次金币少一颗
-          console.log(this.errorNum);
           this.setPopAndQuiver(true);
-          this.showWrongObjHandle();
+          this.tips.tryAgain(()=>{});
           this.playMusic('wrong');
           this.shootLock = false;
           this.clickLock = true;
@@ -267,6 +270,7 @@ export default class Game4PlayScene extends Phaser.Scene {
           !this.showWordHandle.lock && (this.createGuideAnims = new CreateGuideAnims(this,this.wordObj.x + 200, this.wordObj.y));
           //@ts-ignore
           this.showWordHandle.lock = true;
+          this.isCheck = true;
         }
       })
     }
@@ -306,7 +310,6 @@ export default class Game4PlayScene extends Phaser.Scene {
       this.lineSprites[this.currentClickIndex] = null;
       this.textArr[this.currentClickIndex].destroy();
       this.textArr[this.currentClickIndex] = null;
-      this.changeQuiverNums(this.quiverNum - 1); //修改箭筒箭矢数量
     }
 
     private getAngel (px : number,py : number,mx : number,my : number) : number {
@@ -433,11 +436,11 @@ export default class Game4PlayScene extends Phaser.Scene {
           audioKey : r.audioKey
         }
       }) || this.transDataHandle(currentItem);
-      this.quiverNum = this.words.length ; //箭筒箭矢数量初始化
+      this.quiverNum = this.words.length + 3 ; //箭筒箭矢数量初始化
       this.errorWords = this.shuffle([...this.words]); //打乱原始数据
-      this.errorNum = 0; //清空错误次数
       this.ballonSprites.length = 0 ;
-      this.lockLifeHandle = false ; //解除锁血
+      this.isCheck = false;
+      // this.lockLifeHandle = false ; //解除锁血
     }
 
     private playMusic (sourceKey : string) : void {
@@ -478,14 +481,55 @@ export default class Game4PlayScene extends Phaser.Scene {
         return new Blob([uInt8Array], {type: contentType});
     }
 
+    private tryAgainHandle () : void {
+      this.quiverNum = this.words.length + 3;
+      this.changeQuiverNums(this.quiverNum);
+    }
+
+
+    private nextWordHandle () : void {
+      //下一个词
+      // ballonSprites,lineSprites,wolfObj
+      this.ballonSprites.map((r,i)=>{
+        r.destroy();
+      });
+      this.lineSprites.map((r,i)=>{
+        r.destroy();
+      })
+      this.textArr.map((r,i)=>{
+        r.destroy();
+      })
+      this.ballonSprites.length = 0;
+      this.lineSprites.length = 0;
+      this.textArr.length = 0;
+      this.wolfObj.destroy();
+      this.wolfObj = null;
+      this.goldObj.setText(this.goldNum += this.quiverNum);
+      this.wordObj.setScale(1);
+      this.currentWord.setScale(1);
+      this.wordObj.y += H;
+      this.currentWord.y += H;
+      if(++this.ccDataIndex >= this.ccData.length){
+        this.ccDataIndex = 0;
+      }
+      this.popText.setText(this.ccData[this.ccDataIndex].name);
+      this.index = -1;
+      this.civa.destroy();
+      this.setWords();
+      this.createWord();
+      this.drawCivaAndWolf();
+      this.drawAnimsHandle();
+      this.setPopAndQuiver();
+      this.changeQuiverNums(this.quiverNum); 
+    }
+
     private clickHandle () : void {
       //点击场景触发
       this.input.on('pointerdown',(...args)=>{
         //@ts-ignore
         if(args[1].length === 0 || args[1][0] instanceof Phaser.GameObjects.Image ) return;
         if(this.goldNum === 0 ) return alert('啊哦，金币不足，一起去赚金币吧');
-        !this.lockLifeHandle && this.goldObj.setText(this.goldNum -= 1);
-        this.lockLifeHandle = true;
+        if(this.quiverNum === 0 && !this.isCheck) return this.tips.error(this.nextWordHandle.bind(this),this.tryAgainHandle.bind(this));
         this.playMusic('shoot');
         this.createGuideAnims && this.createGuideAnims.hideHandle(); //隐藏引导动画
         this.createGuideAnims = null;
@@ -502,30 +546,15 @@ export default class Game4PlayScene extends Phaser.Scene {
             onComplete : ()=>{
               let goldAnims = new SellingGold(this,{
                 callback : ()=>{
-                  this.goldObj.setText(this.goldNum += (this.words.length - this.errorNum));
-                  this.wordObj.setScale(1);
-                  this.currentWord.setScale(1);
-                  this.wordObj.y += H;
-                  this.currentWord.y += H;
-                  if(++this.ccDataIndex >= this.ccData.length){
-                    this.ccDataIndex = 0;
-                  }
-                  this.popText.setText(this.ccData[this.ccDataIndex].name);
-                  this.index = -1;
-                  this.civa.destroy();
-                  this.setWords();
-                  this.createWord();
-                  this.drawCivaAndWolf();
-                  this.drawAnimsHandle();
-                  this.setPopAndQuiver();
-                  this.changeQuiverNums(this.quiverNum);   
+                    this.nextWordHandle();
                 }
               });
-              goldAnims.goodJob(this.words.length - this.errorNum);
+              goldAnims.goodJob(this.quiverNum);
             }
           })
         }
         if(this.shootLock) return;
+        this.changeQuiverNums(this.quiverNum - 1); //修改箭筒箭矢数量
         this.tweens.add({
           targets : args[1][0],
           duration : 200,
@@ -551,7 +580,7 @@ export default class Game4PlayScene extends Phaser.Scene {
     }
 
     private changeQuiverNums (index : number) : void{
-      this.quiverNum = index < 1 && 1 || index;
+      this.quiverNum = index < 0 ? 0 : index;
       this.quiver.setFrame(`jianshi${this.quiverNum}.png`);
     }
 

@@ -16,7 +16,7 @@ export default class TipsParticlesEmitter {
     private tryAgainBtn : Phaser.GameObjects.Image; //再试一次按钮
     private nextBtn : Phaser.GameObjects.Image; //换一个
     private lock : boolean = false;  //节流锁
-    constructor(scene : Phaser.Scene,config : config){
+    constructor(scene : Phaser.Scene,config? : config){
         this.scene = scene;
         this.config = config;
         this.init();
@@ -32,7 +32,7 @@ export default class TipsParticlesEmitter {
 
     private createEmitter () : void {
         //创建粒子效果发射器
-        this.particles = this.scene.add.particles('particles').setDepth(99);
+        this.particles = this.scene.add.particles('particles').setDepth(2000);
         this.emitters = this.particles.createEmitter({
           lifespan : 1000,
           speed : { min: 300, max: 400},
@@ -48,7 +48,7 @@ export default class TipsParticlesEmitter {
       //创建开始游戏遮罩
       this.graphicsObj = this.scene.add.graphics();
       this.graphicsObj.fillStyle(0x000000,.8);
-      this.graphicsObj.fillRect(0,0,1024,552).setDepth(1);
+      this.graphicsObj.fillRect(0,0,1024,552).setDepth(1999);
     }
 
     private playMusic(sourceKey : string) : void {
@@ -57,14 +57,14 @@ export default class TipsParticlesEmitter {
       mp3.play();
     }
 
-    public success() : void {
+    public success(cb : Function) : void {
         if(this.lock) return;
         this.lock = true;
-        this.config.renderBefore && this.config.renderBefore();
+        this.config && this.config.renderBefore && this.config.renderBefore();
         this.tips = this.scene.add.sprite(W / 2 , 208 ,'glodGoodJob')
                       .setOrigin(.5)
                       .setScale(0)
-                      .setDepth(100);
+                      .setDepth(2000);
         this.playMusic('success');
         this.createMask();
         this.boom();
@@ -91,25 +91,25 @@ export default class TipsParticlesEmitter {
           delay : 1000,
           callback : ()=>{
             this.clearHandle();
-            this.config.successCb ();
+            cb && cb.call(this.scene);
           }
         })
     }
 
-    public tryAgain() : void {
+    public tryAgain(cb : Function) : void {
       if(this.lock) return;
       this.playMusic('success');
       this.lock = true;
-      this.config.renderBefore && this.config.renderBefore();
+      this.config && this.config.renderBefore && this.config.renderBefore();
       this.tips = this.scene.add.sprite(W / 2 , 208 ,'tipsTryagain')
                     .setOrigin(.5)
                     .setScale(0)
                     .setAngle(0)
-                    .setDepth(100);
+                    .setDepth(2000);
       this.tryAgainBtn = this.scene.add.image(W / 2 , 421 , 'btnAgain' )
                           .setOrigin(.5)
                           .setAlpha(0)
-                          .setDepth(100)
+                          .setDepth(2001)
                           .setInteractive();
       this.createMask();
       this.scene.tweens.add({
@@ -154,28 +154,28 @@ export default class TipsParticlesEmitter {
           }
         ],
         onComplete : ()=>{
-          this.tryAgainBtn.on('pointerdown',this.tryAgainHandle.bind(this))
+          this.tryAgainBtn.on('pointerdown',this.tryAgainHandle.bind(this,cb.bind(this.scene)))
         }
       })
       
     }
 
-    public error () : void {
+    public error (nextCb : Function , tryagainCb : Function) : void {
       if(this.lock) return;
       this.playMusic('success');
       this.lock = true;
-      this.config.renderBefore && this.config.renderBefore();
+      this.config && this.config.renderBefore && this.config.renderBefore();
       this.tips = this.scene.add.sprite(W / 2 , 208 - H ,'tipsNo')
                     .setOrigin(.5)
-                    .setDepth(100);
+                    .setDepth(2000);
       this.tryAgainBtn = this.scene.add.image(551 , 364 + 20 , 'btnAgainOnce')
                           .setOrigin(0)
-                          .setDepth(100)
+                          .setDepth(2001)
                           .setInteractive()
                           .setAlpha(0);
       this.nextBtn = this.scene.add.image(293.5 , 364 + 20 , 'btnChange')
                       .setOrigin(0)
-                      .setDepth(100)
+                      .setDepth(2001)
                       .setInteractive()
                       .setAlpha(0);
       this.createMask();
@@ -193,16 +193,16 @@ export default class TipsParticlesEmitter {
         ease : 'Sine.easeInOut',
         duration : 800,
         onComplete : ()=>{
-          this.tryAgainBtn.on('pointerdown',this.tryAgainHandle.bind(this));
-          this.nextBtn.on('pointerdown',this.nextHandle.bind(this));
+          this.tryAgainBtn.on('pointerdown',this.tryAgainHandle.bind(this,tryagainCb.bind(this.scene)));
+          this.nextBtn.on('pointerdown',this.nextHandle.bind(this,nextCb.bind(this.scene)));
         }
       });
     }
 
-    private nextHandle() : void {
+    private nextHandle(cb : Function) : void {
       this.playMusic('clickMp3');
       this.clearHandle();
-      this.config.nextCb.call(this.scene);
+      cb();
     }
 
     private clearHandle () : void {
@@ -219,10 +219,10 @@ export default class TipsParticlesEmitter {
       this.lock = false;
     }
     
-    private tryAgainHandle() : void {
+    private tryAgainHandle(cb : Function) : void {
       this.playMusic('clickMp3');
       this.clearHandle();
-      this.config.tryAgainCb.call(this.scene);
+      cb();
     }
     
 
