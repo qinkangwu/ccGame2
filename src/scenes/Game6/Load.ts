@@ -37,6 +37,7 @@ export default class Game6LoadScene extends Phaser.Scene {
      this.load.audio('correct', 'assets/sounds/successMp3.mp3');
      this.load.audio('click', 'assets/sounds/clickMp3.mp3');
      this.load.bitmapFont('GenJyuuGothic', 'assets/font/GenJyuuGothic/font.png','assets/font/GenJyuuGothic/font.xml');
+     this.load.bitmapFont('GenJyuuGothic47', 'assets/font/GenJyuuGothic47/font.png','assets/font/GenJyuuGothic47/font.xml');
     this.assets.forEach((v) => {
       this.load.image(v.key, v.url);
     })
