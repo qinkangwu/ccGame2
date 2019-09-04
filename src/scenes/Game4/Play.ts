@@ -546,9 +546,11 @@ export default class Game4PlayScene extends Phaser.Scene {
             onComplete : ()=>{
               let goldAnims = new SellingGold(this,{
                 callback : ()=>{
+                    goldAnims.golds.destroy();
                     this.nextWordHandle();
                 }
               });
+              goldAnims.golds.setDepth(101);
               goldAnims.goodJob(this.quiverNum);
             }
           })
