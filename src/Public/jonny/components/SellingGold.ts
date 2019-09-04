@@ -38,11 +38,11 @@ export class SellingGold {
      *  正确
      */
     public goodJob(_goldValue) {
+        if (_goldValue === 0) return this.callback.call(this.parentScene);
         this.bg.fillStyle(0x000000);
         this.bg.fillRect(0, 0, 1024, 552);
         this.bg.setAlpha(0.7);
         this.golds.add(this.bg);
-        if (_goldValue === 0) return this.callback.call(this.parentScene);
         this.goldValue = _goldValue;
         let _gold: Phaser.GameObjects.Image;
         for (let i = 0; i < this.goldValue; i++) {
