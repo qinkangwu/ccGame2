@@ -62,7 +62,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
   private particles: Phaser.GameObjects.Particles.ParticleEmitterManager; // 粒子控制器
   private emitters: Phaser.GameObjects.Particles.ParticleEmitter;  //粒子发射器
-  private tipsParticlesEmitterConfig: config;  //成功、失败触发器
+  //private tipsParticlesEmitterConfig: config;  //成功、失败触发器
   private tipsParticlesEmitter: TipsParticlesEmitter; //成功、失败触发器
   private planAnims: PlanAnims; //专场动画
 
@@ -637,7 +637,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function checkoutResult(correctAnswer, result) {
-      that.tipsParticlesEmitterConfig = {   //反馈触发器的配置
+      let tipsParticlesEmitterConfig = {   //反馈触发器的配置
         nextCb: that.nextLevel.bind(that, "next"),
         successCb: that.nextLevel.bind(that, "success"),
         tryAgainCb: () => {
@@ -655,9 +655,9 @@ export default class Game6PlayScene extends Phaser.Scene {
       that.tipsParticlesEmitter = new TipsParticlesEmitter(that, that.tipsParticlesEmitterConfig);
 
 
-      correctAnswer = result; //test 
+      //correctAnswer = result; //test 
       if (correctAnswer === result) {     //正确
-        that.tipsParticlesEmitter.success();
+        that.tipsParticlesEmitter.success(tipsParticlesEmitterConfig.successCb);
       } else {
         if (goldValue === 0) {
           alert("啊哦，你又错啦！金币不足，一起去赚金币吧");
@@ -665,9 +665,9 @@ export default class Game6PlayScene extends Phaser.Scene {
           return false;
         }
         if (that.recordTimes >= 2) {    //没有机会
-          that.tipsParticlesEmitter.error();
+          that.tipsParticlesEmitter.error(tipsParticlesEmitterConfig.nextCb,tipsParticlesEmitterConfig.tryAgainCb);
         } else {
-          that.tipsParticlesEmitter.tryAgain();   //再试一次
+          that.tipsParticlesEmitter.tryAgain(tipsParticlesEmitterConfig.tryAgainCb);   //再试一次
         }
 
       }
