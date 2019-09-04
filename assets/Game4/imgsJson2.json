@@ -4,13 +4,13 @@
 			"image": "imgsJson2.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 326,
-				"h": 436
+				"w": 516,
+				"h": 500
 			},
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "jianshi1.png",
+					"filename": "jianshi0.png",
 					"frame": {
 						"x": 1,
 						"y": 1,
@@ -31,7 +31,7 @@
 					}
 				},
 				{
-					"filename": "jianshi2.png",
+					"filename": "jianshi1.png",
 					"frame": {
 						"x": 130,
 						"y": 1,
@@ -52,7 +52,7 @@
 					}
 				},
 				{
-					"filename": "jianshi3.png",
+					"filename": "jianshi2.png",
 					"frame": {
 						"x": 259,
 						"y": 1,
@@ -73,7 +73,70 @@
 					}
 				},
 				{
+					"filename": "jianshi3.png",
+					"frame": {
+						"x": 1,
+						"y": 251,
+						"w": 127,
+						"h": 248
+					},
+					"rotated": false,
+					"trimmed": false,
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 127,
+						"h": 248
+					},
+					"sourceSize": {
+						"w": 127,
+						"h": 248
+					}
+				},
+				{
 					"filename": "jianshi4.png",
+					"frame": {
+						"x": 130,
+						"y": 251,
+						"w": 127,
+						"h": 248
+					},
+					"rotated": false,
+					"trimmed": false,
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 127,
+						"h": 248
+					},
+					"sourceSize": {
+						"w": 127,
+						"h": 248
+					}
+				},
+				{
+					"filename": "jianshi5.png",
+					"frame": {
+						"x": 259,
+						"y": 251,
+						"w": 127,
+						"h": 248
+					},
+					"rotated": false,
+					"trimmed": false,
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 127,
+						"h": 248
+					},
+					"sourceSize": {
+						"w": 127,
+						"h": 248
+					}
+				},
+				{
+					"filename": "jianshi6.png",
 					"frame": {
 						"x": 388,
 						"y": 1,
@@ -94,24 +157,24 @@
 					}
 				},
 				{
-					"filename": "talk.png",
+					"filename": "jianshi7.png",
 					"frame": {
-						"x": 1,
+						"x": 388,
 						"y": 251,
-						"w": 294,
-						"h": 275
+						"w": 127,
+						"h": 248
 					},
 					"rotated": false,
 					"trimmed": false,
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 294,
-						"h": 275
+						"w": 127,
+						"h": 248
 					},
 					"sourceSize": {
-						"w": 294,
-						"h": 275
+						"w": 127,
+						"h": 248
 					}
 				}
 			]
