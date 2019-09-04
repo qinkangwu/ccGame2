@@ -30,8 +30,8 @@ var arrowLObj: any = null;
 var arrowRObj: any = null;
 
 const initPosition = {
-  x: 1024 * 0.5 + 10,
-  y: 410
+  x:516.45, 
+  y:417.15
 }
 
 
@@ -208,35 +208,35 @@ export default class Game6PlayScene extends Phaser.Scene {
     let ballIndex = phoneticSymbols.length - 1;
     let nullballIndex = 0;
     phoneticSymbols.forEach((v, i) => {
-      let ballImg = this.add.image(initPosition.x, initPosition.y, `${ballImgTexures[i]}`);
-      ballImg.setData("name", v.name);
-      ballImg.setData("arrowIndex", i);
-      ballImg.setScale(0);
-      let ballText = new Phaser.GameObjects.BitmapText(this, initPosition.x - 5, initPosition.y + 18, "GenJyuuGothic", v.name, 47, 0.5).setOrigin(0.5);
-      ballText.setScale(0);
-      let ball = new Phaser.GameObjects.Container(this, 0, 0, [ballImg, ballText]);
+      let ballImg = this.add.image(-121,-129,`${ballImgTexures[i]}`).setOrigin(0);
+      let ballText = new Phaser.GameObjects.BitmapText(this,-5,18, "GenJyuuGothic", v.name, 47, 0.5).setOrigin(0.5);
+      let ball = new Phaser.GameObjects.Container(this, initPosition.x, initPosition.y, [ballImg, ballText]).setScale(0);
+      ball.setData("name", v.name);
+      ball.name = v.name;
+      ball.setData("arrowIndex", i);
       this.balls.add(ball);
-      initAni([ballImg, ballText]);
+      initAni(ball);
     });
 
     //@ts-ignore
     // setTimeout(initAni.bind(this,this.balls.list[2].list[0]),3000);
-    function initAni(objs) {
+    function initAni(obj) {
       that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
         //@ts-ignore
-        targets: objs,
+        targets: obj,
         delay: _delay,
         scale: 1,
         duration: 1000,
         ease: EASE.spring,
         onComplete: () => {
-          that.physics.world.enable(objs[0]);
-          objs[0].body.setCircle(71.5, 71.5 * 0.5 + 15, 71.5 * 0.5 + 23);
+           that.physics.world.enable(obj);
+           obj.body.setCircle(72,-72,-72);
+           obj.body.setCollideWorldBounds(true);
           if (count === 0) {
+            count = 1;
             that.createUpArrow();
             that.ballEvents(ballIndex, nullballIndex);
           }
-          count += 1;
         }
       });
     }
@@ -246,10 +246,9 @@ export default class Game6PlayScene extends Phaser.Scene {
    * 单个药品的上下交互
    */
   private ballEvents(ballIndex: number, nullballIndex: number): void {
-    console.log(nullballIndex);
     let that = this;
     let nullBallOffsetX = 241;
-    let nullball = this.physics.add.image(201 + nullballIndex * nullBallOffsetX, 67, "img_ballnull").setOrigin(0).setCircle(71.5 * 0.5, 71.5 * 0.5, 71.5 * 0.5);
+    let nullball = this.physics.add.image(201 + nullballIndex * nullBallOffsetX, 67, "img_ballnull").setOrigin(0).setCircle(73.5*0.5,73.5*0.5,73.5*0.5);
 
     this.tweens.add({
       targets: nullball,
@@ -262,18 +261,21 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.nullballs.add(nullball);
 
     let ball: Phaser.GameObjects.Container = (<Phaser.GameObjects.Container>this.balls.list[ballIndex]);
-    let speaker: Phaser.Sound.BaseSound = that.sound.add(ball.list[0].getData("name"));
+    let speaker: Phaser.Sound.BaseSound = that.sound.add(ball.getData("name"));
     speaker.on("complete", function () {
       speaker.destroy();  //播放一次就销毁
     })
-    ball.list[0].setInteractive({ pixelPerfect: true, alphaTolerance: 120, draggable: true });
-    ball.list[0].on("drag", ballImgOnDrag);
-    ball.list[0].on("dragstart", ballOnDragStart);
-    ball.list[0].on("dragend", ballOnDragEnd);
-    function ballImgOnDrag(pointer, dragX, dragY): void {
-      StaticAni.alphaScaleFuc(this, 1, 1, 1);
-      (<Phaser.GameObjects.Image>ball.list[0]).setPosition(dragX, dragY);
-      (<Phaser.GameObjects.Text>ball.list[1]).setPosition(dragX - 5, dragY + 18);
+    ball.setInteractive(new Phaser.Geom.Circle(0,0,72),Phaser.Geom.Circle.Contains,true);
+
+    this.input.setDraggable(ball,true);
+
+    ball.on("drag", ballOnDrag);
+    ball.on("dragstart", ballOnDragStart);
+    ball.on("dragend", ballOnDragEnd);
+
+    function ballOnDrag(pointer,dragX, dragY): void {
+      StaticAni.alphaScaleFuc(this,1, 1, 1);
+      this.setPosition(dragX, dragY);
     }
 
     that.arrowRotateAni(nullballIndex, nullball);
@@ -282,35 +284,32 @@ export default class Game6PlayScene extends Phaser.Scene {
     function ballOnDragStart() {
       that.clickSound.play();
       that.status = "一轮上下拖拽开始";
-      //that.scaleMaxAni(this);
       StaticAni.alphaScaleFuc(this, 1.2, 1.2, 1);
       that.arrowAgainHide();
     }
 
     function ballOnDragEnd() {
       StaticAni.alphaScaleFuc(this, 1, 1, 1);
-      console.log(that.status);
       if (that.status === "一轮上下拖拽结束") {
         return false;
       }
       that.arrowAgainShow();
       if (that.status !== "一个上下拖拽结束") {
-        (<Phaser.GameObjects.Image>ball.list[0]).setPosition(initPosition.x, initPosition.y);
-        (<Phaser.GameObjects.Text>ball.list[1]).setPosition(initPosition.x - 5, initPosition.y + 18);
+        this.setPosition(initPosition.x, initPosition.y);
       }
     }
 
-    let collider = this.physics.add.overlap(ball.list[0], nullball, overlapHandler, null, this);
+    let collider = this.physics.add.overlap(ball, nullball, overlapHandler, null, this);
 
 
     function overlapHandler() {
       that.status = "一个上下拖拽结束";
       that.clickSound.play();
-      ball.list[0].off("drag", ballImgOnDrag);
-      ball.list[0].off("dragstart", ballOnDragStart);
-      ball.list[0].off("dragend", ballOnDragEnd);
-      (<Phaser.GameObjects.Image>ball.list[0]).setPosition(nullball.x + 71.5 * 0.5 + 40, nullball.y + 71.5 * 0.5 + 25);
-      (<Phaser.GameObjects.Text>ball.list[1]).setPosition(nullball.x + 71.5 * 0.5 + 35, nullball.y + 71.5 * 0.5 + 45);
+      //that.input.setDraggable(ball,false);
+       ball.off("drag", ballOnDrag);
+       ball.off("dragstart", ballOnDragStart);
+       ball.off("dragend", ballOnDragEnd);
+      ball.setPosition(nullball.x + 71.5 * 0.5 + 40, nullball.y + 71.5 * 0.5 + 25);
       nullball.destroy();  //直接销毁空球体
       speaker.play();
       collider.destroy();
@@ -347,28 +346,27 @@ export default class Game6PlayScene extends Phaser.Scene {
     var hits = 0;
 
     this.balls.list = this.balls.list.reverse(); //反向排序
-    (this.balls.list[0] as Phaser.GameObjects.Container).list[0].setData("listIndex", 0);
-    (this.balls.list[1] as Phaser.GameObjects.Container).list[0].setData("listIndex", 1);
+    this.balls.list[0].setData("listIndex", 0);
+    this.balls.list[1].setData("listIndex", 1);
     if (this.balls.list.length > 2) {
-      (this.balls.list[2] as Phaser.GameObjects.Container).list[0].setData("listIndex", 2);
+      (this.balls.list[2] as Phaser.GameObjects.Container).setData("listIndex", 2);
     }
     setTimeout(() => {
       this.balls.list.forEach((v, i) => {
         if (i !== 1) {
-          (<Phaser.GameObjects.Container>v).list[0].on("dragstart", onLeftRightDragStart);
-          (<Phaser.GameObjects.Container>v).list[0].on("drag", onLeftRightDrag);
-          (<Phaser.GameObjects.Container>v).list[0].on("dragend", onLeftRightDragEnd);
+          (<Phaser.GameObjects.Container>v).on("dragstart", onLeftRightDragStart);
+          (<Phaser.GameObjects.Container>v).on("drag", onLeftRightDrag);
+          (<Phaser.GameObjects.Container>v).on("dragend", onLeftRightDragEnd);
         }
       })
     }, 1000);
 
     function onLeftRightDragStart() {
+     this.body.setCollideWorldBounds(true);
       that.status = "一个左或右拖拽开始";
       that.scaleMaxAni(this);
       this.setData("ox", this.x);
       this.setData("oy", this.y);
-      this.parentContainer.list[1].setData("ox", this.parentContainer.list[1].x);
-      this.parentContainer.list[1].setData("oy", this.parentContainer.list[1].y);
       that.arrowLRHide();  //隐藏箭头
     }
 
@@ -397,10 +395,9 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function onLeftRightDrag(pointer, dragX, dragY): void {
-      (<Phaser.GameObjects.Image>this).setPosition(dragX, dragY);
-      (<Phaser.GameObjects.Text>this.parentContainer.list[1]).setPosition(dragX - 5, dragY + 18);
+      this.setPosition(dragX, dragY);
       if (that.balls.list.length > 2) {
-        setMirror.call(this, dragX, dragY);
+       setMirror.call(this, dragX, dragY);   
       }
     }
 
@@ -410,18 +407,18 @@ export default class Game6PlayScene extends Phaser.Scene {
         return false;
       }
       // @ts-ignore
-      let x = that.balls.list[1].list[0].x + (that.balls.list[1].list[0].x - dragX);
+      let x = that.balls.list[1].x + (that.balls.list[1].x - dragX);
       // @ts-ignore
-      let y = that.balls.list[1].list[0].y + (that.balls.list[1].list[0].y - dragY);
+      let y = that.balls.list[1].y + (that.balls.list[1].y - dragY);
       // @ts-ignore
-      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[0].setPosition(x, y);
+      let mirrorBall = that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].setPosition(x, y);
+      mirrorBall.body.setCollideWorldBounds(false);
       // @ts-ignore
-      that.balls.list[(that.balls.list.length - 1) - this.getData("listIndex")].list[1].setPosition(x - 5, y + 18);
     }
 
     let collider: Phaser.Physics.Arcade.Collider;   //声明一个碰撞器
-    let collisoins: Array<Phaser.GameObjects.Image> = [];   //碰撞物序列
-    let hitObject = (<Phaser.GameObjects.Container>this.balls.list[1]).list[0];  //被碰撞物
+    let collisoins: Array<Phaser.GameObjects.Container> = [];   //碰撞物序列
+    let hitObject = this.balls.list[1];  //被碰撞物
     // @ts-ignore
     const hitObjectX = <Phaser.Physics.Arcade.Image>hitObject.x;
     // @ts-ignore
@@ -429,7 +426,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
     this.balls.list.forEach(v => {
       // @ts-ignore
-      collisoins.push(v.list[0]);
+      collisoins.push(v);
     })
 
     collider = this.physics.add.overlap(collisoins, hitObject, hitFuc, null, this);
