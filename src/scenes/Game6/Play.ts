@@ -62,7 +62,7 @@ export default class Game6PlayScene extends Phaser.Scene {
 
   private particles: Phaser.GameObjects.Particles.ParticleEmitterManager; // 粒子控制器
   private emitters: Phaser.GameObjects.Particles.ParticleEmitter;  //粒子发射器
-  private tipsParticlesEmitterConfig: config;  //成功、失败触发器
+  //private tipsParticlesEmitterConfig: config;  //成功、失败触发器
   private tipsParticlesEmitter: TipsParticlesEmitter; //成功、失败触发器
   private planAnims: PlanAnims; //专场动画
 
@@ -83,10 +83,11 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   preload(): void {
-
   }
 
   create(): void {
+    console.log(this);
+    //this.
     //index = 6; //test
     this.createStaticScene();
     this.createAudio();
@@ -209,9 +210,9 @@ export default class Game6PlayScene extends Phaser.Scene {
     let nullballIndex = 0;
     phoneticSymbols.forEach((v, i) => {
       let ballImg = this.add.image(-121,-129,`${ballImgTexures[i]}`).setOrigin(0);
-      let ballText = new Phaser.GameObjects.BitmapText(this,-5,18, "GenJyuuGothic", v.name, 47, 0.5).setOrigin(0.5);
+      let ballText = new Phaser.GameObjects.BitmapText(this,-5,18, "GenJyuuGothic47", v.name, 47, 0.5).setOrigin(0.5);
       let ball = new Phaser.GameObjects.Container(this, initPosition.x, initPosition.y, [ballImg, ballText]).setScale(0);
-      ball.setData("name", v.name);
+      ball.setData("name",v.name);
       ball.name = v.name;
       ball.setData("arrowIndex", i);
       this.balls.add(ball);
@@ -354,9 +355,15 @@ export default class Game6PlayScene extends Phaser.Scene {
     setTimeout(() => {
       this.balls.list.forEach((v, i) => {
         if (i !== 1) {
-          (<Phaser.GameObjects.Container>v).on("dragstart", onLeftRightDragStart);
-          (<Phaser.GameObjects.Container>v).on("drag", onLeftRightDrag);
-          (<Phaser.GameObjects.Container>v).on("dragend", onLeftRightDragEnd);
+          v.setData("initPosition",{
+            //@ts-ignore
+            x:v.x,
+            //@ts-ignore
+            y:v.y
+          });
+          v.on("dragstart", onLeftRightDragStart);
+          v.on("drag", onLeftRightDrag);
+          v.on("dragend", onLeftRightDragEnd);
         }
       })
     }, 1000);
@@ -390,6 +397,14 @@ export default class Game6PlayScene extends Phaser.Scene {
         //   );
       }
       if (that.status !== "一轮左右拖拽结束") {
+        that.balls.list.forEach((ball,i)=>{
+          if(i!==1){
+            (ball as Phaser.GameObjects.Container).setPosition(
+              ball.getData("initPosition").x,
+              ball.getData("initPosition").y,
+            )
+          }
+        })
         that.arrowLRShow();
       }
     }
@@ -622,7 +637,7 @@ export default class Game6PlayScene extends Phaser.Scene {
     }
 
     function checkoutResult(correctAnswer, result) {
-      that.tipsParticlesEmitterConfig = {   //反馈触发器的配置
+      let tipsParticlesEmitterConfig = {   //反馈触发器的配置
         nextCb: that.nextLevel.bind(that, "next"),
         successCb: that.nextLevel.bind(that, "success"),
         tryAgainCb: () => {
@@ -637,10 +652,12 @@ export default class Game6PlayScene extends Phaser.Scene {
         }
       }
 
-      that.tipsParticlesEmitter = new TipsParticlesEmitter(that, that.tipsParticlesEmitterConfig);
+      that.tipsParticlesEmitter = new TipsParticlesEmitter(that);
 
+
+      //correctAnswer = result; //test 
       if (correctAnswer === result) {     //正确
-        that.tipsParticlesEmitter.success();
+        that.tipsParticlesEmitter.success(tipsParticlesEmitterConfig.successCb);
       } else {
         if (goldValue === 0) {
           alert("啊哦，你又错啦！金币不足，一起去赚金币吧");
@@ -648,9 +665,9 @@ export default class Game6PlayScene extends Phaser.Scene {
           return false;
         }
         if (that.recordTimes >= 2) {    //没有机会
-          that.tipsParticlesEmitter.error();
+          that.tipsParticlesEmitter.error(tipsParticlesEmitterConfig.nextCb,tipsParticlesEmitterConfig.tryAgainCb);
         } else {
-          that.tipsParticlesEmitter.tryAgain();   //再试一次
+          that.tipsParticlesEmitter.tryAgain(tipsParticlesEmitterConfig.tryAgainCb);   //再试一次
         }
 
       }
