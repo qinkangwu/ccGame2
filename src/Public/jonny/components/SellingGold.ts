@@ -95,7 +95,7 @@ export class SellingGold{
                 targets:glod,
                 x:Gold.imgPosition.x,
                 y:Gold.imgPosition.y,
-                delay:delay-=delay*0.5,
+                delay:delay-200,
                 ease:"Sine.easeOut",
                 duration:300,
                 onComplete:()=>{

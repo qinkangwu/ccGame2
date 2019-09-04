@@ -212,7 +212,7 @@ export default class Game6PlayScene extends Phaser.Scene {
       let ballImg = this.add.image(-121,-129,`${ballImgTexures[i]}`).setOrigin(0);
       let ballText = new Phaser.GameObjects.BitmapText(this,-5,18, "GenJyuuGothic47", v.name, 47, 0.5).setOrigin(0.5);
       let ball = new Phaser.GameObjects.Container(this, initPosition.x, initPosition.y, [ballImg, ballText]).setScale(0);
-      ball.setData("name", v.name);
+      ball.setData("name",v.name);
       ball.name = v.name;
       ball.setData("arrowIndex", i);
       this.balls.add(ball);
