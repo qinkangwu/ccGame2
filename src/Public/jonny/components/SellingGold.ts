@@ -24,19 +24,24 @@ export class SellingGold{
     private texture:string;
     private callback:Function;
     private count:number = 0;
+    private bg:Phaser.GameObjects.Graphics;
 
     constructor(parentScene:Phaser.Scene,config?:Config){
         this.parentScene = parentScene;
-        this.goldValue = 3;
         this.callback = config.callback || function (){};
         this.texture = config.texture || "gold";
         this.golds = this.parentScene.add.container(0,0);
+        this.bg = this.parentScene.add.graphics();
     }
 
     /**
      *  正确
      */
-    public goodJob(_goldValue:number=3) {
+    public goodJob(_goldValue) {
+        this.bg.fillStyle(0x000000);
+        this.bg.fillRect(0,0,1024,552);
+        this.bg.setAlpha(0.7);
+        this.golds.add(this.bg);
         if(_goldValue === 0)  return this.callback.call(this.parentScene);
         this.goldValue = _goldValue;
         let _gold:Phaser.GameObjects.Image;
@@ -104,11 +109,15 @@ export class SellingGold{
                         alpha:0,
                         duration:300,
                         onComplete:()=>{
-                            glod.destroy();
                             if(this.count===0){
-                                this.count=1;
                                 this.callback(); 
                             }
+                            if(this.count===this.goldValue - 1){
+                                setTimeout(()=>{
+                                    this.golds.destroy(); //晚一秒销毁的目的是为了衔接下一步的专场动画
+                                },1000);
+                            }
+                            this.count+=1;
                         }
                     })
                 }
