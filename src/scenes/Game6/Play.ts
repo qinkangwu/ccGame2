@@ -354,9 +354,15 @@ export default class Game6PlayScene extends Phaser.Scene {
     setTimeout(() => {
       this.balls.list.forEach((v, i) => {
         if (i !== 1) {
-          (<Phaser.GameObjects.Container>v).on("dragstart", onLeftRightDragStart);
-          (<Phaser.GameObjects.Container>v).on("drag", onLeftRightDrag);
-          (<Phaser.GameObjects.Container>v).on("dragend", onLeftRightDragEnd);
+          v.setData("initPosition",{
+            //@ts-ignore
+            x:v.x,
+            //@ts-ignore
+            y:v.y
+          });
+          v.on("dragstart", onLeftRightDragStart);
+          v.on("drag", onLeftRightDrag);
+          v.on("dragend", onLeftRightDragEnd);
         }
       })
     }, 1000);
@@ -390,6 +396,14 @@ export default class Game6PlayScene extends Phaser.Scene {
         //   );
       }
       if (that.status !== "一轮左右拖拽结束") {
+        that.balls.list.forEach((ball,i)=>{
+          if(i!==1){
+            (ball as Phaser.GameObjects.Container).setPosition(
+              ball.getData("initPosition").x,
+              ball.getData("initPosition").y,
+            )
+          }
+        })
         that.arrowLRShow();
       }
     }
@@ -639,6 +653,8 @@ export default class Game6PlayScene extends Phaser.Scene {
 
       that.tipsParticlesEmitter = new TipsParticlesEmitter(that, that.tipsParticlesEmitterConfig);
 
+
+      correctAnswer = result; //test 
       if (correctAnswer === result) {     //正确
         that.tipsParticlesEmitter.success();
       } else {
