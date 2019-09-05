@@ -46,6 +46,13 @@ export default class Button extends Phaser.GameObjects.Sprite {
         this.on("pointerup", this.pointerupHandler)
     }
 
+    public static bindEvent(obj):void{
+        obj.on("pointerover", this.prototype.pointeroverHandler);
+        obj.on("pointerout", this.prototype.pointeroutHandler);
+        obj.on("pointerdown", this.prototype.pointerdownHandler);
+        obj.on("pointerup", this.prototype.pointerupHandler);
+    }
+
     public pointerupHandler(): void | boolean {
         if (!this.interactive) {
             return false;

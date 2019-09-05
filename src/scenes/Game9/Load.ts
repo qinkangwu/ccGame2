@@ -30,7 +30,7 @@ export default class Game9LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.audio('bgm', 'assets/sounds/bgm-happyworld.mp3');
+    this.load.audio('bgm', 'assets/sounds/bgm-02.mp3');
     this.load.audio('correct', 'assets/sounds/successMp3.mp3');
     this.load.audio('click', 'assets/sounds/clickMp3.mp3');
     this.load.audio('wrong', 'assets/sounds/failMp3.mp3');

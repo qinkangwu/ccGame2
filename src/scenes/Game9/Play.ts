@@ -118,18 +118,20 @@ export default class Game9PlayScene extends Phaser.Scene {
       let _ix = i;
       _ix = _ix % 4;
       let _iy = Math.floor(i / 4);
-      let _x = 227 + 120 * 0.5 + 158 * _ix;
-      let _y = 25 + 91 * 0.5 + 112 * _iy;
-      let _cookieImg = new Button(this, _x, _y, "cookie",{ pixelPerfect: true, alphaTolerance: 120, draggable: true });
+      let _x = 287 + 158*_ix; 
+      let _y = 70.05 + 183*_iy;
+      let _cookieImg = new Button(this, 0, 0, "cookie",{ pixelPerfect: true, alphaTolerance: 120, draggable: true });
       _cookieImg.name = v.name;
       _cookieImg.setAlpha(1);
       _cookieImg.minAlpha = 1;
-      _cookieImg.setData("initPosition",{x:_cookieImg.x,y:_cookieImg.y});
-      _cookieImg.setData("hit",0);
+      //_cookieImg.setData("hit",0);
       _cookieImg.pointerdownFunc = this.playPhonetic.bind(this,_cookieImg.name);
-      let _cookieText = new Phaser.GameObjects.Text(this, _cookieImg.x, _cookieImg.y, v.name, <Phaser.Types.GameObjects.Text.TextSyle>{ align: "center", fontSize: "35px", stroke: "#fff", strokeThickness: 2 }).setOrigin(0.5);
+      let _cookieText = new Phaser.GameObjects.Text(this,0,0, v.name, <Phaser.Types.GameObjects.Text.TextSyle>{ align: "center", fontSize: "35px", stroke: "#fff", strokeThickness: 2 }).setOrigin(0.5);
       let _cookies = new Phaser.GameObjects.Container(this).setAlpha(1);
       _cookies.add([_cookieImg, _cookieText]);
+      _cookies.x = _x;
+      _cookies.y = _y;
+      _cookies.setData("initPosition",{x:_cookies.x,y:_cookies.y});
       this.cookieImgs.push(_cookieImg);
       this.actors.add(_cookies);
       this.cookies.push(_cookies);
@@ -153,7 +155,7 @@ export default class Game9PlayScene extends Phaser.Scene {
         targets:this.cookies[cookieIndex],
         duration:300,
         alpha:1,
-        y:0,
+        y:this.cookies[cookieIndex].getData("initPosition").y,
         ease:"Bounce.easeOut",
         onComplete:function (){
           cookieIndex+=1;

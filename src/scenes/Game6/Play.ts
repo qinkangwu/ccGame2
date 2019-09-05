@@ -86,8 +86,6 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   create(): void {
-    console.log(this);
-    //this.
     //index = 6; //test
     this.createStaticScene();
     this.createAudio();
