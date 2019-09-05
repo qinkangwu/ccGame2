@@ -187,7 +187,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     });
 
     if (index === 0) {
-      setTimeout(this.gameStart.bind(this, cookiesPool), 3000);
+      setTimeout(this.gameStart.bind(this, cookiesPool), 3500);
     } else {
       this.gameStart(cookiesPool);
     }
@@ -309,18 +309,18 @@ export default class Game9PlayScene extends Phaser.Scene {
       }
     }
 
-    let collideCookies: Phaser.GameObjects.Container[] = [];
+    let collisionNullcookies: Phaser.GameObjects.Image[] = [];
     let collider_1 = that.physics.add.overlap(that.cookies, that.nullCookies, overlapHandler_1, null, this);
 
     function overlapHandler_1(...args) {
-      console.log("hit");
+      let hits:number=0;
+
       args[0].setData("hit", 1);
       args[0].setPosition(args[1].x, args[1].y);
       that.layer2.remove(args[0]);
       that.layer1.add(args[0]);
       args[0].interactive = false;
 
-      //(args[0].body as Phaser.Physics.Arcade.Body).destroy();
       that.physics.world.disable(args[0]);
 
       let collideCookie = args[1].getData("cookie");
@@ -338,17 +338,26 @@ export default class Game9PlayScene extends Phaser.Scene {
         }, 1000);
       }
       args[1].setData("cookie", args[0]);
+      args[1].setData("collision",1);
       that.playPhonetic(args[0].name);
+      that.nullCookies.forEach((nullCookie,i)=>{
+        let result = nullCookie.getData("collision");
+        if(result!==undefined){
+          hits+=result; 
+        } 
+        if(hits===that.nullCookies.length){
+            dragEnd(); 
+        }
+      })
     }
 
-    function dragEnd(cookie) {
+    function dragEnd() {
       console.log("拖拽结束");
       that.cookies.forEach(v => {
         v.off("dragstart");
         v.off("drag");
         v.off("dragend");
       })
-      that.playPhonetic(cookie.name);
     }
 
 
