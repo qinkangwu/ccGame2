@@ -7,6 +7,29 @@ import PlanAnims from '../../Public/PlanAnims';
 const vol = 0.3; //背景音乐的音量
 var index: number; //题目的指针，默认为0
 
+//机器人
+class CivaMen extends Phaser.GameObjects.Image{
+  public dx:number;
+  public dy:number;
+  constructor(scene:Phaser.Scene,x: number, y: number, texture: string,dx:number,dy:number){
+    super(scene,x,y,texture);
+    this.dx = dx;
+    this.dy = dy;
+    this.init();
+  }
+
+  private init(){
+    this.setOrigin(0.5,0);   //注册点设置为脚板底
+  }
+
+  public jumpIn():void{
+    /**
+     * work init
+     */
+  }
+}
+
+
 export default class Game9PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
 
@@ -31,13 +54,15 @@ export default class Game9PlayScene extends Phaser.Scene {
   private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
   private cookies: Phaser.GameObjects.Container[] = []; //饼干包含文字
   private nullCookies: Phaser.GameObjects.Image[] = []; //空饼干
+  private civaMen:CivaMen; //机器人 
   //动态开始
 
   //层次
-  private layer0: Phaser.GameObjects.Container;   //bg
+  private layer0: Phaser.GameObjects.Container;  //bg,
   private layer1: Phaser.GameObjects.Container;  //nullcookie
   private layer2: Phaser.GameObjects.Container;  //cookie,civa
-  private layer3: Phaser.GameObjects.Container;  //UI
+  private layer3: Phaser.GameObjects.Container;  //civa
+  private layer4: Phaser.GameObjects.Container;  //btnExit,btnSound
 
   constructor() {
     super({
@@ -79,7 +104,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   createStage() {
     let that = this;
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 5; i++) {
       this[`layer${i}`] = new Phaser.GameObjects.Container(this);
       this.add.existing(this[`layer${i}`]);
     }
@@ -90,7 +115,8 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.originalSoundBtn = new Button(this, 25 + 60 * 0.5, 467 + 60 * 0.5, "originalSoundBtn");
     this.tryAginListenBtn = new Button(this, 89, 435 + 50, "try-agin-btn");
     this.tryAginListenBtn.setOrigin(0, 1);
-    this.layer1.add([bg, this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
+    this.layer0.add(bg);
+    this.layer4.add([this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
     this.originalSoundBtn.on("pointerdown", this.playWord.bind(that));
 
     this.bgm = this.sound.add('bgm');
