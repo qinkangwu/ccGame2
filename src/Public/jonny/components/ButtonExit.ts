@@ -1,5 +1,5 @@
 import 'phaser';
-import Button from './Button';
+import {Button} from './Button';
 
 /**
   * 在加载文件同时，纹理key必须为 btnExit,注册点为中心,可以修改属性minAlpha

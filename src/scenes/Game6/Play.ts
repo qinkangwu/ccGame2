@@ -148,24 +148,6 @@ export default class Game6PlayScene extends Phaser.Scene {
       blendMode: 'ADD',
       on: false
     })
-
-    // this.tipsParticlesEmitterConfig = {
-    //   nextCb: () => {
-
-    //   },
-    //   renderBefore: () => {
-
-    //   },
-    //   successCb: () => {
-
-    //   },
-    //   tryAgainCb: () => {
-
-    //   }
-    // }
-
-    // this.tipsParticlesEmitter = new TipsParticlesEmitter(this, this.tipsParticlesEmitterConfig);
-
   }
 
   /**

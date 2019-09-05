@@ -9,7 +9,7 @@ export class StaticAni{
 }
 
 export class TweenAni{
-    public static alphaScaleYoyoFunc(scene:Phaser.Scene,obj:Phaser.GameObjects.Image,scaleX:number,scaleY:number,alpha:number){
+    public static alphaScaleYoyoFunc(scene:Phaser.Scene,obj:Phaser.GameObjects.Image | Phaser.GameObjects.Container,scaleX:number,scaleY:number,alpha:number){
         scene.tweens.add({
             targets : obj,
             scaleX : scaleX,
