@@ -1,7 +1,8 @@
 import 'phaser';
 import { Game9DataItem } from '../../interface/Game9';
-import { cover,rotateTips } from '../../Public/jonny/core';
-import { Button,ButtonContainer, ButtonMusic, ButtonExit } from '../../Public/jonny/components';
+import { cover, rotateTips } from '../../Public/jonny/core';
+import { Button, ButtonContainer, ButtonMusic, ButtonExit } from '../../Public/jonny/components';
+import PlanAnims from '../../Public/PlanAnims';
 
 const vol = 0.3; //背景音乐的音量
 var index: number; //题目的指针，默认为0
@@ -23,14 +24,20 @@ export default class Game9PlayScene extends Phaser.Scene {
   private btnSound: ButtonMusic; //音乐按钮
   private originalSoundBtn: Button; //原音按钮
   private tryAginListenBtn: Button; //在听一次按钮
+  private planAnims: PlanAnims;
   //静态结束
 
   //动态开始
-  private actors: Phaser.GameObjects.Container; // 演员序列
   private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
   private cookies: Phaser.GameObjects.Container[] = []; //饼干包含文字
   private nullCookies: Phaser.GameObjects.Image[] = []; //空饼干
   //动态开始
+
+  //层次
+  private layer0: Phaser.GameObjects.Container;   //bg
+  private layer1: Phaser.GameObjects.Container;  //nullcookie
+  private layer2: Phaser.GameObjects.Container;  //cookie,civa
+  private layer3: Phaser.GameObjects.Container;  //UI
 
   constructor() {
     super({
@@ -50,12 +57,15 @@ export default class Game9PlayScene extends Phaser.Scene {
 
   create(): void {
     if (index === 0) {
-      //this.scene.pause();
-      this.createStage();
-      //this.cover = new Cover(this, "cover");
-      //this.add.existing(this.cover);
+      this.scene.pause();
       rotateTips.init();
+      cover(this, "cover", () => {
+        this.planAnims.show(index + 1)
+      });
+    } else {
+      this.planAnims.show(index + 1);
     }
+    this.createStage();
     this.createActors();
   }
 
@@ -69,15 +79,18 @@ export default class Game9PlayScene extends Phaser.Scene {
   createStage() {
     let that = this;
 
-    this.stage = new Phaser.GameObjects.Container(this);
-    this.add.existing(this.stage);
+    for (let i = 0; i < 4; i++) {
+      this[`layer${i}`] = new Phaser.GameObjects.Container(this);
+      this.add.existing(this[`layer${i}`]);
+    }
+
     let bg = this.add.image(0, 0, "bg").setOrigin(0);
     this.btnExit = new ButtonExit(this);
     this.btnSound = new ButtonMusic(this);
     this.originalSoundBtn = new Button(this, 25 + 60 * 0.5, 467 + 60 * 0.5, "originalSoundBtn");
     this.tryAginListenBtn = new Button(this, 89, 435 + 50, "try-agin-btn");
     this.tryAginListenBtn.setOrigin(0, 1);
-    this.stage.add([bg, this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
+    this.layer1.add([bg, this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
     this.originalSoundBtn.on("pointerdown", this.playWord.bind(that));
 
     this.bgm = this.sound.add('bgm');
@@ -89,19 +102,19 @@ export default class Game9PlayScene extends Phaser.Scene {
       loop: true,
       volume: vol
     }
+
     this.bgm.play("start", config);
     this.clickSound = this.sound.add('click');
     this.correctSound = this.sound.add('correct');
     this.wrongSound = this.sound.add('wrong');
+
+    this.planAnims = new PlanAnims(this, this.ccData.length);
   }
 
   /**
    * 创建演员们
    */
   createActors(): void {
-    this.actors = new Phaser.GameObjects.Container(this);
-    this.add.existing(this.actors);
-
     //单词发生器
     let wordSound = this.ccData[index].name;
     this.wordSpeaker = this.sound.add(wordSound);
@@ -116,61 +129,33 @@ export default class Game9PlayScene extends Phaser.Scene {
       let _ix = i;
       _ix = _ix % 4;
       let _iy = Math.floor(i / 4);
-      let _x = 287 + 158*_ix; 
-      let _y = 70.05 + 183*_iy;
-      let _cookieImg = new Phaser.GameObjects.Image(this,0,0,"cookie");
+      let _x = 287 + 158 * _ix;
+      let _y = 70.05 + 183 * _iy;
+      let _cookieImg = new Phaser.GameObjects.Image(this, 0, 0, "cookie");
       _cookieImg.setAlpha(1);
-      let _cookieText = new Phaser.GameObjects.BitmapText(this,0,0+5,"GenJyuuGothic47",v.name,35,0).setOrigin(0.5);
-     let _cookie = new ButtonContainer(this,new Phaser.Geom.Rectangle(-60,-47,120,91),Phaser.Geom.Rectangle.Contains).setAlpha(1);
+      let _cookieText = new Phaser.GameObjects.BitmapText(this, 0, 0 + 5, "GenJyuuGothic47", v.name, 35, 0).setOrigin(0.5);
+      let _cookie = new ButtonContainer(this, new Phaser.Geom.Rectangle(-60, -47, 120, 91), Phaser.Geom.Rectangle.Contains).setAlpha(1);
       _cookie.name = v.name;
       _cookie.minAlpha = 1;
-      _cookie.pointerdownFunc = this.playPhonetic.bind(this,_cookie.name);
+      _cookie.pointerdownFunc = this.playPhonetic.bind(this, _cookie.name);
       _cookie.add([_cookieImg, _cookieText]);
       _cookie.x = _x;
       _cookie.y = _y;
-      _cookie.setData("initPosition",{x:_cookie.x,y:_cookie.y});
-      _cookie.setData("hit",0);
-      //this.cookieImgs.push(_cookieImg);
-      this.actors.add(_cookie);
+      _cookie.setData("initPosition", { x: _cookie.x, y: _cookie.y });
+      _cookie.setData("hit", 0);
+      _cookie.setDepth(2);
+      this.layer2.add(_cookie);
       this.cookies.push(_cookie);
     })
 
 
-    //饼干动画 开始--------------
-    this.cookies.forEach((cookie,index)=>{
+    //饼干 初始化--------------
+    this.cookies.forEach((cookie, index) => {
       let i = index;
       i = i % 4;
-      cookie.y+= (50 + i*50);
+      cookie.y += (50 + i * 50);
       cookie.setAlpha(0);
     })
-
-    let cookieIndex = 0;
-
-    let bounceAni = ()=>{
-      let that = this;
-      this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-        targets:this.cookies[cookieIndex],
-        duration:300,
-        alpha:1,
-        y:this.cookies[cookieIndex].getData("initPosition").y,
-        ease:"Bounce.easeOut",
-        onComplete:function (){
-          cookieIndex+=1;
-          if(cookieIndex===2){
-            that.wordSpeaker.play();
-          }
-          if(cookieIndex>cookiesPool.length-1){
-            that.dragEvent();
-            return false;
-          }else{
-            bounceAni();
-          }
-        }
-      })
-    };
-    bounceAni();
-
-    //饼干动画 结束
 
     //空饼干--------
     let phoneticSymbols = this.ccData[index].phoneticSymbols;
@@ -192,24 +177,66 @@ export default class Game9PlayScene extends Phaser.Scene {
           break;
       }
       let _nullCookieImg = new Phaser.GameObjects.Image(this, offsetX, 472, "null-cookie");
+      _nullCookieImg.setDepth(1);
       _nullCookieImg.name = v.name;
       _nullCookieImg.setAlpha(0);
-      this.actors.add(_nullCookieImg);
+      this.layer1.add(_nullCookieImg);
       this.nullCookies.push(_nullCookieImg);
       this.physics.world.enable(_nullCookieImg);
-      (<Phaser.Physics.Arcade.Body>_nullCookieImg.body).setSize(_nullCookieImg.width * 0.5, _nullCookieImg.height * 0.5);
+      (<Phaser.Physics.Arcade.Body>_nullCookieImg.body).setSize(_nullCookieImg.width * 0.2, _nullCookieImg.height * 0.2);
     });
 
-    //空饼干动画
-    this.nullCookies.forEach((nullcookie,i)=>{
-        this.tweens.add({
-          targets:nullcookie,
-          alpha:1,
-          delay:1000*i,
-          duration:500
-        })
-    }) 
+    if (index === 0) {
+      setTimeout(this.gameStart.bind(this, cookiesPool), 3000);
+    } else {
+      this.gameStart(cookiesPool);
+    }
+  }
 
+  /**
+   * 游戏开始
+   */
+  private gameStart(cookiesPool): void {
+    var nullCookieAni = () => {
+      this.nullCookies.forEach((nullcookie, i) => {
+        this.tweens.add({
+          targets: nullcookie,
+          alpha: 1,
+          delay: 500 * i,
+          duration: 500,
+          OnComplete:()=>{
+            this.dragEvent();
+          }
+        })
+      })
+    }
+
+
+    let cookieIndex = 0;
+    let bounceAni = () => {
+      let that = this;
+      this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+        targets: this.cookies[cookieIndex],
+        duration: 300,
+        alpha: 1,
+        y: this.cookies[cookieIndex].getData("initPosition").y,
+        ease: "Bounce.easeOut",
+        onComplete: function () {
+          cookieIndex += 1;
+          if (cookieIndex === 2) {
+            that.wordSpeaker.play();
+          }
+          if (cookieIndex > cookiesPool.length - 1) {
+            nullCookieAni(); 
+            return false;
+          } else {
+            bounceAni();
+          }
+        }
+      })
+    };
+
+    bounceAni();
 
   }
 
@@ -223,7 +250,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   /**
    * 播放饼干上的音标
    */
-  private playPhonetic(key):void{
+  private playPhonetic(key): void {
     let _phonetic: Phaser.Sound.BaseSound = this.sound.add(key);
     _phonetic.play();
     _phonetic.on("complete", function () {
@@ -238,34 +265,43 @@ export default class Game9PlayScene extends Phaser.Scene {
   private dragEvent(): void {
     let that = this;
 
-    let hits:number = 0; //碰撞次数
+    let hits: number = 0; //碰撞次数
     this.physics.world.enable(this.cookies);
     this.cookies.forEach(cookieEvent);
 
-    function cookieEvent(cookie:ButtonContainer) {
+    function cookieEvent(cookie: ButtonContainer) {
       (cookie.body as Phaser.Physics.Arcade.Body)
         .setCollideWorldBounds(true)
-        .setSize(cookie.shape.width,cookie.shape.height)
-        .setOffset(cookie.shape.x,cookie.shape.y);
-      that.input.setDraggable(cookie,true);
+        .setSize(cookie.shape.width, cookie.shape.height)
+        .setOffset(cookie.shape.x, cookie.shape.y);
+      that.input.setDraggable(cookie, true);
       cookie.on("dragstart", cookieOnDragStart);
       cookie.on("drag", cookieOnDrag);
       cookie.on("dragend", cookieOnDragEnd);
     }
 
-    function cookieOnDrag(pointer,dragX,dragY) {
+    function cookieOnDrag(pointer, dragX, dragY) {
+      if (!this.interactive) {
+        return false;
+      }
       this.x = dragX;
       this.y = dragY;
     }
 
-    function cookieOnDragStart(pointer,startX,startY) {
+    function cookieOnDragStart(pointer, startX, startY) {
+      if (!this.interactive) {
+        return false;
+      }
       that.clickSound.play();
     }
 
 
     function cookieOnDragEnd() {
+      if (!this.interactive) {
+        return false;
+      }
       that.clickSound.play();
-      if(this.getData("hit")===0){
+      if (this.getData("hit") === 0) {
         this.setPosition(
           this.getData("initPosition").x,
           this.getData("initPosition").y
@@ -273,33 +309,48 @@ export default class Game9PlayScene extends Phaser.Scene {
       }
     }
 
+    let collideCookies: Phaser.GameObjects.Container[] = [];
+    let collider_1 = that.physics.add.overlap(that.cookies, that.nullCookies, overlapHandler_1, null, this);
 
-    let collider = that.physics.add.overlap(that.cookies,that.nullCookies, overlapHandler, null, this);
-    function overlapHandler(...args){
-        args[0].setData("hit",1);
-        args[0].setPosition(args[1].x,args[1].y);
-        args[0].off("dragstart");
-        args[0].off("drag");
-        args[0].off("dragend");
-        args[0].body.destroy();
-        args[1].destroy();
-        that.playPhonetic(args[0].name);
-        hits+=1;
-        if(hits===that.ccData[index].phoneticSymbols.length){
-          dragEnd(args[0]);
-        }
+    function overlapHandler_1(...args) {
+      console.log("hit");
+      args[0].setData("hit", 1);
+      args[0].setPosition(args[1].x, args[1].y);
+      that.layer2.remove(args[0]);
+      that.layer1.add(args[0]);
+      args[0].interactive = false;
+
+      //(args[0].body as Phaser.Physics.Arcade.Body).destroy();
+      that.physics.world.disable(args[0]);
+
+      let collideCookie = args[1].getData("cookie");
+      if (collideCookie !== undefined && collideCookie.getData("hit") === 1) {
+        collideCookie.setData("hit", 0);
+        (collideCookie as Phaser.GameObjects.Container).setPosition(
+          collideCookie.getData("initPosition").x,
+          collideCookie.getData("initPosition").y
+        )
+        collideCookie.interactive = true;
+        setTimeout(() => {
+          that.layer2.add(collideCookie);
+          that.layer1.remove(collideCookie);
+          that.physics.world.enable(collideCookie);
+        }, 1000);
+      }
+      args[1].setData("cookie", args[0]);
+      that.playPhonetic(args[0].name);
     }
 
-    function dragEnd(cookie){
-        console.log("拖拽结束");
-        that.cookies.forEach(v=>{
+    function dragEnd(cookie) {
+      console.log("拖拽结束");
+      that.cookies.forEach(v => {
         v.off("dragstart");
         v.off("drag");
         v.off("dragend");
-        })
-        that.playPhonetic(cookie.name);
-        /**init work */
+      })
+      that.playPhonetic(cookie.name);
     }
+
 
   }
 
