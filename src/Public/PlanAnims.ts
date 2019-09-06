@@ -23,15 +23,8 @@ export default class PlanAnims {
         this.total = total;
     }
 
-    private playMusic(sourceKey : string) : void {
-        //播放音频
-        let mp3 : Phaser.Sound.BaseSound = this.scene.sound.add(sourceKey);
-        mp3.play();
-    }
-
     public show (current : number,cb? : Function) : void {
         if(this.lock ) return;
-        this.playMusic('planAnimSound240ms');
         current > 0 && (this.current = current);
         this.lock = true;
         this.createMask();
@@ -136,6 +129,5 @@ export default class PlanAnims {
         scene.load.image('plan','assets/commonUI/plan.png');
         scene.load.image('splitIcon','assets/commonUI/splitIcon.png');
         scene.load.image('cloud','assets/commonUI/cloud.png');
-        scene.load.audio('planAnimSound240ms','assets/sounds/planAnimSound240ms.mp3');
     }
 }
