@@ -1,9 +1,9 @@
 import 'phaser';
-import { Game9DataItem,Game9PhoneticSymbol } from '../../interface/Game9';
+import { Game9DataItem, Game9PhoneticSymbol } from '../../interface/Game9';
 import { cover, rotateTips } from '../../Public/jonny/core';
 import { Button, ButtonContainer, ButtonMusic, ButtonExit } from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
-import { CivaMen } from '../../Public/jonny/game9';
+import { CivaMen, Cookie } from '../../Public/jonny/game9';
 
 const vol = 0.3; //背景音乐的音量
 var index: number; //题目的指针，默认为0
@@ -12,7 +12,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
 
   private ccData: Array<Game9DataItem> = [];
-  private cookiesPool:Array<Game9PhoneticSymbol> = [];
+  private cookiesPool: Array<Game9PhoneticSymbol> = [];
 
   //静态开始
   private stage: Phaser.GameObjects.Container; // 舞台
@@ -31,7 +31,7 @@ export default class Game9PlayScene extends Phaser.Scene {
 
   //动态开始
   private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
-  private cookies: Phaser.GameObjects.Container[] = []; //饼干包含文字
+  private cookies: Cookie[] = []; //饼干包含文字
   private nullCookies: Phaser.GameObjects.Image[] = []; //空饼干
   private civaMen: CivaMen; //机器人 
   //动态开始
@@ -70,10 +70,10 @@ export default class Game9PlayScene extends Phaser.Scene {
       this.scene.pause();
       rotateTips.init();
       cover(this, "cover", () => {
-        this.planAnims.show(index + 1,this.gameStart)
+        this.planAnims.show(index + 1, this.gameStart)
       });
     } else {
-      this.planAnims.show(index + 1,this.gameStart);
+      this.planAnims.show(index + 1, this.gameStart);
     }
   }
 
@@ -131,26 +131,22 @@ export default class Game9PlayScene extends Phaser.Scene {
     //this.phonetic = new Audio();
 
     //饼干－－－－
-  
     this.cookiesPool.forEach((v, i) => {
       let _ix = i;
       _ix = _ix % 4;
       let _iy = Math.floor(i / 4);
       let _x = 287 + 158 * _ix;
       let _y = 70.05 + 183 * _iy;
-      let _cookieImg = new Phaser.GameObjects.Image(this, 0, 0, "cookie");
-      _cookieImg.setAlpha(1);
-      let _cookieText = new Phaser.GameObjects.BitmapText(this, 0, 0 + 5, "GenJyuuGothic47", v.name, 35, 0).setOrigin(0.5);
-      let _cookie = new ButtonContainer(this, new Phaser.Geom.Rectangle(-60, -47, 120, 91), Phaser.Geom.Rectangle.Contains).setAlpha(1);
+      let _cookie = new Cookie(this, new Phaser.Geom.Rectangle(-60, -47, 120, 91), Phaser.Geom.Rectangle.Contains, v.name).setAlpha(1);
       _cookie.name = v.name;
       _cookie.minAlpha = 1;
       _cookie.pointerdownFunc = this.playPhonetic.bind(this, _cookie.name);
-      _cookie.add([_cookieImg, _cookieText]);
       _cookie.x = _x;
       _cookie.y = _y;
-      _cookie.setData("initPosition", { x: _cookie.x, y: _cookie.y });
-      _cookie.setData("hit", 0);
-      _cookie.setDepth(2);
+      _cookie.initPosition = {
+        x: _cookie.x, y: _cookie.y
+      }
+      _cookie.hit = 0;
       this.layer2.add(_cookie);
       this.cookies.push(_cookie);
     })
@@ -190,15 +186,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       (<Phaser.Physics.Arcade.Body>_nullCookieImg.body).setSize(_nullCookieImg.width * 0.2, _nullCookieImg.height * 0.2);
     });
 
-    // if (index === 0) {
-    //   setTimeout(this.gameStart.bind(this, cookiesPool), 3500);
-    // } else {
-    //   this.gameStart(cookiesPool);
-    // }
-
-
     //创建 civa
-
     this.civaMen = new CivaMen(this, -136.05, 428.1, "civa");
     this.layer3.add(this.civaMen);
   }
@@ -229,7 +217,7 @@ export default class Game9PlayScene extends Phaser.Scene {
         targets: this.cookies[cookieIndex],
         duration: 300,
         alpha: 1,
-        y: this.cookies[cookieIndex].getData("initPosition").y,
+        y: this.cookies[cookieIndex].initPosition.y,
         ease: "Bounce.easeOut",
         onComplete: function () {
           cookieIndex += 1;
@@ -312,10 +300,10 @@ export default class Game9PlayScene extends Phaser.Scene {
         return false;
       }
       that.clickSound.play();
-      if (this.getData("hit") === 0) {
+      if (this.hit === 0) {
         this.setPosition(
-          this.getData("initPosition").x,
-          this.getData("initPosition").y
+          this.initPosition.x,
+          this.initPosition.y
         );
       }
     }
@@ -326,20 +314,24 @@ export default class Game9PlayScene extends Phaser.Scene {
     function overlapHandler_1(...args) {
       let hits: number = 0;
 
-      args[0].setData("hit", 1);
+      args[0].hit = 1;
       args[0].setPosition(args[1].x, args[1].y);
       that.layer2.remove(args[0]);
       that.layer1.add(args[0]);
       args[0].interactive = false;
 
+      // setTimeout(() => {
+      //   args[0].interactive = true;
+      // }, 1000);
+
       that.physics.world.disable(args[0]);
 
       let collideCookie = args[1].getData("cookie");
-      if (collideCookie !== undefined && collideCookie.getData("hit") === 1) {
-        collideCookie.setData("hit", 0);
+      if (collideCookie !== undefined && collideCookie.hit === 1) {
+        collideCookie.hit = 0;
         (collideCookie as Phaser.GameObjects.Container).setPosition(
-          collideCookie.getData("initPosition").x,
-          collideCookie.getData("initPosition").y
+          collideCookie.initPosition.x,
+          collideCookie.initPosition.y
         )
         collideCookie.interactive = true;
         setTimeout(() => {
@@ -364,30 +356,30 @@ export default class Game9PlayScene extends Phaser.Scene {
 
     function dragEnd() {
       console.log("拖拽结束");
-      civaJump();
+      that.civaJump();
       that.cookies.forEach(v => {
         v.off("dragstart");
         v.off("drag");
         v.off("dragend");
       })
     }
+  }
 
-    function civaJump() {
-      switch (that.nullCookies.length) {
-        case 2:
-          that.civaMen.startJumpIn(3,[365,680,928]);
-          break;
-        case 3:
-          that.civaMen.startJumpIn(4,[365,528,680,928]);
-          break;
-        case 4:
-          that.civaMen.startJumpIn(5,[288,446,600,762,928]);
-          break;
-      }
-
+  /**
+   * civa 开始跳跃
+   */
+  private civaJump(): void {
+    switch (this.nullCookies.length) {
+      case 2:
+        this.civaMen.startJumpIn(3, [365, 680, 928]);
+        break;
+      case 3:
+        this.civaMen.startJumpIn(4, [365, 528, 680, 928]);
+        break;
+      case 4:
+        this.civaMen.startJumpIn(5, [288, 446, 600, 762, 928]);
+        break;
     }
-
-
   }
 
 }
