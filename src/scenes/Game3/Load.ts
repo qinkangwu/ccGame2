@@ -35,7 +35,7 @@ export default class Game3LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.image('pianoTopBg','assets/Game3/PianoTopBg.png'); 
+    this.load.image('pianoTopBg','assets/Game3/pianoTopBg.png'); 
     this.load.image('fiveLines','assets/Game3/fiveLines.png'); 
     this.load.image('game3Mask','assets/Game3/mask.png'); 
     this.load.image('leftIcon','assets/Game3/leftIcon.png'); 
