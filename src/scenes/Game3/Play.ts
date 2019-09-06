@@ -389,7 +389,7 @@ export default class Game3PlayScene extends Phaser.Scene {
       this.anims.create({
         key : 'redAnims',
         frames : this.anims.generateFrameNumbers('keys',{start : 0 , end : 1}),
-        frameRate : 5,
+        frameRate : 12,
         repeat : 0,
         yoyo : true
       });
@@ -397,7 +397,7 @@ export default class Game3PlayScene extends Phaser.Scene {
       this.anims.create({
         key : 'blueAnims',
         frames : this.anims.generateFrameNumbers('keys',{start: 0 , end : 1}),
-        frameRate : 5,
+        frameRate : 12,
         repeat : 0,
         yoyo : true
       })
