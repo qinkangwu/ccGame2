@@ -35,9 +35,14 @@ export default class Game3LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.image('game3Bgi','assets/Game3/PianoPageBg.png'); 
-    this.load.multiatlas('icons','assets/Game3/imgsJson.json','assets/Game3');
-    this.load.spritesheet('keys','assets/Game3/imgsJson2.png',{frameWidth : 110 , frameHeight : 229 , margin: 1, spacing: 2});
+    this.load.image('pianoTopBg','assets/Game3/PianoTopBg.png'); 
+    this.load.image('fiveLines','assets/Game3/fiveLines.png'); 
+    this.load.image('game3Mask','assets/Game3/mask.png'); 
+    this.load.image('leftIcon','assets/Game3/leftIcon.png'); 
+    this.load.image('rightIcon','assets/Game3/rightIcon.png'); 
+    this.load.multiatlas('game3Icons3','assets/Game3/imgsJson3.json','assets/Game3');
+    this.load.multiatlas('icons','assets/Game3/imgsJson1.json','assets/Game3');
+    this.load.spritesheet('keys','assets/Game3/imgsJson2.png',{frameWidth : 220 , frameHeight : 438 , margin: 1, spacing: 2});
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;

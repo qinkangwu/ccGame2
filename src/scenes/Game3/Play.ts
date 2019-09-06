@@ -5,6 +5,7 @@ import {get , makeParams} from '../../lib/http';
 
 const W = 1024;
 const H = 552;
+const initW = W + 100;
 
 export default class Game3PlayScene extends Phaser.Scene {
     private ccData : Array<game3DataInterface> = [];   //音标数据
@@ -51,12 +52,33 @@ export default class Game3PlayScene extends Phaser.Scene {
   
     create(): void {
       //初始化渲染
-      this.add.tileSprite(0,0,W,H,'game3Bgi').setOrigin(0); //背景
+      this.cameras.main.setBackgroundColor('#0E49A7');
+      this.drawTopBg();
       this.drawBottomKeys(); //键盘
-      this.drawTopWord(); //音标气泡
-      this.createAnims(); //创建动画
-      this.createEmitter(); //创建粒子发射器
+      // this.drawTopWord(); //音标气泡
+      // this.createAnims(); //创建动画
+      // this.createEmitter(); //创建粒子发射器
       this.animsLayoutHandle();//开起布局
+    }
+
+    private drawTopBg () : void {
+      //顶部五线谱
+      this.add.image(0,0,'pianoTopBg').setOrigin(0).setDisplaySize(W,319);
+      this.add.image(0,32,'fiveLines').setOrigin(0).setDisplaySize(W,223);
+      this.add.image(82,66.5,'game3Icons3','note1.png').setOrigin(.5).setDisplaySize(100,65);
+      this.add.image(250,171,'game3Icons3','note2.png').setOrigin(.5).setDisplaySize(128,96);
+      this.add.image(767,120.5,'game3Icons3','note3.png').setOrigin(.5).setDisplaySize(81,99);
+      this.add.image(968.5,193,'game3Icons3','note4.png').setOrigin(.5).setDisplaySize(67,126);
+      let graphics = this.add.graphics();
+      graphics.fillStyle(0xffffff);
+      graphics.fillCircle(W / 2,143,95);
+      this.add.text(W / 2 ,143.5,'/t/',{
+        fontSize: "80px",
+        fontFamily:"Arial Rounded MT Bold",
+        fill : '#00AE97'
+      }).setDepth(1).setOrigin(.5);
+
+      this.add.image(0,0,'game3Mask').setOrigin(0).setDisplaySize(W,297);
     }
 
   
@@ -133,15 +155,15 @@ export default class Game3PlayScene extends Phaser.Scene {
       }
       this.flag = 0;
       this.keySpritesArr.map((r,i)=>{
-        this.itemAnimateHandle(r,isLeft && r.x - W || r.x + W,dragNum,isLeft,i);
+        this.itemAnimateHandle(r,isLeft && r.x - initW || r.x + initW,dragNum,isLeft,i);
       });
 
       this.textsArr.map((r,i)=>{
-        this.itemAnimateHandle(r,isLeft && r.x - W || r.x + W,dragNum,isLeft);
+        this.itemAnimateHandle(r,isLeft && r.x - initW || r.x + initW,dragNum,isLeft);
       })
 
       this.imgsArr.map((r,i)=>{
-        this.itemAnimateHandle(r,isLeft && r.x - W || r.x + W,dragNum,isLeft);
+        this.itemAnimateHandle(r,isLeft && r.x - initW || r.x + initW,dragNum,isLeft);
       })
     }
 
@@ -161,7 +183,7 @@ export default class Game3PlayScene extends Phaser.Scene {
         this.drawBottomKeys(isLeft);
         this.animsLayoutHandle(isLeft);
         this.loadMusic(this.ccData);
-        this.titleObj.setText(this.bookMenu[this.currentBookIndex].name);
+        // this.titleObj.setText(this.bookMenu[this.currentBookIndex].name);
       })
     }
 
@@ -223,17 +245,18 @@ export default class Game3PlayScene extends Phaser.Scene {
     private dragEndHandle (...args) : void {
       //拖拽结束
       //@ts-ignore
-      let childX : number = this.scene.keySpritesArr[0].x;
-      let isLeft : boolean = childX < 0;
+      let isLeft : boolean = this.scene.keySpritesArr[0].x < -92;
+      //@ts-ignore
+      let childX : number = -92 - this.scene.keySpritesArr[0].x;
       if(Math.abs(childX) > 100 && Date.now() - this.dragTimer > 200){
         //@ts-ignore
-        this.scene.animateAfterDragHandle.call(this.scene,isLeft,childX);
+        this.scene.animateAfterDragHandle.call(this.scene,isLeft,Math.abs(childX));
       }else{
         //@ts-ignore
         this.scene.tweens.add({
           //@ts-ignore
           targets : this.scene.keySpritesArr.concat(this.scene.textsArr,this.scene.imgsArr),
-          x : `-=${childX}`,
+          x :`+=${childX}`,
           ease: 'Sine.easeInOut',
           duration: 300
         })
@@ -329,7 +352,7 @@ export default class Game3PlayScene extends Phaser.Scene {
       })
     }
 
-    private drawBottomKeys(isLeft : boolean = false) : void{
+    private drawBottomKeys (isLeft : boolean = false) : void {
       //渲染键盘
       let dataArr : Array<game3DataInterface> = this.ccData;
       for(let i = 0 ; i < dataArr.length ; i++){
@@ -338,47 +361,101 @@ export default class Game3PlayScene extends Phaser.Scene {
           break;
         }
       }
+      // dataArr.length = 5; //test
+      let isRenderCenter : boolean = dataArr.length < 8;
       let imgKey : number = 0;
-      let leftDistance : number = (W - (110 * dataArr.length + 5 * (dataArr.length - 1 ))) / 2 ; //计算如果要居中，第一个键盘的x值
-      let itemWidth : number = (W - (5 * (dataArr.length - 1))) / dataArr.length;
-      for ( let i = 0 ; i < dataArr.length ; i ++){
-        //渲染白键
-        let sprite : Phaser.GameObjects.Sprite = this.add.sprite(i === 0 ? (isLeft && W || -W) : this.leftSpriteX + (itemWidth + 5),H - 240,'keys',0).setOrigin(0).setInteractive({
+      let arrCenterInx : number = Math.ceil((9 - dataArr.length) / 2);
+      for ( let i = 0 ; i < (isRenderCenter && 9 || 10) ; i ++){
+        let sprite : Phaser.GameObjects.Sprite = this.add.sprite(i === 0 ? (isLeft && ( isRenderCenter &&  initW -30 || initW - 92) || ( isRenderCenter &&  -initW -30 || -initW - 92)) : this.leftSpriteX + (110 + 12),319,'keys').setOrigin(0).setInteractive({
           draggable : true
-        });
-        sprite.scaleX = itemWidth / sprite.width;
-        this.leftSpriteX = sprite.x;
-        sprite.setData('index',i); //记住是按的哪个键盘，可以拿到相应的音标
-        //渲染音标字符
-        let text : Phaser.GameObjects.Text = this.add.text(sprite.x + 30,sprite.y + sprite.height - 75,this.setWordsTrim(dataArr[i].name),{
-          fontSize : 40,
-          font: 'bold 45px Arial Rounded MT',
-          fill : i < this.middle && '#D25F5F' || '#65A5EF',
-          bold : true
-        }).setOrigin(0.5,0);
-        text.x = sprite.x +  ((sprite.width * sprite.scaleX) / 2);
+        }).setDisplaySize(110,219);
+        //(isLeft && W || -W)  (isRenderCenter && -30 || -92)
         this.keySpritesArr.push(sprite);
-        this.textsArr.push(text);
+        this.leftSpriteX = sprite.x;
+        if((!isRenderCenter &&  i >= 1) || (isRenderCenter && i >= arrCenterInx)){
+          let y = isRenderCenter ? i - arrCenterInx : i - 1;
+          if(y < dataArr.length){
+            let text : Phaser.GameObjects.Text = this.add.text(sprite.x + 55,sprite.y + 130 ,dataArr[y].name,{
+              fontSize: "40px",
+              fontFamily:"Arial Rounded MT Bold",
+              font: 'bold 45px Arial Rounded MT',
+              fill : y < this.middle && '#D25F5F' || '#65A5EF',
+              bold : true
+            }).setOrigin(0.5,0).setDepth(1000);
+            this.textsArr.push(text);
+          }
+        }
         sprite.on('dragstart',this.dragStartHandle.bind(sprite));
         sprite.on('drag',this.dragMoveHandle.bind(sprite));
         sprite.on('dragend',this.dragEndHandle.bind(sprite));
         sprite.on('pointerdown',this.pointerDownHandle.bind(sprite));
         sprite.on('pointerup',this.pointeUpHandle.bind(sprite));
-        if(i % 3 === 2 || ( (i % 3 === 0 || i % 3 === 1) && i === (dataArr.length - 1))){
+        if(
+          (isRenderCenter && (i === 2 || i === 5 || i === 8)) ||
+          (!isRenderCenter && (i === 2 || i ===6 || i === 9 ))
+        ){
           //间隔渲染彩键
           continue;
         }
         //渲染彩键
-        imgKey = (imgKey + 1 > 7 ? 1 : imgKey + 1);
-        let img : Phaser.GameObjects.Image = this.add.image( sprite.x + (110 * sprite.scaleX),sprite.y - 11,'icons',`ImgPiano0${imgKey}.png`).setDepth(100).setOrigin(.5,0);
+        imgKey = (imgKey + 1 > 5 ? 1 : imgKey + 1);
+        let img : Phaser.GameObjects.Image = this.add.image( sprite.x + 116.5,sprite.y - 11,'icons',`key${imgKey}.png`).setDepth(100).setOrigin(.5,0).setDisplaySize(67,119);
         this.imgsArr.push(img);
       }
+      isRenderCenter && this.add.image(35.5,480,'leftIcon').setDisplaySize(51,32);
+      isRenderCenter && this.add.image(W - 36.5,480,'rightIcon').setDisplaySize(51,32);
     }
+
+    // private drawBottomKeys(isLeft : boolean = false) : void{
+    //   //渲染键盘
+    //   let dataArr : Array<game3DataInterface> = this.ccData;
+    //   for(let i = 0 ; i < dataArr.length ; i++){
+    //     if(dataArr[i].vowelConsonant === '辅音'){
+    //       this.middle = i;
+    //       break;
+    //     }
+    //   }
+    //   let imgKey : number = 0;
+    //   let leftDistance : number = (W - (110 * dataArr.length + 5 * (dataArr.length - 1 ))) / 2 ; //计算如果要居中，第一个键盘的x值
+    //   let itemWidth : number = (W - (5 * (dataArr.length - 1))) / dataArr.length;
+    //   for ( let i = 0 ; i < dataArr.length ; i ++){
+    //     //渲染白键
+    //     let sprite : Phaser.GameObjects.Sprite = this.add.sprite(i === 0 ? (isLeft && W || -W) : this.leftSpriteX + (itemWidth + 5),H - 240,'keys',0).setOrigin(0).setInteractive({
+    //       draggable : true
+    //     });
+    //     sprite.scaleX = itemWidth / sprite.width;
+    //     this.leftSpriteX = sprite.x;
+    //     sprite.setData('index',i); //记住是按的哪个键盘，可以拿到相应的音标
+    //     //渲染音标字符
+    //     let text : Phaser.GameObjects.Text = this.add.text(sprite.x + 30,sprite.y + sprite.height - 75,this.setWordsTrim(dataArr[i].name),{
+    //       fontSize : 40,
+    //       font: 'bold 45px Arial Rounded MT',
+    //       fill : i < this.middle && '#D25F5F' || '#65A5EF',
+    //       bold : true
+    //     }).setOrigin(0.5,0);
+    //     text.x = sprite.x +  ((sprite.width * sprite.scaleX) / 2);
+    //     this.keySpritesArr.push(sprite);
+    //     this.textsArr.push(text);
+    //     sprite.on('dragstart',this.dragStartHandle.bind(sprite));
+    //     sprite.on('drag',this.dragMoveHandle.bind(sprite));
+    //     sprite.on('dragend',this.dragEndHandle.bind(sprite));
+    //     sprite.on('pointerdown',this.pointerDownHandle.bind(sprite));
+    //     sprite.on('pointerup',this.pointeUpHandle.bind(sprite));
+    //     if(i % 3 === 2 || ( (i % 3 === 0 || i % 3 === 1) && i === (dataArr.length - 1))){
+    //       //间隔渲染彩键
+    //       continue;
+    //     }
+    //     //渲染彩键
+    //     imgKey = (imgKey + 1 > 7 ? 1 : imgKey + 1);
+    //     let img : Phaser.GameObjects.Image = this.add.image( sprite.x + (110 * sprite.scaleX),sprite.y - 11,'icons',`ImgPiano0${imgKey}.png`).setDepth(100).setOrigin(.5,0);
+    //     this.imgsArr.push(img);
+    //   }
+    // }
 
     private animsLayoutHandle (isLeft : boolean = false) : void {
       this.tweens.add({
         targets : [...this.keySpritesArr,...this.imgsArr,...this.textsArr],
-        x : `+=${isLeft && -W || W}`,
+        x : `+=${isLeft && -initW || initW}`,
         ease: 'Sine.easeInOut',
         duration: 500
       })
@@ -438,9 +515,9 @@ export default class Game3PlayScene extends Phaser.Scene {
         fill : '#fff',
       }).setAlpha(0).setOrigin(0.5);
 
-      this.title &&  (this.titleObj = this.add.text(20,20,this.title,{
-        font: 'bold 20px Arial Rounded MT',
-        fill : '#fff',
-      }));
+      // this.title &&  (this.titleObj = this.add.text(20,20,this.title,{
+      //   font: 'bold 20px Arial Rounded MT',
+      //   fill : '#fff',
+      // }));
     }
   };

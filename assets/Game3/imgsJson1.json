@@ -1,0 +1,125 @@
+{
+	"textures": [
+		{
+			"image": "imgsJson1.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 408,
+				"h": 478
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "key1.png",
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 134,
+						"h": 237
+					},
+					"rotated": false,
+					"trimmed": false,
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 134,
+						"h": 237
+					},
+					"sourceSize": {
+						"w": 134,
+						"h": 237
+					}
+				},
+				{
+					"filename": "key2.png",
+					"frame": {
+						"x": 137,
+						"y": 1,
+						"w": 134,
+						"h": 237
+					},
+					"rotated": false,
+					"trimmed": false,
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 134,
+						"h": 237
+					},
+					"sourceSize": {
+						"w": 134,
+						"h": 237
+					}
+				},
+				{
+					"filename": "key3.png",
+					"frame": {
+						"x": 273,
+						"y": 1,
+						"w": 134,
+						"h": 237
+					},
+					"rotated": false,
+					"trimmed": false,
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 134,
+						"h": 237
+					},
+					"sourceSize": {
+						"w": 134,
+						"h": 237
+					}
+				},
+				{
+					"filename": "key4.png",
+					"frame": {
+						"x": 1,
+						"y": 240,
+						"w": 134,
+						"h": 237
+					},
+					"rotated": false,
+					"trimmed": false,
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 134,
+						"h": 237
+					},
+					"sourceSize": {
+						"w": 134,
+						"h": 237
+					}
+				},
+				{
+					"filename": "key5.png",
+					"frame": {
+						"x": 137,
+						"y": 240,
+						"w": 134,
+						"h": 237
+					},
+					"rotated": false,
+					"trimmed": false,
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 134,
+						"h": 237
+					},
+					"sourceSize": {
+						"w": 134,
+						"h": 237
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:16886163eee985c7909bd08a539149ce:9732145e449df145a5c1e4e18b83a13d:92542590d6f80419c8dc07203c6a793b$"
+	}
+}

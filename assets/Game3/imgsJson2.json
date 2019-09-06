@@ -1,96 +1,54 @@
 {
 	"textures": [
 		{
-			"image": "imgsJson2.png",
+			"image": "imgsJson3.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 112,
-				"h": 924
+				"w": 444,
+				"h": 440
 			},
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "PianoBtnWhite01(1).png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 110,
-						"h": 229
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 110,
-						"h": 229
-					},
+					"filename": "pianoKey1.png",
 					"frame": {
 						"x": 1,
 						"y": 1,
-						"w": 110,
-						"h": 229
-					}
-				},
-				{
-					"filename": "PianoBtnWhite02.png",
+						"w": 220,
+						"h": 438
+					},
 					"rotated": false,
 					"trimmed": false,
-					"sourceSize": {
-						"w": 110,
-						"h": 229
-					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 110,
-						"h": 229
+						"w": 220,
+						"h": 438
 					},
-					"frame": {
-						"x": 1,
-						"y": 232,
-						"w": 110,
-						"h": 229
+					"sourceSize": {
+						"w": 220,
+						"h": 438
 					}
 				},
 				{
-					"filename": "PianoBtnWhite03(2).png",
+					"filename": "pianoKey2.png",
+					"frame": {
+						"x": 223,
+						"y": 1,
+						"w": 220,
+						"h": 438
+					},
 					"rotated": false,
 					"trimmed": false,
-					"sourceSize": {
-						"w": 110,
-						"h": 229
-					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 110,
-						"h": 229
+						"w": 220,
+						"h": 438
 					},
-					"frame": {
-						"x": 1,
-						"y": 463,
-						"w": 110,
-						"h": 229
-					}
-				},
-				{
-					"filename": "PianoBtnWhite04.png",
-					"rotated": false,
-					"trimmed": false,
 					"sourceSize": {
-						"w": 110,
-						"h": 229
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 110,
-						"h": 229
-					},
-					"frame": {
-						"x": 1,
-						"y": 694,
-						"w": 110,
-						"h": 229
+						"w": 220,
+						"h": 438
 					}
 				}
 			]

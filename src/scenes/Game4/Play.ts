@@ -225,8 +225,9 @@ export default class Game4PlayScene extends Phaser.Scene {
             this.allBallonIsFinish();
           }
         }else{
-          this.setPopAndQuiver(true);
-          this.tips.tryAgain(()=>{});
+          this.tips.tryAgain(()=>{
+            this.setPopAndQuiver(true);
+          });
           this.playMusic('wrong');
           this.shootLock = false;
           this.clickLock = true;
