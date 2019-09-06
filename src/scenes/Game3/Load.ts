@@ -40,7 +40,9 @@ export default class Game3LoadScene extends Phaser.Scene {
     this.load.image('game3Mask','assets/Game3/mask.png'); 
     this.load.image('leftIcon','assets/Game3/leftIcon.png'); 
     this.load.image('rightIcon','assets/Game3/rightIcon.png'); 
+    this.load.image('particles','assets/Game5/particles.png');
     this.load.multiatlas('game3Icons3','assets/Game3/imgsJson3.json','assets/Game3');
+    this.load.multiatlas('game3Icons4','assets/Game3/imgsJson4.json','assets/Game3');
     this.load.multiatlas('icons','assets/Game3/imgsJson1.json','assets/Game3');
     this.load.spritesheet('keys','assets/Game3/imgsJson2.png',{frameWidth : 220 , frameHeight : 438 , margin: 1, spacing: 2});
     this.load.on('complete',()=>{

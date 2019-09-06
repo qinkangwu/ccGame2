@@ -30,6 +30,10 @@ export default class Game3PlayScene extends Phaser.Scene {
     private currentParams : object = {} //当前选择的课件
     private currentBookIndex : number = 0; //当前选择的课件的索引，用于做切换课件
     private flag : number = 0 ; //锁计数器
+    private arrowArr : Array<Phaser.GameObjects.Image> = [] ; //箭头arr
+    private noteArr : Array<Phaser.GameObjects.Image> = []; //音符数组
+    private fiveLinesArr : Array<Phaser.GameObjects.Image> = []; //五线谱数组
+    private bgObj : Phaser.GameObjects.Image ; //背景对象
     constructor() {
       super({
         key: "Game3PlayScene"
@@ -54,31 +58,48 @@ export default class Game3PlayScene extends Phaser.Scene {
       //初始化渲染
       this.cameras.main.setBackgroundColor('#0E49A7');
       this.drawTopBg();
-      this.drawBottomKeys(); //键盘
+      this.drawBottomKeys(true); //键盘
       // this.drawTopWord(); //音标气泡
-      // this.createAnims(); //创建动画
-      // this.createEmitter(); //创建粒子发射器
-      this.animsLayoutHandle();//开起布局
+      this.createAnims(); //创建动画
+      this.createEmitter(); //创建粒子发射器
+      this.tweens.add({
+        targets : this.bgObj,
+        ease: 'Sine.easeInOut',
+        displayHeight : 319,
+        duration : 600,
+        onComplete : ()=>{
+          this.animsLayoutHandle(true);//开起布局
+          this.tweens.add({
+            targets : this.fiveLinesArr,
+            ease: 'Sine.easeInOut',
+            x : `-=${W}`,
+            duration : 800
+          })
+        }
+      })  
     }
 
     private drawTopBg () : void {
       //顶部五线谱
-      this.add.image(0,0,'pianoTopBg').setOrigin(0).setDisplaySize(W,319);
-      this.add.image(0,32,'fiveLines').setOrigin(0).setDisplaySize(W,223);
-      this.add.image(82,66.5,'game3Icons3','note1.png').setOrigin(.5).setDisplaySize(100,65);
-      this.add.image(250,171,'game3Icons3','note2.png').setOrigin(.5).setDisplaySize(128,96);
-      this.add.image(767,120.5,'game3Icons3','note3.png').setOrigin(.5).setDisplaySize(81,99);
-      this.add.image(968.5,193,'game3Icons3','note4.png').setOrigin(.5).setDisplaySize(67,126);
-      let graphics = this.add.graphics();
-      graphics.fillStyle(0xffffff);
-      graphics.fillCircle(W / 2,143,95);
-      this.add.text(W / 2 ,143.5,'/t/',{
+      this.bgObj = this.add.image(0,0,'pianoTopBg').setOrigin(0).setDisplaySize(W,0);
+      this.fiveLinesArr.push(this.add.image(0 + W,32,'fiveLines').setOrigin(0).setDisplaySize(W,223));
+      this.noteArr.push(this.add.image(82,66.5,'game3Icons3','note1.png').setOrigin(.5).setDisplaySize(100,65).setAlpha(0));
+      this.noteArr.push(this.add.image(250,171,'game3Icons3','note2.png').setOrigin(.5).setDisplaySize(128,96).setAlpha(0));
+      this.noteArr.push(this.add.image(767,120.5,'game3Icons3','note3.png').setOrigin(.5).setDisplaySize(81,99).setAlpha(0));
+      this.noteArr.push(this.add.image(968.5,193,'game3Icons3','note4.png').setOrigin(.5).setDisplaySize(67,126).setAlpha(0));
+      this.redSprite = this.add.sprite(W / 2,146,'game3Icons4','civa1.png').setOrigin(0.5).setAlpha(0).setDisplaySize(263,250).setDepth(1);
+      this.blueSprite = this.add.sprite(W / 2,146,'game3Icons4','civa2.png').setOrigin(0.5).setAlpha(0).setDisplaySize(263,250).setDepth(1);
+      this.redText = this.add.text(W / 2 ,143.5,'',{
         fontSize: "80px",
         fontFamily:"Arial Rounded MT Bold",
-        fill : '#00AE97'
-      }).setDepth(1).setOrigin(.5);
-
-      this.add.image(0,0,'game3Mask').setOrigin(0).setDisplaySize(W,297);
+        fill : '#fff'
+      }).setAlpha(0).setOrigin(0.5).setDepth(1);
+      this. blueText = this.add.text(W / 2 ,143.5,'',{
+        fontSize: "80px",
+        fontFamily:"Arial Rounded MT Bold",
+        fill : '#fff'
+      }).setAlpha(0).setOrigin(0.5).setDepth(1);
+      this.fiveLinesArr.push(this.add.image(0 + W,0,'game3Mask').setOrigin(0).setDisplaySize(W,297));
     }
 
   
@@ -96,10 +117,9 @@ export default class Game3PlayScene extends Phaser.Scene {
 
     private createEmitter () : void {
       //创建粒子效果发射器
-      this.particles = this.add.particles('icons');
+      this.particles = this.add.particles('particles');
       for(let i = 0 ; i < 2 ; i ++){
         this.emitters[i === 0 && 'red' || 'blue'] = this.particles.createEmitter({
-          frame : 'boom.png',
           lifespan : 1000,
           speed : { min: 300, max: 400},
           alpha : {start: 0.7, end: 0 },
@@ -122,6 +142,8 @@ export default class Game3PlayScene extends Phaser.Scene {
       //@ts-ignore
       this.scene.dragX = args[0].worldX;
       this.dragTimer = Date.now();
+      //@ts-ignore
+      this.scene.dragStartHandle.objX = this.scene.keySpritesArr[0].x;
     }
 
     private dragMoveHandle (...args) : void {
@@ -170,11 +192,11 @@ export default class Game3PlayScene extends Phaser.Scene {
     private switchBookAndUnitHandle (isLeft : boolean) : void{
       //切换数据操作
       this.tweens.add({
-        targets : [this.redSprite,this.redText,this.blueSprite,this.blueText],
+        targets : [this.redSprite,this.redText,this.blueSprite,this.blueText,...this.noteArr],
         alpha : 0,
         ease: 'Sine.easeInOut',
         duration : 500
-      })
+      });
       get(apiPath.getUnitDetail + '?'+ makeParams({
         bookId : this.bookMenu[this.currentBookIndex].bookId,
         unitId : this.bookMenu[this.currentBookIndex].unitId
@@ -198,6 +220,10 @@ export default class Game3PlayScene extends Phaser.Scene {
           //@ts-ignore
           item.destroy();
           if((++this.flag) >= (this.keySpritesArr.length + this.imgsArr.length + this.textsArr.length )){
+            this.arrowArr.map((r,i)=>{
+              r.destroy();
+            });
+            this.arrowArr.length = 0 ;
             this.switchBookAndUnitHandle(isLeft);
             this.keySpritesArr.length = 0;
             this.imgsArr.length = 0;
@@ -245,9 +271,9 @@ export default class Game3PlayScene extends Phaser.Scene {
     private dragEndHandle (...args) : void {
       //拖拽结束
       //@ts-ignore
-      let isLeft : boolean = this.scene.keySpritesArr[0].x < -92;
+      let isLeft : boolean = this.scene.keySpritesArr[0].x < this.scene.dragStartHandle.objX;
       //@ts-ignore
-      let childX : number = -92 - this.scene.keySpritesArr[0].x;
+      let childX : number = this.scene.dragStartHandle.objX - this.scene.keySpritesArr[0].x;
       if(Math.abs(childX) > 100 && Date.now() - this.dragTimer > 200){
         //@ts-ignore
         this.scene.animateAfterDragHandle.call(this.scene,isLeft,Math.abs(childX));
@@ -274,11 +300,17 @@ export default class Game3PlayScene extends Phaser.Scene {
         this.redText.alpha = 1;
         this.blueText.alpha = 0;
         this.blueSprite.alpha = 0;
+        this.noteArr.map((r,i)=>{
+          r.alpha = 1 ;
+        });
       }else{
         this.redSprite.alpha = 0;
         this.blueSprite.alpha = 1;
         this.redText.alpha = 0;
         this.blueText.alpha = 1;
+        this.noteArr.map((r,i)=>{
+          r.alpha = 1 ;
+        });
       }
       //@ts-ignore
       if(this.boom.lock) return;
@@ -286,7 +318,7 @@ export default class Game3PlayScene extends Phaser.Scene {
       this.boom.lock = true;
       //抖动效果
       this.tweens.add({
-        targets : key === 'red' && [this.redSprite , this.redText ] || [this.blueSprite,this.blueText],
+        targets : key === 'red' && [this.redText ] || [this.blueText],
         scaleX : 0.6,
         scaleY : 0.6,
         ease: 'Sine.easeInOut',
@@ -296,6 +328,26 @@ export default class Game3PlayScene extends Phaser.Scene {
           //@ts-ignore
           this.boom.lock = false;
         }
+      });
+      this.tweens.add({
+        targets : key === 'red' && [this.redSprite ] || [this.blueSprite],
+        displayWidth : this.redSprite.displayWidth * 0.6,
+        displayHeight : this.redSprite.displayHeight * 0.6,
+        ease: 'Sine.easeInOut',
+        duration: 100,
+        yoyo: true,
+        onComplete : ()=>{
+          //@ts-ignore
+          this.boom.lock = false;
+        }
+      });
+      this.tweens.add({
+        targets : this.noteArr,
+        displayWidth : '*=0.6',
+        displayHeight : '*=0.6',
+        ease: 'Sine.easeInOut',
+        duration: 100,
+        yoyo: true
       })
     }
 
@@ -307,22 +359,19 @@ export default class Game3PlayScene extends Phaser.Scene {
       //@ts-ignore
       if(Date.now() - this.timer < 200){
         //@ts-ignore
-        let index = this.getData('index');
-
-        //@ts-ignore
-        index < this.scene.middle ? this.anims.play('redAnims',false) : this.anims.play('blueAnims',false);
+        this.getData('vowelConsonant') === '元音' ? this.anims.play('redAnims',false) : this.anims.play('blueAnims',false);
 
         try{
           //@ts-ignore
-          this.scene.playMusic(this.scene.ccData[index].id);
+          this.scene.playMusic(this.getData('id'));
         }catch(e){
           console.log(e);
         }finally{
-           //@ts-ignore
-          index < this.scene.middle ? this.scene.setWords('red',this.scene.ccData[index].name) : this.scene.setWords('blue',this.scene.ccData[index].name);
+          //@ts-ignore
+          this.getData('vowelConsonant') === '元音' ? this.scene.setWords('red',this.getData('name')) : this.scene.setWords('blue',this.getData('name'));
 
           //@ts-ignore
-          index < this.scene.middle ? this.scene.boom('red') : this.scene.boom('blue');
+          this.getData('vowelConsonant') === '元音' ? this.scene.boom('red') : this.scene.boom('blue');
         }
         //@ts-ignore
         // if(this.scene.show.some((r,i)=> !r)){
@@ -345,7 +394,7 @@ export default class Game3PlayScene extends Phaser.Scene {
 
       this.anims.create({
         key : 'blueAnims',
-        frames : this.anims.generateFrameNumbers('keys',{start: 2 , end : 3}),
+        frames : this.anims.generateFrameNumbers('keys',{start: 0 , end : 1}),
         frameRate : 5,
         repeat : 0,
         yoyo : true
@@ -370,7 +419,6 @@ export default class Game3PlayScene extends Phaser.Scene {
           draggable : true
         }).setDisplaySize(110,219);
         //(isLeft && W || -W)  (isRenderCenter && -30 || -92)
-        this.keySpritesArr.push(sprite);
         this.leftSpriteX = sprite.x;
         if((!isRenderCenter &&  i >= 1) || (isRenderCenter && i >= arrCenterInx)){
           let y = isRenderCenter ? i - arrCenterInx : i - 1;
@@ -379,17 +427,21 @@ export default class Game3PlayScene extends Phaser.Scene {
               fontSize: "40px",
               fontFamily:"Arial Rounded MT Bold",
               font: 'bold 45px Arial Rounded MT',
-              fill : y < this.middle && '#D25F5F' || '#65A5EF',
+              fill : y < this.middle && '#F2592A' || '#00AE97',
               bold : true
-            }).setOrigin(0.5,0).setDepth(1000);
+            }).setOrigin(0.5,0).setDepth(1000).setAlpha(0);
             this.textsArr.push(text);
+            sprite.on('pointerdown',this.pointerDownHandle.bind(sprite));
+            sprite.on('pointerup',this.pointeUpHandle.bind(sprite));
+            sprite.setData('vowelConsonant',dataArr[y].vowelConsonant);
+            sprite.setData('name',dataArr[y].name);
+            sprite.setData('id',dataArr[y].id);
           }
         }
         sprite.on('dragstart',this.dragStartHandle.bind(sprite));
         sprite.on('drag',this.dragMoveHandle.bind(sprite));
         sprite.on('dragend',this.dragEndHandle.bind(sprite));
-        sprite.on('pointerdown',this.pointerDownHandle.bind(sprite));
-        sprite.on('pointerup',this.pointeUpHandle.bind(sprite));
+        this.keySpritesArr.push(sprite);
         if(
           (isRenderCenter && (i === 2 || i === 5 || i === 8)) ||
           (!isRenderCenter && (i === 2 || i ===6 || i === 9 ))
@@ -402,8 +454,8 @@ export default class Game3PlayScene extends Phaser.Scene {
         let img : Phaser.GameObjects.Image = this.add.image( sprite.x + 116.5,sprite.y - 11,'icons',`key${imgKey}.png`).setDepth(100).setOrigin(.5,0).setDisplaySize(67,119);
         this.imgsArr.push(img);
       }
-      isRenderCenter && this.add.image(35.5,480,'leftIcon').setDisplaySize(51,32);
-      isRenderCenter && this.add.image(W - 36.5,480,'rightIcon').setDisplaySize(51,32);
+      isRenderCenter && this.arrowArr.push(this.add.image(35.5,480,'leftIcon').setDisplaySize(51,32));
+      isRenderCenter && this.arrowArr.push(this.add.image(W - 36.5,480,'rightIcon').setDisplaySize(51,32));
     }
 
     // private drawBottomKeys(isLeft : boolean = false) : void{
@@ -457,7 +509,15 @@ export default class Game3PlayScene extends Phaser.Scene {
         targets : [...this.keySpritesArr,...this.imgsArr,...this.textsArr],
         x : `+=${isLeft && -initW || initW}`,
         ease: 'Sine.easeInOut',
-        duration: 500
+        duration: 800,
+        onComplete : ()=>{
+          this.tweens.add({
+            targets : this.textsArr,
+            alpha : 1,
+            ease: 'Sine.easeInOut',
+            duration: 500,
+          })
+        }
       })
     }
 

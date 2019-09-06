@@ -1,0 +1,62 @@
+{
+	"textures": [
+		{
+			"image": "imgsJson4.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 1055,
+				"h": 501
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "civa1.png",
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 526,
+						"h": 499
+					},
+					"rotated": false,
+					"trimmed": false,
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 526,
+						"h": 499
+					},
+					"sourceSize": {
+						"w": 526,
+						"h": 499
+					}
+				},
+				{
+					"filename": "civa2.png",
+					"frame": {
+						"x": 529,
+						"y": 1,
+						"w": 525,
+						"h": 499
+					},
+					"rotated": false,
+					"trimmed": false,
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 525,
+						"h": 499
+					},
+					"sourceSize": {
+						"w": 525,
+						"h": 499
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:adff094b7603fa2894b54faaca044223:433a1502e710b77961e549b6462d28db:af878b0f1d3d0d0112a7db1a7014d9b4$"
+	}
+}
