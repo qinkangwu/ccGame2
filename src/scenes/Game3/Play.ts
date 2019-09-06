@@ -69,20 +69,21 @@ export default class Game3PlayScene extends Phaser.Scene {
         duration : 600,
         onComplete : ()=>{
           this.animsLayoutHandle(true);//开起布局
-          this.tweens.add({
-            targets : this.fiveLinesArr,
-            ease: 'Sine.easeInOut',
-            x : `-=${W}`,
-            duration : 800
-          })
         }
       })  
+      this.tweens.add({
+        targets : this.fiveLinesArr,
+        ease: 'Sine.easeInOut',
+        alpha : 1,
+        delay : 800,
+        duration : 800
+      })
     }
 
     private drawTopBg () : void {
       //顶部五线谱
       this.bgObj = this.add.image(0,0,'pianoTopBg').setOrigin(0).setDisplaySize(W,0);
-      this.fiveLinesArr.push(this.add.image(0 + W,32,'fiveLines').setOrigin(0).setDisplaySize(W,223));
+      this.fiveLinesArr.push(this.add.image(0 ,32,'fiveLines').setOrigin(0).setDisplaySize(W,223).setAlpha(0));
       this.noteArr.push(this.add.image(82,66.5,'game3Icons3','note1.png').setOrigin(.5).setDisplaySize(100,65).setAlpha(0));
       this.noteArr.push(this.add.image(250,171,'game3Icons3','note2.png').setOrigin(.5).setDisplaySize(128,96).setAlpha(0));
       this.noteArr.push(this.add.image(767,120.5,'game3Icons3','note3.png').setOrigin(.5).setDisplaySize(81,99).setAlpha(0));
@@ -99,7 +100,7 @@ export default class Game3PlayScene extends Phaser.Scene {
         fontFamily:"Arial Rounded MT Bold",
         fill : '#fff'
       }).setAlpha(0).setOrigin(0.5).setDepth(1);
-      this.fiveLinesArr.push(this.add.image(0 + W,0,'game3Mask').setOrigin(0).setDisplaySize(W,297));
+      this.fiveLinesArr.push(this.add.image(0,0,'game3Mask').setOrigin(0).setDisplaySize(W,297).setAlpha(0));
     }
 
   
@@ -192,7 +193,7 @@ export default class Game3PlayScene extends Phaser.Scene {
     private switchBookAndUnitHandle (isLeft : boolean) : void{
       //切换数据操作
       this.tweens.add({
-        targets : [this.redSprite,this.redText,this.blueSprite,this.blueText,...this.noteArr],
+        targets : [this.redSprite,this.redText,this.blueSprite,this.blueText],
         alpha : 0,
         ease: 'Sine.easeInOut',
         duration : 500
@@ -341,14 +342,15 @@ export default class Game3PlayScene extends Phaser.Scene {
           this.boom.lock = false;
         }
       });
-      this.tweens.add({
+      //@ts-ignore
+      !this.boom.noteAnims && (this.boom.noteAnims = this.tweens.add({
         targets : this.noteArr,
-        displayWidth : '*=0.6',
-        displayHeight : '*=0.6',
         ease: 'Sine.easeInOut',
-        duration: 100,
-        yoyo: true
-      })
+        y : '+=13',
+        duration: 1000,
+        yoyo: true,
+        repeat : -1
+      }))
     }
 
     private pointerDownHandle (...args) : void{
@@ -423,10 +425,9 @@ export default class Game3PlayScene extends Phaser.Scene {
         if((!isRenderCenter &&  i >= 1) || (isRenderCenter && i >= arrCenterInx)){
           let y = isRenderCenter ? i - arrCenterInx : i - 1;
           if(y < dataArr.length){
-            let text : Phaser.GameObjects.Text = this.add.text(sprite.x + 55,sprite.y + 130 ,dataArr[y].name,{
-              fontSize: "40px",
+            let text : Phaser.GameObjects.Text = this.add.text(sprite.x + 55,sprite.y + 150 ,dataArr[y].name,{
+              fontSize: "36px",
               fontFamily:"Arial Rounded MT Bold",
-              font: 'bold 45px Arial Rounded MT',
               fill : y < this.middle && '#F2592A' || '#00AE97',
               bold : true
             }).setOrigin(0.5,0).setDepth(1000).setAlpha(0);
