@@ -34,7 +34,7 @@ const initHandle = (arr : object[]) : void=>{
     render:{
       antialias:true
     },
-    // resolution:2,
+    //resolution:2,
     //transparent : true,
     scene: sceneArr
   };

@@ -1,39 +1,18 @@
 import 'phaser';
-import { Game9DataItem } from '../../interface/Game9';
+import { Game9DataItem,Game9PhoneticSymbol } from '../../interface/Game9';
 import { cover, rotateTips } from '../../Public/jonny/core';
 import { Button, ButtonContainer, ButtonMusic, ButtonExit } from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
+import { CivaMen } from '../../Public/jonny/game9';
 
 const vol = 0.3; //背景音乐的音量
 var index: number; //题目的指针，默认为0
-
-//机器人
-class CivaMen extends Phaser.GameObjects.Image{
-  public dx:number;
-  public dy:number;
-  constructor(scene:Phaser.Scene,x: number, y: number, texture: string,dx:number,dy:number){
-    super(scene,x,y,texture);
-    this.dx = dx;
-    this.dy = dy;
-    this.init();
-  }
-
-  private init(){
-    this.setOrigin(0.5,0);   //注册点设置为脚板底
-  }
-
-  public jumpIn():void{
-    /**
-     * work init
-     */
-  }
-}
-
 
 export default class Game9PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
 
   private ccData: Array<Game9DataItem> = [];
+  private cookiesPool:Array<Game9PhoneticSymbol> = [];
 
   //静态开始
   private stage: Phaser.GameObjects.Container; // 舞台
@@ -54,7 +33,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
   private cookies: Phaser.GameObjects.Container[] = []; //饼干包含文字
   private nullCookies: Phaser.GameObjects.Image[] = []; //空饼干
-  private civaMen:CivaMen; //机器人 
+  private civaMen: CivaMen; //机器人 
   //动态开始
 
   //层次
@@ -72,7 +51,11 @@ export default class Game9PlayScene extends Phaser.Scene {
 
   init(res: { data: any[], index: number }) {
     index = res.index;
+    //index = 2; //test
     this.ccData = res.data;
+    this.cookiesPool = this.ccData[index].phoneticSymbols.concat(this.ccData[index].uselessPhoneticSymbols);
+    this.cookiesPool.sort(() => Math.random() - 0.5).sort(() => Math.random() - 0.5);//两次乱序
+    this.planAnims = new PlanAnims(this, this.ccData.length);
     console.log(this.ccData);
   }
 
@@ -81,17 +64,17 @@ export default class Game9PlayScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.createStage();
+    this.createActors();
     if (index === 0) {
       this.scene.pause();
       rotateTips.init();
       cover(this, "cover", () => {
-        this.planAnims.show(index + 1)
+        this.planAnims.show(index + 1,this.gameStart)
       });
     } else {
-      this.planAnims.show(index + 1);
+      this.planAnims.show(index + 1,this.gameStart);
     }
-    this.createStage();
-    this.createActors();
   }
 
   update(time: number, delta: number): void {
@@ -134,7 +117,6 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.correctSound = this.sound.add('correct');
     this.wrongSound = this.sound.add('wrong');
 
-    this.planAnims = new PlanAnims(this, this.ccData.length);
   }
 
   /**
@@ -149,9 +131,8 @@ export default class Game9PlayScene extends Phaser.Scene {
     //this.phonetic = new Audio();
 
     //饼干－－－－
-    let cookiesPool = this.ccData[index].phoneticSymbols.concat(this.ccData[index].uselessPhoneticSymbols);
-    cookiesPool.sort(() => Math.random() - 0.5).sort(() => Math.random() - 0.5);//两次乱序
-    cookiesPool.forEach((v, i) => {
+  
+    this.cookiesPool.forEach((v, i) => {
       let _ix = i;
       _ix = _ix % 4;
       let _iy = Math.floor(i / 4);
@@ -189,9 +170,6 @@ export default class Game9PlayScene extends Phaser.Scene {
     let cookies = this.cookies;
     phoneticSymbols.forEach((v, i, arr) => {
       switch (arr.length) {
-        case 1:
-          offsetX = (cookies[i].x + cookies[i + 3].x) >> 1;
-          break;
         case 2:
           offsetX = (cookies[i * 2].x + cookies[i * 2 + 1].x) >> 1;
           break;
@@ -212,17 +190,23 @@ export default class Game9PlayScene extends Phaser.Scene {
       (<Phaser.Physics.Arcade.Body>_nullCookieImg.body).setSize(_nullCookieImg.width * 0.2, _nullCookieImg.height * 0.2);
     });
 
-    if (index === 0) {
-      setTimeout(this.gameStart.bind(this, cookiesPool), 3500);
-    } else {
-      this.gameStart(cookiesPool);
-    }
+    // if (index === 0) {
+    //   setTimeout(this.gameStart.bind(this, cookiesPool), 3500);
+    // } else {
+    //   this.gameStart(cookiesPool);
+    // }
+
+
+    //创建 civa
+
+    this.civaMen = new CivaMen(this, -136.05, 428.1, "civa");
+    this.layer3.add(this.civaMen);
   }
 
   /**
    * 游戏开始
    */
-  private gameStart(cookiesPool): void {
+  private gameStart(): void {
     var nullCookieAni = () => {
       this.nullCookies.forEach((nullcookie, i) => {
         this.tweens.add({
@@ -230,7 +214,7 @@ export default class Game9PlayScene extends Phaser.Scene {
           alpha: 1,
           delay: 500 * i,
           duration: 500,
-          OnComplete:()=>{
+          OnComplete: () => {
             this.dragEvent();
           }
         })
@@ -252,8 +236,9 @@ export default class Game9PlayScene extends Phaser.Scene {
           if (cookieIndex === 2) {
             that.wordSpeaker.play();
           }
-          if (cookieIndex > cookiesPool.length - 1) {
-            nullCookieAni(); 
+          if (cookieIndex > that.cookiesPool.length - 1) {
+            nullCookieAni();
+            that.civaMen.startJumpIn(1, [140]);
             return false;
           } else {
             bounceAni();
@@ -339,7 +324,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     let collider_1 = that.physics.add.overlap(that.cookies, that.nullCookies, overlapHandler_1, null, this);
 
     function overlapHandler_1(...args) {
-      let hits:number=0;
+      let hits: number = 0;
 
       args[0].setData("hit", 1);
       args[0].setPosition(args[1].x, args[1].y);
@@ -364,26 +349,42 @@ export default class Game9PlayScene extends Phaser.Scene {
         }, 1000);
       }
       args[1].setData("cookie", args[0]);
-      args[1].setData("collision",1);
+      args[1].setData("collision", 1);
       that.playPhonetic(args[0].name);
-      that.nullCookies.forEach((nullCookie,i)=>{
+      that.nullCookies.forEach((nullCookie, i) => {
         let result = nullCookie.getData("collision");
-        if(result!==undefined){
-          hits+=result; 
-        } 
-        if(hits===that.nullCookies.length){
-            dragEnd(); 
+        if (result !== undefined) {
+          hits += result;
+        }
+        if (hits === that.nullCookies.length) {
+          dragEnd();
         }
       })
     }
 
     function dragEnd() {
       console.log("拖拽结束");
+      civaJump();
       that.cookies.forEach(v => {
         v.off("dragstart");
         v.off("drag");
         v.off("dragend");
       })
+    }
+
+    function civaJump() {
+      switch (that.nullCookies.length) {
+        case 2:
+          that.civaMen.startJumpIn(3,[365,680,928]);
+          break;
+        case 3:
+          that.civaMen.startJumpIn(4,[365,528,680,928]);
+          break;
+        case 4:
+          that.civaMen.startJumpIn(5,[288,446,600,762,928]);
+          break;
+      }
+
     }
 
 
