@@ -344,13 +344,22 @@ export default class Game3PlayScene extends Phaser.Scene {
       });
       //@ts-ignore
       !this.boom.noteAnims && (this.boom.noteAnims = this.tweens.add({
-        targets : this.noteArr,
+        targets : [this.noteArr[0],this.noteArr[2]],
+        ease: 'Sine.easeInOut',
+        y : '-=13',
+        duration: 1000,
+        yoyo: true,
+        repeat : -1
+      }));
+      //@ts-ignore
+      !this.boom.noteAnims2 && (this.boom.noteAnims2 = this.tweens.add({
+        targets : [this.noteArr[1],this.noteArr[3]],
         ease: 'Sine.easeInOut',
         y : '+=13',
         duration: 1000,
         yoyo: true,
         repeat : -1
-      }))
+      }));
     }
 
     private pointerDownHandle (...args) : void{
