@@ -102,6 +102,7 @@ export class ButtonContainer extends Phaser.GameObjects.Container {
     public minAlpha: number;
     public interactive: boolean;
     public shape:any;
+    private overAni:boolean = true;
 
     constructor(scene: Phaser.Scene,shape:any,callback:Phaser.Types.Input.HitAreaCallback) {
         super(scene);
@@ -169,7 +170,11 @@ export class ButtonContainer extends Phaser.GameObjects.Container {
             return false;
         }
         StaticAni.alphaScaleFuc(this, 1, 1, 1);
-        TweenAni.alphaScaleYoyoFunc(this.scene, this, 1.2, 1.2, 1);
+        if(this.overAni){
+            TweenAni.alphaScaleYoyoFunc(this.scene, this, 1.2, 1.2, 1);
+            this.overAni = false;
+        }
+       
         if (this.pointeroutFunc !== undefined) {
             this.pointeroverFunc();
         }
