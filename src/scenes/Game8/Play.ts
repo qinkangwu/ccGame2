@@ -2,6 +2,7 @@ import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import CreateBtnClass from '../../Public/CreateBtnClass';
 import CreateMask from '../../Public/CreateMask';
+import PlanAnims from "../../Public/PlanAnims";
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 
 const W = 1024;
@@ -20,6 +21,7 @@ export default class Game8PlayScene extends Phaser.Scene {
     private choosePopArr : Phaser.GameObjects.Image[] = []; //选择的气泡
     private chooseTextArr : Phaser.GameObjects.Text[] = []; //选择的文本
     private previewLock : boolean = false; //恢复锁
+    private planAnims : PlanAnims; //飞机过长动画引用
     private tips : TipsParticlesEmitter; //tip组件
     constructor() {
       super({
@@ -32,14 +34,18 @@ export default class Game8PlayScene extends Phaser.Scene {
   
     preload(): void {
       TipsParticlesEmitter.loadImg(this);
+      PlanAnims.loadImg(this);
     }
     
   
     create(): void {
       new CreateMask(this,()=>{
-        this.baitAnims(); //注册动画
-        this.popShowAnims(); //中间气泡展示动画
-        this.initEmitterHandle(); //初始化事件
+        this.planAnims = new PlanAnims(this,13);
+        this.planAnims.show(1,()=>{
+          this.baitAnims(); //注册动画
+          this.popShowAnims(); //中间气泡展示动画
+          this.initEmitterHandle(); //初始化事件
+        })
       }); //遮罩层
       this.createBgi(); //创建背景
       this.createBgm(); //创建背景音乐
