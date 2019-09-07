@@ -359,7 +359,6 @@ export default class Game9PlayScene extends Phaser.Scene {
 
       args[1].cookie = args[0];
       args[1].collision = 1;
-      that.playPhonetic(args[0].name);
 
       that.nullCookies.forEach((nullCookie, i) => {
         let result = nullCookie.collision;
