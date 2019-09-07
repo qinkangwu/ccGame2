@@ -246,11 +246,9 @@ export default class Game9PlayScene extends Phaser.Scene {
         ease: "Bounce.easeOut",
         onComplete: function () {
           cookieIndex += 1;
-          if (cookieIndex === 2) {
-            that.wordSpeaker.play();
-          }
           if (cookieIndex > that.cookiesPool.length - 1) {
             nullCookieAni();
+            that.wordSpeaker.play();
             taraginListenAni.play();
             that.civaMen.startJumpIn(1, [140]);
             return false;
