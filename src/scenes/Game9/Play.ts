@@ -4,7 +4,7 @@ import { cover, rotateTips } from '../../Public/jonny/core';
 import { Button, ButtonContainer, ButtonMusic, ButtonExit } from '../../Public/jonny/components';
 import { EASE } from '../../Public/jonny/Animate';
 import PlanAnims from '../../Public/PlanAnims';
-import { CivaMen, Cookie ,NullCookie} from '../../Public/jonny/game9';
+import { CivaMen, Cookie, NullCookie } from '../../Public/jonny/game9';
 
 const vol = 0.3; //背景音乐的音量
 var index: number; //题目的指针，默认为0
@@ -100,7 +100,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.tryAginListenBtn = new Button(this, 89, 435 + 50, "try-agin-btn").setAlpha(1);
     this.tryAginListenBtn.minAlpha = 1;
     this.tryAginListenBtn.setOrigin(0, 1);
-    this.tryAginListenBtn.setScale(0).setRotation((Math.PI/180)*-30);
+    this.tryAginListenBtn.setScale(0).setRotation((Math.PI / 180) * -30);
     this.layer0.add(bg);
     this.layer4.add([this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
     this.originalSoundBtn.on("pointerdown", this.playWord.bind(that));
@@ -213,53 +213,112 @@ export default class Game9PlayScene extends Phaser.Scene {
     }
 
     var taraginListenAni = this.tweens.timeline(<Phaser.Types.Tweens.TimelineBuilderConfig>{
-        targets:this.tryAginListenBtn,
-        paused:true,
-        tweens:[
-          {
-            scale:1,
-            rotation:0,
-            duration:500,
-            ease:EASE.spring
-          },
-          {
-            rotation:Phaser.Math.DegToRad(-30),
-            yoyo:true,
-            repeat:3,
-            duration:500,
-            repeatDelay:300,
-            ease:EASE.spring
-          }
-        ]
-      });
+      targets: this.tryAginListenBtn,
+      paused: true,
+      tweens: [
+        {
+          scale: 1,
+          rotation: 0,
+          duration: 500,
+          ease: EASE.spring
+        },
+        {
+          rotation: Phaser.Math.DegToRad(-30),
+          yoyo: true,
+          repeat: 3,
+          duration: 500,
+          repeatDelay: 300,
+          ease: EASE.spring
+        }
+      ]
+    });
 
+    let cookiesAni = () => {
+      let duration = 1000;
+      let ease = 'Sine.easeOut';
 
-
-    let cookieIndex = 0;
-    let bounceAni = () => {
-      let that = this;
-      this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-        targets: this.cookies[cookieIndex],
-        duration: 300,
+      this.add.tween(<Phaser.Types.Tweens.TimelineBuilderConfig>{
+        targets: this.cookies[0],
         alpha: 1,
-        y: this.cookies[cookieIndex].initPosition.y,
-        ease: "Bounce.easeOut",
-        onComplete: function () {
-          cookieIndex += 1;
-          if (cookieIndex > that.cookiesPool.length - 1) {
-            nullCookieAni();
-            that.wordSpeaker.play();
-            taraginListenAni.play();
-            that.civaMen.startJumpIn(1, [140]);
-            return false;
-          } else {
-            bounceAni();
-          }
+        y: this.cookies[0].initPosition.y,
+        delay:0,
+        duration:duration,
+        ease:ease
+      })
+
+      this.add.tween(<Phaser.Types.Tweens.TimelineBuilderConfig>{
+        targets: this.cookies[1],
+        alpha: 1,
+        y: this.cookies[1].initPosition.y,
+        delay:300,
+        duration:duration,
+        ease:ease
+      })
+
+      this.add.tween(<Phaser.Types.Tweens.TimelineBuilderConfig>{
+        targets: this.cookies[4],
+        alpha: 1,
+        y: this.cookies[4].initPosition.y,
+        delay:300,
+        duration:duration,
+        ease:ease
+      })
+
+      this.add.tween(<Phaser.Types.Tweens.TimelineBuilderConfig>{
+        targets: this.cookies[2],
+        alpha: 1,
+        y: this.cookies[2].initPosition.y,
+        delay:600,
+        duration:duration,
+        ease:ease
+      })
+
+      this.add.tween(<Phaser.Types.Tweens.TimelineBuilderConfig>{
+        targets: this.cookies[5],
+        alpha: 1,
+        y: this.cookies[5].initPosition.y,
+        delay:600,
+        duration:duration,
+        ease:ease
+      })
+
+      this.add.tween(<Phaser.Types.Tweens.TimelineBuilderConfig>{
+        targets: this.cookies[3],
+        alpha: 1,
+        y: this.cookies[3].initPosition.y,
+        delay:900,
+        duration:duration,
+        ease:ease
+      })
+
+      this.add.tween(<Phaser.Types.Tweens.TimelineBuilderConfig>{
+        targets: this.cookies[6],
+        alpha: 1,
+        y: this.cookies[6].initPosition.y,
+        delay:900,
+        duration:duration,
+        ease:ease
+      })
+
+      this.add.tween(<Phaser.Types.Tweens.TimelineBuilderConfig>{
+        targets: this.cookies[7],
+        alpha: 1,
+        y: this.cookies[7].initPosition.y,
+        delay:1200,
+        duration:duration,
+        ease:ease,
+        onComplete:()=>{
+          nullCookieAni();
+                  this.wordSpeaker.play();
+                  taraginListenAni.play();
+                  this.civaMen.startJumpIn(1, [140]);
+                  return false;
         }
       })
-    };
 
-    bounceAni();
+    }
+
+    cookiesAni();
 
   }
 
@@ -329,14 +388,14 @@ export default class Game9PlayScene extends Phaser.Scene {
           this.initPosition.x,
           this.initPosition.y
         );
-        if(this.hit === 0.5){
+        if (this.hit === 0.5) {
           console.log("exe");
-          that.physics.world.enable(this); 
+          that.physics.world.enable(this);
           this.hit = 0;
           //this.nullCookie.setData("collision", 0);
           this.nullCookie.collision = 0;
-           that.layer1.remove(this);
-           that.layer2.add(this);
+          that.layer1.remove(this);
+          that.layer2.add(this);
         }
       }
     }
@@ -354,7 +413,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       args[0].interactive = false;
       args[0].nullCookie = args[1];
       that.physics.world.disable(args[0]);
-      
+
 
       setTimeout(() => {
         args[0].interactive = true;
@@ -366,7 +425,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       let collideCookie = args[1].cookie;
       if (collideCookie !== undefined && collideCookie.hit === 0.5) {
         collideCookie.hit = 0;
-        if(args[0].name !== collideCookie.name){
+        if (args[0].name !== collideCookie.name) {
           (collideCookie as Phaser.GameObjects.Container).setPosition(
             collideCookie.initPosition.x,
             collideCookie.initPosition.y
