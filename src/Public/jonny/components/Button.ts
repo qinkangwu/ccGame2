@@ -20,6 +20,7 @@ export class Button extends Phaser.GameObjects.Sprite {
     public pointerupFunc: Function;
     public minAlpha: number;
     public interactive: boolean;
+    private overAni:boolean = true;
 
     constructor(scene: Phaser.Scene, x: number = 0, y: number = 0, texture: string, shape?: any, callback?: Phaser.Types.Input.HitAreaCallback) {
         super(scene, x, y, texture);
@@ -87,7 +88,10 @@ export class Button extends Phaser.GameObjects.Sprite {
             return false;
         }
         StaticAni.alphaScaleFuc(this, 1, 1, 1);
-        TweenAni.alphaScaleYoyoFunc(this.scene, this, 1.2, 1.2, 1);
+        if(this.overAni){
+            TweenAni.alphaScaleYoyoFunc(this.scene, this, 1.2, 1.2, 1);
+            this.overAni = false;
+        }
         if (this.pointeroutFunc !== undefined) {
             this.pointeroverFunc();
         }

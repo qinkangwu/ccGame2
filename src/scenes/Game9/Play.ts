@@ -95,7 +95,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     let bg = this.add.image(0, 0, "bg").setOrigin(0);
     this.btnExit = new ButtonExit(this);
     this.btnSound = new ButtonMusic(this);
-    this.originalSoundBtn = new Button(this, 25 + 60 * 0.5, 467 + 60 * 0.5, "originalSoundBtn");
+    this.originalSoundBtn = new Button(this, 25 + 60 * 0.5, 467 + 60 * 0.5, "originalSoundBtn").setAlpha(1);
     this.tryAginListenBtn = new Button(this, 89, 435 + 50, "try-agin-btn");
     this.tryAginListenBtn.setOrigin(0, 1);
     this.layer0.add(bg);
