@@ -300,11 +300,19 @@ export default class Game9PlayScene extends Phaser.Scene {
         return false;
       }
       that.clickSound.play();
-      if (this.hit === 0) {
+      if (this.hit === 0 || this.hit === 0.5) {
         this.setPosition(
           this.initPosition.x,
           this.initPosition.y
         );
+        if(this.hit === 0.5){
+          console.log("exe");
+          that.physics.world.enable(this); 
+          this.hit = 0;
+          this.nullCookie.setData("collision", 0);
+           that.layer1.remove(this);
+           that.layer2.add(this);
+        }
       }
     }
 
@@ -319,34 +327,44 @@ export default class Game9PlayScene extends Phaser.Scene {
       that.layer2.remove(args[0]);
       that.layer1.add(args[0]);
       args[0].interactive = false;
-
-      // setTimeout(() => {
-      //   args[0].interactive = true;
-      // }, 1000);
-
+      args[0].nullCookie = args[1];
       that.physics.world.disable(args[0]);
+      
+
+      setTimeout(() => {
+        args[0].interactive = true;
+        args[0].hit = 0.5;
+        //that.physics.world.enable(args[0]);
+      }, 1000);
+
 
       let collideCookie = args[1].getData("cookie");
-      if (collideCookie !== undefined && collideCookie.hit === 1) {
+      if (collideCookie !== undefined && collideCookie.hit === 0.5) {
         collideCookie.hit = 0;
-        (collideCookie as Phaser.GameObjects.Container).setPosition(
-          collideCookie.initPosition.x,
-          collideCookie.initPosition.y
-        )
-        collideCookie.interactive = true;
-        setTimeout(() => {
-          that.layer2.add(collideCookie);
-          that.layer1.remove(collideCookie);
-          that.physics.world.enable(collideCookie);
-        }, 1000);
+        if(args[0].name !== collideCookie.name){
+          (collideCookie as Phaser.GameObjects.Container).setPosition(
+            collideCookie.initPosition.x,
+            collideCookie.initPosition.y
+          )
+          collideCookie.interactive = true;
+          setTimeout(() => {
+            that.layer2.add(collideCookie);
+            that.layer1.remove(collideCookie);
+            that.physics.world.enable(collideCookie);
+            console.log(that.layer1.list);
+          }, 1000);
+        }
       }
+
       args[1].setData("cookie", args[0]);
       args[1].setData("collision", 1);
       that.playPhonetic(args[0].name);
+
       that.nullCookies.forEach((nullCookie, i) => {
         let result = nullCookie.getData("collision");
         if (result !== undefined) {
           hits += result;
+          console.log(hits);
         }
         if (hits === that.nullCookies.length) {
           dragEnd();

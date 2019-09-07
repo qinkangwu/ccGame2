@@ -11,6 +11,7 @@ export class Cookie extends ButtonContainer{
     }
 
     public hit:number;
+    public nullCookie:Phaser.GameObjects.Image;
 
     constructor(scene:Phaser.Scene,shape:any,callback: Phaser.Types.Input.HitAreaCallback,text:string){
         super(scene,shape,callback);
