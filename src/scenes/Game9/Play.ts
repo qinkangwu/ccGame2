@@ -3,7 +3,7 @@ import { Game9DataItem, Game9PhoneticSymbol } from '../../interface/Game9';
 import { cover, rotateTips } from '../../Public/jonny/core';
 import { Button, ButtonContainer, ButtonMusic, ButtonExit } from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
-import { CivaMen, Cookie } from '../../Public/jonny/game9';
+import { CivaMen, Cookie ,NullCookie} from '../../Public/jonny/game9';
 
 const vol = 0.3; //背景音乐的音量
 var index: number; //题目的指针，默认为0
@@ -32,7 +32,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   //动态开始
   private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
   private cookies: Cookie[] = []; //饼干包含文字
-  private nullCookies: Phaser.GameObjects.Image[] = []; //空饼干
+  private nullCookies: NullCookie[] = []; //空饼干
   private civaMen: CivaMen; //机器人 
   //动态开始
 
@@ -176,7 +176,7 @@ export default class Game9PlayScene extends Phaser.Scene {
           offsetX = cookies[i].x;
           break;
       }
-      let _nullCookieImg = new Phaser.GameObjects.Image(this, offsetX, 472, "null-cookie");
+      let _nullCookieImg = new NullCookie(this, offsetX, 472, "null-cookie");
       _nullCookieImg.setDepth(1);
       _nullCookieImg.name = v.name;
       _nullCookieImg.setAlpha(0);
@@ -309,7 +309,8 @@ export default class Game9PlayScene extends Phaser.Scene {
           console.log("exe");
           that.physics.world.enable(this); 
           this.hit = 0;
-          this.nullCookie.setData("collision", 0);
+          //this.nullCookie.setData("collision", 0);
+          this.nullCookie.collision = 0;
            that.layer1.remove(this);
            that.layer2.add(this);
         }
@@ -338,7 +339,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       }, 1000);
 
 
-      let collideCookie = args[1].getData("cookie");
+      let collideCookie = args[1].cookie;
       if (collideCookie !== undefined && collideCookie.hit === 0.5) {
         collideCookie.hit = 0;
         if(args[0].name !== collideCookie.name){
@@ -356,12 +357,12 @@ export default class Game9PlayScene extends Phaser.Scene {
         }
       }
 
-      args[1].setData("cookie", args[0]);
-      args[1].setData("collision", 1);
+      args[1].cookie = args[0];
+      args[1].collision = 1;
       that.playPhonetic(args[0].name);
 
       that.nullCookies.forEach((nullCookie, i) => {
-        let result = nullCookie.getData("collision");
+        let result = nullCookie.collision;
         if (result !== undefined) {
           hits += result;
           console.log(hits);

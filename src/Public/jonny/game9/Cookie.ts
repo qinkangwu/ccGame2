@@ -1,4 +1,5 @@
 import { ButtonContainer} from "../components";
+import { NullCookie } from "./index";
 import "phaser";
 
 export class Cookie extends ButtonContainer{
@@ -11,7 +12,7 @@ export class Cookie extends ButtonContainer{
     }
 
     public hit:number;
-    public nullCookie:Phaser.GameObjects.Image;
+    public nullCookie:NullCookie;
 
     constructor(scene:Phaser.Scene,shape:any,callback: Phaser.Types.Input.HitAreaCallback,text:string){
         super(scene,shape,callback);
