@@ -519,7 +519,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.civaMen.round.result = 0;
     if(this.civaMen.round.times===1){
       this.tryAgin();
-    }else if(this.civaMen.round.times===2){
+    }else if(this.civaMen.round.times>=2){
       this.ohNo();
     }
   }
@@ -535,33 +535,34 @@ export default class Game9PlayScene extends Phaser.Scene {
    * 重置开始状态
    */
   private resetStart(){
-    // this.scene.start('Game9PlayScene', {
-    //   data: this.ccData,
-    //   index: 2
-    // });
-    // this.nullCookies.forEach(nullCookie=>{
-    //   nullCookie.collision = 0;
-    //   let cookie = nullCookie.cookie;
-    //   cookie.setPosition(
-    //     nullCookie.cookie.initPosition.x,
-    //     nullCookie.cookie.initPosition.y
-    //   )
-    //   cookie.on("dragstart",DrogEvent.cookieOnDragStart);
-    //   cookie.on("drag",DrogEvent.cookieOnDrag);
-    //   cookie.on("dragend",DrogEvent.cookieOnDragEnd);
-    //   cookie.hit = 0;
-    //   cookie.interactive = true;
-    //   this.physics.world.enable(cookie);
-    //   cookie.nullCookie = null;
-    //   nullCookie.cookie = null
-    // })
+    this.nullCookies.forEach(nullCookie=>{
+      nullCookie.collision = 0;
+      nullCookie.cookie = null
+    })
+
+    this.cookies.forEach(cookie=>{
+      this.physics.world.enable(cookie);
+      cookie.setPosition(
+        cookie.initPosition.x,
+        cookie.initPosition.y
+      )
+      cookie.on("dragstart",DrogEvent.cookieOnDragStart);
+      cookie.on("drag",DrogEvent.cookieOnDrag);
+      cookie.on("dragend",DrogEvent.cookieOnDragEnd);
+      cookie.hit = 0;
+      cookie.interactive = true;
+      cookie.nullCookie = null;
+    });
   }
 
   /**
    * 再次错误
    */
   private ohNo(){
-
+    this.tipsParticlesEmitter.error(
+      this.nextRound,
+      this.resetStart
+    )
   }
 
   /**
