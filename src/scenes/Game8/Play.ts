@@ -4,11 +4,13 @@ import CreateBtnClass from '../../Public/CreateBtnClass';
 import CreateMask from '../../Public/CreateMask';
 import PlanAnims from "../../Public/PlanAnims";
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
+import { item } from "../../interface/Game8";
 
 const W = 1024;
 const H = 552;
 
 export default class Game8PlayScene extends Phaser.Scene {
+    private ccData : item[] = []; //数据
     private bgm : Phaser.Sound.BaseSound ; //背景音乐
     private createBtnClass : CreateBtnClass ; //按钮组件返回
     private bait : Phaser.GameObjects.Sprite; //鱼饵
@@ -23,6 +25,8 @@ export default class Game8PlayScene extends Phaser.Scene {
     private previewLock : boolean = false; //恢复锁
     private planAnims : PlanAnims; //飞机过长动画引用
     private tips : TipsParticlesEmitter; //tip组件
+    private currentIndex : number = 0 ; //当前数据索引
+    private smallFishNum : number = 0 ; 
     constructor() {
       super({
         key: "Game8PlayScene"
@@ -30,6 +34,7 @@ export default class Game8PlayScene extends Phaser.Scene {
     }
   
     init(data): void {
+      data && data.data && (this.ccData = data.data);
     }
   
     preload(): void {
@@ -40,8 +45,8 @@ export default class Game8PlayScene extends Phaser.Scene {
   
     create(): void {
       new CreateMask(this,()=>{
-        this.planAnims = new PlanAnims(this,13);
-        this.planAnims.show(1,()=>{
+        this.planAnims = new PlanAnims(this,this.ccData.length);
+        this.planAnims.show(this.currentIndex + 1,()=>{
           this.baitAnims(); //注册动画
           this.popShowAnims(); //中间气泡展示动画
           this.initEmitterHandle(); //初始化事件
@@ -49,8 +54,11 @@ export default class Game8PlayScene extends Phaser.Scene {
       }); //遮罩层
       this.createBgi(); //创建背景
       this.createBgm(); //创建背景音乐
+      this.loadMusic(this.ccData);
       this.createBtnClass = new CreateBtnClass(this,{
-        playBtnCallback : ()=>{},
+        playBtnCallback : ()=>{
+          this.playMusic(this.ccData[this.currentIndex].id);
+        },
         bgm : this.bgm,
         previewCallback : this.previewHandle.bind(this),
         previewPosition : {},
@@ -67,8 +75,21 @@ export default class Game8PlayScene extends Phaser.Scene {
       this.tips = new TipsParticlesEmitter(this); //tip组件
     }
 
+    private playMusic (sourceKey : string) : void {
+      //播放音频
+      let mp3 : Phaser.Sound.BaseSound = this.sound.add(sourceKey);
+      mp3.play();
+    }
+
+    private nextWordHandle() : void { 
+      this.currentIndex = this.currentIndex + 1 > this.ccData.length - 1 ? 0 : this.currentIndex + 1 ;
+      this.planAnims.show(this.currentIndex + 1,()=>{
+        this.previewHandle();
+      })
+    }
+
     private renderLeftUI() : void {
-      for(let i = 0 ; i < 4; i ++ ){
+      for(let i = 0 ; i < this.ccData[this.currentIndex].phoneticSymbols.length; i ++ ){
         this.leftPopArr.push(
           this.add.image(55,H - 145 - ((i) * 65),'game8Icons2',`smallPop${i + 1}.png`)
             .setOrigin(.5)
@@ -76,10 +97,24 @@ export default class Game8PlayScene extends Phaser.Scene {
         )
       }
       this.smallFishMenu = this.add.image(55.5,143.5,'game8Icons2','smf.png').setOrigin(.5);
-      this.smallFishText = this.add.text(this.smallFishMenu.x + 9,this.smallFishMenu.y + 19,'1/3',{
+      this.smallFishText = this.add.text(this.smallFishMenu.x + 9,this.smallFishMenu.y + 19,`0/${this.ccData[this.currentIndex].phoneticSymbols.length}`,{
         font: 'Bold 16px Arial Rounded MT',
         fill : '#ffffff',
       }).setOrigin(.5);
+    }
+
+    private loadMusic (data : Array<item>) : void {
+      //加载音频
+      data && data.map((r :item , i : number )=>{
+        this.load.audio(r.id,r.audioKey);
+        r.phoneticSymbols.map((r2,i2)=>{
+          this.load.audio(r2.id,r2.audioKey);
+        });
+        r.uselessPhoneticSymbols.map((r2,i2)=>{
+          this.load.audio(r2.id,r2.audioKey);
+        })
+      })
+      this.load.start(); //preload自动运行，其他地方加载资源必须手动启动，不然加载失效
     }
 
     private previewHandle () : void {
@@ -96,6 +131,7 @@ export default class Game8PlayScene extends Phaser.Scene {
       this.leftUiIndex = -1;
       this.popArr.length = 0 ;
       this.textArr.length = 0 ;
+      this.smallFishNum = 0;
       this.renderCenterPop();
       this.popShowAnims();
       this.renderLeftUI();
@@ -163,11 +199,15 @@ export default class Game8PlayScene extends Phaser.Scene {
 
     private moveToHandle (obj : Phaser.GameObjects.Image) : void {
       let index : number = obj.getData('index');
-      if(this.leftUiIndex === 3){
+      const name : string = obj.getData('name');
+      const id : string = obj.getData('id');
+      if(this.leftUiIndex === this.ccData[this.currentIndex].phoneticSymbols.length -1 ){
         return;
       }
+      this.playMusic(id);
+      this.leftUiIndex = this.leftUiIndex + 1 >= this.ccData[this.currentIndex].phoneticSymbols.length ? 0 : this.leftUiIndex + 1
+      this.smallFishText.setText(`${++this.smallFishNum}/${this.ccData[this.currentIndex].phoneticSymbols.length}`)
       this.bait.play('begin');
-      this.leftUiIndex = this.leftUiIndex + 1 >= 4 ? 0 : this.leftUiIndex + 1
       this.textArr[index].destroy();
       this.tweens.add({
         targets : obj,
@@ -180,21 +220,34 @@ export default class Game8PlayScene extends Phaser.Scene {
         onComplete : ()=>{
           obj.destroy();
           this.popArr[index] = null;
-          this.createSmallPopHandle();
-          if(this.leftUiIndex === 3){
-            this.chooseEndHandle(); 
+          this.createSmallPopHandle(name);
+          if(this.leftUiIndex === this.ccData[this.currentIndex].phoneticSymbols.length - 1){
+            let flag = true;
+            this.choosePopArr.map((r,i)=>{
+              if(r.getData('name') !== this.ccData[this.currentIndex].phoneticSymbols[i].name){
+                flag = false;
+              }
+            });
+            if(flag){
+              //正确
+              this.chooseEndHandle();
+            }else{
+              //错误
+              this.tips.tryAgain(this.previewHandle)
+            }
           }
         }
       })
     }
 
-    private createSmallPopHandle () : void {
+    private createSmallPopHandle (name : string) : void {
       //选择相应气泡 渲染到左边
       this.choosePopArr[this.leftUiIndex] = this.add.image(this.leftPopArr[this.leftUiIndex].x,this.leftPopArr[this.leftUiIndex].y,'game8Icons2','smallPop.png')
                                                 .setOrigin(.5)
                                                 .setDisplaySize(60,60)
                                                 .setDepth(100)
-      this.chooseTextArr[this.leftUiIndex] = this.add.text(this.choosePopArr[this.leftUiIndex].x,this.choosePopArr[this.leftUiIndex].y,'/i/',{
+                                                .setData('name',name)
+      this.chooseTextArr[this.leftUiIndex] = this.add.text(this.choosePopArr[this.leftUiIndex].x,this.choosePopArr[this.leftUiIndex].y,name,{
         font: 'Bold 23px Arial Rounded MT',
         fill : '#017FF8',
       }).setOrigin(.5).setDepth(101);
@@ -265,19 +318,33 @@ export default class Game8PlayScene extends Phaser.Scene {
           graphicsObj.destroy();
           path1.destroy();
           fish.destroy();
+          this.nextWordHandle();
         }
       })
       
     }
 
+    private shuffle<T> (arr : T[]) : T[]{
+      //Fisher-Yates shuffle 算法 打乱数组顺序
+      for (let i :number = 1; i < arr.length ; i ++) {
+        let random : number = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[random]] = [arr[random], arr[i]];   //es6  交换数组成员位置
+      }
+      return arr;
+    }
+
     private renderCenterPop () : void {
       //渲染中间的泡泡
+      let contentData = this.ccData[this.currentIndex].phoneticSymbols.concat(this.ccData[this.currentIndex].uselessPhoneticSymbols.slice(0,6));
+      contentData = this.shuffle(contentData);
       for (let i = 0 ; i < 9 ; i ++ ){
         if(i < 3){
           this.popArr.push(
             this.add.image(W / 2 + (-185 + (i * 185)),H / 2 - 173 ,'game8Icons2','bigPop.png')
               .setOrigin(.5)
               .setData('index',i)
+              .setData('name',contentData[i].name)
+              .setData('id',contentData[i].id)
               .setDisplaySize(0,0)
               .setInteractive()
           )
@@ -286,6 +353,8 @@ export default class Game8PlayScene extends Phaser.Scene {
             this.add.image(W / 2 + (-185 + ((i - 3) * 185)),H / 2,'game8Icons2','bigPop.png')
               .setOrigin(.5)
               .setData('index',i)
+              .setData('name',contentData[i].name)
+              .setData('id',contentData[i].id)
               .setDisplaySize(0,0)
               .setInteractive()
           )
@@ -294,12 +363,14 @@ export default class Game8PlayScene extends Phaser.Scene {
             this.add.image(W / 2 + (-185 + ((i - 6) * 185)),H / 2 + 173,'game8Icons2','bigPop.png')
               .setOrigin(.5)
               .setData('index',i)
+              .setData('name',contentData[i].name)
+              .setData('id',contentData[i].id)
               .setDisplaySize(0,0)
               .setInteractive()
           )
         }
         this.textArr.push(
-          this.add.text(this.popArr[i].x,this.popArr[i].y,'/i/',{
+          this.add.text(this.popArr[i].x,this.popArr[i].y,contentData[i].name,{
             font: 'Bold 60px Arial Rounded MT',
             fill : '#0080F5',
           }).setOrigin(.5).setAlpha(0)
