@@ -3,6 +3,7 @@ import apiPath from '../../lib/apiPath';
 import { get, makeParams } from '../../lib/http';
 import { Game6DataItem, game6asset } from '../../interface/Game6';
 import { resize } from '../../Public/jonny/core';
+import { SellingGold } from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
@@ -38,6 +39,7 @@ export default class Game6LoadScene extends Phaser.Scene {
     this.load.audio('click', 'assets/sounds/clickMp3.mp3');
     this.load.bitmapFont('GenJyuuGothic', 'assets/font/GenJyuuGothic/font.png', 'assets/font/GenJyuuGothic/font.xml');
     this.load.bitmapFont('GenJyuuGothic47', 'assets/font/GenJyuuGothic47/font.png', 'assets/font/GenJyuuGothic47/font.xml');
+    SellingGold.loadImg(this);
     this.assets.forEach((v) => {
       this.load.image(v.key, v.url);
     })

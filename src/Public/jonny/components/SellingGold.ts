@@ -1,8 +1,8 @@
 import "phaser";
+import { EASE } from '../Animate'
 import { Gold } from "./Gold";
 
 interface Config {
-    texture?: string;   //纹理,默认为 assets/commonUI/gold.png，须先载入纹理，
     callback?: Function;  //动画结束的回调函数，可选
 }
 
@@ -21,7 +21,6 @@ export class SellingGold {
     private parentScene: Phaser.Scene;
     private goldValue: number;
     public golds: Phaser.GameObjects.Container;
-    private texture: string;
     private callback: Function;
     private count: number = 0;
     private bg: Phaser.GameObjects.Graphics;
@@ -29,9 +28,9 @@ export class SellingGold {
     constructor(parentScene: Phaser.Scene, config?: Config) {
         this.parentScene = parentScene;
         this.callback = config.callback || function () { };
-        this.texture = config.texture || "gold";
         this.golds = this.parentScene.add.container(0, 0);
         this.bg = this.parentScene.add.graphics();
+
     }
 
     /**
@@ -42,102 +41,86 @@ export class SellingGold {
         this.bg.fillStyle(0x000000);
         this.bg.fillRect(0, 0, 1024, 552);
         this.bg.setAlpha(0.7);
-        this.golds.add(this.bg);
         this.goldValue = _goldValue;
-        let _gold: Phaser.GameObjects.Image;
-        for (let i = 0; i < this.goldValue; i++) {
-            if (this.goldValue === 3) {
-                if (i === 0) {
-                    _gold = this.createGlod().setPosition(400, 276).setScale(0);
-                    this.golds.add(_gold);    //左
-                    this.goldAni(_gold, 600);
-                }
-                if (i === 1) {
-                    _gold = this.createGlod().setPosition(624, 276).setScale(0);
-                    this.golds.add(_gold);    //右
-                    this.goldAni(_gold, 200);
-                }
-                if (i === 2) {
-                    _gold = this.createGlod().setPosition(512, 276).setScale(0);
-                    this.golds.add(_gold);    //上
-                    this.goldAni(_gold, 400);
-                }
-            } else if (this.goldValue === 2) {
-                if (i === 0) {
-                    _gold = this.createGlod().setPosition(400, 276).setScale(0);
-                    this.golds.add(_gold);    //左
-                    this.goldAni(_gold, 600);
-                }
-                if (i === 1) {
-                    _gold = this.createGlod().setPosition(624, 276).setScale(0);
-                    this.golds.add(_gold);    //右
-                    this.goldAni(_gold, 200);
-                }
-            } else if (this.goldValue === 1) {
-                _gold = this.createGlod().setPosition(512, 276).setScale(0);
-                this.golds.add(_gold);    //上
-                this.goldAni(_gold, 400);
-            }
 
-        }
+        let goldCoinsLight: Phaser.GameObjects.Image;
+        goldCoinsLight = this.parentScene.add.image(347 + 331 * 0.5, 67 + 331 * 0.5, "goldCoinsLight");
+        let goldCoins: Phaser.GameObjects.Image;
+        goldCoins = this.parentScene.add.image(406 + 193 * 0.5, 146 + 167 * 0.5, "goldCoins");
+        let goldCoinsValue: Phaser.GameObjects.Image;
+        goldCoinsValue = this.parentScene.add.image(445 + 136 * 0.5, 346 + 65 * 0.5, "goldCoinsValue");
+        let goldCoinsValueText: Phaser.GameObjects.BitmapText;
+        goldCoinsValueText = this.parentScene.add.bitmapText(490 + 46 * 0.5, 350 + 56 * 0.5 + 56 * 0.2, "STYuantiSC40", `+${_goldValue}`, 40).setOrigin(0.5, 0.5);
+        this.golds.add([this.bg, goldCoinsLight, goldCoins, goldCoinsValue, goldCoinsValueText]);
+        this.goldAni();
     }
 
 
-    private createGlod(): Phaser.GameObjects.Image {
-        let glod = this.parentScene.add.image(0, 0, this.texture);
-        return glod;
-    }
-
-    private goldAni(glod, delay: number): void {
-        delay = delay - 200;
-        delay = delay < 0 ? 0 : delay;
-        let that = this;
-        let factor = 0.45;
-        var spring = function (t) {
-            return Math.pow(2, -10 * t) * Math.sin((t - factor / 4) * (2 * Math.PI) / factor) + 1;
+    private goldAni(): void {
+        let goldCoinsLight = (this.golds.list[1] as Phaser.GameObjects.Image);
+        let goldCoins = (this.golds.list[2] as Phaser.GameObjects.Image);
+        let goldCoinsValue = (this.golds.list[3] as Phaser.GameObjects.Image);
+        let goldCoinsValueText = (this.golds.list[4] as Phaser.GameObjects.BitmapText);
+        var init = (ani) => {
+            goldCoinsLight.setScale(0);
+            goldCoins.setScale(0);
+            goldCoinsValue.setScale(0);
+            goldCoinsValueText.setScale(0);
+            ani();
         }
 
-        var onCompleteHandler = () => {
-            this.parentScene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-                targets: glod,
-                x: Gold.imgPosition.x,
-                y: Gold.imgPosition.y,
-                delay: delay,
-                ease: "Sine.easeOut",
-                duration: 300,
-                onComplete: () => {
-                    this.parentScene.tweens.add({
-                        targets: glod,
+        var ani = () => {
+            this.parentScene.tweens.timeline(<Phaser.Types.Tweens.TimelineBuilderConfig>{
+                tweens: [
+                    {
+                        targets: [goldCoinsLight, goldCoins],
+                        scale: 1,
+                        ease: "Sine.easeOut",
+                        duration: 1000
+                    }
+                ]
+            })
+
+            this.parentScene.add.tween({
+                targets: [goldCoinsValue, goldCoinsValueText],
+                scale: 1,
+                ease: EASE.spring,
+                delay: 500,
+                duration: 1000
+            })
+
+            this.parentScene.tweens.timeline({
+                tweens: [
+                    {
+                        targets: goldCoinsLight,
+                        rotation: Math.PI * 2,
+                        duration: 2000,
+                    },
+                    {
+                        targets: [goldCoinsLight, goldCoins, goldCoinsValue, goldCoinsValueText],
+                        scale:0,
                         alpha: 0,
-                        duration: 300,
-                        onComplete: () => {
-                            if (this.count === 0) {
-                                this.callback();
-                            }
-                            if (this.count === this.goldValue - 1) {
-                                setTimeout(() => {
-                                    this.golds.destroy(); //晚一秒销毁的目的是为了衔接下一步的专场动画
-                                }, 1000);
-                            }
-                            this.count += 1;
-                        }
-                    })
+                        duration: 200
+                    }
+                ],
+                onComplete: () => {
+                    this.callback();
+                    setTimeout(() => {
+                        this.golds.destroy(); //晚一秒销毁的目的是为了衔接下一步的专场动画
+                    }, 1000);
                 }
             })
-        }
-
-        this.parentScene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-            targets: glod,
-            scale: 1,
-            ease: spring,
-            duration: 800,
-            onComplete: onCompleteHandler
-        })
-
     }
+
+    init(ani);
+}
 
     public static loadImg(scene: Phaser.Scene): void {
-        scene.load.image("gold", "assets/commonUI/gold.png");
-    }
+    scene.load.image("goldCoins", "assets/commonUI/goldCoins.png");
+    scene.load.image("goldCoinsValue", "assets/commonUI/goldCoinsValue.png");
+    scene.load.image("goldCoinsLight", "assets/commonUI/goldCoinsLight.png");
+    scene.load.audio("goldSound", "assets/sounds/goldSound.mp3");
+    scene.load.bitmapFont("STYuantiSC40", "assets/font/STYuantiSC40/font.png", "assets/font/STYuantiSC40/font.xml");
+}
 
 }
