@@ -3,6 +3,7 @@ import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import CreateBtnClass from '../../Public/CreateBtnClass';
 import CreateMask from '../../Public/CreateMask';
+import PlanAnims from "../../Public/PlanAnims";
 
 const W = 1024;
 const H = 552;
@@ -27,6 +28,7 @@ export default class Game10PlayScene extends Phaser.Scene {
     private submitBtn : Phaser.GameObjects.Sprite; //提交键盘
     private wordGraphics : Phaser.GameObjects.Graphics ; //字符末尾
     private graphicsTweens : Phaser.Tweens.Tween; //字符末尾动画引用
+    private planAnims : PlanAnims; //飞机过长动画引用
     constructor() {
       super({
         key: "Game10PlayScene"
@@ -37,11 +39,13 @@ export default class Game10PlayScene extends Phaser.Scene {
     }
   
     preload(): void {
+      PlanAnims.loadImg(this);
     }
     
   
     create(): void {
       this.createBgi(); //背景
+      this.planAnims = new PlanAnims(this,13);
       this.createBgm(); //bgm
       this.createGold(); //金币
       this.renderKeyBorad(); //渲染键盘
@@ -58,8 +62,10 @@ export default class Game10PlayScene extends Phaser.Scene {
         }
       }); //公共按钮组件
       new CreateMask(this,()=>{
-        this.initAnims();
-        this.renderWordGraphics();
+        this.planAnims.show(1,()=>{
+          this.initAnims();
+          this.renderWordGraphics();
+        })
       }); //遮罩层
     }
 
