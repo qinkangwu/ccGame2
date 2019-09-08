@@ -241,78 +241,78 @@ export default class Game9PlayScene extends Phaser.Scene {
         targets: this.cookies[0],
         alpha: 1,
         y: this.cookies[0].initPosition.y,
-        delay:0,
-        duration:duration,
-        ease:ease
+        delay: 0,
+        duration: duration,
+        ease: ease
       })
 
       this.add.tween(<Phaser.Types.Tweens.TimelineBuilderConfig>{
         targets: this.cookies[1],
         alpha: 1,
         y: this.cookies[1].initPosition.y,
-        delay:300,
-        duration:duration,
-        ease:ease
+        delay: 300,
+        duration: duration,
+        ease: ease
       })
 
       this.add.tween(<Phaser.Types.Tweens.TimelineBuilderConfig>{
         targets: this.cookies[4],
         alpha: 1,
         y: this.cookies[4].initPosition.y,
-        delay:300,
-        duration:duration,
-        ease:ease
+        delay: 300,
+        duration: duration,
+        ease: ease
       })
 
       this.add.tween(<Phaser.Types.Tweens.TimelineBuilderConfig>{
         targets: this.cookies[2],
         alpha: 1,
         y: this.cookies[2].initPosition.y,
-        delay:600,
-        duration:duration,
-        ease:ease
+        delay: 600,
+        duration: duration,
+        ease: ease
       })
 
       this.add.tween(<Phaser.Types.Tweens.TimelineBuilderConfig>{
         targets: this.cookies[5],
         alpha: 1,
         y: this.cookies[5].initPosition.y,
-        delay:600,
-        duration:duration,
-        ease:ease
+        delay: 600,
+        duration: duration,
+        ease: ease
       })
 
       this.add.tween(<Phaser.Types.Tweens.TimelineBuilderConfig>{
         targets: this.cookies[3],
         alpha: 1,
         y: this.cookies[3].initPosition.y,
-        delay:900,
-        duration:duration,
-        ease:ease
+        delay: 900,
+        duration: duration,
+        ease: ease
       })
 
       this.add.tween(<Phaser.Types.Tweens.TimelineBuilderConfig>{
         targets: this.cookies[6],
         alpha: 1,
         y: this.cookies[6].initPosition.y,
-        delay:900,
-        duration:duration,
-        ease:ease
+        delay: 900,
+        duration: duration,
+        ease: ease
       })
 
       this.add.tween(<Phaser.Types.Tweens.TimelineBuilderConfig>{
         targets: this.cookies[7],
         alpha: 1,
         y: this.cookies[7].initPosition.y,
-        delay:1200,
-        duration:duration,
-        ease:ease,
-        onComplete:()=>{
+        delay: 1200,
+        duration: duration,
+        ease: ease,
+        onComplete: () => {
           nullCookieAni();
-                  this.wordSpeaker.play();
-                  taraginListenAni.play();
-                  this.civaMen.startJumpIn(1, [140]);
-                  return false;
+          this.wordSpeaker.play();
+          taraginListenAni.play();
+          this.civaMen.startJumpIn(1, [140]);
+          return false;
         }
       })
 
@@ -457,13 +457,34 @@ export default class Game9PlayScene extends Phaser.Scene {
 
     function dragEnd() {
       console.log("拖拽结束");
-      that.civaJump();
+      that.checkoutResult()
+        .then(msg => {
+          console.log(msg)
+          that.civaJump();
+        })
+        .catch(err => {
+          console.log(err)
+        });
       that.cookies.forEach(v => {
         v.off("dragstart");
         v.off("drag");
         v.off("dragend");
       })
     }
+  }
+
+  /**
+   * 判断拖拽的结果，是否准确
+   */
+  private checkoutResult(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      this.nullCookies.forEach(nullCookie => {
+        if (nullCookie.name !== nullCookie.cookie.name) {
+          reject("结果错误");
+        }
+      })
+      resolve("结果正确");
+    })
   }
 
   /**
