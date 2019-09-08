@@ -5,6 +5,7 @@ import { Button, ButtonContainer, ButtonMusic, ButtonExit } from '../../Public/j
 import { EASE } from '../../Public/jonny/Animate';
 import PlanAnims from '../../Public/PlanAnims';
 import { CivaMen, Cookie, NullCookie } from '../../Public/jonny/game9';
+import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
 const vol = 0.3; //背景音乐的音量
 var index: number; //题目的指针，默认为0
@@ -19,7 +20,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
 
   private ccData: Array<Game9DataItem> = [];
-  private cookiesPool: Array<Game9PhoneticSymbol> = [];
+  private cookiesPool: Array<Game9PhoneticSymbol>;
 
   //静态开始
   private stage: Phaser.GameObjects.Container; // 舞台
@@ -38,9 +39,10 @@ export default class Game9PlayScene extends Phaser.Scene {
 
   //动态开始
   private wordSpeaker: Phaser.Sound.BaseSound;   //单词播放器
-  private cookies: Cookie[] = []; //饼干包含文字
-  private nullCookies: NullCookie[] = []; //空饼干
+  private cookies: Cookie[]; //饼干包含文字
+  private nullCookies: NullCookie[]; //空饼干
   private civaMen: CivaMen; //机器人 
+  private tipsParticlesEmitter:TipsParticlesEmitter;   
   //动态开始
 
   //层次
@@ -60,9 +62,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     index = res.index;
     //index = 2; //test
     this.ccData = res.data;
-    this.cookiesPool = this.ccData[index].phoneticSymbols.concat(this.ccData[index].uselessPhoneticSymbols);
-    this.cookiesPool.sort(() => Math.random() - 0.5).sort(() => Math.random() - 0.5);//两次乱序
-    this.planAnims = new PlanAnims(this, this.ccData.length);
+    
     console.log(this.ccData);
   }
 
@@ -71,6 +71,9 @@ export default class Game9PlayScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.cookiesPool = [];
+    this.cookies = [];
+    this.nullCookies = [];
     this.createStage();
     this.createActors();
     if (index === 0) {
@@ -126,18 +129,20 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.correctSound = this.sound.add('correct');
     this.wrongSound = this.sound.add('wrong');
 
+    this.planAnims = new PlanAnims(this, this.ccData.length);
   }
 
   /**
    * 创建演员们
    */
   createActors(): void {
+    console.log("createActors");
     //单词发生器
     let wordSound = this.ccData[index].name;
     this.wordSpeaker = this.sound.add(wordSound);
 
-    //音标发生器
-    //this.phonetic = new Audio();
+    this.cookiesPool = this.ccData[index].phoneticSymbols.concat(this.ccData[index].uselessPhoneticSymbols);
+    this.cookiesPool.sort(() => Math.random() - 0.5).sort(() => Math.random() - 0.5);//两次乱序
 
     //饼干－－－－
     this.cookiesPool.forEach((v, i) => {
@@ -166,13 +171,14 @@ export default class Game9PlayScene extends Phaser.Scene {
       let i = index;
       i = i % 4;
       cookie.y += (50 + i * 50);
-      cookie.setAlpha(0);
+      cookie.setAlpha(0);   
     })
 
     //空饼干--------
     let phoneticSymbols = this.ccData[index].phoneticSymbols;
     let offsetX: number = 0;
     let cookies = this.cookies;
+    let debug:string = "";
     phoneticSymbols.forEach((v, i, arr) => {
       switch (arr.length) {
         case 2:
@@ -188,22 +194,29 @@ export default class Game9PlayScene extends Phaser.Scene {
       let _nullCookieImg = new NullCookie(this, offsetX, 472, "null-cookie");
       _nullCookieImg.setDepth(1);
       _nullCookieImg.name = v.name;
-      _nullCookieImg.setAlpha(0);
+      debug+=`${v.name},`;
+      _nullCookieImg.setAlpha(0);   
       this.layer1.add(_nullCookieImg);
       this.nullCookies.push(_nullCookieImg);
       this.physics.world.enable(_nullCookieImg);
       (<Phaser.Physics.Arcade.Body>_nullCookieImg.body).setSize(_nullCookieImg.width * 0.2, _nullCookieImg.height * 0.2);
     });
+    console.log("正确答案",debug)
 
     //创建 civa
     this.civaMen = new CivaMen(this, -136.05, 428.1, "civa");
     this.layer3.add(this.civaMen);
+
+
+    //创建用户反馈
+    this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
   }
 
   /**
    * 游戏开始
    */
   private gameStart(): void {
+    console.log("game start");
     var nullCookieAni = () => {
       this.nullCookies.forEach((nullcookie, i) => {
         this.tweens.add({
@@ -212,7 +225,9 @@ export default class Game9PlayScene extends Phaser.Scene {
           delay: 500 * i,
           duration: 500,
           OnComplete: () => {
+            if(i===this.nullCookies.length -1){ 
             this.dragEvent();
+            }
           }
         })
       })
@@ -240,6 +255,8 @@ export default class Game9PlayScene extends Phaser.Scene {
     });
 
     let cookiesAni = () => {
+      console.log("饼干动画");
+
       let duration = 1000;
       let ease = 'Sine.easeOut';
 
@@ -353,10 +370,8 @@ export default class Game9PlayScene extends Phaser.Scene {
   private dragEvent(): void {
     let that = this;
 
-    let hits: number = 0; //碰撞次数
+    //let hits: number = 0; //碰撞次数
     this.physics.world.enable(this.cookies);
-
-    
 
     DrogEvent.cookieOnDrag = function (pointer, dragX, dragY) {
       if (!this.interactive) {
@@ -403,8 +418,7 @@ export default class Game9PlayScene extends Phaser.Scene {
         .setCollideWorldBounds(true)
         .setSize(cookie.shape.width, cookie.shape.height)
         .setOffset(cookie.shape.x, cookie.shape.y);
-      that.input.setDraggable(cookie, true);
-
+        that.input.setDraggable(cookie, true);
        cookie.on("dragstart", DrogEvent.cookieOnDragStart);
        cookie.on("drag", DrogEvent.cookieOnDrag);
        cookie.on("dragend", DrogEvent.cookieOnDragEnd);
@@ -433,7 +447,7 @@ export default class Game9PlayScene extends Phaser.Scene {
 
 
       let collideCookie = args[1].cookie;
-      if (collideCookie !== undefined && collideCookie.hit === 0.5) {
+      if (collideCookie !== null && collideCookie.hit === 0.5) {
         collideCookie.hit = 0;
         if (args[0].name !== collideCookie.name) {
           (collideCookie as Phaser.GameObjects.Container).setPosition(
@@ -453,16 +467,14 @@ export default class Game9PlayScene extends Phaser.Scene {
       args[1].cookie = args[0];
       args[1].collision = 1;
 
-      that.nullCookies.forEach((nullCookie, i) => {
+      that.nullCookies.forEach((nullCookie,i) => {
         let result = nullCookie.collision;
-        if (result !== undefined) {
           hits += result;
-          console.log(hits);
-        }
         if (hits === that.nullCookies.length) {
           that.dragEnd();
         }
       })
+
     }
   }
 
@@ -495,7 +507,9 @@ export default class Game9PlayScene extends Phaser.Scene {
    */
   private isRight():void{
     this.civaMen.round.result = 1;
-    this.civaJump();
+    this.tipsParticlesEmitter.success(()=>{
+      this.civaJump();
+    })
   }
 
   /**
@@ -513,14 +527,40 @@ export default class Game9PlayScene extends Phaser.Scene {
   /**
    * 再玩一次
    */
-  private tryAgin():void{
-    
+  private tryAgin(){
+    this.tipsParticlesEmitter.tryAgain(this.resetStart);
+  }
+
+  /**
+   * 重置开始状态
+   */
+  private resetStart(){
+    // this.scene.start('Game9PlayScene', {
+    //   data: this.ccData,
+    //   index: 2
+    // });
+    // this.nullCookies.forEach(nullCookie=>{
+    //   nullCookie.collision = 0;
+    //   let cookie = nullCookie.cookie;
+    //   cookie.setPosition(
+    //     nullCookie.cookie.initPosition.x,
+    //     nullCookie.cookie.initPosition.y
+    //   )
+    //   cookie.on("dragstart",DrogEvent.cookieOnDragStart);
+    //   cookie.on("drag",DrogEvent.cookieOnDrag);
+    //   cookie.on("dragend",DrogEvent.cookieOnDragEnd);
+    //   cookie.hit = 0;
+    //   cookie.interactive = true;
+    //   this.physics.world.enable(cookie);
+    //   cookie.nullCookie = null;
+    //   nullCookie.cookie = null
+    // })
   }
 
   /**
    * 再次错误
    */
-  private ohNo():void{
+  private ohNo(){
 
   }
 
@@ -528,7 +568,14 @@ export default class Game9PlayScene extends Phaser.Scene {
    * 下一道题
    */
   private nextRound():void{
-    
+      this.layer1.destroy();
+      this.layer2.destroy();
+      this.layer3.destroy();
+      index+=1;
+      this.scene.start('Game9PlayScene', {
+        data: this.ccData,
+        index: index
+      });
   }
 
   /**
@@ -549,6 +596,7 @@ export default class Game9PlayScene extends Phaser.Scene {
    * civa 开始跳跃
    */
   private civaJump(): void {
+    this.civaMen.animateEnd = this.nextRound.bind(this);
     switch (this.nullCookies.length) {
       case 2:
         this.civaMen.startJumpIn(3, [365, 680, 928]);

@@ -24,6 +24,8 @@ export class CivaMen extends Phaser.GameObjects.Image {
         times:number;   //玩了几次
         result:number;  //是否正确，错误为0，正确为1
     }
+    public animateEnd:Function;  //动画全部结束的回调
+
     public times: number;
     private _times: number;
     private dxArr: number[];
@@ -89,7 +91,8 @@ export class CivaMen extends Phaser.GameObjects.Image {
                 duration: 1000,
                 onUpdate:()=>{
                     this.x+=5;
-                }
+                },
+                onComplete:this.animateEnd
             })
         }
 
@@ -115,9 +118,9 @@ export class CivaMen extends Phaser.GameObjects.Image {
                 }
             }
         })
-
-
     }
+
+   
 
     private drawPath(): void {
         let graphics = this.scene.add.graphics();
