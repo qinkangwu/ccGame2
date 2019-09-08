@@ -20,6 +20,10 @@ export class CivaMen extends Phaser.GameObjects.Image {
     public dx: number;
     public offsetY: number;
     public duration: number;
+    public round:{
+        times:number;   //玩了几次
+        result:number;  //是否正确，错误为0，正确为1
+    }
     public times: number;
     private _times: number;
     private dxArr: number[];
@@ -34,6 +38,10 @@ export class CivaMen extends Phaser.GameObjects.Image {
         this.y = y;
         this.duration = 1000;
         this._times = 0;
+        this.round = {
+            times:0,
+            result:0
+        }
         this.init();
     }
 

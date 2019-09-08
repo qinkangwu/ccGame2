@@ -9,6 +9,12 @@ import { CivaMen, Cookie, NullCookie } from '../../Public/jonny/game9';
 const vol = 0.3; //背景音乐的音量
 var index: number; //题目的指针，默认为0
 
+class DrogEvent {
+  public static cookieOnDragStart:Function;
+  public static cookieOnDragEnd:Function;
+  public static cookieOnDrag:Function;
+}
+
 export default class Game9PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
 
@@ -349,28 +355,19 @@ export default class Game9PlayScene extends Phaser.Scene {
 
     let hits: number = 0; //碰撞次数
     this.physics.world.enable(this.cookies);
-    this.cookies.forEach(cookieEvent);
 
-    function cookieEvent(cookie: ButtonContainer) {
-      (cookie.body as Phaser.Physics.Arcade.Body)
-        .setCollideWorldBounds(true)
-        .setSize(cookie.shape.width, cookie.shape.height)
-        .setOffset(cookie.shape.x, cookie.shape.y);
-      that.input.setDraggable(cookie, true);
-      cookie.on("dragstart", cookieOnDragStart);
-      cookie.on("drag", cookieOnDrag);
-      cookie.on("dragend", cookieOnDragEnd);
-    }
+    
 
-    function cookieOnDrag(pointer, dragX, dragY) {
+    DrogEvent.cookieOnDrag = function (pointer, dragX, dragY) {
       if (!this.interactive) {
         return false;
       }
       this.x = dragX;
       this.y = dragY;
+      return true;
     }
 
-    function cookieOnDragStart(pointer, startX, startY) {
+    DrogEvent.cookieOnDragStart = function (pointer, startX, startY) {
       if (!this.interactive) {
         return false;
       }
@@ -378,7 +375,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     }
 
 
-    function cookieOnDragEnd() {
+    DrogEvent.cookieOnDragEnd = function () {
       if (!this.interactive) {
         return false;
       }
@@ -398,6 +395,19 @@ export default class Game9PlayScene extends Phaser.Scene {
           that.layer2.add(this);
         }
       }
+    }
+
+    this.cookies.forEach(cookieEvent);
+    function cookieEvent(cookie: ButtonContainer) {
+      (cookie.body as Phaser.Physics.Arcade.Body)
+        .setCollideWorldBounds(true)
+        .setSize(cookie.shape.width, cookie.shape.height)
+        .setOffset(cookie.shape.x, cookie.shape.y);
+      that.input.setDraggable(cookie, true);
+
+       cookie.on("dragstart", DrogEvent.cookieOnDragStart);
+       cookie.on("drag", DrogEvent.cookieOnDrag);
+       cookie.on("dragend", DrogEvent.cookieOnDragEnd);
     }
 
     let collisionNullcookies: Phaser.GameObjects.Image[] = [];
@@ -450,27 +460,75 @@ export default class Game9PlayScene extends Phaser.Scene {
           console.log(hits);
         }
         if (hits === that.nullCookies.length) {
-          dragEnd();
+          that.dragEnd();
         }
       })
     }
+  }
 
-    function dragEnd() {
-      console.log("拖拽结束");
-      that.checkoutResult()
-        .then(msg => {
-          console.log(msg)
-          that.civaJump();
-        })
-        .catch(err => {
-          console.log(err)
-        });
-      that.cookies.forEach(v => {
-        v.off("dragstart");
-        v.off("drag");
-        v.off("dragend");
+  /**
+   * 拖拽结束
+   */
+  private dragEnd(): void {
+    console.log("拖拽结束");
+
+    this.civaMen.round.times+=1;
+
+    this.checkoutResult()
+      .then(msg => {    //正确
+        console.log(msg)
+        this.isRight();
       })
+      .catch(err => {   //错误
+        console.log(err)
+        this.isWrong();
+      });
+    this.cookies.forEach(cookie => {
+       cookie.off("dragstart");
+       cookie.off("drag");
+       cookie.off("dragend");
+    })
+  }
+
+  /**
+   * 正确的结果处理
+   */
+  private isRight():void{
+    this.civaMen.round.result = 1;
+    this.civaJump();
+  }
+
+  /**
+   * 错误的结果处理
+   */
+  private isWrong():void{
+    this.civaMen.round.result = 0;
+    if(this.civaMen.round.times===1){
+      this.tryAgin();
+    }else if(this.civaMen.round.times===2){
+      this.ohNo();
     }
+  }
+
+  /**
+   * 再玩一次
+   */
+  private tryAgin():void{
+    
+  }
+
+  /**
+   * 再次错误
+   */
+  private ohNo():void{
+
+  }
+
+  /**
+   * 下一道题
+   */
+  private nextRound():void{
+    
   }
 
   /**
