@@ -96,7 +96,7 @@ export default class Game8PlayScene extends Phaser.Scene {
             .setDisplaySize(60,60)
         )
       }
-      this.smallFishMenu = this.add.image(55.5,143.5,'game8Icons2','smf.png').setOrigin(.5);
+      this.smallFishMenu = this.add.image(55.5,143.5,'game8Icons2','smf.png').setOrigin(.5).setDisplaySize(75,66);
       this.smallFishText = this.add.text(this.smallFishMenu.x + 9,this.smallFishMenu.y + 19,`0/${this.ccData[this.currentIndex].phoneticSymbols.length}`,{
         font: 'Bold 16px Arial Rounded MT',
         fill : '#ffffff',
@@ -291,7 +291,7 @@ export default class Game8PlayScene extends Phaser.Scene {
       let fish : Phaser.GameObjects.Image = this.add.image(W / 2 , H / 2 ,'game8Icons2' , 'bmf.png')
                                                   .setOrigin(.5)
                                                   .setDepth(1003)
-                                                  .setScale(0)
+                                                  .setDisplaySize(0,0)
                                                   .setAngle(0)
 
       this.tweens.add({
@@ -308,8 +308,8 @@ export default class Game8PlayScene extends Phaser.Scene {
         duration : 500,
         delay : 500,
         angle : 360,
-        scaleX : 1,
-        scaleY : 1
+        displayWidth : 169,
+        displayHeight : 127
       });
 
       this.time.addEvent({
