@@ -3,6 +3,7 @@ import apiPath from '../../lib/apiPath';
 import { get } from '../../lib/http';
 import { Game9DataItem, Game9asset } from '../../interface/Game9';
 import { resize } from '../../Public/jonny/core';
+import { SellingGold } from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
@@ -13,7 +14,7 @@ export default class Game9LoadScene extends Phaser.Scene {
   private _loader: Phaser.Loader.LoaderPlugin;
   private ccData: Array<Game9DataItem> = [];
   private centerText: Phaser.GameObjects.Text; //文本内容
-  private assets: Game9asset[] = [{"url":"assets/Game9/bg.jpg","key":"bg"},{"url":"assets/Game9/civa.png","key":"civa"},{"url":"assets/Game9/cookie.png","key":"cookie"},{"url":"assets/Game9/cover.png","key":"cover"},{"url":"assets/Game9/getSugarGourdWordByBookUnitId.json","key":"getSugarGourdWordByBookUnitId"},{"url":"assets/Game9/null-cookie.png","key":"null-cookie"},{"url":"assets/Game9/shengmingzhi.png","key":"shengmingzhi"},{"url":"assets/Game9/try-agin-btn.png","key":"try-agin-btn"},{"url":"assets/commonUI/backplayBtn.png","key":"backplayBtn"},{"url":"assets/commonUI/btnExit.png","key":"btnExit"},{"url":"assets/commonUI/btnSoundOff.png","key":"btnSoundOff"},{"url":"assets/commonUI/btnSoundOn.png","key":"btnSoundOn"},{"url":"assets/commonUI/originalSoundBtn.png","key":"originalSoundBtn"},{"url":"assets/commonUI/tipsGoodjob.png","key":"tipsGoodjob"},{"url":"assets/commonUI/tipsNo.png","key":"tipsNo"},{"url":"assets/commonUI/tipsTryagain.png","key":"tipsTryagain"}];
+  private assets: Game9asset[] = [{"url":"assets/Game9/bg.jpg","key":"bg"},{"url":"assets/Game9/civa.png","key":"civa"},{"url":"assets/Game9/cookie.png","key":"cookie"},{"url":"assets/Game9/cover.png","key":"cover"},{"url":"assets/Game9/getSugarGourdWordByBookUnitId.json","key":"getSugarGourdWordByBookUnitId"},{"url":"assets/Game9/null-cookie.png","key":"null-cookie"},{"url":"assets/Game9/shengmingzhi.png","key":"shengmingzhi"},{"url":"assets/Game9/try-agin-btn.png","key":"try-agin-btn"},{"url":"assets/commonUI/backplayBtn.png","key":"backplayBtn"},{"url":"assets/commonUI/btnExit.png","key":"btnExit"},{"url":"assets/commonUI/btnSoundOff.png","key":"btnSoundOff"},{"url":"assets/commonUI/btnSoundOn.png","key":"btnSoundOn"},{"url":"assets/commonUI/originalSoundBtn.png","key":"originalSoundBtn"},{"url":"assets/commonUI/tipsGoodjob.png","key":"tipsGoodjob"},{"url":"assets/commonUI/tipsNo.png","key":"tipsNo"},{"url":"assets/commonUI/tipsTryagain.png","key":"tipsTryagain"},{ "url": "assets/commonUI/goldValue.png", "key": "goldValue" }];
   constructor() {
     super({
       key: "Game6LoadScene"
@@ -39,6 +40,7 @@ export default class Game9LoadScene extends Phaser.Scene {
     this.load.bitmapFont('GenJyuuGothic47', 'assets/font/GenJyuuGothic47/font.png', 'assets/font/GenJyuuGothic47/font.xml');
     TipsParticlesEmitter.loadImg(this)
     PlanAnims.loadImg(this);
+    SellingGold.loadImg(this);
     this.assets.forEach((v) => {
       this.load.image(v.key, v.url);
     })

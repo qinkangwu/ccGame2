@@ -13,7 +13,6 @@ interface Config {
  * texture:string,  默认为 assets/commonUI/gold.png，须先载入纹理,否则需要重新传递此参数 | 可选
  * callback:Phaser.Types.Tweens.TweenOnCompleteCallback    动画结束的回调函数 | 可选
  * } 
- * 
  * 子对象golds的深度自己设置
  */
 
@@ -98,7 +97,7 @@ export class SellingGold {
                     },
                     {
                         targets: [goldCoinsLight, goldCoins, goldCoinsValue, goldCoinsValueText],
-                        scale:0,
+                        scale: 0,
                         alpha: 0,
                         duration: 200
                     }
@@ -110,17 +109,17 @@ export class SellingGold {
                     }, 1000);
                 }
             })
+        }
+
+        init(ani);
     }
 
-    init(ani);
-}
-
     public static loadImg(scene: Phaser.Scene): void {
-    scene.load.image("goldCoins", "assets/commonUI/goldCoins.png");
-    scene.load.image("goldCoinsValue", "assets/commonUI/goldCoinsValue.png");
-    scene.load.image("goldCoinsLight", "assets/commonUI/goldCoinsLight.png");
-    scene.load.audio("goldSound", "assets/sounds/goldSound.mp3");
-    scene.load.bitmapFont("STYuantiSC40", "assets/font/STYuantiSC40/font.png", "assets/font/STYuantiSC40/font.xml");
-}
+        scene.load.image("goldCoins", "assets/commonUI/goldCoins.png");
+        scene.load.image("goldCoinsValue", "assets/commonUI/goldCoinsValue.png");
+        scene.load.image("goldCoinsLight", "assets/commonUI/goldCoinsLight.png");
+        scene.load.audio("goldSound", "assets/sounds/goldSound.mp3");
+        scene.load.bitmapFont("STYuantiSC40", "assets/font/STYuantiSC40/font.png", "assets/font/STYuantiSC40/font.xml");
+    }
 
 }

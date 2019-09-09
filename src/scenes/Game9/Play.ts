@@ -1,7 +1,7 @@
 import 'phaser';
 import { Game9DataItem, Game9PhoneticSymbol } from '../../interface/Game9';
 import { cover, rotateTips } from '../../Public/jonny/core';
-import { Button, ButtonContainer, ButtonMusic, ButtonExit } from '../../Public/jonny/components';
+import { Button, ButtonContainer, ButtonMusic, ButtonExit,SellingGold,Gold} from '../../Public/jonny/components';
 import { EASE } from '../../Public/jonny/Animate';
 import PlanAnims from '../../Public/PlanAnims';
 import { CivaMen, Cookie, NullCookie } from '../../Public/jonny/game9';
@@ -9,6 +9,7 @@ import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
 const vol = 0.3; //背景音乐的音量
 var index: number; //题目的指针，默认为0
+var goldValue: number = 20; //金币的值
 
 class DrogEvent {
   public static cookieOnDragStart:Function;
@@ -35,6 +36,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   private originalSoundBtn: Button; //原音按钮
   private tryAginListenBtn: Button; //在听一次按钮
   private planAnims: PlanAnims;
+  private gold:Gold;
   //静态结束
 
   //动态开始
@@ -43,6 +45,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   private nullCookies: NullCookie[]; //空饼干
   private civaMen: CivaMen; //机器人 
   private tipsParticlesEmitter:TipsParticlesEmitter;   
+  private sellingGold:SellingGold; 
   //动态开始
 
   //层次
@@ -130,6 +133,8 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.wrongSound = this.sound.add('wrong');
 
     this.planAnims = new PlanAnims(this, this.ccData.length);
+    this.gold = new Gold(this, goldValue);   //设置金币
+    this.layer4.add([this.gold]);
   }
 
   /**
@@ -506,9 +511,13 @@ export default class Game9PlayScene extends Phaser.Scene {
    * 正确的结果处理
    */
   private isRight():void{
+    this.sellingGold = new SellingGold(this,{callback:()=>{
+      this.sellingGold.golds.destroy();
+      this.civaJump.call(this);
+    }});
     this.civaMen.round.result = 1;
     this.tipsParticlesEmitter.success(()=>{
-      this.civaJump();
+        this.sellingGold.goodJob(3);
     })
   }
 
@@ -609,6 +618,21 @@ export default class Game9PlayScene extends Phaser.Scene {
         this.civaMen.startJumpIn(5, [288, 446, 600, 762, 928]);
         break;
     }
+  }
+
+  /**
+   * 设置金币的动作
+   */
+  private setGoldValue(value: number) {
+    goldValue += value;
+    this.gold.setText(goldValue);
+  }
+
+  /**
+   * 检查金币是否为0
+   */
+  private checkoutGoldValue(): boolean {
+    return goldValue < 0 ? true : false;
   }
 
 }
