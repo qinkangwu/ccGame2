@@ -84,7 +84,7 @@ export class CivaMen extends Phaser.GameObjects.Image {
         var goOut = () => {
             let target = {
                 t:0
-            }
+            };
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: target,
                 t:1,
@@ -92,7 +92,9 @@ export class CivaMen extends Phaser.GameObjects.Image {
                 onUpdate:()=>{
                     this.x+=5;
                 },
-                onComplete:this.animateEnd
+                onComplete:()=>{
+                    this.animateEnd();
+                }
             })
         }
 
