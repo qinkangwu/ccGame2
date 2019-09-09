@@ -514,6 +514,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.sellingGold = new SellingGold(this,{callback:()=>{
       this.sellingGold.golds.destroy();
       this.civaJump.call(this);
+      this.setGoldValue(3);
     }});
     this.civaMen.round.result = 1;
     this.tipsParticlesEmitter.success(()=>{
@@ -568,6 +569,7 @@ export default class Game9PlayScene extends Phaser.Scene {
    * 再次错误
    */
   private ohNo(){
+    this.setGoldValue(-1);
     this.tipsParticlesEmitter.error(
       this.nextRound,
       this.resetStart
