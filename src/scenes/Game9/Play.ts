@@ -328,7 +328,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.physics.world.enable(this.cookies);
 
     DrogEvent.cookieOnDrag = function (pointer, dragX, dragY) {
-      if (!this.interactive ) {
+      if (!this.interactive) {
         return false;
       }
       this.x = dragX;
@@ -493,6 +493,7 @@ export default class Game9PlayScene extends Phaser.Scene {
    * 重置开始状态
    */
   private resetStart() {
+    console.log(this.layer1,this.layer2);
     this.nullCookies.forEach(nullCookie => {
       nullCookie.collision = 0;
       nullCookie.cookie = null
