@@ -405,10 +405,10 @@ export default class Game9PlayScene extends Phaser.Scene {
             collideCookie.initPosition.x,
             collideCookie.initPosition.y
           )
-          collideCookie.interactive = true;
-          setTimeout(() => {
             that.layer2.add(collideCookie);
             that.layer1.remove(collideCookie);
+          collideCookie.interactive = true;
+          setTimeout(() => {
             that.physics.world.enable(collideCookie);
             console.log(that.layer1.list);
           }, 1000);
@@ -493,7 +493,18 @@ export default class Game9PlayScene extends Phaser.Scene {
    * 重置开始状态
    */
   private resetStart() {
-    console.log(this.layer1,this.layer2);
+    this.layer1.list.forEach(obj=>{
+      if(obj instanceof Cookie){
+         this.layer1.remove(obj); 
+         this.layer2.add(obj); 
+      };
+    })
+    this.layer2.list.forEach(obj=>{
+      if(obj instanceof NullCookie){
+         this.layer2.remove(obj); 
+         this.layer1.add(obj); 
+      };
+    })
     this.nullCookies.forEach(nullCookie => {
       nullCookie.collision = 0;
       nullCookie.cookie = null
