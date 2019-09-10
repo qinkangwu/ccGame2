@@ -425,7 +425,6 @@ export default class Game9PlayScene extends Phaser.Scene {
           that.dragEnd();
         }
       })
-
     }
   }
 
