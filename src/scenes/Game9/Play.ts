@@ -368,7 +368,8 @@ export default class Game9PlayScene extends Phaser.Scene {
         if (this.hit === 0.5) {
           that.physics.world.enable(this);
           this.hit = 0;
-          if(this.nullCookie !== undefined || this.nullCookie !== null){
+          if(this.nullCookie !== undefined && this.nullCookie !== null){
+            console.log(this.nullCookie);
             this.nullCookie.collision = 0;
           }
           that.layer1.remove(this);
