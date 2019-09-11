@@ -28,13 +28,13 @@ const initHandle = (arr : object[]) : void=>{
       arcade: {
         gravity: { y: 0 },
         debug: false
-        //debug: true
+       // debug: true
       }
     },
     render:{
       antialias:true
     },
-    // resolution:2,
+    //resolution:2,
     //transparent : true,
     scene: sceneArr
   };

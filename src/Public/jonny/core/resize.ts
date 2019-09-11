@@ -16,4 +16,15 @@ export var resize = function (w,h){
       object-fit: contain;
       object-position: center;
     `);
+
+    deleteOther();
+}
+
+function deleteOther(){
+  let hash = window.location.hash;
+  if(hash==="#/game5"){
+    return false;
+  } 
+  let dontRemove = document.querySelector(".dontRemove");
+  dontRemove.innerHTML = "";
 }

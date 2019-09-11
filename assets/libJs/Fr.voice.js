@@ -57,8 +57,7 @@
 				navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia
 					|| navigator.mozGetUserMedia || navigator.msGetUserMedia;
 				window.URL = window.URL || window.webkitURL;
-
-				if (navigator.getUserMedia === false) {
+				if (navigator.mediaDevices.getUserMedia === false) {
 					alert('getUserMedia() is not supported in your browser');
 				}
 				this.context = new AudioContext();

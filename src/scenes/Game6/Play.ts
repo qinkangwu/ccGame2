@@ -86,8 +86,6 @@ export default class Game6PlayScene extends Phaser.Scene {
   }
 
   create(): void {
-    console.log(this);
-    //this.
     //index = 6; //test
     this.createStaticScene();
     this.createAudio();
@@ -150,24 +148,6 @@ export default class Game6PlayScene extends Phaser.Scene {
       blendMode: 'ADD',
       on: false
     })
-
-    // this.tipsParticlesEmitterConfig = {
-    //   nextCb: () => {
-
-    //   },
-    //   renderBefore: () => {
-
-    //   },
-    //   successCb: () => {
-
-    //   },
-    //   tryAgainCb: () => {
-
-    //   }
-    // }
-
-    // this.tipsParticlesEmitter = new TipsParticlesEmitter(this, this.tipsParticlesEmitterConfig);
-
   }
 
   /**

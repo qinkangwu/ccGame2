@@ -13,13 +13,14 @@ import { StaticAni, TweenAni } from '../Animate';
  */
 
 
-export default class Button extends Phaser.GameObjects.Sprite {
+export class Button extends Phaser.GameObjects.Sprite {
     public pointeroverFunc: Function;
     public pointeroutFunc: Function;
     public pointerdownFunc: Function;
     public pointerupFunc: Function;
     public minAlpha: number;
     public interactive: boolean;
+    private overAni:boolean = true;
 
     constructor(scene: Phaser.Scene, x: number = 0, y: number = 0, texture: string, shape?: any, callback?: Phaser.Types.Input.HitAreaCallback) {
         super(scene, x, y, texture);
@@ -44,6 +45,13 @@ export default class Button extends Phaser.GameObjects.Sprite {
         this.on("pointerout", this.pointeroutHandler);
         this.on("pointerdown", this.pointerdownHandler)
         this.on("pointerup", this.pointerupHandler)
+    }
+
+    public static bindEvent(obj):void{
+        obj.on("pointerover", this.prototype.pointeroverHandler);
+        obj.on("pointerout", this.prototype.pointeroutHandler);
+        obj.on("pointerdown", this.prototype.pointerdownHandler);
+        obj.on("pointerup", this.prototype.pointerupHandler);
     }
 
     public pointerupHandler(): void | boolean {
@@ -80,11 +88,99 @@ export default class Button extends Phaser.GameObjects.Sprite {
             return false;
         }
         StaticAni.alphaScaleFuc(this, 1, 1, 1);
-        TweenAni.alphaScaleYoyoFunc(this.scene, this, 1.2, 1.2, 1);
+        if(this.overAni){
+            TweenAni.alphaScaleYoyoFunc(this.scene, this, 1.2, 1.2, 1);
+            this.overAni = false;
+        }
         if (this.pointeroutFunc !== undefined) {
             this.pointeroverFunc();
         }
     }
+}
 
+export class ButtonContainer extends Phaser.GameObjects.Container {
+    public pointeroverFunc: Function;
+    public pointeroutFunc: Function;
+    public pointerdownFunc: Function;
+    public pointerupFunc: Function;
+    public minAlpha: number;
+    public interactive: boolean;
+    public shape:any;
+    private overAni:boolean = true;
 
+    constructor(scene: Phaser.Scene,shape:any,callback:Phaser.Types.Input.HitAreaCallback) {
+        super(scene);
+        this.initStyle();
+        this.minAlpha = 0.7;
+        this.shape = shape;
+        this.bindEvent(shape, callback);
+    }
+
+    initStyle(): void {
+        this.setAlpha(0.7);
+    }
+
+    private bindEvent(shape: any, callback: Phaser.Types.Input.HitAreaCallback): void {
+        if (shape !== undefined) {
+            this.setInteractive(shape, callback);
+        } else {
+            this.setInteractive();
+        }
+        this.interactive = true;
+        this.on("pointerover", this.pointeroverHandler);
+        this.on("pointerout", this.pointeroutHandler);
+        this.on("pointerdown", this.pointerdownHandler)
+        this.on("pointerup", this.pointerupHandler)
+    }
+
+    public static bindEvent(obj):void{
+        obj.on("pointerover", this.prototype.pointeroverHandler);
+        obj.on("pointerout", this.prototype.pointeroutHandler);
+        obj.on("pointerdown", this.prototype.pointerdownHandler);
+        obj.on("pointerup", this.prototype.pointerupHandler);
+    }
+
+    public pointerupHandler(): void | boolean {
+        if (!this.interactive) {
+            return false;
+        }
+        StaticAni.alphaScaleFuc(this, 1, 1, this.minAlpha);
+        if (this.pointerupFunc !== undefined) {
+            this.pointerupFunc();
+        }
+    }
+
+    public pointerdownHandler(): void | boolean {
+        if (!this.interactive) {
+            return false;
+        }
+        StaticAni.alphaScaleFuc(this, 1.2, 1.2, 1);
+        if (this.pointerdownFunc !== undefined) {
+            this.pointerdownFunc();
+        }
+    }
+
+    public pointeroutHandler(): void | boolean {
+        if (!this.interactive) {
+            return false;
+        }
+        if (this.pointeroverFunc !== undefined) {
+            this.pointeroverFunc();
+        }
+    }
+
+    public pointeroverHandler(): void | boolean {
+        if (!this.interactive) {
+            return false;
+        }
+        StaticAni.alphaScaleFuc(this, 1, 1, 1);
+        if(this.overAni){
+            TweenAni.alphaScaleYoyoFunc(this.scene, this, 1.2, 1.2, 1);
+            this.overAni = false;
+        }
+       
+        if (this.pointeroutFunc !== undefined) {
+            this.pointeroverFunc();
+        }
+    }
 }

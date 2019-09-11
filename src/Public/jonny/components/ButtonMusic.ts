@@ -1,5 +1,5 @@
 import 'phaser';
-import Button from './Button';
+import {Button} from './Button';
 
 /** 加载的纹理名称必须为btnSoundOff，btnSoundOn
   * @param Phaser.Scene [scene]  
