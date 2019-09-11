@@ -368,7 +368,9 @@ export default class Game9PlayScene extends Phaser.Scene {
         if (this.hit === 0.5) {
           that.physics.world.enable(this);
           this.hit = 0;
-          this.nullCookie.collision = 0;
+          if(this.nullCookie !== undefined || this.nullCookie !== null){
+            this.nullCookie.collision = 0;
+          }
           that.layer1.remove(this);
           that.layer2.add(this);
         }
@@ -517,7 +519,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     })
     this.nullCookies.forEach(nullCookie => {
       nullCookie.collision = 0;
-      nullCookie.cookie = null
+      nullCookie.cookie = null;
     })
     this.cookies.forEach(cookie => {
       this.physics.world.enable(cookie);
