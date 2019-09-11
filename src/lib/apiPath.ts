@@ -7,5 +7,6 @@ export default {
     uploadRecord : 'https://ccgame.civaonline.cn/voice/voiceToText',
     getGame7Data : 'https://ccgame.civaonline.cn/game/getSugarGourdWordByBookUnitId?bookId=62e346de8d8118e9b8a3d481d7d1b1rrr&unitId=eec17898988511e9b6d5d481d7d1b142',
     getGame8Data : 'https://ccgame.civaonline.cn/game/getSugarGourdWordByBookUnitId?bookId=476351b78d8111e9b8a3d481d7d1b146&unitId=02decbcb988511e9b6d5d481d7d1b146',
+    getGame10Data : 'https://ccgame.civaonline.cn/game/getDrawingBoardByBookUnitId?bookId=476351b78d8111e9b8a3d481d7d1b146&unitId=02decbcb988511e9b6d5d481d7d1b146',
     picCompare : 'https://ccgame.civaonline.cn/voice/pictureCompare'
 }

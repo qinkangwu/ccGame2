@@ -288,7 +288,7 @@ export default class Game8PlayScene extends Phaser.Scene {
                                                   .setOrigin(.5)
                                                   .setDepth(1002)
                                                   .setScale(0);
-      let fish : Phaser.GameObjects.Image = this.add.image(W / 2 , H / 2 ,'game8Icons2' , 'bmf.png')
+      let fish : Phaser.GameObjects.Image = this.add.image(W / 2 , H / 2 , 'bmf')
                                                   .setOrigin(.5)
                                                   .setDepth(1003)
                                                   .setDisplaySize(0,0)

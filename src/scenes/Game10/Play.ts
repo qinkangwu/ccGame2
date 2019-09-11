@@ -2,6 +2,7 @@ import "phaser";
 import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import CreateBtnClass from '../../Public/CreateBtnClass';
+import { item } from "../../interface/Game10";
 import CreateMask from '../../Public/CreateMask';
 import PlanAnims from "../../Public/PlanAnims";
 
@@ -9,6 +10,7 @@ const W = 1024;
 const H = 552;
 
 export default class Game10PlayScene extends Phaser.Scene {
+    private ccData : item[] = [];
     private bgm : Phaser.Sound.BaseSound ; //背景音乐
     private goldIcon : Phaser.GameObjects.Image; //金币数量
     private goldText : Phaser.GameObjects.Text; //金币文本
@@ -29,6 +31,8 @@ export default class Game10PlayScene extends Phaser.Scene {
     private wordGraphics : Phaser.GameObjects.Graphics ; //字符末尾
     private graphicsTweens : Phaser.Tweens.Tween; //字符末尾动画引用
     private planAnims : PlanAnims; //飞机过长动画引用
+    private currentIndex : number = 0 ; //当前的索引
+    private imgObj : Phaser.GameObjects.Sprite; //图片
     constructor() {
       super({
         key: "Game10PlayScene"
@@ -36,10 +40,14 @@ export default class Game10PlayScene extends Phaser.Scene {
     }
   
     init(data): void {
+      data && data.data && (this.ccData = data.data);
     }
   
     preload(): void {
       PlanAnims.loadImg(this);
+      this.ccData.map((r,i)=>{
+        this.load.image(r.name,r.img);
+      })
     }
     
   
@@ -49,6 +57,7 @@ export default class Game10PlayScene extends Phaser.Scene {
       this.createBgm(); //bgm
       this.createGold(); //金币
       this.renderKeyBorad(); //渲染键盘
+      this.renderImg(); //渲染图片
       new CreateBtnClass(this,{
         bgm : this.bgm,
         previewCallback : ()=>{
@@ -67,6 +76,13 @@ export default class Game10PlayScene extends Phaser.Scene {
           this.renderWordGraphics();
         })
       }); //遮罩层
+    }
+
+    private renderImg() : void {
+      this.imgObj = this.add.sprite(281.5,197.5,this.ccData[this.currentIndex].name)
+      .setOrigin(.5)
+      .setDisplaySize(233,191)
+      .setAngle(-8);
     }
 
     private initAnims() : void {

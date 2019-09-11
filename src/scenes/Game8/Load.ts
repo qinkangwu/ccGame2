@@ -42,6 +42,7 @@ export default class Game8LoadScene extends Phaser.Scene {
 
   preload(): void {
     this.load.image('bgi','assets/Game8/bgi.png');
+    this.load.image('bmf','assets/Game8/bmf.png');
     this.load.audio('bgm','assets/Game5/bgm.mp3');
     this.load.multiatlas('game8Icons','assets/Game8/imgsJson.json','assets/Game8');
     this.load.multiatlas('game8Icons2','assets/Game8/imgsJson2.json','assets/Game8');
