@@ -364,17 +364,19 @@ export default class Game9PlayScene extends Phaser.Scene {
       }
       that.clickSound.play();
       if (this.hit === 0 || this.hit === 0.5) {
-        that.moveTo(this,this.initPosition.x,this.initPosition.y)
-        if (this.hit === 0.5) {
-          that.physics.world.enable(this);
-          this.hit = 0;
-          if(this.nullCookie !== undefined && this.nullCookie !== null){
-            console.log(this.nullCookie);
-            this.nullCookie.collision = 0;
+        that.moveTo(this,this.initPosition.x,this.initPosition.y,()=>{
+          if (this.hit === 0.5) {
+            that.physics.world.enable(this);
+            this.hit = 0;
+            if(this.nullCookie !== undefined && this.nullCookie !== null){
+              console.log(this.nullCookie);
+              this.nullCookie.collision = 0;
+            }
+            this.nullCookie.cookie = null;
+            that.layer1.remove(this);
+            that.layer2.add(this);
           }
-          that.layer1.remove(this);
-          that.layer2.add(this);
-        }
+        })
       }
     }
 
