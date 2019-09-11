@@ -317,13 +317,26 @@ export default class Game9PlayScene extends Phaser.Scene {
     });
   }
 
+  /**
+   * 移动程序
+   */
+  public moveTo(obj,x:number,y:number,callback:any=()=>{}){
+    this.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+      targets:obj,
+      x:x,
+      y:y,
+      duration:500,
+      ease:"Sine.easeOut",
+      onComplete:callback
+    })
+  }
 
   /**
    * 执行拖拽的互动 
    */
   private dragEvent(): void {
     let that = this;
-
+    let working:boolean = false;   //碰撞器是否在工作
     //let hits: number = 0; //碰撞次数
     this.physics.world.enable(this.cookies);
 
@@ -344,16 +357,13 @@ export default class Game9PlayScene extends Phaser.Scene {
     }
 
 
-    DrogEvent.cookieOnDragEnd = function () {
+    DrogEvent.cookieOnDragEnd = function (this:Cookie) {
       if (!this.interactive) {
         return false;
       }
       that.clickSound.play();
       if (this.hit === 0 || this.hit === 0.5) {
-        this.setPosition(
-          this.initPosition.x,
-          this.initPosition.y
-        );
+        that.moveTo(this,this.initPosition.x,this.initPosition.y)
         if (this.hit === 0.5) {
           that.physics.world.enable(this);
           this.hit = 0;
@@ -363,6 +373,8 @@ export default class Game9PlayScene extends Phaser.Scene {
         }
       }
     }
+
+
 
     this.cookies.forEach(cookieEvent);
     function cookieEvent(cookie: ButtonContainer) {
@@ -380,9 +392,12 @@ export default class Game9PlayScene extends Phaser.Scene {
     let collider_1 = that.physics.add.overlap(that.cookies, that.nullCookies, overlapHandler_1, null, this);
 
     function overlapHandler_1(...args) {
+      if(working){
+        return false;
+      }
       let hits: number = 0;
 
-      args[0].hit = 1;
+      working = true;
       args[0].setPosition(args[1].x, args[1].y);
       that.layer2.remove(args[0]);
       that.layer1.add(args[0]);
@@ -390,28 +405,22 @@ export default class Game9PlayScene extends Phaser.Scene {
       args[0].nullCookie = args[1];
       that.physics.world.disable(args[0]);
 
-
       setTimeout(() => {
         args[0].interactive = true;
         args[0].hit = 0.5;
+        working = false;
       }, 1000);
-
 
       let collideCookie = args[1].cookie;
       if (collideCookie !== null && collideCookie.hit === 0.5) {
         collideCookie.hit = 0;
         if (args[0].name !== collideCookie.name) {
-          (collideCookie as Phaser.GameObjects.Container).setPosition(
-            collideCookie.initPosition.x,
-            collideCookie.initPosition.y
-          )
-            that.layer2.add(collideCookie);
+          that.moveTo(collideCookie,collideCookie.initPosition.x,collideCookie.initPosition.y,()=>{
             that.layer1.remove(collideCookie);
-          collideCookie.interactive = true;
-          setTimeout(() => {
+            that.layer2.add(collideCookie);
+            collideCookie.interactive = true;
             that.physics.world.enable(collideCookie);
-            console.log(that.layer1.list);
-          }, 1000);
+          });
         }
       }
 
@@ -426,6 +435,7 @@ export default class Game9PlayScene extends Phaser.Scene {
         }
       })
     }
+
   }
 
   /**
