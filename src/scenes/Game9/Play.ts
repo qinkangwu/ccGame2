@@ -9,7 +9,7 @@ import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
 const vol = 0.3; //背景音乐的音量
 var index: number; //题目的指针，默认为0
-var goldValue: number = 20; //金币的值
+var goldValue: number = 3; //金币的值
 
 class DrogEvent {
   public static cookieOnDragStart: Function;
@@ -92,6 +92,7 @@ export default class Game9PlayScene extends Phaser.Scene {
 
   update(time: number, delta: number): void {
     this.btnSound.mountUpdate();
+  
   }
 
   /**
@@ -542,6 +543,12 @@ export default class Game9PlayScene extends Phaser.Scene {
       this.nextRound,
       this.resetStart
     )
+    if (goldValue === 0) {
+      setTimeout(()=>{
+      this.scene.pause();
+      alert("啊哦，你又错啦！金币不足，一起去赚金币吧");
+      },1300)
+    }
   }
 
   /**
@@ -595,6 +602,7 @@ export default class Game9PlayScene extends Phaser.Scene {
    */
   private setGoldValue(value: number) {
     goldValue += value;
+  
     this.gold.setText(goldValue);
   }
 
