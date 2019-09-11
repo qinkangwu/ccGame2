@@ -60,11 +60,20 @@ export class SellingGold {
         let goldCoins = (this.golds.list[2] as Phaser.GameObjects.Image);
         let goldCoinsValue = (this.golds.list[3] as Phaser.GameObjects.Image);
         let goldCoinsValueText = (this.golds.list[4] as Phaser.GameObjects.BitmapText);
+        var soundPlay = ()=>{
+            let sound = this.parentScene.sound.add("goldSound");
+            sound.on("complete",()=>{
+                sound.destroy();
+            });
+            sound.play();
+        }
+
         var init = (ani) => {
             goldCoinsLight.setScale(0);
             goldCoins.setScale(0);
             goldCoinsValue.setScale(0);
             goldCoinsValueText.setScale(0);
+            soundPlay();
             ani();
         }
 
@@ -110,6 +119,8 @@ export class SellingGold {
                 }
             })
         }
+
+       
 
         init(ani);
     }
