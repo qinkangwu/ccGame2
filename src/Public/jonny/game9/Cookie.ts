@@ -43,5 +43,21 @@ export class Cookie extends ButtonContainer{
         this.add([this.image, this.bitmapText]);
     }
 
+    // public goHome(callback:any):void{
+    //     if(this.x !== this.initPosition.x && this.y !== this.initPosition.y){
+    //         //console.log(this.scene.add.tween);
+    //         let cookie = this;
+    //         let scene = this.scene.add.tween(<Phaser.Types.Tweens.TimelineBuilderConfig>{
+    //             target:cookie,
+    //             x:this.initPosition.x,
+    //             y:this.initPosition.y,
+    //             alpha:0,
+    //             duration:500,
+    //             ease:"Sine.easeOut",
+    //             onComplete:callback
+    //         })
+    //         console.log(scene);
+    //     }
+    // }
 
 } 

@@ -20,6 +20,7 @@ export class TweenAni {
             yoyo: true
         })
     }
+
 }
 
 export const EASE = {
