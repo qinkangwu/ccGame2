@@ -186,7 +186,9 @@ export default class Game8PlayScene extends Phaser.Scene {
       this.popArr.length = 0 ;
       this.textArr.length = 0 ;
       this.smallFishNum = 0;
+      this.timerNum = 46;
       this.renderCenterPop();
+      this.renderCenterWord();
       this.popShowAnims(()=>{
         this.timeDownHandle(); //倒计时任务开启
       });
@@ -340,7 +342,6 @@ export default class Game8PlayScene extends Phaser.Scene {
         this.moveToHandle(obj);
       }else{
         //错误
-        console.log('错误');
         this.clickErrorWord(obj);
       }
     }
@@ -349,6 +350,25 @@ export default class Game8PlayScene extends Phaser.Scene {
       let index : number = obj.getData('index');
       const name : string = obj.getData('name');
       const id : string = obj.getData('id');
+      let wrongObj = this.add.image(this.timerObj.x + 3 , this.timerObj.y + 20, 'game8Icons2', 'error.png').setOrigin(.5).setAlpha(1);
+      this.tweens.timeline({
+        targets : wrongObj,
+        ease : 'Sine.easeInOut',
+        duration :300,
+        tweens : [
+          {
+            y : '-=20',
+            alpha : 1,
+          },
+          {
+            y : '-=20',
+            alpha : 0,
+          }
+        ],
+        onComplete : ()=>{
+          wrongObj.destroy();
+        }
+      });
       this.tweens.timeline({
         targets : [obj , this.textArr[index]],
         ease : 'Sine.easeInOut',
@@ -593,7 +613,20 @@ export default class Game8PlayScene extends Phaser.Scene {
               this.tweens.add({
                 targets : this.bigFish,
                 ease : 'Sine.easeInOut',
-                
+                duration : 500,
+                x : this.smallFishMenu.x,
+                y : this.smallFishMenu.y,
+                displayWidth : 75, 
+                displayHeight : 63,
+                onComplete : ()=>{
+                  this.bigFish.destroy();
+                  this.centerWordObj.destroy()
+                  this.centerWordText.destroy();
+                  this.bigFish = null ;
+                  this.centerWordObj = null;
+                  this.centerWordText = null;
+                  this.nextWordHandle();
+                }
               })
             }
           })
