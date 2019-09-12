@@ -1,6 +1,6 @@
 import 'phaser';
 import { Game9DataItem, Game9PhoneticSymbol } from '../../interface/Game9';
-import { cover, rotateTips , Bounds,isHit} from '../../Public/jonny/core';
+import { cover, rotateTips ,isHit} from '../../Public/jonny/core';
 import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import { EASE } from '../../Public/jonny/Animate';
 import PlanAnims from '../../Public/PlanAnims';
@@ -187,7 +187,6 @@ export default class Game9PlayScene extends Phaser.Scene {
       let _cookie = new Cookie(this, new Phaser.Geom.Rectangle(-60, -47, 120, 91), Phaser.Geom.Rectangle.Contains, v.name, _delay, _x, _y).setAlpha(1);
       _cookie.name = v.name;
       _cookie.minAlpha = 1;
-      _cookie.pointerdownFunc = this.playPhonetic.bind(this, _cookie.name);
       _cookie.hit = 0;
       this.layer2.add(_cookie);
       this.cookies.push(_cookie);
