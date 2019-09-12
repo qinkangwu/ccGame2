@@ -339,15 +339,36 @@ export default class Game9PlayScene extends Phaser.Scene {
     let that = this;
     let working:boolean = false;   //碰撞器是否在工作
     //let hits: number = 0; //碰撞次数
+    let hitB:boolean = false;
     this.physics.world.enable(this.cookies);
 
     DrogEvent.cookieOnDrag = function (pointer, dragX, dragY) {
       if (!this.interactive) {
         return false;
       }
-      
       this.x = dragX;
       this.y = dragY;
+      that.nullCookies.forEach(nullCookie=>{
+        if(isHit(this.syncBounds(),nullCookie.syncBounds())){
+          if(nullCookie.cookie && this.name !== nullCookie.cookie.name && this.hit===0.5 && !hitB){
+              hitB = true;
+              this.interactive = false;
+              this.setPosition(
+                nullCookie.x,
+                nullCookie.y
+              );
+              that.moveTo(nullCookie.cookie,this.nullCookie.x,this.nullCookie.y,()=>{
+                 this.nullCookie.cookie = nullCookie.cookie;  //我的男朋友的女朋友是他的女朋友
+                 nullCookie.cookie.nullCookie = this.nullCookie;   //他的女朋友的男朋友是我的男朋友
+                 nullCookie.cookie = this;    //他的女朋友是我
+                 nullCookie.cookie.nullCookie = nullCookie;     //他的女朋友的男朋友是他
+                 this.interactive = true;
+                 hitB = false;
+                console.log("finsh");
+              })
+          } 
+        }
+      })
       return true;
     }
 
