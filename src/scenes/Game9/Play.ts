@@ -1,6 +1,6 @@
 import 'phaser';
 import { Game9DataItem, Game9PhoneticSymbol } from '../../interface/Game9';
-import { cover, rotateTips } from '../../Public/jonny/core';
+import { cover, rotateTips , Bounds,isHit} from '../../Public/jonny/core';
 import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import { EASE } from '../../Public/jonny/Animate';
 import PlanAnims from '../../Public/PlanAnims';
@@ -345,6 +345,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
+      
       this.x = dragX;
       this.y = dragY;
       return true;
@@ -441,7 +442,6 @@ export default class Game9PlayScene extends Phaser.Scene {
         }
       })
     }
-
   }
 
   /**
