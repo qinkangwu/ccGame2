@@ -52,7 +52,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   //层次
   private layer0: Phaser.GameObjects.Container;  //bg,
   private layer1: Phaser.GameObjects.Container;  //nullcookie
-  private layer2: Phaser.GameObjects.Container;  //cookie,civa
+  private layer2: Phaser.GameObjects.Container;  //cookie
   private layer3: Phaser.GameObjects.Container;  //civa
   private layer4: Phaser.GameObjects.Container;  //btnExit,btnSound
 
@@ -189,7 +189,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       }
       let _cookie = new Cookie(this, new Phaser.Geom.Rectangle(-60, -47, 120, 91), Phaser.Geom.Rectangle.Contains, v.name, _delay, _x, _y).setAlpha(1);
       _cookie.name = v.name;
-      _cookie.minAlpha = 1;
+      //_cookie.minAlpha = 1;
       _cookie.hit = 0;
       this.layer2.add(_cookie);
       this.cookies.push(_cookie);
@@ -432,6 +432,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       that.layer2.remove(args[0]);
       that.layer1.add(args[0]);
       args[0].interactive = false;
+      args[0].setScale(1);
       args[0].nullCookie = args[1];
       that.physics.world.disable(args[0]);
 
@@ -500,7 +501,6 @@ export default class Game9PlayScene extends Phaser.Scene {
         console.log(err)
         this.isWrong();
       });
-
   }
 
   /**

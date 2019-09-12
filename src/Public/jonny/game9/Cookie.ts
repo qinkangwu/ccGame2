@@ -44,6 +44,9 @@ export class Cookie extends ButtonContainer{
               })
         })
         this.add([this.image, this.bitmapText]);
+        this.overAni = false;
+        this.minAlpha = 1;
+        this.maxScale = 1;
     }
 
     public syncBounds():Bounds{
