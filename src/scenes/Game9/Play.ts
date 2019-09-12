@@ -1,6 +1,6 @@
 import 'phaser';
 import { Game9DataItem, Game9PhoneticSymbol } from '../../interface/Game9';
-import { cover, rotateTips } from '../../Public/jonny/core';
+import { cover, rotateTips , Bounds,isHit} from '../../Public/jonny/core';
 import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import { EASE } from '../../Public/jonny/Animate';
 import PlanAnims from '../../Public/PlanAnims';
@@ -9,7 +9,7 @@ import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
 const vol = 0.3; //背景音乐的音量
 var index: number; //题目的指针，默认为0
-var goldValue: number = 20; //金币的值
+var goldValue: number = 3; //金币的值
 
 class DrogEvent {
   public static cookieOnDragStart: Function;
@@ -92,6 +92,7 @@ export default class Game9PlayScene extends Phaser.Scene {
 
   update(time: number, delta: number): void {
     this.btnSound.mountUpdate();
+  
   }
 
   /**
@@ -338,6 +339,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     let that = this;
     let working:boolean = false;   //碰撞器是否在工作
     //let hits: number = 0; //碰撞次数
+    let hitB:boolean = false;
     this.physics.world.enable(this.cookies);
 
     DrogEvent.cookieOnDrag = function (pointer, dragX, dragY) {
@@ -346,6 +348,27 @@ export default class Game9PlayScene extends Phaser.Scene {
       }
       this.x = dragX;
       this.y = dragY;
+      that.nullCookies.forEach(nullCookie=>{
+        if(isHit(this.syncBounds(),nullCookie.syncBounds())){
+          if(nullCookie.cookie && this.name !== nullCookie.cookie.name && this.hit===0.5 && !hitB){
+              hitB = true;
+              this.interactive = false;
+              this.setPosition(
+                nullCookie.x,
+                nullCookie.y
+              );
+              that.moveTo(nullCookie.cookie,this.nullCookie.x,this.nullCookie.y,()=>{
+                 this.nullCookie.cookie = nullCookie.cookie;  //我的男朋友的女朋友是他的女朋友
+                 nullCookie.cookie.nullCookie = this.nullCookie;   //他的女朋友的男朋友是我的男朋友
+                 nullCookie.cookie = this;    //他的女朋友是我
+                 nullCookie.cookie.nullCookie = nullCookie;     //他的女朋友的男朋友是他
+                 this.interactive = true;
+                 hitB = false;
+                console.log("finsh");
+              })
+          } 
+        }
+      })
       return true;
     }
 
@@ -363,14 +386,19 @@ export default class Game9PlayScene extends Phaser.Scene {
       }
       that.clickSound.play();
       if (this.hit === 0 || this.hit === 0.5) {
-        that.moveTo(this,this.initPosition.x,this.initPosition.y)
-        if (this.hit === 0.5) {
-          that.physics.world.enable(this);
-          this.hit = 0;
-          this.nullCookie.collision = 0;
-          that.layer1.remove(this);
-          that.layer2.add(this);
-        }
+        that.moveTo(this,this.initPosition.x,this.initPosition.y,()=>{
+          if (this.hit === 0.5) {
+            that.physics.world.enable(this);
+            this.hit = 0;
+            if(this.nullCookie !== undefined && this.nullCookie !== null){
+              console.log(this.nullCookie);
+              this.nullCookie.collision = 0;
+            }
+            this.nullCookie.cookie = null;
+            that.layer1.remove(this);
+            that.layer2.add(this);
+          }
+        })
       }
     }
 
@@ -435,7 +463,6 @@ export default class Game9PlayScene extends Phaser.Scene {
         }
       })
     }
-
   }
 
   /**
@@ -516,7 +543,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     })
     this.nullCookies.forEach(nullCookie => {
       nullCookie.collision = 0;
-      nullCookie.cookie = null
+      nullCookie.cookie = null;
     })
     this.cookies.forEach(cookie => {
       this.physics.world.enable(cookie);
@@ -542,6 +569,12 @@ export default class Game9PlayScene extends Phaser.Scene {
       this.nextRound,
       this.resetStart
     )
+    if (goldValue === 0) {
+      setTimeout(()=>{
+      this.scene.pause();
+      alert("啊哦，你又错啦！金币不足，一起去赚金币吧");
+      },1300)
+    }
   }
 
   /**
@@ -595,6 +628,7 @@ export default class Game9PlayScene extends Phaser.Scene {
    */
   private setGoldValue(value: number) {
     goldValue += value;
+  
     this.gold.setText(goldValue);
   }
 

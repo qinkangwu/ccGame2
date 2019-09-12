@@ -93,7 +93,7 @@ export default class Game9LoadScene extends Phaser.Scene {
     this._loader.on("complete", () => {
       this.scene.start('Game9PlayScene', {
         data: this.ccData,
-        index: 0
+        index: 2
       });
     });
     this._loader.start();
