@@ -65,6 +65,7 @@ export default class Game4PlayScene extends Phaser.Scene {
       PlanAnims.loadImg(this); //全局组件加载img
       SellingGold.loadImg(this); //全局组件加载Img
       TipsParticlesEmitter.loadImg(this);
+      Gold.loadImg(this);
     }
     
   
