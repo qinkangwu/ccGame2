@@ -4,7 +4,7 @@ import { cover, rotateTips, isHit } from '../../Public/jonny/core';
 import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import { EASE } from '../../Public/jonny/Animate';
 import PlanAnims from '../../Public/PlanAnims';
-import { CivaMen, Cookie, NullCookie,SuccessBtn} from '../../Public/jonny/game9';
+import { CivaMen, Cookie, NullCookie, SuccessBtn } from '../../Public/jonny/game9';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
 const vol = 0.3; //背景音乐的音量
@@ -52,7 +52,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   //层次
   private layer0: Phaser.GameObjects.Container;  //bg,
   private layer1: Phaser.GameObjects.Container;  //nullcookie
-  private layer2: Phaser.GameObjects.Container;  //cookie,civa
+  private layer2: Phaser.GameObjects.Container;  //cookie
   private layer3: Phaser.GameObjects.Container;  //civa
   private layer4: Phaser.GameObjects.Container;  //btnExit,btnSound
 
@@ -136,8 +136,8 @@ export default class Game9PlayScene extends Phaser.Scene {
 
     this.planAnims = new PlanAnims(this, this.ccData.length);
     this.gold = new Gold(this, goldValue);   //设置金币
-    this.successBtn = new SuccessBtn(this, 939 + 60 * 0.5, 467 + 60 * 0.5, "successBtn").setAlpha(0);
-    this.successBtn.on("pointerdown",this.successBtnPointerdown.bind(this));
+    this.successBtn = new SuccessBtn(this, 939 + 60 * 0.5, 552 * 0.5, "successBtn");
+    this.successBtn.on("pointerdown", this.successBtnPointerdown.bind(this));
     this.layer4.add([this.successBtn, this.gold]);
   }
 
@@ -189,7 +189,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       }
       let _cookie = new Cookie(this, new Phaser.Geom.Rectangle(-60, -47, 120, 91), Phaser.Geom.Rectangle.Contains, v.name, _delay, _x, _y).setAlpha(1);
       _cookie.name = v.name;
-      _cookie.minAlpha = 1;
+      //_cookie.minAlpha = 1;
       _cookie.hit = 0;
       this.layer2.add(_cookie);
       this.cookies.push(_cookie);
@@ -432,6 +432,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       that.layer2.remove(args[0]);
       that.layer1.add(args[0]);
       args[0].interactive = false;
+      args[0].setScale(1);
       args[0].nullCookie = args[1];
       that.physics.world.disable(args[0]);
 
@@ -472,6 +473,11 @@ export default class Game9PlayScene extends Phaser.Scene {
    */
   private dragEnd(): void {
     console.log("拖拽结束");
+    this.cookies.forEach(cookie => {
+      cookie.off("dragstart");
+      cookie.off("drag");
+      cookie.off("dragend");
+    })
     this.civaMen.round.times += 1;
     this.successBtn.setAlpha(1);
     this.successBtn.animate.play();
@@ -481,8 +487,8 @@ export default class Game9PlayScene extends Phaser.Scene {
    *  successBtnPointerdown 
    */
   private successBtnPointerdown() {
-    if(!this.successBtn.interactive){
-        return false;
+    if (!this.successBtn.interactive) {
+      return false;
     }
     this.successBtn.interactive = false;
     this.successBtn.animate.stop();
@@ -495,11 +501,6 @@ export default class Game9PlayScene extends Phaser.Scene {
         console.log(err)
         this.isWrong();
       });
-    this.cookies.forEach(cookie => {
-      cookie.off("dragstart");
-      cookie.off("drag");
-      cookie.off("dragend");
-    })
   }
 
   /**

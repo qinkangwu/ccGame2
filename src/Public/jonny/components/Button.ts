@@ -19,6 +19,7 @@ export class Button extends Phaser.GameObjects.Sprite {
     public pointerdownFunc: Function;
     public pointerupFunc: Function;
     public minAlpha: number;
+    public maxScale:number;
     public interactive: boolean;
     private overAni:boolean = true;
 
@@ -27,6 +28,7 @@ export class Button extends Phaser.GameObjects.Sprite {
         this.scene = scene;
         this.initStyle();
         this.minAlpha = 0.7;
+        this.maxScale = 1.2;
         this.bindEvent(shape, callback);
     }
 
@@ -89,7 +91,7 @@ export class Button extends Phaser.GameObjects.Sprite {
         }
         StaticAni.alphaScaleFuc(this, 1, 1, 1);
         if(this.overAni){
-            TweenAni.alphaScaleYoyoFunc(this.scene, this, 1.2, 1.2, 1);
+            TweenAni.alphaScaleYoyoFunc(this.scene, this, this.maxScale, this.maxScale, 1);
             this.overAni = false;
         }
         if (this.pointeroutFunc !== undefined) {
@@ -104,14 +106,16 @@ export class ButtonContainer extends Phaser.GameObjects.Container {
     public pointerdownFunc: Function;
     public pointerupFunc: Function;
     public minAlpha: number;
+    public maxScale:number;
     public interactive: boolean;
     public shape:any;
-    private overAni:boolean = true;
+    public overAni:boolean = true;
 
     constructor(scene: Phaser.Scene,shape:any,callback:Phaser.Types.Input.HitAreaCallback) {
         super(scene);
         this.initStyle();
         this.minAlpha = 0.7;
+        this.maxScale = 1.2;
         this.shape = shape;
         this.bindEvent(shape, callback);
     }
@@ -154,7 +158,7 @@ export class ButtonContainer extends Phaser.GameObjects.Container {
         if (!this.interactive) {
             return false;
         }
-        StaticAni.alphaScaleFuc(this, 1.2, 1.2, 1);
+        StaticAni.alphaScaleFuc(this, this.maxScale, this.maxScale, 1);
         if (this.pointerdownFunc !== undefined) {
             this.pointerdownFunc();
         }
