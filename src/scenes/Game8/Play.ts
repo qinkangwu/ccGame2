@@ -3,11 +3,13 @@ import apiPath from '../../lib/apiPath';
 import CreateBtnClass from '../../Public/CreateBtnClass';
 import CreateMask from '../../Public/CreateMask';
 import { Gold } from "../../Public/jonny/components/Gold";
+import { SellingGold } from "../../Public/jonny/components/SellingGold";
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 import { item } from "../../interface/Game8";
 
 const W = 1024;
 const H = 552;
+const timerNumber = 59;
 
 export default class Game8PlayScene extends Phaser.Scene {
     private ccData : item[] = []; //数据
@@ -29,7 +31,7 @@ export default class Game8PlayScene extends Phaser.Scene {
     private goldObj : Gold ; //金币组件引用
     private timerObj : Phaser.GameObjects.Image; //时间UI对象
     private timerText : Phaser.GameObjects.Text; //时间UI文本
-    private timerNum : number = 99; //时间number
+    private timerNum : number = timerNumber; //时间number
     private timerEvent : Phaser.Time.TimerEvent; //倒计时任务
     private graphicsObj : Phaser.GameObjects.Graphics; //mask
     private timeoutObj : Phaser.GameObjects.Image; //倒计时UI对象
@@ -37,7 +39,8 @@ export default class Game8PlayScene extends Phaser.Scene {
     private centerWordObj : Phaser.GameObjects.Graphics; //中间展示的正确单词对象
     private centerWordText : Phaser.GameObjects.Text; //中间展示的正确单词文本
     private bigFish : Phaser.GameObjects.Image; //中间大鱼对象
-    private sholdGetGoldNum : number ; //正常情况下可以获得的金币数量
+    private sholdGetGoldNum : number = 6; //正常情况下可以获得的金币数量
+    private currentGoldNum : number = 0 ; //当前的金币数量
     constructor() {
       super({
         key: "Game8PlayScene"
@@ -51,6 +54,7 @@ export default class Game8PlayScene extends Phaser.Scene {
     preload(): void {
       TipsParticlesEmitter.loadImg(this);
       Gold.loadImg(this);
+      SellingGold.loadImg(this); //全局组件加载Img
     }
     
   
@@ -68,7 +72,7 @@ export default class Game8PlayScene extends Phaser.Scene {
       }); //遮罩层
       this.createBgi(); //创建背景
       this.createBgm(); //创建背景音乐
-      this.goldObj = new Gold(this,0);
+      this.goldObj = new Gold(this,this.currentGoldNum);
       this.add.existing(this.goldObj);
       this.loadMusic(this.ccData);
       this.createBtnClass = new CreateBtnClass(this,{
@@ -108,19 +112,26 @@ export default class Game8PlayScene extends Phaser.Scene {
         loop : true
       });
     }
+    
 
     private timeEndHandle() : void {
       let goodjobFish = Math.floor(this.ccData.length * 0.8);
-      let tryAgainFish = Math.floor(this.ccData.length * 0.6);
       if(this.smallFishNum >= goodjobFish){
         //goodjob
-        this.tips.success(()=>{});
-      }else if(this.smallFishNum >= tryAgainFish){
-        //tryagain
-        this.tips.tryAgain(()=>{});
+        this.tips.success(()=>{
+          let goldAnims = new SellingGold(this,{
+            callback : ()=>{
+              this.goldObj.setText(this.currentGoldNum+=this.sholdGetGoldNum);
+              this.previewHandle(true);
+            }
+          });
+          goldAnims.golds.setDepth(101);
+          goldAnims.goodJob(this.sholdGetGoldNum);
+        });
       }else{
-        //oh no
-        this.tips.error(()=>{},()=>{});
+        this.tips.tryAgain(()=>{
+          this.previewHandle(true);
+        });
       }
     }
 
@@ -189,9 +200,13 @@ export default class Game8PlayScene extends Phaser.Scene {
       this.load.start(); //preload自动运行，其他地方加载资源必须手动启动，不然加载失效
     }
 
-    private previewHandle () : void {
+    private previewHandle (isStart : boolean = false) : void {
       //恢复操作
       if(this.previewLock) return;
+      isStart && (this.currentIndex = 0 );
+      isStart && (this.timerNum = timerNumber);
+      isStart && (this.smallFishNum = 0 );
+      isStart && this.smallFishText.setText(`${this.smallFishNum}/${this.ccData.length}`);
       this.popArr.map((r,i)=>{
         r && r.destroy();
         this.textArr[i] && this.textArr[i].destroy();
@@ -210,6 +225,8 @@ export default class Game8PlayScene extends Phaser.Scene {
         this.playMusic(this.ccData[this.currentIndex].id);
       });
       this.renderLeftUI(false);
+      //@ts-ignore
+      this.itemClickHandle.clickLock = false;
     }
 
     private renderTimeout (cb : Function) : void {
@@ -454,8 +471,6 @@ export default class Game8PlayScene extends Phaser.Scene {
           obj.destroy();
           this.popArr[index] = null;
           this.createSmallPopHandle(name);
-          //@ts-ignore
-          this.itemClickHandle.clickLock = false;
           if(this.leftUiIndex === this.ccData[this.currentIndex].phoneticSymbols.length - 1){
             let flag = true;
             this.choosePopArr.length = this.ccData[this.currentIndex].phoneticSymbols.length;
@@ -474,8 +489,11 @@ export default class Game8PlayScene extends Phaser.Scene {
               })
             }else{
               //错误
-              this.tips.tryAgain(this.previewHandle)
+              this.tips.tryAgain(this.previewHandle);
             }
+          }else{
+            //@ts-ignore
+            this.itemClickHandle.clickLock = false;
           }
         }
       })
@@ -560,6 +578,8 @@ export default class Game8PlayScene extends Phaser.Scene {
 
     private chooseEndHandle() : void {
       //成功展示小鱼
+      //@ts-ignore
+      this.itemClickHandle.clickLock = true;
       this.playMusic(this.ccData[this.currentIndex].id);
       this.timerEvent.paused = true; //暂停计时器
       this.tweens.add({
@@ -640,7 +660,30 @@ export default class Game8PlayScene extends Phaser.Scene {
                     displayWidth : 75, 
                     displayHeight : 63,
                     onComplete : ()=>{
-                      this.smallFishText.setText(`${++this.smallFishNum}/${this.ccData.length}`)
+                      //@ts-ignore
+                      this.itemClickHandle.clickLock = false;
+                      this.smallFishText.setText(`${++this.smallFishNum}/${this.ccData.length}`);
+                      if(this.smallFishNum === this.ccData.length){
+                        this.timerEvent.paused = true;
+                        this.sholdGetGoldNum += 2;
+                        this.tips.success(()=>{
+                          let goldAnims = new SellingGold(this,{
+                            callback : ()=>{
+                              this.goldObj.setText(this.currentGoldNum+=this.sholdGetGoldNum);
+                              this.previewHandle(true);
+                            }
+                          });
+                          goldAnims.golds.setDepth(101);
+                          goldAnims.goodJob(this.sholdGetGoldNum);
+                        });
+                        this.bigFish.destroy();
+                        this.centerWordObj.destroy()
+                        this.centerWordText.destroy();
+                        this.bigFish = null ;
+                        this.centerWordObj = null;
+                        this.centerWordText = null;
+                        return;
+                      }
                       this.bigFish.destroy();
                       this.centerWordObj.destroy()
                       this.centerWordText.destroy();
