@@ -1,0 +1,105 @@
+import 'phaser';
+import apiPath from '../../lib/apiPath';
+import { get } from '../../lib/http';
+import { Assets,Game11DataItem,GetSentenceData,GetSentenceDataVocabulary,Vocabulary} from '../../interface/Game11';
+import { resize } from '../../Public/jonny/core';
+import { SellingGold } from '../../Public/jonny/components';
+import PlanAnims from '../../Public/PlanAnims';
+import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
+
+const W = 1024;
+const H = 552;
+
+export default class Game11LoadScene extends Phaser.Scene {
+  private _loader: Phaser.Loader.LoaderPlugin;
+  private ccData: Array<Game11DataItem> = [];
+  private centerText: Phaser.GameObjects.Text; //文本内容
+  private assets:Assets[] = [{"url":"assets/commonUI/successBtn.png","key":"bg"},{"url":"assets/commonUI/btnSoundOff.png","key":"btnSoundOff"},{"url":"assets/commonUI/btnSoundOn.png","key":"btnSoundOn"},{"url":"assets/commonUI/btnExit.png","key":"btnExit"},{"url":"assets/commonUI/originalSoundBtn.png","key":"originalSoundBtn"},{"url":"assets/commonUI/listenAgain.png","key":"listenAgain"},{"url":"assets/Game11/locomotive.png","key":"locomotive"},{"url":"assets/Game11/rope.png","key":"rope"},{"url":"assets/Game11/symbolTrainBox.png","key":"symbolTrainBox"},{"url":"assets/Game11/trainBox.png","key":"trainBox"}];
+  constructor() {
+    super({
+      key: "Game11LoadScene"
+    });
+    this.ccData = [];
+  }
+
+  init(): void {
+    resize.call(this, W, H);
+    this.centerText = this.add.text(1024 * 0.5, 552 * 0.5, '0%', {
+      fill: '#fff',
+      font: 'bold 60px Arial',
+      bold: true,
+    }).setOrigin(.5, .5);
+    this._loader = new Phaser.Loader.LoaderPlugin(this);
+  }
+
+  preload(): void {
+    this.load.audio('bgm', 'assets/sounds/bgm-01.mp3');
+    this.load.bitmapFont('ArialRoundedBold30', 'assets/font/ArialRoundedBold30/font.png', 'assets/font/ArialRoundedBold30/font.xml');
+    TipsParticlesEmitter.loadImg(this)
+    PlanAnims.loadImg(this);
+    SellingGold.loadImg(this);
+    this.assets.forEach((v) => {
+      this.load.image(v.key, v.url);
+    })
+    this.load.on("progress", (e: any) => {
+      e = Math.floor(e * 50);
+      this.centerText.setText(`${e}%`);
+    })
+    this.load.on("complete", (e: any) => {
+      this.getData();
+    })
+  }
+
+  create(): void {
+  }
+
+  /**
+   * 正式状态
+   */
+  private getData() {
+    get("assets/Game9/getSugarGourdWordByBookUnitId.json").then((res) => {
+      if(res.code==='0000'){
+       this.ccData = (<GetSentenceData[]>res.result).map(v=>{
+        delete v.id; 
+        delete v.videoId;
+        delete v.imgKey;
+        v.vocabularies.map(_v=>{
+          delete _v.id;
+          delete _v.videoId;
+          delete _v.img;
+          delete _v.syllable;
+          delete _v.phoneticSymbol;
+          return _v;
+        });
+        return v;
+      })
+      }
+    }).then(() => {
+      this.loadAudio();
+    })
+  }
+
+  /**
+   * 加载音频
+   */
+  private loadAudio(): void {
+    this.ccData.forEach(v => {
+      this._loader.audio(v.sentenceName, v.audioKey);
+      v.vocabularies.forEach(_v => {
+        this._loader.audio(_v.name, _v.audioKey);
+      })
+    })
+    this._loader.on("progress", (e: any) => {
+      e = Math.floor(50 + e * 50);
+      this.centerText.setText(`${e}%`);
+    })
+    this._loader.on("complete", () => {
+      this.scene.start('Game11PlayScene', {
+        data: this.ccData,
+        index: 2
+      });
+    });
+    this._loader.start();
+  }
+
+};

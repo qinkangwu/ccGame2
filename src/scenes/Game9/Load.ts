@@ -60,7 +60,7 @@ export default class Game9LoadScene extends Phaser.Scene {
    * 正式状态
    */
   private getData() {
-    get("assets/Game9/getSugarGourdWordByBookUnitId.json").then((res) => {
+    get(apiPath.getWordsData).then((res) => {
       if(res.code==='0000'){
        this.ccData = res.result.map(v=>{
         let pl = v.phoneticSymbols.length; //正确音标的长度
