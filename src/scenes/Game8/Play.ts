@@ -9,7 +9,7 @@ import { item } from "../../interface/Game8";
 
 const W = 1024;
 const H = 552;
-const timerNumber = 59;
+let timerNumber = 59;
 
 export default class Game8PlayScene extends Phaser.Scene {
     private ccData : item[] = []; //数据
@@ -31,7 +31,7 @@ export default class Game8PlayScene extends Phaser.Scene {
     private goldObj : Gold ; //金币组件引用
     private timerObj : Phaser.GameObjects.Image; //时间UI对象
     private timerText : Phaser.GameObjects.Text; //时间UI文本
-    private timerNum : number = timerNumber; //时间number
+    private timerNum : number = 0; //时间number
     private timerEvent : Phaser.Time.TimerEvent; //倒计时任务
     private graphicsObj : Phaser.GameObjects.Graphics; //mask
     private timeoutObj : Phaser.GameObjects.Image; //倒计时UI对象
@@ -49,6 +49,8 @@ export default class Game8PlayScene extends Phaser.Scene {
   
     init(data): void {
       data && data.data && (this.ccData = data.data);
+      timerNumber = this.ccData.length * 5;
+      this.timerNum = timerNumber;
     }
   
     preload(): void {
@@ -94,17 +96,30 @@ export default class Game8PlayScene extends Phaser.Scene {
       this.tips = new TipsParticlesEmitter(this); //tip组件
     }
     
+
+    private s_to_hs(s) : string{
+      //秒数换算成分钟
+      let h;
+      h = Math.floor(s/60);
+      s = s%60;
+      h += '';
+      s += '';
+      h = (h.length==1)?'0'+h:h;
+      s = (s.length==1)?'0'+s:s;
+      return h+':'+s;
+  }
+    
     private timeDownHandle () : void {
       this.timerEvent = this.time.addEvent({
         delay : 1000,
         callback : ()=>{
           this.timerNum = this.timerNum - 1 <= 0 ? 0 : this.timerNum - 1;
-          this.timerText.setText(`00:${('0'+this.timerNum).substr(('0'+this.timerNum).length - 2 , 2)}`);
+          this.timerText.setText(this.s_to_hs(this.timerNum));
           if(this.timerNum === 0 ){
             //倒计时结束
             this.timerEvent.destroy();
             this.timerEvent = null;
-            this.timeEndHandle(); 
+            this.timeEndHandle();
             console.log('倒计时结束');
             return;
           }
@@ -179,7 +194,7 @@ export default class Game8PlayScene extends Phaser.Scene {
         fill : '#ffffff',
       }).setOrigin(.5);
       this.timerObj = this.add.image(971.45 + 200,244.5,'game8Icons2','timeout.png').setOrigin(.5);
-      this.timerText = this.add.text(this.timerObj.x - 15,this.timerObj.y + 9,`00:${this.timerNum}`,{
+      this.timerText = this.add.text(this.timerObj.x - 15,this.timerObj.y + 9,this.s_to_hs(this.timerNum),{
         fontSize: "14px",
         fontFamily:"Arial Rounded MT Bold",
         fill : '#ffffff'
@@ -429,7 +444,7 @@ export default class Game8PlayScene extends Phaser.Scene {
           if(this.timerNum <= 0 ){
             this.timerNum = 0 ;
           }
-          this.timerText.setText(`00:${('0'+this.timerNum).substr(('0'+this.timerNum).length - 2 , 2)}`);
+          this.timerText.setText(this.s_to_hs(this.timerNum));
           this.timerEvent && (this.timerEvent.paused = false);
         }
       });
