@@ -56,6 +56,7 @@ export default class Game8PlayScene extends Phaser.Scene {
     create(): void {
       new CreateMask(this,()=>{
         this.renderTimeout(()=>{
+          this.playMusic(this.ccData[this.currentIndex].id);
           this.baitAnims(); //注册动画
           this.popShowAnims(()=>{
             this.timeDownHandle(); //倒计时任务开启
@@ -145,7 +146,7 @@ export default class Game8PlayScene extends Phaser.Scene {
     private renderFishAndTimer () : void {
       this.goldObj.x = this.goldObj.x + 200;
       this.smallFishMenu = this.add.image(971.45 + 200,339.25,'game8Icons2','smf.png').setOrigin(.5).setDisplaySize(75,66);
-      this.smallFishText = this.add.text(this.smallFishMenu.x + 4,this.smallFishMenu.y + 19,`0/${this.ccData[this.currentIndex].phoneticSymbols.length}`,{
+      this.smallFishText = this.add.text(this.smallFishMenu.x + 4,this.smallFishMenu.y + 19,`0/${this.ccData.length}`,{
         font: 'Bold 16px Arial Rounded MT',
         fill : '#ffffff',
       }).setOrigin(.5);
@@ -424,7 +425,6 @@ export default class Game8PlayScene extends Phaser.Scene {
       }
       this.playMusic(id);
       this.leftUiIndex = this.leftUiIndex + 1 >= this.ccData[this.currentIndex].phoneticSymbols.length ? 0 : this.leftUiIndex + 1
-      this.smallFishText.setText(`${++this.smallFishNum}/${this.ccData[this.currentIndex].phoneticSymbols.length}`)
       this.bait.play('begin');
       this.tweens.add({
         targets : [obj , this.textArr[index]],
@@ -543,6 +543,7 @@ export default class Game8PlayScene extends Phaser.Scene {
 
     private chooseEndHandle() : void {
       //成功展示小鱼
+      this.playMusic(this.ccData[this.currentIndex].id);
       this.timerEvent.paused = true; //暂停计时器
       this.tweens.add({
         targets : [...this.popArr,...this.textArr],
@@ -619,6 +620,7 @@ export default class Game8PlayScene extends Phaser.Scene {
                 displayWidth : 75, 
                 displayHeight : 63,
                 onComplete : ()=>{
+                  this.smallFishText.setText(`${++this.smallFishNum}/${this.ccData.length}`)
                   this.bigFish.destroy();
                   this.centerWordObj.destroy()
                   this.centerWordText.destroy();

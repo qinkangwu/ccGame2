@@ -37,6 +37,7 @@ export default class Game7PlayScene extends Phaser.Scene {
     private tips : TipsParticlesEmitter; //tip组件
     private currentIndex : number = -1 ; //当前数据索引
     private guideAnims : CreateGuideAnims; //引导动画引用
+    private lockClick : boolean = false;
     constructor() {
       super({
         key: "Game7PlayScene"
@@ -248,6 +249,7 @@ export default class Game7PlayScene extends Phaser.Scene {
         ease : 'Sine.easeInOut',
         onComplete : ()=>{
           this.createBtnClass.startBtnAnimsShow(); //录音按钮动画
+          this.lockClick = false;
         }
       });
     }
@@ -256,9 +258,17 @@ export default class Game7PlayScene extends Phaser.Scene {
       //点击摇杆
       //@ts-ignore
       if(this.handleClick.clickLock) return;
+      //@ts-ignore
+      this.word1 && this.word1 !== 'lock' &&  this.word1.destroy();
+      //@ts-ignore
+      this.word2 && this.word2 !== 'lock' && this.word2.destroy();
+      //@ts-ignore
+      this.word3 && this.word3 !== 'lock' && this.word3.destroy();
       this.createBtnClass.startBtnAnimsHide();
       this.guideAnims.hideHandle();
       this.handle.play('begin');
+      if(this.lockClick) return;
+      this.lockClick = true;
       this.time.addEvent({
         delay : 300,
         callback : ()=>{
@@ -429,6 +439,7 @@ export default class Game7PlayScene extends Phaser.Scene {
       });
       goldAnims.golds.setDepth(101);
       goldAnims.goodJob(num);
+      this.lockClick = false;
     }
 
     private recordStartHandle() : void {
