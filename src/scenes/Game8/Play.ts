@@ -29,7 +29,7 @@ export default class Game8PlayScene extends Phaser.Scene {
     private goldObj : Gold ; //金币组件引用
     private timerObj : Phaser.GameObjects.Image; //时间UI对象
     private timerText : Phaser.GameObjects.Text; //时间UI文本
-    private timerNum : number = 45; //时间number
+    private timerNum : number = 99; //时间number
     private timerEvent : Phaser.Time.TimerEvent; //倒计时任务
     private graphicsObj : Phaser.GameObjects.Graphics; //mask
     private timeoutObj : Phaser.GameObjects.Image; //倒计时UI对象
@@ -37,6 +37,7 @@ export default class Game8PlayScene extends Phaser.Scene {
     private centerWordObj : Phaser.GameObjects.Graphics; //中间展示的正确单词对象
     private centerWordText : Phaser.GameObjects.Text; //中间展示的正确单词文本
     private bigFish : Phaser.GameObjects.Image; //中间大鱼对象
+    private sholdGetGoldNum : number ; //正常情况下可以获得的金币数量
     constructor() {
       super({
         key: "Game8PlayScene"
@@ -67,7 +68,7 @@ export default class Game8PlayScene extends Phaser.Scene {
       }); //遮罩层
       this.createBgi(); //创建背景
       this.createBgm(); //创建背景音乐
-      this.goldObj = new Gold(this,20);
+      this.goldObj = new Gold(this,0);
       this.add.existing(this.goldObj);
       this.loadMusic(this.ccData);
       this.createBtnClass = new CreateBtnClass(this,{
@@ -99,12 +100,28 @@ export default class Game8PlayScene extends Phaser.Scene {
             //倒计时结束
             this.timerEvent.destroy();
             this.timerEvent = null;
+            this.timeEndHandle(); 
             console.log('倒计时结束');
             return;
           }
         },
         loop : true
       });
+    }
+
+    private timeEndHandle() : void {
+      let goodjobFish = Math.floor(this.ccData.length * 0.8);
+      let tryAgainFish = Math.floor(this.ccData.length * 0.6);
+      if(this.smallFishNum >= goodjobFish){
+        //goodjob
+        this.tips.success(()=>{});
+      }else if(this.smallFishNum >= tryAgainFish){
+        //tryagain
+        this.tips.tryAgain(()=>{});
+      }else{
+        //oh no
+        this.tips.error(()=>{},()=>{});
+      }
     }
 
     private initAnims () : void {
@@ -186,12 +203,11 @@ export default class Game8PlayScene extends Phaser.Scene {
       this.leftUiIndex = -1;
       this.popArr.length = 0 ;
       this.textArr.length = 0 ;
-      this.smallFishNum = 0;
-      this.timerNum = 46;
       this.renderCenterPop();
       this.renderCenterWord();
       this.popShowAnims(()=>{
         this.timeDownHandle(); //倒计时任务开启
+        this.playMusic(this.ccData[this.currentIndex].id);
       });
       this.renderLeftUI(false);
     }
@@ -442,6 +458,7 @@ export default class Game8PlayScene extends Phaser.Scene {
           this.itemClickHandle.clickLock = false;
           if(this.leftUiIndex === this.ccData[this.currentIndex].phoneticSymbols.length - 1){
             let flag = true;
+            this.choosePopArr.length = this.ccData[this.currentIndex].phoneticSymbols.length;
             this.choosePopArr.map((r,i)=>{
               if(r.getData('name') !== this.ccData[this.currentIndex].phoneticSymbols[i].name){
                 flag = false;
@@ -589,7 +606,7 @@ export default class Game8PlayScene extends Phaser.Scene {
         alpha : 1 ,
       });
       this.time.addEvent({
-        delay : 1000,
+        delay : 2000,
         callback : ()=>{
           this.tweens.add({
             targets : [this.centerWordObj,this.centerWordText],
@@ -611,23 +628,28 @@ export default class Game8PlayScene extends Phaser.Scene {
             duration : 300,
             alpha : 1,
             onComplete : ()=>{
-              this.tweens.add({
-                targets : this.bigFish,
-                ease : 'Sine.easeInOut',
-                duration : 500,
-                x : this.smallFishMenu.x,
-                y : this.smallFishMenu.y,
-                displayWidth : 75, 
-                displayHeight : 63,
-                onComplete : ()=>{
-                  this.smallFishText.setText(`${++this.smallFishNum}/${this.ccData.length}`)
-                  this.bigFish.destroy();
-                  this.centerWordObj.destroy()
-                  this.centerWordText.destroy();
-                  this.bigFish = null ;
-                  this.centerWordObj = null;
-                  this.centerWordText = null;
-                  this.nextWordHandle();
+              this.time.addEvent({
+                delay : 500,
+                callback : ()=>{
+                  this.tweens.add({
+                    targets : this.bigFish,
+                    ease : 'Sine.easeInOut',
+                    duration : 500,
+                    x : this.smallFishMenu.x,
+                    y : this.smallFishMenu.y,
+                    displayWidth : 75, 
+                    displayHeight : 63,
+                    onComplete : ()=>{
+                      this.smallFishText.setText(`${++this.smallFishNum}/${this.ccData.length}`)
+                      this.bigFish.destroy();
+                      this.centerWordObj.destroy()
+                      this.centerWordText.destroy();
+                      this.bigFish = null ;
+                      this.centerWordObj = null;
+                      this.centerWordText = null;
+                      this.nextWordHandle();
+                    }
+                  })
                 }
               })
             }
@@ -647,7 +669,7 @@ export default class Game8PlayScene extends Phaser.Scene {
 
     private renderCenterPop () : void {
       //渲染中间的泡泡
-      let contentData = this.ccData[this.currentIndex].phoneticSymbols.concat(this.ccData[this.currentIndex].uselessPhoneticSymbols.slice(0,6));
+      let contentData = this.ccData[this.currentIndex].phoneticSymbols.concat(this.ccData[this.currentIndex].uselessPhoneticSymbols.slice(0,9 - this.ccData[this.currentIndex].phoneticSymbols.length));
       contentData = this.shuffle(contentData);
       for (let i = 0 ; i < 9 ; i ++ ){
         if(i < 3){
