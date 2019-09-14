@@ -49,7 +49,7 @@ export default class Game8PlayScene extends Phaser.Scene {
   
     init(data): void {
       data && data.data && (this.ccData = data.data);
-      timerNumber = this.ccData.length * 5;
+      timerNumber = this.ccData.length * 50;
       this.timerNum = timerNumber;
     }
   
@@ -684,6 +684,7 @@ export default class Game8PlayScene extends Phaser.Scene {
                         this.tips.success(()=>{
                           let goldAnims = new SellingGold(this,{
                             callback : ()=>{
+                              goldAnims.golds.destroy();
                               this.goldObj.setText(this.currentGoldNum+=this.sholdGetGoldNum);
                               this.previewHandle(true);
                             }

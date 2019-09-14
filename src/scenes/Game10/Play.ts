@@ -5,6 +5,9 @@ import CreateBtnClass from '../../Public/CreateBtnClass';
 import { item } from "../../interface/Game10";
 import CreateMask from '../../Public/CreateMask';
 import PlanAnims from "../../Public/PlanAnims";
+import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
+import { Gold } from "../../Public/jonny/components/Gold";
+import { SellingGold } from "../../Public/jonny/components/SellingGold";
 
 const W = 1024;
 const H = 552;
@@ -12,8 +15,6 @@ const H = 552;
 export default class Game10PlayScene extends Phaser.Scene {
     private ccData : item[] = [];
     private bgm : Phaser.Sound.BaseSound ; //背景音乐
-    private goldIcon : Phaser.GameObjects.Image; //金币数量
-    private goldText : Phaser.GameObjects.Text; //金币文本
     private lifeIcon : Phaser.GameObjects.Image; //金币数量
     private lifeText : Phaser.GameObjects.Text; //金币文本
     private comment : Phaser.GameObjects.Image; //提示按钮
@@ -33,6 +34,11 @@ export default class Game10PlayScene extends Phaser.Scene {
     private planAnims : PlanAnims; //飞机过长动画引用
     private currentIndex : number = 0 ; //当前的索引
     private imgObj : Phaser.GameObjects.Sprite; //图片
+    private curData : string[]; //当前的对象
+    private tips : TipsParticlesEmitter; //tip组件
+    private goldObj : Gold ; //金币组件引用
+    private currentGoldNum : number = 0 ; //当前的金币数量
+    private errorNum : number = 0 ; //错误的次数
     constructor() {
       super({
         key: "Game10PlayScene"
@@ -47,7 +53,9 @@ export default class Game10PlayScene extends Phaser.Scene {
       PlanAnims.loadImg(this);
       this.ccData.map((r,i)=>{
         this.load.image(r.name,r.img);
-      })
+      });
+      TipsParticlesEmitter.loadImg(this);
+      SellingGold.loadImg(this); //全局组件加载Img
     }
     
   
@@ -58,12 +66,18 @@ export default class Game10PlayScene extends Phaser.Scene {
       this.createGold(); //金币
       this.renderKeyBorad(); //渲染键盘
       this.renderImg(); //渲染图片
+      this.loadMusic(this.ccData); //加载音频
+      this.tips = new TipsParticlesEmitter(this); //tip组件
+      this.goldObj = new Gold(this,this.currentGoldNum);
+      this.add.existing(this.goldObj);
       new CreateBtnClass(this,{
         bgm : this.bgm,
         previewCallback : ()=>{
           this.setContent('');
         },
-        commentCallback : ()=>{},
+        commentCallback : ()=>{
+          this.playMusic(this.ccData[this.currentIndex].id);
+        },
         previewPosition : {
           y : H - 140,
           _s : true,
@@ -76,6 +90,32 @@ export default class Game10PlayScene extends Phaser.Scene {
           this.renderWordGraphics();
         })
       }); //遮罩层
+    }
+
+    private distanceHandle (arr : string[]) : string[] {
+      let obj = {};
+      let result = [];
+      for ( let i of arr ){
+        if(!obj[i]){
+          result.push(i)
+          obj[i] = 1
+        }
+      }
+      return result;
+    }
+
+    private playMusic (sourceKey : string) : void {
+      //播放音频
+      let mp3 : Phaser.Sound.BaseSound = this.sound.add(sourceKey);
+      mp3.play();
+    }
+
+    private loadMusic (data : Array<item>) : void {
+      //加载音频
+      data && data.map((r :item , i : number )=>{
+        this.load.audio(r.id,r.audioKey);
+      })
+      this.load.start(); //preload自动运行，其他地方加载资源必须手动启动，不然加载失效
     }
 
     private renderImg() : void {
@@ -120,18 +160,7 @@ export default class Game10PlayScene extends Phaser.Scene {
     }
 
     private createGold () : void {
-      //创建按钮
-      this.goldIcon = this.add.image(55,H - 55,'game10icons2','gold.png')
-        .setOrigin(.5)
-        .setDisplaySize(60,60)
-        .setInteractive()
-      //@ts-ignore
-      this.goldText = this.add.text(this.goldIcon.x + 14,this.goldIcon.y + 17,this.goldNumber.n + '',{
-        fontSize: "14px",
-        fontFamily:"Arial Rounded MT Bold",
-        fill : '#fff',
-      }).setOrigin(.5);
-      this.lifeIcon = this.add.image(55 , H - 147.5 , 'game10icons2' , 'life.png');
+      this.lifeIcon = this.add.image(55 , H - 55 , 'game10icons2' , 'life.png');
       //@ts-ignore
       this.lifeText = this.add.text(this.lifeIcon.x + 14,this.lifeIcon.y + 12,this.goldNumber.l + '',{
         fontSize: "14px",
@@ -145,8 +174,22 @@ export default class Game10PlayScene extends Phaser.Scene {
       }).setOrigin(.5);
     }
 
+    private shuffle<T> (arr : T[]) : T[]{
+      //Fisher-Yates shuffle 算法 打乱数组顺序
+      for (let i :number = 1; i < arr.length ; i ++) {
+        let random : number = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[random]] = [arr[random], arr[i]];   //es6  交换数组成员位置
+      }
+      return arr;
+    }
+
     private renderKeyBorad() : void {
       //渲染键盘
+      this.curData = this.ccData[this.currentIndex].name.split('');
+      this.curData = this.distanceHandle(this.curData);
+      this.wordsArr = this.shuffle(this.wordsArr);
+      this.curData = this.distanceHandle(this.shuffle(this.curData.concat(this.wordsArr.slice(0,10 - this.curData.length))));
+      if(this.curData.length !== 10) return this.renderKeyBorad();
       for(let i = 0 ; i < 10 ; i ++) {
         if(i < 4){
           let item : Phaser.GameObjects.Sprite = this.add.sprite(600 + (i * 77),227,'game10icons3','btn_keybord1.png')
@@ -156,7 +199,7 @@ export default class Game10PlayScene extends Phaser.Scene {
             .setData('index',i)
           this.keywordsArr.push(item);
           this.keywordsArr2.push(
-            this.add.text(item.x + item.width / 4 + 2, item.y + item.height / 4 - 5, this.wordsArr[i],{
+            this.add.text(item.x + item.width / 4 + 2, item.y + item.height / 4 - 5, this.curData[i],{
               fontSize: "40px",
               fontFamily:"Arial Rounded MT Bold",
               fill : '#F293B9',
@@ -170,7 +213,7 @@ export default class Game10PlayScene extends Phaser.Scene {
             .setData('index',i)
           this.keywordsArr.push(item);
           this.keywordsArr2.push(
-            this.add.text(item.x + item.width / 4 + 2, item.y + item.height / 4 - 5, this.wordsArr[i],{
+            this.add.text(item.x + item.width / 4 + 2, item.y + item.height / 4 - 5, this.curData[i],{
               fontSize: "40px",
               fontFamily:"Arial Rounded MT Bold",
               fill : '#F293B9',
@@ -184,7 +227,7 @@ export default class Game10PlayScene extends Phaser.Scene {
             .setData('index',i)
           this.keywordsArr.push(item);
           this.keywordsArr2.push(
-            this.add.text(item.x + item.width / 4 + 2, item.y + item.height / 4 - 5, this.wordsArr[i],{
+            this.add.text(item.x + item.width / 4 + 2, item.y + item.height / 4 - 5, this.curData[i],{
               fontSize: "40px",
               fontFamily:"Arial Rounded MT Bold",
               fill : '#F293B9',
@@ -214,10 +257,66 @@ export default class Game10PlayScene extends Phaser.Scene {
       if(obj.getData('submitBtn')){
         //提交按钮
         obj.play('submit');
+        let text = this.content.text;
+        if(text === this.ccData[this.currentIndex].name){
+          //成功
+          this.tips.success(()=>{
+            let goldAnims = new SellingGold(this,{
+              callback : ()=>{
+                goldAnims.golds.destroy();
+                this.goldObj.setText(this.currentGoldNum+=5);
+                this.nextWordHandle(); //下一个词
+              }
+            });
+            goldAnims.golds.setDepth(101);
+            goldAnims.goodJob(5);
+          })
+        }else{
+          //失败
+          if(++this.errorNum === 1){
+            this.tips.tryAgain(()=>{
+              this.clearRenderBorad(); //清空当前键盘布局
+              this.renderKeyBorad(); //开始下一个单词的布局
+              this.initAnims();
+              this.renderWordGraphics();
+            })
+          }else{
+            this.tips.error(()=>{
+              this.nextWordHandle();
+            },()=>{
+              this.clearRenderBorad(); //清空当前键盘布局
+              this.renderKeyBorad(); //开始下一个单词的布局
+              this.initAnims();
+              this.renderWordGraphics();
+            });
+          }
+        }
         return;
       }
       obj.play('keydown');
-      this.setContent(this.content.text += this.wordsArr[obj.getData('index')]);
+      this.setContent(this.content.text += this.curData[obj.getData('index')]);
+    }
+
+    private nextWordHandle () : void {
+      this.currentIndex = this.currentIndex + 1 > this.ccData.length - 1 ? 0 : this.currentIndex + 1 ;
+      this.errorNum = 0;
+      this.clearRenderBorad(); //清空当前键盘布局
+      this.renderKeyBorad(); //开始下一个单词的布局
+      this.initAnims();
+      this.renderWordGraphics();
+    }
+
+    private clearRenderBorad() : void {
+      this.keywordsArr.map((r,i)=>{
+        r && r.destroy();
+        this.keywordsArr2[i] && this.keywordsArr2[i].destroy();
+      });
+      this.submitBtn.destroy();
+      this.keywordsArr.length = 0 ;
+      this.keywordsArr2.length = 0;
+      this.submitBtn = null ;
+      this.setContent('');
+      this.clearGraphics();
     }
 
     private setContent(content : string) : void {
