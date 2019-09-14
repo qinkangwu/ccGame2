@@ -1,7 +1,7 @@
 import 'phaser';
 import apiPath from '../../lib/apiPath';
 import { get } from '../../lib/http';
-import { Assets,Game11DataItem,GetSentenceData,GetSentenceDataVocabulary,Vocabulary} from '../../interface/Game11';
+import { Assets,Game11DataItem,GetSentenceData} from '../../interface/Game11';
 import { resize } from '../../Public/jonny/core';
 import { SellingGold } from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
@@ -14,7 +14,7 @@ export default class Game11LoadScene extends Phaser.Scene {
   private _loader: Phaser.Loader.LoaderPlugin;
   private ccData: Array<Game11DataItem> = [];
   private centerText: Phaser.GameObjects.Text; //文本内容
-  private assets:Assets[] = [{"url":"assets/commonUI/successBtn.png","key":"bg"},{"url":"assets/commonUI/btnSoundOff.png","key":"btnSoundOff"},{"url":"assets/commonUI/btnSoundOn.png","key":"btnSoundOn"},{"url":"assets/commonUI/btnExit.png","key":"btnExit"},{"url":"assets/commonUI/originalSoundBtn.png","key":"originalSoundBtn"},{"url":"assets/commonUI/listenAgain.png","key":"listenAgain"},{"url":"assets/Game11/locomotive.png","key":"locomotive"},{"url":"assets/Game11/rope.png","key":"rope"},{"url":"assets/Game11/symbolTrainBox.png","key":"symbolTrainBox"},{"url":"assets/Game11/trainBox.png","key":"trainBox"}];
+  private assets:Assets[] = [{"url":"assets/mask/Game11.png","key":"Game11"},{"url":"assets/commonUI/successBtn.png","key":"successBtn"},{"url":"assets/commonUI/btnSoundOff.png","key":"btnSoundOff"},{"url":"assets/commonUI/btnSoundOn.png","key":"btnSoundOn"},{"url":"assets/commonUI/btnExit.png","key":"btnExit"},{"url":"assets/commonUI/originalSoundBtn.png","key":"originalSoundBtn"},{"url":"assets/commonUI/listenAgain.png","key":"listenAgain"},{"url":"assets/Game11/locomotive.png","key":"locomotive"},{"url":"assets/Game11/rope.png","key":"rope"},{"url":"assets/Game11/symbolTrainBox.png","key":"symbolTrainBox"},{"url":"assets/Game11/trainBox.png","key":"trainBox"},{"url":"assets/commonUI/goldValue.png","key":"goldValue"},{"url":"assets/Game11/bg.png","key":"bg"}];
   constructor() {
     super({
       key: "Game11LoadScene"
@@ -57,12 +57,13 @@ export default class Game11LoadScene extends Phaser.Scene {
    * 正式状态
    */
   private getData() {
-    get("assets/Game9/getSugarGourdWordByBookUnitId.json").then((res) => {
+    get("assets/game11/getSentenceData.json").then((res) => {
       if(res.code==='0000'){
        this.ccData = (<GetSentenceData[]>res.result).map(v=>{
         delete v.id; 
         delete v.videoId;
         delete v.imgKey;
+        v.name = v.name.replace(/\s/g,"");
         v.vocabularies.map(_v=>{
           delete _v.id;
           delete _v.videoId;
@@ -84,7 +85,7 @@ export default class Game11LoadScene extends Phaser.Scene {
    */
   private loadAudio(): void {
     this.ccData.forEach(v => {
-      this._loader.audio(v.sentenceName, v.audioKey);
+      this._loader.audio(v.name, v.audioKey);
       v.vocabularies.forEach(_v => {
         this._loader.audio(_v.name, _v.audioKey);
       })
@@ -96,7 +97,7 @@ export default class Game11LoadScene extends Phaser.Scene {
     this._loader.on("complete", () => {
       this.scene.start('Game11PlayScene', {
         data: this.ccData,
-        index: 2
+        index: 0
       });
     });
     this._loader.start();

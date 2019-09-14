@@ -7,7 +7,7 @@ export class Locomotive extends Phaser.GameObjects.Image{
      */
     constructor(scene: Phaser.Scene, x: number=0, y: number=0, texture: string="locomotive"){
         super(scene,x,y,texture);
-        this.setScale(1,0.97);
+        this.init();
         this.pitStop = this.scene.tweens.timeline({
             targets:this,
             paused:true,
@@ -27,10 +27,11 @@ export class Locomotive extends Phaser.GameObjects.Image{
                 }
             ]    
         })
-        this.init();
     }
 
     init(){
+        this.setScale(1,0.97);
+        this.setOrigin(0.5,1);
         this.setPosition(1167.75,287);
     }
 

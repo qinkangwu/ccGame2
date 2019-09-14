@@ -6,7 +6,7 @@ export interface Assets {
 
 export interface GetSentenceData {
     "id": string;
-    "sentenceName": string;
+    "name": string;
     "audioKey": string;
     "videoId": string;
     "imgKey": string;
@@ -31,7 +31,7 @@ export interface Vocabulary {
 
 
 export interface Game11DataItem {
-    "sentenceName": string;
+    "name": string;
     "audioKey": string;
     "vocabularies": Vocabulary[]
 }
