@@ -1,6 +1,6 @@
 import "phaser";
 /**
-  * 注册点为火车车厢的车底;
+  * 注册点为火车车厢的车底(0.5,1);
   */
 export class TrainBox extends Phaser.GameObjects.Container {
     public body: Phaser.Physics.Arcade.Body;
@@ -20,7 +20,6 @@ export class TrainBox extends Phaser.GameObjects.Container {
     }
 
     private init() {
-        //let graphics = new Phaser.GameObjects.Graphics(this.scene);
         this.setInteractive(this.shape,<Phaser.Types.Input.HitAreaCallback>Phaser.Geom.Circle.Contains);
     }
 
@@ -34,6 +33,8 @@ export class TrainBox extends Phaser.GameObjects.Container {
     private setBody() {
         this.scene.physics.world.enable(this);
         this.body.setCircle(110, -110,-110*2);
+        this.body.allowGravity = true;
+        this.body.gravity = new Phaser.Math.Vector2(0,200);
     }
 
     public static loadImg(scene: Phaser.Scene) {
