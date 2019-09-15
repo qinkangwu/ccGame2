@@ -12,16 +12,11 @@ export class Locomotive extends Phaser.GameObjects.Image{
             targets:this,
             paused:true,
             repeat:-1,
+            yoyo:true,
             tweens:[
                 {
-                    scaleX:0.97,
+                    scaleX:0.98,
                     scaleY:1,
-                    duration:250,
-                    ease:"Sine.easeOut"
-                },
-                {
-                    scaleX:1,
-                    scaleY:0.97,
                     duration:250,
                     ease:"Sine.easeOut"
                 }
@@ -30,17 +25,23 @@ export class Locomotive extends Phaser.GameObjects.Image{
     }
 
     init(){
-        this.setScale(1,0.97);
+        this.setScale(1,0.98);
         this.setOrigin(0.5,1);
-        this.setPosition(1167.75,287);
+        this.setPosition(1167.75,280);
     }
 
     public admission():void{
         this.scene.add.tween({
             targets:this,
-            duration:3000,
+            duration:5000,
             ease:"Sine.easeOut",
-            x:180
+            x:180,
+            onStart:()=>{
+               this.pitStop.play(); 
+            },
+            onComplete:()=>{
+                //this.pitStop.play();
+            }
         })
     }
 

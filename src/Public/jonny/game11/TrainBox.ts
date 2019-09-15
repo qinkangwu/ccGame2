@@ -9,6 +9,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
     public shape: Phaser.Geom.Circle;
     public interactive: Boolean;
     public blockedDown:Boolean;
+    public platform:Phaser.Physics.Arcade.Sprite;
     public startPosition:Phaser.Math.Vector2;
     public movePosition:Phaser.Math.Vector2;
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, text: string) {

@@ -18,7 +18,7 @@ class DrogEvent {
   public static onDrag: Function;
 }
 
-export default class Game9PlayScene extends Phaser.Scene {
+export default class Game11PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
 
   private ccData: Array<Game11DataItem> = [];
@@ -145,7 +145,7 @@ export default class Game9PlayScene extends Phaser.Scene {
      //this.staticGroup = this.physics.add.staticGroup();
      this.staticGroup = new Phaser.Physics.Arcade.StaticGroup(this.physics.world,this);
      this.staticGroup.setDepth(0,1);
-     this.platforms[0] = this.staticGroup.create(1024*0.5,290,"ground").refreshBody();
+     this.platforms[0] = this.staticGroup.create(1024*0.5,295,"ground").refreshBody();
      this.platforms[1] = this.staticGroup.create(1024*0.5,550,"ground").refreshBody();
   }
 
@@ -156,6 +156,10 @@ export default class Game9PlayScene extends Phaser.Scene {
     //句子发声器
     let sentenceName = this.ccData[index].name;
     this.sentenceSpeaker = this.sound.add(sentenceName);
+
+    //火车头
+    this.locomotivel = new Locomotive(this);
+    this.layer1.add(this.locomotivel);
 
     let vocabularies = this.ccData[index].vocabularies.sort(() => Math.random() - 0.5);
 
@@ -192,6 +196,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.trainboxs.forEach(trainbox=>{
       trainbox.body.allowGravity = true;
     })
+    this.locomotivel.admission();
     this.dragEvent();
   }
 
@@ -287,11 +292,13 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.colliders[2].name = "TPC2";
 
     function TPC1Handler(t:TrainBox,p){
+      t.platform = p;
       t.body.setGravityY(0);
     }
 
     function TPC2Handler(t:TrainBox,p:Phaser.Physics.Arcade.Sprite){
       t.blockedDown = true;
+      t.platform = p;
       t.body.setGravityY(0);
     }
   }
