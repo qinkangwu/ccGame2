@@ -13,9 +13,9 @@ var index: number; //题目的指针，默认为0
 var goldValue: number = 3; //金币的值
 
 class DrogEvent {
-  public static cookieOnDragStart: Function;
-  public static cookieOnDragEnd: Function;
-  public static cookieOnDrag: Function;
+  public static onDragStart: Function;
+  public static onDragEnd: Function;
+  public static onDrag: Function;
 }
 
 export default class Game9PlayScene extends Phaser.Scene {
@@ -44,7 +44,10 @@ export default class Game9PlayScene extends Phaser.Scene {
   private locomotivel: Locomotive; //火车头
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
+  private platforms:Phaser.Physics.Arcade.Sprite[] = [];
   //动态开始
+
+  private colliders:Phaser.Physics.Arcade.Collider[] = []; //火车车厢与轨道碰撞器
 
   /**
    * bg
@@ -103,6 +106,7 @@ export default class Game9PlayScene extends Phaser.Scene {
 
     for (let i = 0; i < 5; i++) {
       this[`layer${i}`] = new Phaser.GameObjects.Container(this);
+      this[`layer${i}`].setDepth(1 + i)
       this.add.existing(this[`layer${i}`]);
     }
 
@@ -138,8 +142,11 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.layer2.add([this.successBtn, this.gold]);
 
     //静止物体
-    this.staticGroup = this.physics.add.staticGroup();
-    this.staticGroup.create(1024*0.5,550,"ground");
+     //this.staticGroup = this.physics.add.staticGroup();
+     this.staticGroup = new Phaser.Physics.Arcade.StaticGroup(this.physics.world,this);
+     this.staticGroup.setDepth(0,1);
+     this.platforms[0] = this.staticGroup.create(1024*0.5,290,"ground").refreshBody();
+     this.platforms[1] = this.staticGroup.create(1024*0.5,550,"ground").refreshBody();
   }
 
   /**
@@ -153,13 +160,11 @@ export default class Game9PlayScene extends Phaser.Scene {
     let vocabularies = this.ccData[index].vocabularies.sort(() => Math.random() - 0.5);
 
     //火车序列－－－－
-    let _y = 535;
+    let _y = 535 - 10;
     vocabularies.forEach((data, i) => {
       let _x = 211.5 + (232 + 5) * i;
       let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name);
-      trainBox.on("pointerdown",()=>{
-        console.log(1);
-      })
+      trainBox.name = data.name;
       this.trainboxs.push(trainBox);
       this.layer1.add(trainBox);
     })
@@ -174,10 +179,9 @@ export default class Game9PlayScene extends Phaser.Scene {
       this.layer1.add(trainBox);
     })
 
-    this.physics.add.collider(this.trainboxs,this.staticGroup);
-
     //创建用户反馈
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
+
   }
 
   /**
@@ -185,26 +189,10 @@ export default class Game9PlayScene extends Phaser.Scene {
    */
   private gameStart(): void {
     console.log("game start");
-    var taraginListenAni = this.tweens.timeline(<Phaser.Types.Tweens.TimelineBuilderConfig>{
-      targets: this.tryAginListenBtn,
-      paused: true,
-      tweens: [
-        {
-          scale: 1,
-          rotation: 0,
-          duration: 500,
-          ease: EASE.spring
-        },
-        {
-          rotation: Phaser.Math.DegToRad(-30),
-          yoyo: true,
-          repeat: 3,
-          duration: 500,
-          repeatDelay: 300,
-          ease: EASE.spring
-        }
-      ]
-    });
+    this.trainboxs.forEach(trainbox=>{
+      trainbox.body.allowGravity = true;
+    })
+    this.dragEvent();
   }
 
   /**
@@ -242,136 +230,71 @@ export default class Game9PlayScene extends Phaser.Scene {
   /**
    * 执行拖拽的互动 
    */
-  // private dragEvent(): void {
-  //   let that = this;
-  //   let working: boolean = false;   //碰撞器是否在工作
-  //   //let hits: number = 0; //碰撞次数
-  //   let hitB: boolean = false;
-  //   this.physics.world.enable(this.cookies);
+  private dragEvent(): void {
+    let that = this;
+    let working: boolean = false;   //碰撞器是否在工作
+    
+    console.log(this);
 
-  //   DrogEvent.cookieOnDrag = function (pointer, dragX, dragY) {
-  //     if (!this.interactive) {
-  //       return false;
-  //     }
-  //     this.x = dragX;
-  //     this.y = dragY;
-  //     that.nullCookies.forEach(nullCookie => {
-  //       if (isHit(this.syncBounds(), nullCookie.syncBounds())) {
-  //         if (nullCookie.cookie && this.name !== nullCookie.cookie.name && this.hit === 0.5 && !hitB) {
-  //           hitB = true;
-  //           this.interactive = false;
-  //           this.setPosition(
-  //             nullCookie.x,
-  //             nullCookie.y
-  //           );
-  //           that.moveTo(nullCookie.cookie, this.nullCookie.x, this.nullCookie.y, () => {
-  //             this.nullCookie.cookie = nullCookie.cookie;  //我的男朋友的女朋友是他的女朋友
-  //             nullCookie.cookie.nullCookie = this.nullCookie;   //他的女朋友的男朋友是我的男朋友
-  //             nullCookie.cookie = this;    //他的女朋友是我
-  //             nullCookie.cookie.nullCookie = nullCookie;     //他的女朋友的男朋友是他
-  //             this.interactive = true;
-  //             hitB = false;
-  //             console.log("finsh");
-  //           })
-  //         }
-  //       }
-  //     })
-  //     return true;
-  //   }
+    DrogEvent.onDrag = function (this:TrainBox,pointer, dragX, dragY) {
+      if (!this.interactive) {
+        return false;
+      }
+      this.movePosition = new Phaser.Math.Vector2(dragX, dragY);
+      this.x = dragX;
+      if(this.blockedDown&&this.movePosition.y>this.startPosition.y){
+        this.y = that.platforms[1].y - that.platforms[1].body.halfHeight;
+      }else{
+        this.blockedDown = false;
+        this.y = dragY;
+      }
+    }
 
-  //   DrogEvent.cookieOnDragStart = function (pointer, startX, startY) {
-  //     if (!this.interactive) {
-  //       return false;
-  //     }
-  //     that.clickSound.play();
-  //   }
+    DrogEvent.onDragStart = function (this:TrainBox,pointer, startX, startY) {
+      if(this.name){
+      that.playWord(this.name);
+      }
+      if (!this.interactive) {
+        return false;
+      }
+      this.startPosition = new Phaser.Math.Vector2(pointer.x,pointer.y);
+      this.body.allowGravity = false;
+    }
 
 
-  //   DrogEvent.cookieOnDragEnd = function (this: Cookie) {
-  //     if (!this.interactive) {
-  //       return false;
-  //     }
-  //     that.clickSound.play();
-  //     if (this.hit === 0 || this.hit === 0.5) {
-  //       that.moveTo(this, this.initPosition.x, this.initPosition.y, () => {
-  //         if (this.hit === 0.5) {
-  //           that.physics.world.enable(this);
-  //           this.hit = 0;
-  //           if (this.nullCookie !== undefined && this.nullCookie !== null) {
-  //             console.log(this.nullCookie);
-  //             this.nullCookie.collision = 0;
-  //           }
-  //           this.nullCookie.cookie = null;
-  //           that.layer1.remove(this);
-  //           that.layer2.add(this);
-  //         }
-  //       })
-  //     }
-  //   }
+    DrogEvent.onDragEnd = function (this: TrainBox) {
+      if (!this.interactive) {
+        return false;
+      }
+      this.body.allowGravity = true;
+      this.body.gravity = new Phaser.Math.Vector2(0,500);
+    }
 
+    this.trainboxs.forEach(trainboxEvent);
 
+    function trainboxEvent(trainbox:TrainBox){
+      trainbox.on("dragstart", DrogEvent.onDragStart);
+      trainbox.on("drag", DrogEvent.onDrag);
+      trainbox.on("dragend", DrogEvent.onDragEnd);
+    }
 
-  //   this.cookies.forEach(cookieEvent);
-  //   function cookieEvent(cookie: ButtonContainer) {
-  //     (cookie.body as Phaser.Physics.Arcade.Body)
-  //       .setCollideWorldBounds(true)
-  //       .setSize(cookie.shape.width, cookie.shape.height)
-  //       .setOffset(cookie.shape.x, cookie.shape.y);
-  //     that.input.setDraggable(cookie, true);
-  //     cookie.on("dragstart", DrogEvent.cookieOnDragStart);
-  //     cookie.on("drag", DrogEvent.cookieOnDrag);
-  //     cookie.on("dragend", DrogEvent.cookieOnDragEnd);
-  //   }
+    this.colliders[0] = that.physics.add.collider(that.trainboxs,that.trainboxs);   //火车箱之间的碰撞器
+    this.colliders[1] = this.physics.add.collider(this.trainboxs,this.platforms[0],TPC1Handler);   //火车箱与铁轨的碰撞器
+    this.colliders[2] = this.physics.add.collider(this.trainboxs,this.platforms[1],TPC2Handler);   //火车箱与地面的碰撞器
 
-  //   let collisionNullcookies: Phaser.GameObjects.Image[] = [];
-  //   let collider_1 = that.physics.add.overlap(that.cookies, that.nullCookies, overlapHandler_1, null, this);
+    this.colliders[0].name = "TTC";
+    this.colliders[1].name = "TPC1";
+    this.colliders[2].name = "TPC2";
 
-  //   function overlapHandler_1(...args) {
-  //     if (working) {
-  //       return false;
-  //     }
-  //     let hits: number = 0;
+    function TPC1Handler(t:TrainBox,p){
+      t.body.setGravityY(0);
+    }
 
-  //     working = true;
-  //     args[0].setPosition(args[1].x, args[1].y);
-  //     that.layer2.remove(args[0]);
-  //     that.layer1.add(args[0]);
-  //     args[0].interactive = false;
-  //     args[0].setScale(1);
-  //     args[0].nullCookie = args[1];
-  //     that.physics.world.disable(args[0]);
-
-  //     setTimeout(() => {
-  //       args[0].interactive = true;
-  //       args[0].hit = 0.5;
-  //       working = false;
-  //     }, 1000);
-
-  //     let collideCookie = args[1].cookie;
-  //     if (collideCookie !== null && collideCookie.hit === 0.5) {
-  //       collideCookie.hit = 0;
-  //       if (args[0].name !== collideCookie.name) {
-  //         that.moveTo(collideCookie, collideCookie.initPosition.x, collideCookie.initPosition.y, () => {
-  //           that.layer1.remove(collideCookie);
-  //           that.layer2.add(collideCookie);
-  //           collideCookie.interactive = true;
-  //           that.physics.world.enable(collideCookie);
-  //         });
-  //       }
-  //     }
-
-  //     args[1].cookie = args[0];
-  //     args[1].collision = 1;
-
-  //     that.nullCookies.forEach((nullCookie, i) => {
-  //       let result = nullCookie.collision;
-  //       hits += result;
-  //       if (hits === that.nullCookies.length) {
-  //         that.dragEnd();
-  //       }
-  //     })
-  //   }
-  // }
+    function TPC2Handler(t:TrainBox,p:Phaser.Physics.Arcade.Sprite){
+      t.blockedDown = true;
+      t.body.setGravityY(0);
+    }
+  }
 
   /**
    * 拖拽结束
