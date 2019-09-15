@@ -298,8 +298,10 @@ export default class Game10PlayScene extends Phaser.Scene {
     }
 
     private nextWordHandle () : void {
+      this.imgObj.destroy();
       this.currentIndex = this.currentIndex + 1 > this.ccData.length - 1 ? 0 : this.currentIndex + 1 ;
       this.errorNum = 0;
+      this.renderImg();
       this.clearRenderBorad(); //清空当前键盘布局
       this.renderKeyBorad(); //开始下一个单词的布局
       this.initAnims();
