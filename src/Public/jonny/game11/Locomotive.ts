@@ -1,6 +1,7 @@
 import "phaser";
 
 export class Locomotive extends Phaser.GameObjects.Image{
+    public body: Phaser.Physics.Arcade.Body;
     pitStop:Phaser.Tweens.Timeline;
     /**
      * 注册点为 (0.5,1);

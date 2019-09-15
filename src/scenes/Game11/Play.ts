@@ -146,7 +146,9 @@ export default class Game11PlayScene extends Phaser.Scene {
      this.staticGroup = new Phaser.Physics.Arcade.StaticGroup(this.physics.world,this);
      this.staticGroup.setDepth(0,1);
      this.platforms[0] = this.staticGroup.create(1024*0.5,295,"ground").refreshBody();
+     this.platforms[0].name = "p0";
      this.platforms[1] = this.staticGroup.create(1024*0.5,550,"ground").refreshBody();
+     this.platforms[1].name = "p1";
   }
 
   /**
@@ -164,7 +166,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     let vocabularies = this.ccData[index].vocabularies.sort(() => Math.random() - 0.5);
 
     //火车序列－－－－
-    let _y = 535 - 10;
+    let _y = 535 - 2;
     vocabularies.forEach((data, i) => {
       let _x = 211.5 + (232 + 5) * i;
       let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name);
@@ -194,6 +196,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   private gameStart(): void {
     console.log("game start");
     this.trainboxs.forEach(trainbox=>{
+      //trainbox.setScale(0.7);
       trainbox.body.allowGravity = true;
     })
     this.locomotivel.admission();
@@ -247,7 +250,8 @@ export default class Game11PlayScene extends Phaser.Scene {
       }
       this.movePosition = new Phaser.Math.Vector2(dragX, dragY);
       this.x = dragX;
-      if(this.blockedDown&&this.movePosition.y>this.startPosition.y){
+      console.log(this.platform.name);
+      if(this.blockedDown&&this.platform.name === "p1"&&this.movePosition.y>this.startPosition.y){
         this.y = that.platforms[1].y - that.platforms[1].body.halfHeight;
       }else{
         this.blockedDown = false;
@@ -286,12 +290,14 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.colliders[0] = that.physics.add.collider(that.trainboxs,that.trainboxs);   //火车箱之间的碰撞器
     this.colliders[1] = this.physics.add.collider(this.trainboxs,this.platforms[0],TPC1Handler);   //火车箱与铁轨的碰撞器
     this.colliders[2] = this.physics.add.collider(this.trainboxs,this.platforms[1],TPC2Handler);   //火车箱与地面的碰撞器
+    this.colliders[3] = this.physics.add.collider(this.trainboxs,this.locomotivel);   //火车箱与火车头的碰撞器
 
-    this.colliders[0].name = "TTC";
-    this.colliders[1].name = "TPC1";
-    this.colliders[2].name = "TPC2";
+    // this.colliders[0].name = "TTC";
+    // this.colliders[1].name = "TPC1";
+    // this.colliders[2].name = "TPC2";
 
     function TPC1Handler(t:TrainBox,p){
+      t.blockedDown = true;
       t.platform = p;
       t.body.setGravityY(0);
     }

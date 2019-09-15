@@ -21,7 +21,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
         this.blockedDown = false;
         this.add([this.bg, this.text]);
         this.init();
-        this.drawHitArea();
+        //this.drawHitArea();
         this.setBody();
     }
 
@@ -50,8 +50,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
         this.body.immovable = false;
         this.body.onOverlap = true;
         this.body.mass = 500;
-        this.body.isCircle = true;
-        this.body.gravity = new Phaser.Math.Vector2(0, 500);
+        this.body.gravity = new Phaser.Math.Vector2(0, 10);
         this.body.checkWorldBounds();
     }
 
