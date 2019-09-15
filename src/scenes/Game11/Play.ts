@@ -35,6 +35,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   private planAnims: PlanAnims;
   private gold: Gold;
   private successBtn: SuccessBtn;  //成功提交的按钮
+  private staticGroup:Phaser.Physics.Arcade.StaticGroup;
   //静态结束
 
   //动态开始
@@ -135,6 +136,10 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.successBtn = new SuccessBtn(this, 939 + 60 * 0.5, 552 * 0.5, "successBtn");
     //this.successBtn.on("pointerdown", this.successBtnPointerdown.bind(this));
     this.layer2.add([this.successBtn, this.gold]);
+
+    //静止物体
+    this.staticGroup = this.physics.add.staticGroup();
+    this.staticGroup.create(1024*0.5,550,"ground");
   }
 
   /**
@@ -168,6 +173,8 @@ export default class Game9PlayScene extends Phaser.Scene {
       this.trainboxs.push(trainBox);
       this.layer1.add(trainBox);
     })
+
+    this.physics.add.collider(this.trainboxs,this.staticGroup);
 
     //创建用户反馈
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
