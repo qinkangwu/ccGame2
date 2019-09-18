@@ -142,13 +142,14 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.layer2.add([this.successBtn, this.gold]);
 
     //静止物体
+    this.matter.add.image(1024*0.5,520,"ground").setStatic(true);
      //this.staticGroup = this.physics.add.staticGroup();
-     this.staticGroup = new Phaser.Physics.Arcade.StaticGroup(this.physics.world,this);
-     this.staticGroup.setDepth(0,1);
-     this.platforms[0] = this.staticGroup.create(1024*0.5,295,"ground").refreshBody();
-     this.platforms[0].name = "p0";
-     this.platforms[1] = this.staticGroup.create(1024*0.5,550,"ground").refreshBody();
-     this.platforms[1].name = "p1";
+    //  this.staticGroup = new Phaser.Physics.Arcade.StaticGroup(this.physics.world,this);
+    //  this.staticGroup.setDepth(0,1);
+    //  this.platforms[0] = this.staticGroup.create(1024*0.5,295,"ground").refreshBody();
+    //  this.platforms[0].name = "p0";
+    //  this.platforms[1] = this.staticGroup.create(1024*0.5,550,"ground").refreshBody();
+    //  this.platforms[1].name = "p1";
   }
 
   /**
@@ -197,7 +198,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     console.log("game start");
     this.trainboxs.forEach(trainbox=>{
       //trainbox.setScale(0.7);
-      trainbox.body.allowGravity = true;
+      //trainbox.body.allowGravity = true;
     })
     this.locomotivel.admission();
     this.dragEvent();
@@ -250,7 +251,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       }
       this.movePosition = new Phaser.Math.Vector2(dragX, dragY);
       this.x = dragX;
-      console.log(this.platform.name);
+      //console.log(this.platform.name);
       if(this.blockedDown&&this.platform.name === "p1"&&this.movePosition.y>this.startPosition.y){
         this.y = that.platforms[1].y - that.platforms[1].body.halfHeight;
       }else{
@@ -267,7 +268,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         return false;
       }
       this.startPosition = new Phaser.Math.Vector2(pointer.x,pointer.y);
-      this.body.allowGravity = false;
+      //this.body.allowGravity = false;
     }
 
 
@@ -275,7 +276,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
-      this.body.allowGravity = true;
+      //this.body.allowGravity = true;
       this.body.gravity = new Phaser.Math.Vector2(0,500);
     }
 
@@ -287,10 +288,10 @@ export default class Game11PlayScene extends Phaser.Scene {
       trainbox.on("dragend", DrogEvent.onDragEnd);
     }
 
-    this.colliders[0] = that.physics.add.collider(that.trainboxs,that.trainboxs);   //火车箱之间的碰撞器
-    this.colliders[1] = this.physics.add.collider(this.trainboxs,this.platforms[0],TPC1Handler);   //火车箱与铁轨的碰撞器
-    this.colliders[2] = this.physics.add.collider(this.trainboxs,this.platforms[1],TPC2Handler);   //火车箱与地面的碰撞器
-    this.colliders[3] = this.physics.add.collider(this.trainboxs,this.locomotivel);   //火车箱与火车头的碰撞器
+    // this.colliders[0] = that.physics.add.collider(that.trainboxs,that.trainboxs);   //火车箱之间的碰撞器
+    // this.colliders[1] = this.physics.add.collider(this.trainboxs,this.platforms[0],TPC1Handler);   //火车箱与铁轨的碰撞器
+    // this.colliders[2] = this.physics.add.collider(this.trainboxs,this.platforms[1],TPC2Handler);   //火车箱与地面的碰撞器
+    // this.colliders[3] = this.physics.add.collider(this.trainboxs,this.locomotivel);   //火车箱与火车头的碰撞器
 
     // this.colliders[0].name = "TTC";
     // this.colliders[1].name = "TPC1";

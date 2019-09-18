@@ -39,19 +39,20 @@ export class TrainBox extends Phaser.GameObjects.Container {
     }
 
     private setBody() {
-        this.scene.physics.world.enable(this);
-        this.body.collideWorldBounds = true;
-        // this.body.setSize(218,193);
-        // this.body.setOffset(-218*0.5,-193);
-        this.body.setCircle(193 * 0.5, -193 * 0.5, -193);
-        this.body.allowGravity = false;
-        this.body.allowRotation = true;
-        this.body.allowDrag = true;
-        this.body.immovable = false;
-        this.body.onOverlap = true;
-        this.body.mass = 500;
-        this.body.gravity = new Phaser.Math.Vector2(0, 10);
-        this.body.checkWorldBounds();
+        this.scene.matter.add.gameObject(this.bg,{isStatic:true});
+        // this.scene.physics.world.enable(this);
+        // this.body.collideWorldBounds = true;
+        // // this.body.setSize(218,193);
+        // // this.body.setOffset(-218*0.5,-193);
+        // this.body.setCircle(193 * 0.5, -193 * 0.5, -193);
+        // this.body.allowGravity = false;
+        // this.body.allowRotation = true;
+        // this.body.allowDrag = true;
+        // this.body.immovable = false;
+        // this.body.onOverlap = true;
+        // this.body.mass = 500;
+        // this.body.gravity = new Phaser.Math.Vector2(0, 10);
+        // this.body.checkWorldBounds();
     }
 
     public static loadImg(scene: Phaser.Scene) {
