@@ -110,6 +110,8 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.add.existing(this[`layer${i}`]);
     }
 
+    this.matter.world.setBounds(0, 0, 1024, 552);
+
     let bg = new Phaser.GameObjects.Image(this, 0, 0, "bg").setOrigin(0);
     this.btnExit = new ButtonExit(this);
     this.btnSound = new ButtonMusic(this);
@@ -142,7 +144,8 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.layer2.add([this.successBtn, this.gold]);
 
     //静止物体
-    this.matter.add.image(1024*0.5,520,"ground").setStatic(true);
+    let ground = this.matter.add.image(1024*0.5,520,"ground").setStatic(true);
+    this.layer1.add(ground);
      //this.staticGroup = this.physics.add.staticGroup();
     //  this.staticGroup = new Phaser.Physics.Arcade.StaticGroup(this.physics.world,this);
     //  this.staticGroup.setDepth(0,1);
@@ -167,10 +170,11 @@ export default class Game11PlayScene extends Phaser.Scene {
     let vocabularies = this.ccData[index].vocabularies.sort(() => Math.random() - 0.5);
 
     //火车序列－－－－
-    let _y = 535 - 2;
+    let _y = 300;
+    let _shape = this.cache.json.get("trainboxShape").trainBox;
     vocabularies.forEach((data, i) => {
       let _x = 211.5 + (232 + 5) * i;
-      let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name);
+      let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name,_shape);
       trainBox.name = data.name;
       this.trainboxs.push(trainBox);
       this.layer1.add(trainBox);
@@ -181,7 +185,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     let lastTrainbox: TrainBox = this.trainboxs[this.trainboxs.length - 1];
     symbols.forEach(v => {
       let _x = lastTrainbox.x + 232 + 5;
-      let trainBox = new TrainBox(this, _x, _y, "symbolTrainBox", v);
+      let trainBox = new TrainBox(this, _x, _y, "symbolTrainBox", v,_shape);
       this.trainboxs.push(trainBox);
       this.layer1.add(trainBox);
     })
@@ -245,13 +249,15 @@ export default class Game11PlayScene extends Phaser.Scene {
     
     console.log(this);
 
+    //this.matter.add.mouseSpring({});
+
     DrogEvent.onDrag = function (this:TrainBox,pointer, dragX, dragY) {
       if (!this.interactive) {
         return false;
       }
       this.movePosition = new Phaser.Math.Vector2(dragX, dragY);
       this.x = dragX;
-      //console.log(this.platform.name);
+      console.log(this.platform.name);
       if(this.blockedDown&&this.platform.name === "p1"&&this.movePosition.y>this.startPosition.y){
         this.y = that.platforms[1].y - that.platforms[1].body.halfHeight;
       }else{
@@ -297,17 +303,17 @@ export default class Game11PlayScene extends Phaser.Scene {
     // this.colliders[1].name = "TPC1";
     // this.colliders[2].name = "TPC2";
 
-    function TPC1Handler(t:TrainBox,p){
-      t.blockedDown = true;
-      t.platform = p;
-      t.body.setGravityY(0);
-    }
+    // function TPC1Handler(t:TrainBox,p){
+    //   t.blockedDown = true;
+    //   t.platform = p;
+    //   t.body.setGravityY(0);
+    // }
 
-    function TPC2Handler(t:TrainBox,p:Phaser.Physics.Arcade.Sprite){
-      t.blockedDown = true;
-      t.platform = p;
-      t.body.setGravityY(0);
-    }
+    // function TPC2Handler(t:TrainBox,p:Phaser.Physics.Arcade.Sprite){
+    //   t.blockedDown = true;
+    //   t.platform = p;
+    //   t.body.setGravityY(0);
+    // }
   }
 
   /**

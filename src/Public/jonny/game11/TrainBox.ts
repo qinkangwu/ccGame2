@@ -12,16 +12,18 @@ export class TrainBox extends Phaser.GameObjects.Container {
     public platform:Phaser.Physics.Arcade.Sprite;
     public startPosition:Phaser.Math.Vector2;
     public movePosition:Phaser.Math.Vector2;
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string, text: string) {
+    public matterShape:Object;
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string, text: string,matterShape:object) {
         super(scene, x, y);
-        this.bg = new Phaser.GameObjects.Image(scene, -109, -192, texture).setOrigin(0, 0);
-        this.text = new Phaser.GameObjects.BitmapText(scene, 0, -130.95, "ArialRoundedBold30", text, 30).setOrigin(0.5);
+        this.bg = new Phaser.GameObjects.Image(scene, -109, 192*0.5*-1, texture).setOrigin(0, 0);
+        this.text = new Phaser.GameObjects.BitmapText(scene, 0, -130.95*0.5, "ArialRoundedBold30", text, 30).setOrigin(0.5);
         this.text.tint = 0xFF7F3A;
         this.shape = new Phaser.Geom.Circle(0, -193 * 0.5, 193 * 0.5);
+        this.matterShape = matterShape;
         this.blockedDown = false;
         this.add([this.bg, this.text]);
-        this.init();
-        //this.drawHitArea();
+        //this.init();
+        this.drawHitArea();
         this.setBody();
     }
 
@@ -39,7 +41,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
     }
 
     private setBody() {
-        this.scene.matter.add.gameObject(this.bg,{isStatic:true});
+        this.scene.matter.add.gameObject(this,{shape:this.matterShape});
         // this.scene.physics.world.enable(this);
         // this.body.collideWorldBounds = true;
         // // this.body.setSize(218,193);
