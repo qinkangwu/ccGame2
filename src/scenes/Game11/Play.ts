@@ -35,7 +35,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   private planAnims: PlanAnims;
   private gold: Gold;
   private successBtn: SuccessBtn;  //成功提交的按钮
-  private staticGroup:Phaser.Physics.Arcade.StaticGroup;
+  private staticGroup: Phaser.Physics.Arcade.StaticGroup;
   //静态结束
 
   //动态开始
@@ -44,10 +44,10 @@ export default class Game11PlayScene extends Phaser.Scene {
   private locomotivel: Locomotive; //火车头
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
-  private platforms:Phaser.Physics.Arcade.Sprite[] = [];
+  private platforms: Phaser.Physics.Matter.Image[] = [];
   //动态开始
 
-  private colliders:Phaser.Physics.Arcade.Collider[] = []; //火车车厢与轨道碰撞器
+  private colliders: Phaser.Physics.Arcade.Collider[] = []; //火车车厢与轨道碰撞器
 
   /**
    * bg
@@ -110,7 +110,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.add.existing(this[`layer${i}`]);
     }
 
-    this.matter.world.setBounds(0, 0, 1024, 552);
+    this.matter.world.setBounds(0, 0, 1024, 520);
 
     let bg = new Phaser.GameObjects.Image(this, 0, 0, "bg").setOrigin(0);
     this.btnExit = new ButtonExit(this);
@@ -144,9 +144,9 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.layer2.add([this.successBtn, this.gold]);
 
     //静止物体
-    let ground = this.matter.add.image(1024*0.5,520,"ground").setStatic(true);
-    this.layer1.add(ground);
-     //this.staticGroup = this.physics.add.staticGroup();
+    //this.platforms[0] = this.matter.add.image(1024*0.5,520,"ground").setStatic(true);
+    //this.layer1.add(this.platforms[0]);
+    //this.staticGroup = this.physics.add.staticGroup();
     //  this.staticGroup = new Phaser.Physics.Arcade.StaticGroup(this.physics.world,this);
     //  this.staticGroup.setDepth(0,1);
     //  this.platforms[0] = this.staticGroup.create(1024*0.5,295,"ground").refreshBody();
@@ -164,31 +164,36 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.sentenceSpeaker = this.sound.add(sentenceName);
 
     //火车头
-    this.locomotivel = new Locomotive(this);
-    this.layer1.add(this.locomotivel);
+    //this.locomotivel = new Locomotive(this);
+    //this.layer1.add(this.locomotivel);
 
     let vocabularies = this.ccData[index].vocabularies.sort(() => Math.random() - 0.5);
 
     //火车序列－－－－
-    let _y = 300;
+    let _y = 420;
     let _shape = this.cache.json.get("trainboxShape").trainBox;
     vocabularies.forEach((data, i) => {
       let _x = 211.5 + (232 + 5) * i;
-      let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name,_shape);
-      trainBox.name = data.name;
+      // let trainBoxImg = this.add.image(0, 0+5,"trainBox");
+      // let trainBoxText = this.add.bitmapText(0, -28, "ArialRoundedBold30", data.name, 30).setOrigin(0.5);
+      // let trainBox = this.add.container(_x,_y,[trainBoxImg,trainBoxText]);
+      // this.matter.add.gameObject(trainBox,{shape:_shape});
+      let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name, _shape);
+      // let trainBox = this.matter.add.image(_x, _y, "trainBox",null,{shape:_shape});
+      // trainBox.name = data.name;
       this.trainboxs.push(trainBox);
       this.layer1.add(trainBox);
     })
-
-    let symbolRegExp = /[?!.]/g;
-    let symbols = sentenceName.match(symbolRegExp);
-    let lastTrainbox: TrainBox = this.trainboxs[this.trainboxs.length - 1];
-    symbols.forEach(v => {
-      let _x = lastTrainbox.x + 232 + 5;
-      let trainBox = new TrainBox(this, _x, _y, "symbolTrainBox", v,_shape);
-      this.trainboxs.push(trainBox);
-      this.layer1.add(trainBox);
-    })
+    //this.matter.add.mouseSpring({});
+    // let symbolRegExp = /[?!.]/g;
+    // let symbols = sentenceName.match(symbolRegExp);
+    // let lastTrainbox: TrainBox = this.trainboxs[this.trainboxs.length - 1];
+    // symbols.forEach(v => {
+    //   let _x = lastTrainbox.x + 232 + 5;
+    //   let trainBox = new TrainBox(this, _x, _y, "symbolTrainBox", v,_shape);
+    //   this.trainboxs.push(trainBox);
+    //   this.layer1.add(trainBox);
+    // })
 
     //创建用户反馈
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
@@ -200,11 +205,11 @@ export default class Game11PlayScene extends Phaser.Scene {
    */
   private gameStart(): void {
     console.log("game start");
-    this.trainboxs.forEach(trainbox=>{
+    this.trainboxs.forEach(trainbox => {
       //trainbox.setScale(0.7);
       //trainbox.body.allowGravity = true;
     })
-    this.locomotivel.admission();
+    //this.locomotivel.admission();
     this.dragEvent();
   }
 
@@ -246,49 +251,53 @@ export default class Game11PlayScene extends Phaser.Scene {
   private dragEvent(): void {
     let that = this;
     let working: boolean = false;   //碰撞器是否在工作
-    
+
     console.log(this);
 
     //this.matter.add.mouseSpring({});
 
-    DrogEvent.onDrag = function (this:TrainBox,pointer, dragX, dragY) {
+    DrogEvent.onDrag = function (pointer, dragX, dragY) {
       if (!this.interactive) {
         return false;
       }
       this.movePosition = new Phaser.Math.Vector2(dragX, dragY);
       this.x = dragX;
-      console.log(this.platform.name);
-      if(this.blockedDown&&this.platform.name === "p1"&&this.movePosition.y>this.startPosition.y){
-        this.y = that.platforms[1].y - that.platforms[1].body.halfHeight;
-      }else{
-        this.blockedDown = false;
-        this.y = dragY;
-      }
+      // if(this.movePosition.y<this.startPosition.y){
+
+      // }
+      // if(this.blockedDown&&this.platform.name === "p1"&&this.movePosition.y>this.startPosition.y){
+      //  // this.y = that.platforms[1].y - that.platforms[1].body.halfHeight;
+      // }else if(this.movePosition.y<this.startPosition.y){
+      //   this.blockedDown = false;
+      //   this.y = dragY;
+      // }
     }
 
-    DrogEvent.onDragStart = function (this:TrainBox,pointer, startX, startY) {
-      if(this.name){
-      that.playWord(this.name);
+    DrogEvent.onDragStart = function (this: TrainBox, pointer, startX, startY) {
+      if (this.name) {
+        that.playWord(this.name);
       }
       if (!this.interactive) {
         return false;
       }
-      this.startPosition = new Phaser.Math.Vector2(pointer.x,pointer.y);
-      //this.body.allowGravity = false;
+      this.startPosition = new Phaser.Math.Vector2(pointer.x, pointer.y);
+      this.body.isStatic = true;
+      //this.scene.matter.world.setGravity(0);
     }
 
 
-    DrogEvent.onDragEnd = function (this: TrainBox) {
+    DrogEvent.onDragEnd = function () {
       if (!this.interactive) {
         return false;
       }
       //this.body.allowGravity = true;
-      this.body.gravity = new Phaser.Math.Vector2(0,500);
+      this.body.gravity = new Phaser.Math.Vector2(0, 500);
+      this.body.isStatic = false;
     }
 
     this.trainboxs.forEach(trainboxEvent);
 
-    function trainboxEvent(trainbox:TrainBox){
+    function trainboxEvent(trainbox: TrainBox) {
       trainbox.on("dragstart", DrogEvent.onDragStart);
       trainbox.on("drag", DrogEvent.onDrag);
       trainbox.on("dragend", DrogEvent.onDragEnd);
