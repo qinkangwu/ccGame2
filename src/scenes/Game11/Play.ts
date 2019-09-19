@@ -44,10 +44,8 @@ export default class Game11PlayScene extends Phaser.Scene {
   private locomotivel: Locomotive; //火车头
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
-  private platforms:Phaser.Physics.Arcade.Sprite[] = [];
   //动态开始
 
-  private colliders:Phaser.Physics.Arcade.Collider[] = []; //火车车厢与轨道碰撞器
 
   /**
    * bg
@@ -141,14 +139,6 @@ export default class Game11PlayScene extends Phaser.Scene {
     //this.successBtn.on("pointerdown", this.successBtnPointerdown.bind(this));
     this.layer2.add([this.successBtn, this.gold]);
 
-    //静止物体
-     //this.staticGroup = this.physics.add.staticGroup();
-     this.staticGroup = new Phaser.Physics.Arcade.StaticGroup(this.physics.world,this);
-     this.staticGroup.setDepth(0,1);
-     this.platforms[0] = this.staticGroup.create(1024*0.5,295,"ground").refreshBody();
-     this.platforms[0].name = "p0";
-     this.platforms[1] = this.staticGroup.create(1024*0.5,550,"ground").refreshBody();
-     this.platforms[1].name = "p1";
   }
 
   /**
@@ -166,9 +156,9 @@ export default class Game11PlayScene extends Phaser.Scene {
     let vocabularies = this.ccData[index].vocabularies.sort(() => Math.random() - 0.5);
 
     //火车序列－－－－
-    let _y = 535 - 2;
+    let _y = 426;
     vocabularies.forEach((data, i) => {
-      let _x = 211.5 + (232 + 5) * i;
+      let _x = 211.5 + 225 * i;
       let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name);
       trainBox.name = data.name;
       this.trainboxs.push(trainBox);
@@ -179,7 +169,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     let symbols = sentenceName.match(symbolRegExp);
     let lastTrainbox: TrainBox = this.trainboxs[this.trainboxs.length - 1];
     symbols.forEach(v => {
-      let _x = lastTrainbox.x + 232 + 5;
+      let _x = lastTrainbox.x + 225;
       let trainBox = new TrainBox(this, _x, _y, "symbolTrainBox", v);
       this.trainboxs.push(trainBox);
       this.layer1.add(trainBox);
@@ -197,7 +187,6 @@ export default class Game11PlayScene extends Phaser.Scene {
     console.log("game start");
     this.trainboxs.forEach(trainbox=>{
       //trainbox.setScale(0.7);
-      trainbox.body.allowGravity = true;
     })
     this.locomotivel.admission();
     this.dragEvent();
@@ -242,20 +231,10 @@ export default class Game11PlayScene extends Phaser.Scene {
     let that = this;
     let working: boolean = false;   //碰撞器是否在工作
     
-    console.log(this);
 
     DrogEvent.onDrag = function (this:TrainBox,pointer, dragX, dragY) {
       if (!this.interactive) {
         return false;
-      }
-      this.movePosition = new Phaser.Math.Vector2(dragX, dragY);
-      this.x = dragX;
-      console.log(this.platform.name);
-      if(this.blockedDown&&this.platform.name === "p1"&&this.movePosition.y>this.startPosition.y){
-        this.y = that.platforms[1].y - that.platforms[1].body.halfHeight;
-      }else{
-        this.blockedDown = false;
-        this.y = dragY;
       }
     }
 
@@ -267,7 +246,6 @@ export default class Game11PlayScene extends Phaser.Scene {
         return false;
       }
       this.startPosition = new Phaser.Math.Vector2(pointer.x,pointer.y);
-      this.body.allowGravity = false;
     }
 
 
@@ -275,8 +253,6 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
-      this.body.allowGravity = true;
-      this.body.gravity = new Phaser.Math.Vector2(0,500);
     }
 
     this.trainboxs.forEach(trainboxEvent);
@@ -287,26 +263,6 @@ export default class Game11PlayScene extends Phaser.Scene {
       trainbox.on("dragend", DrogEvent.onDragEnd);
     }
 
-    this.colliders[0] = that.physics.add.collider(that.trainboxs,that.trainboxs);   //火车箱之间的碰撞器
-    this.colliders[1] = this.physics.add.collider(this.trainboxs,this.platforms[0],TPC1Handler);   //火车箱与铁轨的碰撞器
-    this.colliders[2] = this.physics.add.collider(this.trainboxs,this.platforms[1],TPC2Handler);   //火车箱与地面的碰撞器
-    this.colliders[3] = this.physics.add.collider(this.trainboxs,this.locomotivel);   //火车箱与火车头的碰撞器
-
-    // this.colliders[0].name = "TTC";
-    // this.colliders[1].name = "TPC1";
-    // this.colliders[2].name = "TPC2";
-
-    function TPC1Handler(t:TrainBox,p){
-      t.blockedDown = true;
-      t.platform = p;
-      t.body.setGravityY(0);
-    }
-
-    function TPC2Handler(t:TrainBox,p:Phaser.Physics.Arcade.Sprite){
-      t.blockedDown = true;
-      t.platform = p;
-      t.body.setGravityY(0);
-    }
   }
 
   /**
