@@ -21,7 +21,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
         this.blockedDown = false;
         this.add([this.bg, this.text]);
         this.init();
-        //this.drawHitArea();
+        this.drawHitArea();
         this.setBody();
     }
 
