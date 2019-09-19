@@ -340,11 +340,11 @@ export default class Game10PlayScene extends Phaser.Scene {
     private createBgi () : void {
       //背景
       this.add.image(0,0,'bgi').setDisplaySize(W,H).setOrigin(0);
-      this.content = this.add.text(640,56,'',{
+      this.content = this.add.text(780,106,'',{
         fontSize: "80px",
         fontFamily:"Arial Rounded MT Bold",
         fill : '#77F0FF',
-      }).setOrigin(0);
+      }).setOrigin(.5);
     }
 
     private clearGraphics() : void {
@@ -360,7 +360,7 @@ export default class Game10PlayScene extends Phaser.Scene {
       //渲染字符末尾的矩形
       this.wordGraphics = this.wordGraphics || this.add.graphics();
       this.wordGraphics.fillStyle(0x77F0FF);
-      this.wordGraphics.fillRoundedRect(this.content.x + this.content.width,this.content.y + this.content.height,42,8,4);
+      this.wordGraphics.fillRoundedRect(this.content.x + this.content.width / 2 ,this.content.y+30,42,8,4);
       this.graphicsTweens = this.tweens.add({
         targets : this.wordGraphics,
         alpha : 0,
