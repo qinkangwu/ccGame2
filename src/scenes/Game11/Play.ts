@@ -262,9 +262,11 @@ export default class Game11PlayScene extends Phaser.Scene {
       }
       this.movePosition = new Phaser.Math.Vector2(dragX, dragY);
       this.x = dragX;
-      // if(this.movePosition.y<this.startPosition.y){
-
-      // }
+       if(this.movePosition.y>=this.initPosition.y){
+        this.movePosition.y = this.initPosition.y 
+       }else{
+         this.y = dragY;
+       }
       // if(this.blockedDown&&this.platform.name === "p1"&&this.movePosition.y>this.startPosition.y){
       //  // this.y = that.platforms[1].y - that.platforms[1].body.halfHeight;
       // }else if(this.movePosition.y<this.startPosition.y){

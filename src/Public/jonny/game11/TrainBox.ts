@@ -16,7 +16,8 @@ export class TrainBox extends Phaser.GameObjects.Container {
     public matterShape:Object;
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, text: string,matterShape:object) {
         super(scene, x, y);
-        this.bg = new Phaser.GameObjects.Image(scene, 0, 0+5, texture);
+        this.initPosition = new Phaser.Math.Vector2(x,y);
+        this.bg = new Phaser.GameObjects.Image(scene, 0, 0, texture);
         this.text = new Phaser.GameObjects.BitmapText(scene, 0, 0-28, "ArialRoundedBold30", text, 30).setOrigin(0.5);
         this.text.tint = 0xFF7F3A;
         this.shape = new Phaser.Geom.Circle(0, 0, 193 * 0.5);
