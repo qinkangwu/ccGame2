@@ -8,6 +8,11 @@ const H = 552;
 
 export default class Game12PlayScene extends Phaser.Scene {
     private bgm : Phaser.Sound.BaseSound ; //背景音乐
+    private itemArr : Phaser.GameObjects.Image[] = [] ; //外星人数组
+    private leftContetn : Phaser.GameObjects.Image ; //左边飞船
+    private rightContent : Phaser.GameObjects.Image ; //右边飞船
+    private leftContentText : Phaser.GameObjects.Text; //左边飞船文本
+    private rightContentText : Phaser.GameObjects.Text; //右边飞船文本
     constructor() {
       super({
         key: "Game12PlayScene"
@@ -29,6 +34,7 @@ export default class Game12PlayScene extends Phaser.Scene {
       new CreateBtnClass(this,{
         bgm : this.bgm,
       }); //公共按钮组件
+      this.initAnims(); //初始化动画
     }
 
     private createBgm () : void{
@@ -46,17 +52,52 @@ export default class Game12PlayScene extends Phaser.Scene {
     }
 
     private createTopContent() : void {
-      this.add.image(228.5,129.5,'leftContent').setOrigin(.5);
-      this.add.image(775.5,129.5,'rightContent').setOrigin(.5);
+      this.leftContetn = this.add.image(228.5,129.5,'leftContent').setOrigin(.5).setAlpha(0);
+      this.rightContent = this.add.image(775.5,129.5,'rightContent').setOrigin(.5).setAlpha(0);
+      this.leftContentText = this.add.text(this.leftContetn.x , this.leftContetn.y , '/b/', {
+        fontSize: "79px",
+        fontFamily:"Arial Rounded MT Bold",
+        fill : '#ffffff',
+      }).setOrigin(.5).setAlpha(0);
+      this.rightContentText = this.add.text(this.rightContent.x , this.rightContent.y , '/p/', {
+        fontSize: "79px",
+        fontFamily:"Arial Rounded MT Bold",
+        fill : '#ffffff',
+      }).setOrigin(.5).setAlpha(0);
+    }
+
+    private initAnims () : void {
+      this.itemArr.map((r,i)=>{
+        this.tweens.add({
+          targets : r,
+          ease : 'Sine.easeInOut',
+          y : `+=${W}`,
+          duration : 500,
+          delay : i * 50,
+          onComplete : ()=>{
+            this.tweens.add({
+              targets : [this.leftContetn,this.rightContent,this.leftContentText,this.rightContentText],
+              ease : 'Sine.easeInOut',
+              alpha : 1,
+              duration : 500,
+            })
+          }
+        })
+      });
     }
 
     private createContent () : void {
       for(let i = 0 ; i < 10 ; i ++){
         if(i < 5){
-          this.add.image(97 + (i * 115) + (i * 63),272,'content').setOrigin(0);
+          this.itemArr.push(this.add.image(149.5 + (i * 115) + (i * 63),328.5 - W,'content').setOrigin(.5));
         }else{
-          this.add.image(97 + ((i - 5) * 115) + ((i - 5) * 63),412,'content').setOrigin(0);
+          this.itemArr.push(this.add.image(149.5 + ((i - 5) * 115) + ((i - 5) * 63),468.5 - W,'content').setOrigin(.5));
         }
+        this.add.text(this.itemArr[i].x,this.itemArr[i].y + 18,'banana',{
+          fontSize: "26px",
+          fontFamily:"Arial Rounded MT Bold",
+          fill : '#ED6C35',
+        }).setOrigin(.5).setAlpha(0);
       }
     }
 
