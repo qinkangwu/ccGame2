@@ -42,7 +42,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
         this.add(graphics);
     }
 
-    private setBody() {
+    public setBody() {
         this.scene.matter.add.gameObject(this,{shape:this.matterShape,mass:5});
         // this.scene.physics.world.enable(this);
         // this.body.collideWorldBounds = true;

@@ -164,8 +164,8 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.sentenceSpeaker = this.sound.add(sentenceName);
 
     //火车头
-    //this.locomotivel = new Locomotive(this);
-    //this.layer1.add(this.locomotivel);
+    this.locomotivel = new Locomotive(this);
+    this.layer1.add(this.locomotivel);
 
     let vocabularies = this.ccData[index].vocabularies.sort(() => Math.random() - 0.5);
 
@@ -174,13 +174,8 @@ export default class Game11PlayScene extends Phaser.Scene {
     let _shape = this.cache.json.get("trainboxShape").trainBox;
     vocabularies.forEach((data, i) => {
       let _x = 211.5 + (232 + 5) * i;
-      // let trainBoxImg = this.add.image(0, 0+5,"trainBox");
-      // let trainBoxText = this.add.bitmapText(0, -28, "ArialRoundedBold30", data.name, 30).setOrigin(0.5);
-      // let trainBox = this.add.container(_x,_y,[trainBoxImg,trainBoxText]);
-      // this.matter.add.gameObject(trainBox,{shape:_shape});
       let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name, _shape);
-      // let trainBox = this.matter.add.image(_x, _y, "trainBox",null,{shape:_shape});
-      // trainBox.name = data.name;
+       trainBox.name = data.name;
       this.trainboxs.push(trainBox);
       this.layer1.add(trainBox);
     })
@@ -209,7 +204,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       //trainbox.setScale(0.7);
       //trainbox.body.allowGravity = true;
     })
-    //this.locomotivel.admission();
+    this.locomotivel.admission();
     this.dragEvent();
   }
 
@@ -262,11 +257,11 @@ export default class Game11PlayScene extends Phaser.Scene {
       }
       this.movePosition = new Phaser.Math.Vector2(dragX, dragY);
       this.x = dragX;
-       if(this.movePosition.y>=this.initPosition.y){
-        this.movePosition.y = this.initPosition.y 
-       }else{
+      //  if(this.movePosition.y>=this.initPosition.y){
+      //   this.movePosition.y = this.initPosition.y 
+      //  }else{
          this.y = dragY;
-       }
+       //}
       // if(this.blockedDown&&this.platform.name === "p1"&&this.movePosition.y>this.startPosition.y){
       //  // this.y = that.platforms[1].y - that.platforms[1].body.halfHeight;
       // }else if(this.movePosition.y<this.startPosition.y){
