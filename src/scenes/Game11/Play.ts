@@ -116,7 +116,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         v.y = this.well[2].bounds.min.y - v.shape.radius;
       }
     });
-  }
+   }
 
   /**
    * 创建静态场景
@@ -168,9 +168,9 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.layer4.add([this.successBtn, this.gold]);
 
     //静止物体
-    this.well [0]= this.matter.add.rectangle(1024*3*0.5,550,1024*3,50,{isStatic:true,density:100,restitution:0,frictionStatic:0});  //地面
-    this.well [1]= this.matter.add.rectangle(326.5,136.65,15,271.2,{isStatic:true,density:100,restitution:0,frictionStatic:0});  //墙
-    this.well [2]= this.matter.add.rectangle(1024*3*0.5,292,1024*3,20,{isStatic:true,density:100,restitution:0,frictionStatic:0});  //铁轨
+    this.well [0]= this.matter.add.rectangle(1024*3*0.5,550,1024*3,50,{isStatic:true,density:100,restitution:0,frictionStatic:0,label:"ground"});  //地面
+    this.well [1]= this.matter.add.rectangle(326.5,136.65,15,271.2,{isStatic:true,density:100,restitution:0,frictionStatic:0,label:"leftWell"});  //墙
+    this.well [2]= this.matter.add.rectangle(1024*3*0.5,292,1024*3,20,{isStatic:true,density:100,restitution:0,frictionStatic:0,label:"rails"});  //铁轨
     //this.layer1.add(this.platforms[0]);
     //this.staticGroup = this.physics.add.staticGroup();
     //  this.staticGroup = new Phaser.Physics.Arcade.StaticGroup(this.physics.world,this);
@@ -235,6 +235,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.locomotivel.admission();
     this.scrollEvent();
     this.dragEvent();
+    this.matterCollision();
   }
 
   /**
@@ -267,6 +268,41 @@ export default class Game11PlayScene extends Phaser.Scene {
       ease: "Sine.easeOut",
       onComplete: callback
     })
+  }
+
+  /**
+   * 碰撞监听
+   */
+  public matterCollision(){
+    this.matter.world.on("collisionstart",collisionStart);
+    this.matter.world.on("collisionactive",collisionActive);
+    this.matter.world.on("collisionend",collisionEnd);
+
+    function collisionStart(e,obj1,obj2){
+      console.log("start",obj1,obj2);
+      // if(obj2.label===""){
+      //   obj2.isSleeping = true;
+      // }
+      // args.forEach(obj=>{
+      //   if(obj.label===""){
+      //     console.log(1);
+      //     obj.isSleeping = true;
+      //   }
+      // });
+    }
+
+    function collisionActive(e,obj1,obj2){
+      //console.log('active',obj1,obj2);
+      // if(obj2.label===""){
+      //   obj2.gameObject.body.isStatic = true;
+      // }
+    }
+
+    function collisionEnd(e,obj1,obj2){
+      //console.log('end',obj1,obj2);
+
+    }
+
   }
 
   /**
@@ -303,7 +339,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     let that = this;
     let working: boolean = false;   //碰撞器是否在工作
 
-    console.log(this);
+   
 
     //this.matter.add.mouseSpring({});
 

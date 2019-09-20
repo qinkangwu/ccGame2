@@ -27,6 +27,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
     }
 
     private init() {
+        this.y-=10;
         this.setInteractive(this.shape, <Phaser.Types.Input.HitAreaCallback>Phaser.Geom.Circle.Contains);
         this.scene.input.setDraggable(this, true);
         this.interactive = true;
@@ -40,11 +41,10 @@ export class TrainBox extends Phaser.GameObjects.Container {
     }
 
     public setBody() {
-        let body = this.scene.matter.add.gameObject(this, {
-            shape: this.matterShape,
-            isStatic: true
+   this.scene.matter.add.gameObject(this, {
+            shape: this.matterShape
         });
-        this.body.density = 20;
+       // this.body.density = 20;
         //  console.log(body);
         // this.add(body);
         // console.log(this);
