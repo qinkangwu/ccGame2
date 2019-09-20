@@ -36,6 +36,11 @@ export default class Game12LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
+    this.load.audio('bgm','assets/Game7/bgm.mp3');
+    this.load.image('bgi','assets/Game12/bgi.png');
+    this.load.image('content','assets/Game12/content.png');
+    this.load.image('leftContent','assets/Game12/leftContent.png');
+    this.load.image('rightContent','assets/Game12/rightContent.png');
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;

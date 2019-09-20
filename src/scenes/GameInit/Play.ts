@@ -1,6 +1,9 @@
 import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 
+const W = 1024;
+const H = 552;
+
 export default class Game5PlayScene extends Phaser.Scene {
     constructor() {
       super({
