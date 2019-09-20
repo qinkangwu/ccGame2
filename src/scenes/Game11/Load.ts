@@ -33,6 +33,7 @@ export default class Game11LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
+    this.load.json("trainboxShape","assets/Game11/trainboxShape.json");
     this.load.audio('bgm', 'assets/sounds/bgm-01.mp3');
     this.load.bitmapFont('ArialRoundedBold30', 'assets/font/ArialRoundedBold30/font.png', 'assets/font/ArialRoundedBold30/font.xml');
     TipsParticlesEmitter.loadImg(this)

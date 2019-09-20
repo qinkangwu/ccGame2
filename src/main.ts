@@ -10,7 +10,7 @@ path && (path = path.replace(/\b(\w)/g,(m)=>{
 
 let sceneArr: Array<object> = [];
 
-const initHandle = (arr : object[]) : void=>{
+const initHandle = (arr : object[],physics:string) : void=>{
   const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
     width: 1024,
@@ -24,11 +24,16 @@ const initHandle = (arr : object[]) : void=>{
       createContainer : true
     },
     physics: {
-      default: 'arcade',
+      default: physics,
       arcade: {
         gravity: { y: 0 },
-        //debug: false
-        debug: true
+        debug: false
+      },
+      matter:{
+        gravity:{
+          y:1
+        },
+        debug:true
       }
     },
     render:{
@@ -65,7 +70,12 @@ const loadOnDemand = (menu : string ) : void=>{
       //@ts-ignore
       sceneArr.push(r2.default);
     })
-    initHandle(sceneArr);
+    if(path==="Game11"){
+      initHandle(sceneArr,"matter");
+    }else{
+      initHandle(sceneArr,"arcade");
+    }
+    
   })
 }
 

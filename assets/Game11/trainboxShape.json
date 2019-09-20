@@ -1,0 +1,30 @@
+{
+	"generator_info": "Shape definitions generated with PhysicsEditor. Visit https://www.codeandweb.com/physicseditor",
+	"trainBox": {
+		"type": "fromPhysicsEditor",
+		"label": "trainBox",
+		"isStatic": false,
+		"density": 100,
+		"restitution": 0,
+		"friction": 0.5,
+		"frictionAir": 0.010000000000000009,
+		"frictionStatic": 0.6,
+		"collisionFilter": {
+			"group": 4,
+			"category": 1,
+			"mask": 255
+		},
+		"fixtures": [
+			{
+				"label": "",
+				"isSensor": false,
+				"vertices": [
+					[ { "x":208, "y":193 }, { "x":208, "y":80 }, { "x":198, "y":62 }, { "x":19, "y":62 }, { "x":10, "y":82 }, { "x":10, "y":193 } ],
+					[ { "x":217, "y":76 }, { "x":216, "y":66 }, { "x":210, "y":63 }, { "x":198, "y":62 }, { "x":208, "y":80 }, { "x":212, "y":79 } ],
+					[ { "x":198, "y":1 }, { "x":19, "y":0 }, { "x":19, "y":62 }, { "x":198, "y":62 } ],
+					[ { "x":1.399999976158142, "y":76.4000015258789 }, { "x":6, "y":81 }, { "x":10, "y":82 }, { "x":19, "y":62 }, { "x":8, "y":62 }, { "x":4, "y":65 }, { "x":2, "y":68 }, { "x":1, "y":72 } ]
+				]
+			}
+		]
+	}
+}

@@ -35,7 +35,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   private planAnims: PlanAnims;
   private gold: Gold;
   private successBtn: SuccessBtn;  //成功提交的按钮
-  private staticGroup:Phaser.Physics.Arcade.StaticGroup;
+  private staticGroup: Phaser.Physics.Arcade.StaticGroup;
   //静态结束
 
   //动态开始
@@ -44,8 +44,15 @@ export default class Game11PlayScene extends Phaser.Scene {
   private locomotivel: Locomotive; //火车头
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
+<<<<<<< HEAD
   //动态开始
 
+=======
+  private platforms: Phaser.Physics.Matter.Image[] = [];
+  //动态开始
+
+  private colliders: Phaser.Physics.Arcade.Collider[] = []; //火车车厢与轨道碰撞器
+>>>>>>> pj-dev-matter
 
   /**
    * bg
@@ -116,6 +123,8 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.add.existing(this[`layer${i}`]);
     }
 
+    this.matter.world.setBounds(0, 0, 1024, 520);
+
     let bg = new Phaser.GameObjects.Image(this, 0, 0, "bg").setOrigin(0);
     this.btnExit = new ButtonExit(this);
     this.btnSound = new ButtonMusic(this);
@@ -145,8 +154,18 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.gold = new Gold(this, goldValue);   //设置金币
     this.successBtn = new SuccessBtn(this, 939 + 60 * 0.5, 552 * 0.5, "successBtn");
     //this.successBtn.on("pointerdown", this.successBtnPointerdown.bind(this));
-    this.layer4.add([this.successBtn, this.gold]);
+    this.layer2.add([this.successBtn, this.gold]);
 
+    //静止物体
+    //this.platforms[0] = this.matter.add.image(1024*0.5,520,"ground").setStatic(true);
+    //this.layer1.add(this.platforms[0]);
+    //this.staticGroup = this.physics.add.staticGroup();
+    //  this.staticGroup = new Phaser.Physics.Arcade.StaticGroup(this.physics.world,this);
+    //  this.staticGroup.setDepth(0,1);
+    //  this.platforms[0] = this.staticGroup.create(1024*0.5,295,"ground").refreshBody();
+    //  this.platforms[0].name = "p0";
+    //  this.platforms[1] = this.staticGroup.create(1024*0.5,550,"ground").refreshBody();
+    //  this.platforms[1].name = "p1";
   }
 
   /**
@@ -164,25 +183,25 @@ export default class Game11PlayScene extends Phaser.Scene {
     let vocabularies = this.ccData[index].vocabularies.sort(() => Math.random() - 0.5);
 
     //火车序列－－－－
-    this.layer1.setPosition(211,420);
-    let _y = 0;
+    let _y = 420;
+    let _shape = this.cache.json.get("trainboxShape").trainBox;
     vocabularies.forEach((data, i) => {
-      let _x = 225 * i;
-      let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name);
-      trainBox.name = data.name;
+      let _x = 211.5 + (232 + 5) * i;
+      let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name, _shape);
+       trainBox.name = data.name;
       this.trainboxs.push(trainBox);
       this.layer1.add(trainBox);
     })
-
-    let symbolRegExp = /[?!.]/g;
-    let symbols = sentenceName.match(symbolRegExp);
-    let lastTrainbox: TrainBox = this.trainboxs[this.trainboxs.length - 1];
-    symbols.forEach(v => {
-      let _x = lastTrainbox.x + 225;
-      let trainBox = new TrainBox(this, _x, _y, "symbolTrainBox", v);
-      this.trainboxs.push(trainBox);
-      this.layer1.add(trainBox);
-    })
+    //this.matter.add.mouseSpring({});
+    // let symbolRegExp = /[?!.]/g;
+    // let symbols = sentenceName.match(symbolRegExp);
+    // let lastTrainbox: TrainBox = this.trainboxs[this.trainboxs.length - 1];
+    // symbols.forEach(v => {
+    //   let _x = lastTrainbox.x + 232 + 5;
+    //   let trainBox = new TrainBox(this, _x, _y, "symbolTrainBox", v,_shape);
+    //   this.trainboxs.push(trainBox);
+    //   this.layer1.add(trainBox);
+    // })
 
     //创建用户反馈
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
@@ -193,6 +212,11 @@ export default class Game11PlayScene extends Phaser.Scene {
    * 游戏开始
    */
   private gameStart(): void {
+    console.log("game start");
+    this.trainboxs.forEach(trainbox => {
+      //trainbox.setScale(0.7);
+      //trainbox.body.allowGravity = true;
+    })
     this.locomotivel.admission();
     this.scrollEvent();
     this.dragEvent();
@@ -252,39 +276,80 @@ export default class Game11PlayScene extends Phaser.Scene {
   private dragEvent(): void {
     let that = this;
     let working: boolean = false;   //碰撞器是否在工作
-    
 
-    DrogEvent.onDrag = function (this:TrainBox,pointer, dragX, dragY) {
+    console.log(this);
+
+    //this.matter.add.mouseSpring({});
+
+    DrogEvent.onDrag = function (pointer, dragX, dragY) {
       if (!this.interactive) {
         return false;
       }
+      this.movePosition = new Phaser.Math.Vector2(dragX, dragY);
+      this.x = dragX;
+      //  if(this.movePosition.y>=this.initPosition.y){
+      //   this.movePosition.y = this.initPosition.y 
+      //  }else{
+         this.y = dragY;
+       //}
+      // if(this.blockedDown&&this.platform.name === "p1"&&this.movePosition.y>this.startPosition.y){
+      //  // this.y = that.platforms[1].y - that.platforms[1].body.halfHeight;
+      // }else if(this.movePosition.y<this.startPosition.y){
+      //   this.blockedDown = false;
+      //   this.y = dragY;
+      // }
     }
 
-    DrogEvent.onDragStart = function (this:TrainBox,pointer, startX, startY) {
-      if(this.name){
-      that.playWord(this.name);
+    DrogEvent.onDragStart = function (this: TrainBox, pointer, startX, startY) {
+      if (this.name) {
+        that.playWord(this.name);
       }
       if (!this.interactive) {
         return false;
       }
-      this.startPosition = new Phaser.Math.Vector2(pointer.x,pointer.y);
+      this.startPosition = new Phaser.Math.Vector2(pointer.x, pointer.y);
+      this.body.isStatic = true;
+      //this.scene.matter.world.setGravity(0);
     }
 
 
-    DrogEvent.onDragEnd = function (this: TrainBox) {
+    DrogEvent.onDragEnd = function () {
       if (!this.interactive) {
         return false;
       }
+      //this.body.allowGravity = true;
+      this.body.gravity = new Phaser.Math.Vector2(0, 500);
+      this.body.isStatic = false;
     }
 
     this.trainboxs.forEach(trainboxEvent);
 
-    function trainboxEvent(trainbox:TrainBox){
+    function trainboxEvent(trainbox: TrainBox) {
       trainbox.on("dragstart", DrogEvent.onDragStart);
       trainbox.on("drag", DrogEvent.onDrag);
       trainbox.on("dragend", DrogEvent.onDragEnd);
     }
 
+    // this.colliders[0] = that.physics.add.collider(that.trainboxs,that.trainboxs);   //火车箱之间的碰撞器
+    // this.colliders[1] = this.physics.add.collider(this.trainboxs,this.platforms[0],TPC1Handler);   //火车箱与铁轨的碰撞器
+    // this.colliders[2] = this.physics.add.collider(this.trainboxs,this.platforms[1],TPC2Handler);   //火车箱与地面的碰撞器
+    // this.colliders[3] = this.physics.add.collider(this.trainboxs,this.locomotivel);   //火车箱与火车头的碰撞器
+
+    // this.colliders[0].name = "TTC";
+    // this.colliders[1].name = "TPC1";
+    // this.colliders[2].name = "TPC2";
+
+    // function TPC1Handler(t:TrainBox,p){
+    //   t.blockedDown = true;
+    //   t.platform = p;
+    //   t.body.setGravityY(0);
+    // }
+
+    // function TPC2Handler(t:TrainBox,p:Phaser.Physics.Arcade.Sprite){
+    //   t.blockedDown = true;
+    //   t.platform = p;
+    //   t.body.setGravityY(0);
+    // }
   }
 
   /**
