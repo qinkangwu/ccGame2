@@ -7,15 +7,15 @@ export class TrainBox extends Phaser.GameObjects.Container {
     public text: Phaser.GameObjects.BitmapText;
     public shape: Phaser.Geom.Circle;
     public interactive: Boolean;
-    public initPosition:Phaser.Math.Vector2;
-    public startPosition:Phaser.Math.Vector2;
-    public movePosition:Phaser.Math.Vector2;
-    public matterShape:Object;
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string, text: string,matterShape:object) {
+    public initPosition: Phaser.Math.Vector2;
+    public startPosition: Phaser.Math.Vector2;
+    public movePosition: Phaser.Math.Vector2;
+    public matterShape: Object;
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string, text: string, matterShape: object) {
         super(scene, x, y);
-        this.initPosition = new Phaser.Math.Vector2(x,y);
+        this.initPosition = new Phaser.Math.Vector2(x, y);
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, texture);
-        this.text = new Phaser.GameObjects.BitmapText(scene, 0, 0-28, "ArialRoundedBold30", text, 30).setOrigin(0.5);
+        this.text = new Phaser.GameObjects.BitmapText(scene, 0, 0 - 28, "ArialRoundedBold30", text, 30).setOrigin(0.5);
         this.text.tint = 0xFF7F3A;
         this.shape = new Phaser.Geom.Circle(0, 0, 193 * 0.5);
         this.matterShape = matterShape;
@@ -39,8 +39,14 @@ export class TrainBox extends Phaser.GameObjects.Container {
     }
 
     public setBody() {
-        this.scene.matter.add.gameObject(this,{shape:this.matterShape,mass:5});
-        // this.scene.physics.world.enable(this);
+        let body = this.scene.matter.add.gameObject(this, {
+            shape: this.matterShape,
+            isStatic: true
+        });
+        //  console.log(body);
+        // this.add(body);
+        // console.log(this);
+        //this.scene.matter.world.add(this);
         // this.body.collideWorldBounds = true;
         // // this.body.setSize(218,193);
         // // this.body.setOffset(-218*0.5,-193);
