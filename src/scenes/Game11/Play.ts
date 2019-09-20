@@ -52,13 +52,21 @@ export default class Game11PlayScene extends Phaser.Scene {
    */
   private layer0: Phaser.GameObjects.Container;
   /**
-   *trainbox,locomotivel 
+   *trainbox 下,
    */
   private layer1: Phaser.GameObjects.Container;
   /**
-   * UI
+   *trainbox 上,
    */
   private layer2: Phaser.GameObjects.Container;
+  /**
+   * 火车头
+   */
+  private layer3: Phaser.GameObjects.Container;
+  /**
+   * UI
+   */
+  private layer4: Phaser.GameObjects.Container;
 
   constructor() {
     super({
@@ -117,7 +125,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.tryAginListenBtn.setOrigin(0, 1);
     this.tryAginListenBtn.setScale(0).setRotation((Math.PI / 180) * -30);
     this.layer0.add(bg);
-    this.layer2.add([this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
+    this.layer4.add([this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
     this.originalSoundBtn.on("pointerdown", this.playSentence.bind(that));
 
     this.bgm = this.sound.add('bgm');
@@ -137,7 +145,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.gold = new Gold(this, goldValue);   //设置金币
     this.successBtn = new SuccessBtn(this, 939 + 60 * 0.5, 552 * 0.5, "successBtn");
     //this.successBtn.on("pointerdown", this.successBtnPointerdown.bind(this));
-    this.layer2.add([this.successBtn, this.gold]);
+    this.layer4.add([this.successBtn, this.gold]);
 
   }
 
@@ -151,14 +159,15 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     //火车头
     this.locomotivel = new Locomotive(this);
-    this.layer1.add(this.locomotivel);
+    this.layer3.add(this.locomotivel);
 
     let vocabularies = this.ccData[index].vocabularies.sort(() => Math.random() - 0.5);
 
     //火车序列－－－－
-    let _y = 426;
+    this.layer1.setPosition(211,420);
+    let _y = 0;
     vocabularies.forEach((data, i) => {
-      let _x = 211.5 + 225 * i;
+      let _x = 225 * i;
       let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name);
       trainBox.name = data.name;
       this.trainboxs.push(trainBox);
@@ -184,11 +193,8 @@ export default class Game11PlayScene extends Phaser.Scene {
    * 游戏开始
    */
   private gameStart(): void {
-    console.log("game start");
-    this.trainboxs.forEach(trainbox=>{
-      //trainbox.setScale(0.7);
-    })
     this.locomotivel.admission();
+    this.scrollEvent();
     this.dragEvent();
   }
 
@@ -222,6 +228,22 @@ export default class Game11PlayScene extends Phaser.Scene {
       ease: "Sine.easeOut",
       onComplete: callback
     })
+  }
+
+  /**
+   * 执行滚动条的互动
+   */
+  private scrollEvent():void{
+    let bounds = this.layer1.getBounds();
+    let shape = new Phaser.Geom.Rectangle(0,0,bounds.width,bounds.height);
+    let graphics = new Phaser.GameObjects.Graphics(this);
+        graphics.lineStyle(1, 0xff0000);
+        graphics.strokeRect(this.layer1.x,this.layer1.y,shape.width,shape.height);
+        this.layer1.add(graphics);
+    this.layer1.setInteractive(shape,Phaser.Geom.Rectangle.Contains);
+    this.layer1.on("pointerdown",()=>{
+      console.log(1);
+    });
   }
 
   /**
