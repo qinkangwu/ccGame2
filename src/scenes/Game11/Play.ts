@@ -34,7 +34,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   private planAnims: PlanAnims;
   private gold: Gold;
   private successBtn: SuccessBtn;  //成功提交的按钮
-  private well:MatterJS.Body[] = [];  //墙与地
+  private well:any[] = [];  //墙与地
   //静态结束
 
   //动态开始
@@ -104,6 +104,18 @@ export default class Game11PlayScene extends Phaser.Scene {
 
   update(time: number, delta: number): void {
     this.btnSound.mountUpdate();
+    this.trainboxs.forEach(v=>{
+      if(v.body.bounds.min.x <= 0){
+        v.body.isStatic = true;
+        v.x = v.body.bounds.max.x * 0.5;
+      }else if(v.body.bounds.max.y >= this.well[0].bounds.min.y){
+         v.body.isStatic = true;
+         v.y =  v.initPosition.y;
+      }else if(v.body.bounds.max.y >= this.well[2].bounds.min.y && v.body.bounds.max.y <= this.well[2].bounds.max.y){
+        v.body.isStatic = true;
+        v.y = this.well[2].bounds.min.y - v.shape.radius;
+      }
+    });
   }
 
   /**
@@ -156,9 +168,9 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.layer4.add([this.successBtn, this.gold]);
 
     //静止物体
-    this.well [0]= this.matter.add.rectangle(1024*3*0.5,550,1024*3,50,{isStatic:true,density:100,restitution:0,frictionStatic:0});
-    this.well [1]= this.matter.add.rectangle(326.5,136.65,15,271.2,{isStatic:true,density:100,restitution:0,frictionStatic:0});
-    this.well [2]= this.matter.add.rectangle(1024*3*0.5,292,1024*3,20,{isStatic:true,density:100,restitution:0,frictionStatic:0});
+    this.well [0]= this.matter.add.rectangle(1024*3*0.5,550,1024*3,50,{isStatic:true,density:100,restitution:0,frictionStatic:0});  //地面
+    this.well [1]= this.matter.add.rectangle(326.5,136.65,15,271.2,{isStatic:true,density:100,restitution:0,frictionStatic:0});  //墙
+    this.well [2]= this.matter.add.rectangle(1024*3*0.5,292,1024*3,20,{isStatic:true,density:100,restitution:0,frictionStatic:0});  //铁轨
     //this.layer1.add(this.platforms[0]);
     //this.staticGroup = this.physics.add.staticGroup();
     //  this.staticGroup = new Phaser.Physics.Arcade.StaticGroup(this.physics.world,this);
@@ -187,7 +199,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     let vocabularies = this.ccData[index].vocabularies.sort(() => Math.random() - 0.5);
 
     //火车序列－－－－
-    let _y = 420;
+    let _y = 430;
     vocabularies.forEach((data, i) => {
       let _x = 211.5 + (232 + 5) * i;
       let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name, _shape.trainBox);
@@ -301,10 +313,10 @@ export default class Game11PlayScene extends Phaser.Scene {
       }
       this.movePosition = new Phaser.Math.Vector2(dragX, dragY);
       this.x = dragX;
+      this.y = dragY;
       //  if(this.movePosition.y>=this.initPosition.y){
       //   this.movePosition.y = this.initPosition.y 
       //  }else{
-         this.y = dragY;
        //}
       // if(this.blockedDown&&this.platform.name === "p1"&&this.movePosition.y>this.startPosition.y){
       //  // this.y = that.platforms[1].y - that.platforms[1].body.halfHeight;
@@ -344,7 +356,8 @@ export default class Game11PlayScene extends Phaser.Scene {
       trainbox.on("dragend", DrogEvent.onDragEnd);
     }
 
-    // this.colliders[0] = that.physics.add.collider(that.trainboxs,that.trainboxs);   //火车箱之间的碰撞器
+      
+     //this.colliders[0] = that.physics.add.collider(that.trainboxs,that.trainboxs);   //火车箱之间的碰撞器
     // this.colliders[1] = this.physics.add.collider(this.trainboxs,this.platforms[0],TPC1Handler);   //火车箱与铁轨的碰撞器
     // this.colliders[2] = this.physics.add.collider(this.trainboxs,this.platforms[1],TPC2Handler);   //火车箱与地面的碰撞器
     // this.colliders[3] = this.physics.add.collider(this.trainboxs,this.locomotivel);   //火车箱与火车头的碰撞器

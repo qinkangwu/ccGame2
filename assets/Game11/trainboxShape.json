@@ -4,7 +4,7 @@
 		"type": "fromPhysicsEditor",
 		"label": "trainBox",
 		"isStatic": false,
-		"density": 20,
+		"density": 40,
 		"restitution": 0,
 		"friction": 1,
 		"frictionAir": 0.7,

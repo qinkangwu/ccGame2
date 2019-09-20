@@ -3,6 +3,7 @@ import "phaser";
   * 注册点为火车车厢的车底(0.5,1);
   */
 export class TrainBox extends Phaser.GameObjects.Container {
+    public body:any;
     public bg: Phaser.GameObjects.Image;
     public text: Phaser.GameObjects.BitmapText;
     public shape: Phaser.Geom.Circle;
@@ -21,7 +22,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
         this.matterShape = matterShape;
         this.add([this.bg, this.text]);
         this.init();
-        this.drawHitArea();
+        //this.drawHitArea();
         this.setBody();
     }
 
@@ -43,6 +44,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
             shape: this.matterShape,
             isStatic: true
         });
+        this.body.density = 20;
         //  console.log(body);
         // this.add(body);
         // console.log(this);
