@@ -181,7 +181,7 @@ export default class CreateBtnClass {
 
     private backToListHandle() : void {
         //返回游戏列表
-        window.location.href = window.location.origin;
+        window.location.href = 'https://civagame.civaonline.cn:8888'
     }
 
     private switchMusic () : void {
