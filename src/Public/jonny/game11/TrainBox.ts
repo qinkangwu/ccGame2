@@ -3,7 +3,7 @@ import "phaser";
   * 注册点为火车车厢的车底(0.5,1);
   */
 export class TrainBox extends Phaser.GameObjects.Container {
-    public body:any;
+    public body: any;
     public bg: Phaser.GameObjects.Image;
     public text: Phaser.GameObjects.BitmapText;
     public shape: Phaser.Geom.Circle;
@@ -27,7 +27,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
     }
 
     private init() {
-        this.y-=10;
+        this.x += 1030;
         this.setInteractive(this.shape, <Phaser.Types.Input.HitAreaCallback>Phaser.Geom.Circle.Contains);
         this.scene.input.setDraggable(this, true);
         this.interactive = true;
@@ -41,10 +41,10 @@ export class TrainBox extends Phaser.GameObjects.Container {
     }
 
     public setBody() {
-   this.scene.matter.add.gameObject(this, {
+        this.scene.matter.add.gameObject(this, {
             shape: this.matterShape
         });
-       // this.body.density = 20;
+        // this.body.density = 20;
         //  console.log(body);
         // this.add(body);
         // console.log(this);
@@ -61,6 +61,24 @@ export class TrainBox extends Phaser.GameObjects.Container {
         // this.body.mass = 500;
         // this.body.gravity = new Phaser.Math.Vector2(0, 10);
         // this.body.checkWorldBounds();
+    }
+
+    public admission(delay:number=0):Promise<any>{
+        return Promise.resolve({
+            then:resolve=>{
+                this.scene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+                    targets:this,
+                    duration:1000,
+                    delay:delay,
+                    ease:"Sine.easeInOut",
+                    x:this.initPosition.x,
+                    onComplete:()=>{
+                        resolve("ok");
+                    }
+                })
+            }
+        })
+       
     }
 
     public static loadImg(scene: Phaser.Scene) {
