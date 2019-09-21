@@ -79,7 +79,7 @@ export class CivaMen extends Phaser.GameObjects.Image {
     }
 
     public animate() {
-        this.drawPath();
+        //this.drawPath();   //test
 
         var goOut = () => {
             let target = {

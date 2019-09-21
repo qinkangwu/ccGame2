@@ -4,10 +4,10 @@
 		"type": "fromPhysicsEditor",
 		"label": "trainbox",
 		"isStatic": false,
-		"density": 0,
+		"density": 20,
 		"restitution": 0,
 		"friction": 1,
-		"frictionAir": 0.7,
+		"frictionAir": 0.5,
 		"frictionStatic": 1,
 		"collisionFilter": {
 			"group": 0,

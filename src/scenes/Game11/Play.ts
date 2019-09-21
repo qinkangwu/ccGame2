@@ -9,6 +9,8 @@ import { SuccessBtn } from '../../Public/jonny/game9';
 import { Locomotive, TrainBox ,Stage} from '../../Public/jonny/game11';
 
 const vol = 0.3; //背景音乐的音量
+const W = 1024;
+const H = 552;
 var index: number; //题目的指针，默认为0
 var goldValue: number = 3; //金币的值
 
@@ -78,9 +80,8 @@ export default class Game11PlayScene extends Phaser.Scene {
 
   init(res: { data: any[], index: number }) {
     index = res.index;
-    //index = 2; //test
     this.ccData = res.data;
-
+    console.log("正确答案",this.ccData[index].name);
   }
 
   preload(): void {
@@ -114,6 +115,8 @@ export default class Game11PlayScene extends Phaser.Scene {
       }else if(v.body.bounds.max.y >= this.well[2].bounds.min.y && v.body.bounds.max.y <= this.well[2].bounds.max.y){
         v.body.isStatic = true;
         v.y = this.well[2].bounds.min.y - v.shape.radius;
+      }else if(v.x + v.shape.radius >= W*3){
+        v.x = W*3 - v.shape.radius;
       }
     });
    }
@@ -171,14 +174,6 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.well [0]= this.matter.add.rectangle(1024*3*0.5,550,1024*3,50,{isStatic:true,density:100,restitution:0,frictionStatic:0,label:"ground"});  //地面
     this.well [1]= this.matter.add.rectangle(326.5,136.65,15,271.2,{isStatic:true,density:100,restitution:0,frictionStatic:0,label:"leftWell"});  //墙
     this.well [2]= this.matter.add.rectangle(1024*3*0.5,292,1024*3,20,{isStatic:true,density:100,restitution:0,frictionStatic:0,label:"rails"});  //铁轨
-    //this.layer1.add(this.platforms[0]);
-    //this.staticGroup = this.physics.add.staticGroup();
-    //  this.staticGroup = new Phaser.Physics.Arcade.StaticGroup(this.physics.world,this);
-    //  this.staticGroup.setDepth(0,1);
-    //  this.platforms[0] = this.staticGroup.create(1024*0.5,295,"ground").refreshBody();
-    //  this.platforms[0].name = "p0";
-    //  this.platforms[1] = this.staticGroup.create(1024*0.5,550,"ground").refreshBody();
-    //  this.platforms[1].name = "p1";
   }
 
   /**
@@ -200,23 +195,24 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     //火车序列－－－－
     let _y = 430;
+    let offsetX = 225;
     vocabularies.forEach((data, i) => {
-      let _x = 211.5 + (232 + 5) * i;
+      let _x = 211.5 + offsetX * i;
       let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name, _shape.trainBox);
        trainBox.name = data.name;
       this.trainboxs.push(trainBox);
       this.layer1.add(trainBox);
     })
-    //this.matter.add.mouseSpring({});
-    // let symbolRegExp = /[?!.]/g;
-    // let symbols = sentenceName.match(symbolRegExp);
-    // let lastTrainbox: TrainBox = this.trainboxs[this.trainboxs.length - 1];
-    // symbols.forEach(v => {
-    //   let _x = lastTrainbox.x + 232 + 5;
-    //   let trainBox = new TrainBox(this, _x, _y, "symbolTrainBox", v,_shape);
-    //   this.trainboxs.push(trainBox);
-    //   this.layer1.add(trainBox);
-    // })
+    let symbolRegExp = /[?!.]/g;
+    let symbols = sentenceName.match(symbolRegExp);
+    let lastTrainbox: TrainBox = this.trainboxs[this.trainboxs.length - 1];
+    symbols.forEach(v => {
+      let _tx = lastTrainbox.x + offsetX;
+      let symbolsTrainBox = new TrainBox(this, _tx, _y, "symbolTrainBox", v,_shape.trainBox);
+      this.trainboxs.push(symbolsTrainBox);
+      this.layer1.add(symbolsTrainBox);
+      console.log(this.layer1);
+    })
 
     //创建用户反馈
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
@@ -234,7 +230,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     })
     this.locomotivel.admission();
     this.scrollEvent();
-    this.dragEvent();
+    //this.dragEvent();
     this.matterCollision();
   }
 

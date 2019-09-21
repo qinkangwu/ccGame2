@@ -33,7 +33,7 @@ const initHandle = (arr : object[],physics:string) : void=>{
         gravity:{
           y:1
         },
-        debug:true
+        debug:false
       }
     },
     render:{
