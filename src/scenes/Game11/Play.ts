@@ -224,18 +224,25 @@ export default class Game11PlayScene extends Phaser.Scene {
    */
   private gameStart(): void {
     console.log("game start");
+
+    var nextFuc = ()=>{
+      this.scrollEvent();
+    this.dragEvent();
+    this.matterCollision();
+    }
+
     this.locomotivel.admission()
     .then(()=>{
       let trainboxAnimates:((delay?: number) => Promise<any>)[] = this.trainboxs.map(trainbox=>trainbox.admission);
-      Promise.all(trainboxAnimates).then(()=>{"start ok"})
-    //   this.trainboxs.forEach(trainbox => {
-    //     trainbox.admission(0);
-    //  })
+      Promise.all(trainboxAnimates).then(()=>{
+        nextFuc();
+      })
+      this.trainboxs.forEach(trainbox => {
+        trainbox.admission();
+     })
     })
-     
-    this.scrollEvent();
-    //this.dragEvent();
-    //this.matterCollision();
+    
+    
   }
 
   /**
