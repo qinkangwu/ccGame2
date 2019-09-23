@@ -3,6 +3,7 @@ import ButtonMusic from './ButtonMusic';
 import ButtonExit from './ButtonExit';
 import {SellingGold} from "./SellingGold";
 import {Gold} from "./Gold";
+import {SuccessBtn} from "./SuccessBtn";
 
 export {
     Button,
@@ -10,5 +11,6 @@ export {
     ButtonMusic,
     ButtonExit,
     SellingGold,
-    Gold
+    Gold,
+    SuccessBtn
 }

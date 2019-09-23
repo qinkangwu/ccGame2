@@ -3,7 +3,7 @@
 	"trainBox": {
 		"type": "fromPhysicsEditor",
 		"label": "trainbox",
-		"isStatic": true,
+		"isStatic": false,
 		"density": 20,
 		"restitution": 0,
 		"friction": 1,
