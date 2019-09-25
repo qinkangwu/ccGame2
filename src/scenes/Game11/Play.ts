@@ -105,7 +105,7 @@ export default class Game11PlayScene extends Phaser.Scene {
 
   update(time: number, delta: number): void {
     this.btnSound.mountUpdate();
-
+    this.eliminateJitter();
   }
 
   /**
@@ -210,7 +210,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.trainboxs.push(trainBox);
       this.layer1.add(trainBox);
     })
-    let symbolRegExp = /[?!.]/g;
+    let symbolRegExp = /[?!,.]/g;
     let symbols = sentenceName.match(symbolRegExp);
     let lastTrainbox: TrainBox = this.trainboxs[this.trainboxs.length - 1];
     symbols.forEach(v => {
@@ -386,7 +386,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         return false;
       }
       this.startPosition = new Phaser.Math.Vector2(pointer.x, pointer.y);
-      //this.body.isStatic = true;
+      this.body.isStatic = true;
       //this.scene.matter.world.setGravity(0);
     }
 
@@ -397,7 +397,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       }
       //this.body.allowGravity = true;
       this.body.gravity = new Phaser.Math.Vector2(0, 500);
-      //this.body.isStatic = false;
+      this.body.isStatic = false;
     }
 
     this.trainboxs.forEach(trainboxEvent);
@@ -575,23 +575,27 @@ export default class Game11PlayScene extends Phaser.Scene {
    */
   private checkoutResult(): Promise<string> {
 
-    let answer:string[] = [];
+    let answer:string[]|string = [];
 
     let collisionFuc = ()=>{
       this.trainboxs.forEach(trainbox=>{
            if(isHit(this.trackCircle.syncBounds(),trainbox.syncBounds()) && !trainbox.isTrack){
-              answer.push(trainbox.name);
+              (<string[]>answer).push(trainbox.name);
               trainbox.isTrack = true;
            }
       })
     }
-
-
     return new Promise((resolve, reject) => {
       this.trackCircle = new TrackCircle(this, 150, 150, "trackCircle");
       this.layer1.add(this.trackCircle);
       this.trackCircle.animate(collisionFuc,()=>{
+        answer = (answer as string[]).join("");
         console.log(answer);
+        if(answer===this.ccData[index].name){
+          resolve("this is ok!");
+        }else{
+          reject("this is wrong"); 
+        }
       });
     })
   }

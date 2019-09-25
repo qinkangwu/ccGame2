@@ -13,7 +13,7 @@ export class TrackCircle extends Phaser.GameObjects.Image{
        animate(collisionFuc:Function,completeFuc:Function){
         this.scene.tweens.add({
             targets:this,
-            duration:10000,
+            duration:500,
             x:this.targetPosition.x,
             onUpdate:()=>{
                 collisionFuc();
