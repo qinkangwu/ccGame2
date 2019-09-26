@@ -30,7 +30,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
     }
 
     private init() {
-        this.y+=10;
+        this.x+=1000;
         this.setInteractive(this.shape, <Phaser.Types.Input.HitAreaCallback>Phaser.Geom.Circle.Contains);
         this.scene.input.setDraggable(this, true);
         this.interactive = true;

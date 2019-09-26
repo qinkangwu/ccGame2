@@ -23,6 +23,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
 
   private ccData: Array<Game11DataItem> = [];
+  private times:number = 0;  //次数
 
   //静态开始
   private bgm: Phaser.Sound.BaseSound; //背景音乐
@@ -113,7 +114,7 @@ export default class Game11PlayScene extends Phaser.Scene {
    */
   eliminateJitter() {
     this.trainboxs.forEach(v => {
-      if (v.body.bounds.min.x <= 0) {
+      if (v.body.bounds.min.x <= 0 + v.shape.radius) {
         v.body.isStatic = true;
         v.x = v.body.bounds.max.x * 0.5;
       } else if (v.body.bounds.max.y >= this.well[0].bounds.min.y) {
@@ -210,11 +211,12 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.trainboxs.push(trainBox);
       this.layer1.add(trainBox);
     })
+
     let symbolRegExp = /[?!,.]/g;
     let symbols = sentenceName.match(symbolRegExp);
     let lastTrainbox: TrainBox = this.trainboxs[this.trainboxs.length - 1];
     symbols.forEach(v => {
-      let _tx = lastTrainbox.x + offsetX;
+      let _tx = lastTrainbox.initPosition.x + offsetX;
       let symbolsTrainBox = new TrainBox(this, _tx, _y, "symbolTrainBox", v, _shape.trainBox);
       symbolsTrainBox.name = v;
       this.trainboxs.push(symbolsTrainBox);
@@ -458,42 +460,40 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.checkoutResult()
       .then(msg => {    //正确
         console.log(msg)
-        //this.isRight();
+        this.isRight();
       })
       .catch(err => {   //错误
         console.log(err)
-        //this.isWrong();
+        this.isWrong();
       });
   }
 
   /**
    * 正确的结果处理
    */
-  // private isRight(): void {
-  //   this.sellingGold = new SellingGold(this, {
-  //     callback: () => {
-  //       this.sellingGold.golds.destroy();
-  //       this.civaJump.call(this);
-  //       this.setGoldValue(3);
-  //     }
-  //   });
-  //   this.civaMen.round.result = 1;
-  //   this.tipsParticlesEmitter.success(() => {
-  //     this.sellingGold.goodJob(3);
-  //   })
-  // }
+  private isRight(): void {
+    this.sellingGold = new SellingGold(this, {
+      callback: () => {
+        this.sellingGold.golds.destroy();
+        this.setGoldValue(3);
+      }
+    });
+    this.tipsParticlesEmitter.success(() => {
+      this.sellingGold.goodJob(3);
+    })
+  }
 
   /**
    * 错误的结果处理
    */
-  // private isWrong(): void {
-  //   this.civaMen.round.result = 0;
-  //   if (this.civaMen.round.times === 1) {
-  //     this.tryAgin();
-  //   } else if (this.civaMen.round.times >= 2) {
-  //     this.ohNo();
-  //   }
-  // }
+  private isWrong(): void {
+    this.times+=1;
+    if (this.times === 1) {
+      this.tryAgin();
+    } else if (this.times === 2) {
+      this.ohNo();
+    }
+  }
 
   /**
    * 再玩一次
@@ -506,37 +506,16 @@ export default class Game11PlayScene extends Phaser.Scene {
    * 重置开始状态
    */
   private resetStart() {
-    // this.layer1.list.forEach(obj => {
-    //   if (obj instanceof Cookie) {
-    //     this.layer1.remove(obj);
-    //     this.layer2.add(obj);
-    //   };
-    // })
-    // this.layer2.list.forEach(obj => {
-    //   if (obj instanceof NullCookie) {
-    //     this.layer2.remove(obj);
-    //     this.layer1.add(obj);
-    //   };
-    // })
-    // this.nullCookies.forEach(nullCookie => {
-    //   nullCookie.collision = 0;
-    //   nullCookie.cookie = null;
-    // })
-    // this.cookies.forEach(cookie => {
-    //   this.physics.world.enable(cookie);
-    //   cookie.setPosition(
-    //     cookie.initPosition.x,
-    //     cookie.initPosition.y
-    //   )
-    //   cookie.on("dragstart", DrogEvent.cookieOnDragStart);
-    //   cookie.on("drag", DrogEvent.cookieOnDrag);
-    //   cookie.on("dragend", DrogEvent.cookieOnDragEnd);
-    //   cookie.hit = 0;
-    //   cookie.interactive = true;
-    //   cookie.nullCookie = null;
-    // });
-    // this.successBtn.setAlpha(0);
-    // this.successBtn.interactive = true;
+    this.trainboxs.forEach(trainbox=>{
+      this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+        targets:trainbox,
+        duration:500,
+        x:trainbox.initPosition.x,
+        y:trainbox.initPosition.y
+      })
+    })
+    this.successBtn.setAlpha(0);
+    this.successBtn.interactive = true;
   }
 
   /**
@@ -598,24 +577,6 @@ export default class Game11PlayScene extends Phaser.Scene {
         }
       });
     })
-  }
-
-  /**
-   * civa 开始跳跃
-   */
-  private civaJump(): void {
-    // this.civaMen.animateEnd = this.nextRound.bind(this);
-    // switch (this.nullCookies.length) {
-    //   case 2:
-    //     this.civaMen.startJumpIn(3, [365, 680, 928]);
-    //     break;
-    //   case 3:
-    //     this.civaMen.startJumpIn(4, [365, 528, 680, 928]);
-    //     break;
-    //   case 4:
-    //     this.civaMen.startJumpIn(5, [288, 446, 600, 762, 928]);
-    //     break;
-    // }
   }
 
   /**
