@@ -392,7 +392,8 @@ export default class Game11PlayScene extends Phaser.Scene {
     }
 
     DrogEvent.onDragStart = function (pointer, startX, startY) {
-      if (new RegExp("\w").test(this.name)) {
+      console.log(/\w/.test(this.name),this.name);
+      if (/\w/.test(this.name)) {
         that.playWord(this.name);
       }
       if (!this.interactive) {
