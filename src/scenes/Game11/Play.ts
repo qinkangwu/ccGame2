@@ -1,7 +1,7 @@
 import 'phaser';
 import { Game11DataItem, } from '../../interface/Game11';
 import { cover, rotateTips, Bounds, isHit } from '../../Public/jonny/core';
-import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn } from '../../Public/jonny/components';
+import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn,TryAginListenBtn } from '../../Public/jonny/components';
 import { EASE } from '../../Public/jonny/Animate';
 import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
@@ -33,7 +33,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   private btnExit: Button;  //退出按钮
   private btnSound: ButtonMusic; //音乐按钮
   private originalSoundBtn: Button; //原音按钮
-  private tryAginListenBtn: Button; //在听一次按钮
+  private tryAginListenBtn: TryAginListenBtn; //在听一次按钮
   private planAnims: PlanAnims;
   private gold: Gold;
   private successBtn: SuccessBtn;  //成功提交的按钮
@@ -171,10 +171,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.btnExit = new ButtonExit(this);
     this.btnSound = new ButtonMusic(this);
     this.originalSoundBtn = new Button(this, 25 + 60 * 0.5, 467 + 60 * 0.5, "originalSoundBtn").setAlpha(1);
-    this.tryAginListenBtn = new Button(this, 89, 435 + 50, "try-agin-btn").setAlpha(1);
-    this.tryAginListenBtn.minAlpha = 1;
-    this.tryAginListenBtn.setOrigin(0, 1);
-    this.tryAginListenBtn.setScale(0).setRotation((Math.PI / 180) * -30);
+    this.tryAginListenBtn = new TryAginListenBtn(this, 89, 435 + 50);
     this.layer0.add(bg);
     this.layer4.add([this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
     this.originalSoundBtn.on("pointerdown", this.playSentence.bind(that));
@@ -258,6 +255,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     var nextFuc = () => {
       this.scrollEvent();
       this.dragEvent();
+      this.tryAginListenBtn.animate.play();
       //this.matterCollision();   //可选
     }
 

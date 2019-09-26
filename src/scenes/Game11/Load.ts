@@ -3,7 +3,7 @@ import apiPath from '../../lib/apiPath';
 import { get } from '../../lib/http';
 import { Assets,Game11DataItem,GetSentenceData} from '../../interface/Game11';
 import { resize } from '../../Public/jonny/core';
-import { SellingGold } from '../../Public/jonny/components';
+import { SellingGold ,TryAginListenBtn} from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
@@ -36,7 +36,8 @@ export default class Game11LoadScene extends Phaser.Scene {
     this.load.json("trainboxShape","assets/Game11/trainboxShape.json");
     this.load.audio('bgm', 'assets/sounds/bgm-01.mp3');
     this.load.bitmapFont('ArialRoundedBold30', 'assets/font/ArialRoundedBold30/font.png', 'assets/font/ArialRoundedBold30/font.xml');
-    TipsParticlesEmitter.loadImg(this)
+    TipsParticlesEmitter.loadImg(this);
+    TryAginListenBtn.loadAssets(this);
     PlanAnims.loadImg(this);
     SellingGold.loadImg(this);
     this.assets.forEach((v) => {
