@@ -31,19 +31,24 @@ export class Locomotive extends Phaser.GameObjects.Image{
         this.setPosition(1167.75,280);
     }
 
-    public admission():void{
-        this.scene.add.tween({
-            targets:this,
-            duration:5000,
-            ease:"Sine.easeOut",
-            x:180,
-            onStart:()=>{
-               this.pitStop.play(); 
-            },
-            onComplete:()=>{
-                //this.pitStop.play();
+    public admission():Promise<any>{
+        let animate = {
+            then:resolve=>{
+                this.scene.add.tween({
+                    targets:this,
+                    duration:5000,
+                    ease:"Sine.easeOut",
+                    x:180,
+                    onStart:()=>{
+                       this.pitStop.play(); 
+                    },
+                    onComplete:()=>{
+                       resolve("ok");
+                    }
+                })
             }
-        })
+        }
+        return Promise.resolve(animate);
     }
 
     public static loadImg(scene:Phaser.Scene){
