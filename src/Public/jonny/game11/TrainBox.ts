@@ -14,6 +14,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
     public movePosition: Phaser.Math.Vector2;
     public matterShape: Object;
     public isTrack:Boolean;  //是否被轨迹球跟踪过，探知答案！
+    public isDrogUp:number;  //是否被拖到轨道上去了,是为1，否为0
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, text: string, matterShape: object) {
         super(scene, x, y);
         this.initPosition = new Phaser.Math.Vector2(x, y);
@@ -21,6 +22,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
         this.text = new Phaser.GameObjects.BitmapText(scene, 0, 0 - 28, "ArialRoundedBold30", text, 30).setOrigin(0.5);
         this.text.tint = 0xFF7F3A;
         this.isTrack = false; 
+        this.isDrogUp = 0;
         this.shape = new Phaser.Geom.Circle(0, 0, 193 * 0.5);
         this.matterShape = matterShape;
         this.add([this.bg, this.text]);
@@ -51,7 +53,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
         //  console.log(body);
         // this.add(body);
         // console.log(this);
-        //this.scene.matter.world.add(this);
+        // this.scene.matter.world.add(this);
         // this.body.collideWorldBounds = true;
         // // this.body.setSize(218,193);
         // // this.body.setOffset(-218*0.5,-193);

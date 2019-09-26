@@ -1,6 +1,6 @@
 import 'phaser';
 import { Game11DataItem, } from '../../interface/Game11';
-import { cover, rotateTips, isHit } from '../../Public/jonny/core';
+import { cover, rotateTips, Bounds, isHit } from '../../Public/jonny/core';
 import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn } from '../../Public/jonny/components';
 import { EASE } from '../../Public/jonny/Animate';
 import PlanAnims from '../../Public/PlanAnims';
@@ -23,7 +23,8 @@ export default class Game11PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
 
   private ccData: Array<Game11DataItem> = [];
-  private times:number = 0;  //次数
+  private oneWheel:boolean = false;  //一轮是否结束
+  private times: number = 0;  //次数
 
   //静态开始
   private bgm: Phaser.Sound.BaseSound; //背景音乐
@@ -106,7 +107,9 @@ export default class Game11PlayScene extends Phaser.Scene {
 
   update(time: number, delta: number): void {
     this.btnSound.mountUpdate();
-    this.eliminateJitter();
+    if(!this.oneWheel){
+      this.eliminateJitter();
+    }
   }
 
   /**
@@ -180,8 +183,16 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     //静止物体
     this.well[0] = this.matter.add.rectangle(1024 * 4 * 0.5, 550, 1024 * 4, 50, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "ground" });  //地面
+
     this.well[1] = this.matter.add.rectangle(326.5, 136.65, 15, 271.2, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "leftWell" });  //墙
+
     this.well[2] = this.matter.add.rectangle(1024 * 4 * 0.5, 292, 1024 * 4, 20, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "rails" });  //铁轨
+    this.well[2]._bounds = new Bounds(new Phaser.Geom.Rectangle(
+      this.well[2].bounds.min.x,
+      this.well[2].bounds.min.y,
+      this.well[2].bounds.max.x - this.well[2].bounds.min.x,
+      this.well[2].bounds.max.y - this.well[2].bounds.min.y
+    ));
   }
 
   /**
@@ -237,7 +248,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     var nextFuc = () => {
       this.scrollEvent();
       this.dragEvent();
-      this.matterCollision();
+      this.matterCollision();   //可选
     }
 
     this.locomotivel.admission()
@@ -287,7 +298,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   }
 
   /**
-   * 碰撞监听
+   * 碰撞监听  可选
    */
   public matterCollision() {
     let that = this;
@@ -297,10 +308,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.matter.world.on("collisionend", collisionEnd);
 
     function collisionStart(e, obj1, obj2) {
-      if (that.successBtn.alpha === 0) {
-        that.successBtn.animate.play();
-      }
-      //console.log("碰撞");
+      console.log("碰撞");
       //console.log("start",obj1,obj2);
       // if(obj2.label===""){
       //   obj2.isSleeping = true;
@@ -361,13 +369,18 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     //this.matter.add.mouseSpring({});
 
-    DrogEvent.onDrag = function (pointer, dragX, dragY) {
+    DrogEvent.onDrag = function (this: TrainBox, pointer, dragX, dragY) {
       if (!this.interactive) {
         return false;
       }
       this.movePosition = new Phaser.Math.Vector2(dragX, dragY);
       this.x = dragX;
       this.y = dragY;
+      if (isHit(this.syncBounds(), that.well[2]._bounds)) {
+          if(this.isDrogUp===0){
+            this.isDrogUp = 1;
+          } 
+      }
       //  if(this.movePosition.y>=this.initPosition.y){
       //   this.movePosition.y = this.initPosition.y 
       //  }else{
@@ -393,60 +406,45 @@ export default class Game11PlayScene extends Phaser.Scene {
     }
 
 
+
     DrogEvent.onDragEnd = function () {
       if (!this.interactive) {
         return false;
       }
-      //this.body.allowGravity = true;
+      if(that.checkoutDragEnd() === that.trainboxs.length){     //拖拽结束
+          that.dragEnd();
+      } 
       this.body.gravity = new Phaser.Math.Vector2(0, 500);
       this.body.isStatic = false;
     }
 
     this.trainboxs.forEach(trainboxEvent);
-
     function trainboxEvent(trainbox: TrainBox) {
       trainbox.on("dragstart", DrogEvent.onDragStart);
       trainbox.on("drag", DrogEvent.onDrag);
       trainbox.on("dragend", DrogEvent.onDragEnd);
     }
+  }
 
-
-    //this.colliders[0] = that.physics.add.collider(that.trainboxs,that.trainboxs);   //火车箱之间的碰撞器
-    // this.colliders[1] = this.physics.add.collider(this.trainboxs,this.platforms[0],TPC1Handler);   //火车箱与铁轨的碰撞器
-    // this.colliders[2] = this.physics.add.collider(this.trainboxs,this.platforms[1],TPC2Handler);   //火车箱与地面的碰撞器
-    // this.colliders[3] = this.physics.add.collider(this.trainboxs,this.locomotivel);   //火车箱与火车头的碰撞器
-
-    // this.colliders[0].name = "TTC";
-    // this.colliders[1].name = "TPC1";
-    // this.colliders[2].name = "TPC2";
-
-    // function TPC1Handler(t:TrainBox,p){
-    //   t.blockedDown = true;
-    //   t.platform = p;
-    //   t.body.setGravityY(0);
-    // }
-
-    // function TPC2Handler(t:TrainBox,p:Phaser.Physics.Arcade.Sprite){
-    //   t.blockedDown = true;
-    //   t.platform = p;
-    //   t.body.setGravityY(0);
-    // }
+  /**
+   * 检查拖拽是否已经结束
+   */
+  private checkoutDragEnd():number{
+     var length:number = 0;
+     this.trainboxs.forEach(trainbox=>{
+      length = length + trainbox.isDrogUp; 
+     })
+     return length;
   }
 
   /**
    * 拖拽结束
    */
-  // private dragEnd(): void {
-  //   console.log("拖拽结束");
-  //   this.cookies.forEach(cookie => {
-  //     cookie.off("dragstart");
-  //     cookie.off("drag");
-  //     cookie.off("dragend");
-  //   })
-  //   this.civaMen.round.times += 1;
-  //   this.successBtn.setAlpha(1);
-  //   this.successBtn.animate.play();
-  // }
+  private dragEnd(): void {
+    // console.log("拖拽结束");
+     this.successBtn.setAlpha(1);
+     this.successBtn.animate.play();
+  }
 
   /**
    *  successBtnPointerdown 
@@ -475,6 +473,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.sellingGold = new SellingGold(this, {
       callback: () => {
         this.sellingGold.golds.destroy();
+        this.trainboxGetOut();
         this.setGoldValue(3);
       }
     });
@@ -484,10 +483,26 @@ export default class Game11PlayScene extends Phaser.Scene {
   }
 
   /**
+   * 火车开走
+   */
+   private trainboxGetOut():void{
+     //this.locomotivel
+    this.oneWheel = true;
+     this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+       targets:new Array(this.locomotivel).concat(<any[]>this.trainboxs),
+       x:-500,
+       duration:1000,
+       onComplete:()=>{
+         this.nextRound();
+       }
+     })
+   } 
+
+  /**
    * 错误的结果处理
    */
   private isWrong(): void {
-    this.times+=1;
+    this.times += 1;
     if (this.times === 1) {
       this.tryAgin();
     } else if (this.times === 2) {
@@ -506,12 +521,16 @@ export default class Game11PlayScene extends Phaser.Scene {
    * 重置开始状态
    */
   private resetStart() {
-    this.trainboxs.forEach(trainbox=>{
+    this.trainboxs.forEach(trainbox => {
       this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-        targets:trainbox,
-        duration:500,
-        x:trainbox.initPosition.x,
-        y:trainbox.initPosition.y
+        targets: trainbox,
+        duration: 500,
+        x: trainbox.initPosition.x,
+        y: trainbox.initPosition.y,
+        onComplete:()=>{
+          trainbox.isDrogUp = 0;
+          trainbox.isTrack = false; 
+        }
       })
     })
     this.successBtn.setAlpha(0);
@@ -542,11 +561,12 @@ export default class Game11PlayScene extends Phaser.Scene {
     // this.layer1.destroy();
     // this.layer2.destroy();
     // this.layer3.destroy();
-    // index += 1;
-    // this.scene.start('Game9PlayScene', {
-    //   data: this.ccData,
-    //   index: index
-    // });
+    index += 1;
+    this.oneWheel = false;
+    this.scene.start('Game11PlayScene', {
+      data: this.ccData,
+      index: index
+    });
   }
 
   /**
@@ -554,26 +574,26 @@ export default class Game11PlayScene extends Phaser.Scene {
    */
   private checkoutResult(): Promise<string> {
 
-    let answer:string[]|string = [];
+    let answer: string[] | string = [];
 
-    let collisionFuc = ()=>{
-      this.trainboxs.forEach(trainbox=>{
-           if(isHit(this.trackCircle.syncBounds(),trainbox.syncBounds()) && !trainbox.isTrack){
-              (<string[]>answer).push(trainbox.name);
-              trainbox.isTrack = true;
-           }
+    let collisionFuc = () => {
+      this.trainboxs.forEach(trainbox => {
+        if (isHit(this.trackCircle.syncBounds(), trainbox.syncBounds()) && !trainbox.isTrack) {
+          (<string[]>answer).push(trainbox.name);
+          trainbox.isTrack = true;
+        }
       })
     }
     return new Promise((resolve, reject) => {
       this.trackCircle = new TrackCircle(this, 150, 150, "trackCircle");
       this.layer1.add(this.trackCircle);
-      this.trackCircle.animate(collisionFuc,()=>{
+      this.trackCircle.animate(collisionFuc, () => {
         answer = (answer as string[]).join("");
         console.log(answer);
-        if(answer===this.ccData[index].name){
+        if (answer === this.ccData[index].name) {
           resolve("this is ok!");
-        }else{
-          reject("this is wrong"); 
+        } else {
+          reject("this is wrong");
         }
       });
     })
