@@ -97,6 +97,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     if (index === 0) {
       this.scene.pause();
       rotateTips.init();
+      this.firstCreate();
       cover(this, "Game11", () => {
         this.planAnims.show(index + 1, this.gameStart)
       });
@@ -133,6 +134,22 @@ export default class Game11PlayScene extends Phaser.Scene {
   }
 
   /**
+   * 首次才创建
+   */
+  firstCreate():void{
+    this.bgm = this.sound.add('bgm');
+    this.bgm.addMarker({
+      name: "start",
+      start: 0
+    } as Phaser.Types.Sound.SoundMarker);
+    let config: Phaser.Types.Sound.SoundConfig = {
+      loop: true,
+      volume: vol
+    }
+    this.bgm.play("start", config);
+  }
+
+  /**
    * 创建静态场景
    */
   createStage() {
@@ -162,19 +179,8 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.layer4.add([this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
     this.originalSoundBtn.on("pointerdown", this.playSentence.bind(that));
 
-    this.bgm = this.sound.add('bgm');
-    this.bgm.addMarker({
-      name: "start",
-      start: 0
-    } as Phaser.Types.Sound.SoundMarker);
-    let config: Phaser.Types.Sound.SoundConfig = {
-      loop: true,
-      volume: vol
-    }
 
-    this.bgm.play("start", config);
     this.clickSound = this.sound.add('click');
-
     this.planAnims = new PlanAnims(this, this.ccData.length);
     this.gold = new Gold(this, goldValue);   //设置金币
     this.successBtn = new SuccessBtn(this, 939 + 60 * 0.5, 552 * 0.5);
@@ -182,17 +188,21 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.layer4.add([this.successBtn, this.gold]);
 
     //静止物体
-    this.well[0] = this.matter.add.rectangle(1024 * 4 * 0.5, 550, 1024 * 4, 50, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "ground" });  //地面
+    this.well[0] = this.matter.add.rectangle(1024 * 4 * 0.5, 550, 1024 * 4, 50, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "ground" ,render:{visible:true}});  //地面
 
     this.well[1] = this.matter.add.rectangle(326.5, 136.65, 15, 271.2, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "leftWell" });  //墙
 
-    this.well[2] = this.matter.add.rectangle(1024 * 4 * 0.5, 292, 1024 * 4, 20, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "rails" });  //铁轨
+    this.well[2] = this.matter.add.rectangle(1024 * 4 * 0.5, 292, 1024 * 4, 20, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "rails",render: { visible: true }});  //铁轨
+
     this.well[2]._bounds = new Bounds(new Phaser.Geom.Rectangle(
       this.well[2].bounds.min.x,
       this.well[2].bounds.min.y,
       this.well[2].bounds.max.x - this.well[2].bounds.min.x,
       this.well[2].bounds.max.y - this.well[2].bounds.min.y
     ));
+    
+    console.log(this.well[2]);
+
   }
 
   /**
@@ -248,7 +258,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     var nextFuc = () => {
       this.scrollEvent();
       this.dragEvent();
-      this.matterCollision();   //可选
+      //this.matterCollision();   //可选
     }
 
     this.locomotivel.admission()
@@ -307,27 +317,13 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     function collisionStart(e, obj1, obj2) {
       console.log("碰撞");
-      //console.log("start",obj1,obj2);
-      // if(obj2.label===""){
-      //   obj2.isSleeping = true;
-      // }
-      // args.forEach(obj=>{
-      //   if(obj.label===""){
-      //     console.log(1);
-      //     obj.isSleeping = true;
-      //   }
-      // });
     }
 
     function collisionActive(e, obj1, obj2) {
-      //console.log('active',obj1,obj2);
-      // if(obj2.label===""){
-      //   obj2.gameObject.body.isStatic = true;
-      // }
+     
     }
 
     function collisionEnd(e, obj1, obj2) {
-      //console.log('end',obj1,obj2);
 
     }
 
@@ -365,8 +361,6 @@ export default class Game11PlayScene extends Phaser.Scene {
     let that = this;
     let working: boolean = false;   //碰撞器是否在工作
 
-    //this.matter.add.mouseSpring({});
-
     DrogEvent.onDrag = function (this: TrainBox, pointer, dragX, dragY) {
       if (!this.interactive) {
         return false;
@@ -379,20 +373,9 @@ export default class Game11PlayScene extends Phaser.Scene {
             this.isDrogUp = 1;
           } 
       }
-      //  if(this.movePosition.y>=this.initPosition.y){
-      //   this.movePosition.y = this.initPosition.y 
-      //  }else{
-      //}
-      // if(this.blockedDown&&this.platform.name === "p1"&&this.movePosition.y>this.startPosition.y){
-      //  // this.y = that.platforms[1].y - that.platforms[1].body.halfHeight;
-      // }else if(this.movePosition.y<this.startPosition.y){
-      //   this.blockedDown = false;
-      //   this.y = dragY;
-      // }
     }
 
     DrogEvent.onDragStart = function (pointer, startX, startY) {
-      console.log(/\w/.test(this.name),this.name);
       if (/\w/.test(this.name)) {
         that.playWord(this.name);
       }
@@ -401,7 +384,6 @@ export default class Game11PlayScene extends Phaser.Scene {
       }
       this.startPosition = new Phaser.Math.Vector2(pointer.x, pointer.y);
       this.body.isStatic = true;
-      //this.scene.matter.world.setGravity(0);
     }
 
 
