@@ -122,8 +122,8 @@ export default class Game11PlayScene extends Phaser.Scene {
       } else if (v.body.bounds.max.y >= this.well[2].bounds.min.y && v.body.bounds.max.y <= this.well[2].bounds.max.y) {
         v.body.isStatic = true;
         v.y = this.well[2].bounds.min.y - v.shape.radius;
-      } else if (v.x + v.shape.radius >= W * 3) {
-        v.x = W * 3 - v.shape.radius;
+      } else if (v.x + v.shape.radius >= W * 4) {
+        v.x = W * 4 - v.shape.radius;
       }
     });
   }
@@ -178,9 +178,9 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.layer4.add([this.successBtn, this.gold]);
 
     //静止物体
-    this.well[0] = this.matter.add.rectangle(1024 * 3 * 0.5, 550, 1024 * 3, 50, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "ground" });  //地面
+    this.well[0] = this.matter.add.rectangle(1024 * 4 * 0.5, 550, 1024 * 4, 50, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "ground" });  //地面
     this.well[1] = this.matter.add.rectangle(326.5, 136.65, 15, 271.2, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "leftWell" });  //墙
-    this.well[2] = this.matter.add.rectangle(1024 * 3 * 0.5, 292, 1024 * 3, 20, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "rails" });  //铁轨
+    this.well[2] = this.matter.add.rectangle(1024 * 4 * 0.5, 292, 1024 * 4, 20, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "rails" });  //铁轨
   }
 
   /**
@@ -329,7 +329,7 @@ export default class Game11PlayScene extends Phaser.Scene {
    * 执行滚动条的互动
    */
   private scrollEvent(): void {
-    let stageShape = new Phaser.Geom.Rectangle(0, 0, 1024 * 3, 552);
+    let stageShape = new Phaser.Geom.Rectangle(0, 0, 1024 * 4, 552);
     this.gameStage.setInteractive(stageShape, Phaser.Geom.Rectangle.Contains);
     this.input.setDraggable(this.gameStage, true);
     this.gameStage.on('dragstart', gameStageStart);
@@ -344,8 +344,8 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (this.x >= 0) {
         this.x = 0;
       }
-      if (this.x <= 1024 * 2 * -1) {
-        this.x = 1024 * 2 * -1;
+      if (this.x <= 1024 * 3 * -1) {
+        this.x = 1024 * 3 * -1;
       }
     }
   }
