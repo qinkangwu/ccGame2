@@ -225,8 +225,8 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     let symbolRegExp = /[?!,.]/g;
     let symbols = sentenceName.match(symbolRegExp);
-    let lastTrainbox: TrainBox = this.trainboxs[this.trainboxs.length - 1];
     symbols.forEach(v => {
+      let lastTrainbox: TrainBox = this.trainboxs[this.trainboxs.length - 1];
       let _tx = lastTrainbox.initPosition.x + offsetX;
       let symbolsTrainBox = new TrainBox(this, _tx, _y, "symbolTrainBox", v, _shape.trainBox);
       symbolsTrainBox.name = v;
@@ -261,8 +261,6 @@ export default class Game11PlayScene extends Phaser.Scene {
           trainbox.admission();
         })
       })
-
-
   }
 
   /**
