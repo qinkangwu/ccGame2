@@ -29,7 +29,10 @@ export default class Game11PlayScene extends Phaser.Scene {
   //静态开始
   private bgm: Phaser.Sound.BaseSound; //背景音乐
   private clickSound: Phaser.Sound.BaseSound; //点击音效
-  private bg: Phaser.GameObjects.Image; //背景图片
+  private bg1: Phaser.GameObjects.Image; //背景图片
+  private bg2: Phaser.GameObjects.Image; //背景图片
+  private bg3: Phaser.GameObjects.Image; //背景图片
+  private bg4: Phaser.GameObjects.Image; //背景图片
   private btnExit: Button;  //退出按钮
   private btnSound: ButtonMusic; //音乐按钮
   private originalSoundBtn: Button; //原音按钮
@@ -167,12 +170,15 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     // this.matter.world.setBounds(100, 0, 1024*3, 520);
 
-    let bg = new Phaser.GameObjects.Image(this, 0, 0, "bg").setOrigin(0);
+    this.bg1 = new Phaser.GameObjects.Image(this, 0, 0, "bg").setOrigin(0);
+    this.bg2 = new Phaser.GameObjects.Image(this, 1024, 0, "bg").setOrigin(0).setFlipX(true);
+    this.bg3 = new Phaser.GameObjects.Image(this, 1024*2, 0, "bg").setOrigin(0);
+    this.bg4 = new Phaser.GameObjects.Image(this, 1024*3, 0, "bg").setOrigin(0).setFlipX(true);
     this.btnExit = new ButtonExit(this);
     this.btnSound = new ButtonMusic(this);
     this.originalSoundBtn = new Button(this, 25 + 60 * 0.5, 467 + 60 * 0.5, "originalSoundBtn").setAlpha(1);
     this.tryAginListenBtn = new TryAginListenBtn(this, 89, 435 + 50);
-    this.layer0.add(bg);
+    this.layer0.add([this.bg1,this.bg2,this.bg3,this.bg4]);
     this.layer4.add([this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
     this.originalSoundBtn.on("pointerdown", this.playSentence.bind(that));
 
