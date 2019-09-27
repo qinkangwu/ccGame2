@@ -8,7 +8,8 @@ export class TrainBox extends Phaser.GameObjects.Container {
     public text: Phaser.GameObjects.BitmapText;
     public shape: Phaser.Geom.Circle;
     public interactive: Boolean;
-    public initPosition: Phaser.Math.Vector2;
+    public initPositionDown: Phaser.Math.Vector2;
+    public initPositionUp: Phaser.Math.Vector2;
     public startPosition: Phaser.Math.Vector2;
     public movePosition: Phaser.Math.Vector2;
     public matterShape: Object;
@@ -16,7 +17,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
     public isDrogUp: number;  //是否被拖到轨道上去了,是为1，否为0
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, text: string, matterShape: object) {
         super(scene, x, y);
-        this.initPosition = new Phaser.Math.Vector2(x, y);
+        this.initPositionDown = new Phaser.Math.Vector2(x, y);
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, texture);
         this.text = new Phaser.GameObjects.BitmapText(scene, 0, 0 - 28, "ArialRoundedBold30", text, 30).setOrigin(0.5);
         this.text.tint = 0xFF7F3A;
@@ -51,7 +52,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
                     duration: 1000,
                     delay: delay,
                     ease: "Sine.easeInOut",
-                    x: this.initPosition.x,
+                    x: this.initPositionDown.x,
                     onComplete: () => {
                         resolve("ok");
                     }

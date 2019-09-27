@@ -231,7 +231,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     let symbols = sentenceName.match(symbolRegExp);
     symbols.forEach(v => {
       let lastTrainbox: TrainBox = this.trainboxs[this.trainboxs.length - 1];
-      let _tx = lastTrainbox.initPosition.x + offsetX;
+      let _tx = lastTrainbox.initPositionDown.x + offsetX;
       let symbolsTrainBox = new TrainBox(this, _tx, _y, "symbolTrainBox", v, _shape.trainBox);
       symbolsTrainBox.name = v;
       this.trainboxs.push(symbolsTrainBox);
@@ -376,6 +376,8 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.movePosition = new Phaser.Math.Vector2(dragX, dragY);
       this.x = dragX;
       this.y = dragY;
+      console.log(this.y);
+     
       // if (isHit(this.syncBounds(), that.well[2]._bounds)) {
       //   if (this.isDrogUp === 0) {
       //     this.isDrogUp = 1;
@@ -399,10 +401,39 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
-      this.setPosition(
-        this.initPosition.x,
-        this.initPosition.y
-      );
+      console.log(this);
+      if(this.parentContainer === that.layer3 && this.y < -265){    //拖拽上去成功的动作
+        that.layer3.remove(this);
+        that.layer2.add(this);
+        this.setPosition(
+          that.nullTrainboxs[0].x,
+          that.nullTrainboxs[0].y,
+        );
+        this.initPositionUp = new Phaser.Math.Vector2(
+          this.x,
+          this.y
+        );
+        this.isDrogUp = 1;
+      }else if(this.parentContainer === that.layer2 && this.y > 216){   //拖拽上去后又拖拽下来
+        that.layer2.remove(this);
+        that.layer3.add(this);
+        this.setPosition(
+          this.initPositionDown.x,
+          this.initPositionDown.y
+        ); 
+        this.isDrogUp = 0;
+      }else if(this.parentContainer === that.layer3 && this.y > -265){   //没有拖拽上去直接放手
+        this.setPosition(
+          this.initPositionDown.x,
+          this.initPositionDown.y
+        );
+      }else if(this.parentContainer === that.layer2 && this.y < 216){   //拖拽上去后，却没有拖拽下来的
+        this.setPosition(
+          this.initPositionUp.x,
+          this.initPositionUp.y
+        );
+      }
+      
       if (that.checkoutDragEnd() === that.trainboxs.length) {     //拖拽结束
         that.dragEnd();
       }
