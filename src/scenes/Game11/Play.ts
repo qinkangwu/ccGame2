@@ -546,8 +546,8 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
         targets: trainbox,
         duration: 500,
-        x: trainbox.initPosition.x,
-        y: trainbox.initPosition.y,
+        x: trainbox.initPositionDown.x,
+        y: trainbox.initPositionDown.y,
         onComplete: () => {
           trainbox.isDrogUp = 0;
           trainbox.isTrack = false;
