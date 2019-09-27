@@ -78,11 +78,6 @@ export default class Game11PlayScene extends Phaser.Scene {
    */
   private layer3: Phaser.GameObjects.Container;
 
-  // /**
-  //  * UI
-  //  */
-  // private layer4: Phaser.GameObjects.Container;
-
   constructor() {
     super({
       key: "Game11PlayScene"
