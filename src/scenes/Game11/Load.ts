@@ -3,7 +3,7 @@ import apiPath from '../../lib/apiPath';
 import { get } from '../../lib/http';
 import { Assets,Game11DataItem,GetSentenceData} from '../../interface/Game11';
 import { resize } from '../../Public/jonny/core';
-import { SellingGold } from '../../Public/jonny/components';
+import { SellingGold ,TryAginListenBtn} from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
@@ -14,7 +14,7 @@ export default class Game11LoadScene extends Phaser.Scene {
   private _loader: Phaser.Loader.LoaderPlugin;
   private ccData: Array<Game11DataItem> = [];
   private centerText: Phaser.GameObjects.Text; //文本内容
-  private assets:Assets[] = [{"url":"assets/mask/Game11.png","key":"Game11"},{"url":"assets/commonUI/successBtn.png","key":"successBtn"},{"url":"assets/commonUI/btnSoundOff.png","key":"btnSoundOff"},{"url":"assets/commonUI/btnSoundOn.png","key":"btnSoundOn"},{"url":"assets/commonUI/btnExit.png","key":"btnExit"},{"url":"assets/commonUI/originalSoundBtn.png","key":"originalSoundBtn"},{"url":"assets/commonUI/listenAgain.png","key":"listenAgain"},{"url":"assets/Game11/locomotive.png","key":"locomotive"},{"url":"assets/Game11/rope.png","key":"rope"},{"url":"assets/Game11/symbolTrainBox.png","key":"symbolTrainBox"},{"url":"assets/Game11/trainBox.png","key":"trainBox"},{"url":"assets/commonUI/goldValue.png","key":"goldValue"},{"url":"assets/Game11/bg.png","key":"bg"},{"url":"assets/Game11/ground.png","key":"ground"},{"url":"assets/Game11/trackCircle.png","key":"trackCircle"}];
+  private assets:Assets[] = [{"url":"assets/mask/Game11.png","key":"Game11"},{"url":"assets/commonUI/successBtn.png","key":"successBtn"},{"url":"assets/commonUI/btnSoundOff.png","key":"btnSoundOff"},{"url":"assets/commonUI/btnSoundOn.png","key":"btnSoundOn"},{"url":"assets/commonUI/btnExit.png","key":"btnExit"},{"url":"assets/commonUI/originalSoundBtn.png","key":"originalSoundBtn"},{"url":"assets/commonUI/listenAgain.png","key":"listenAgain"},{"url":"assets/Game11/locomotive.png","key":"locomotive"},{"url":"assets/Game11/rope.png","key":"rope"},{"url":"assets/Game11/symbolTrainBox.png","key":"symbolTrainBox"},{"url":"assets/Game11/trainBox.png","key":"trainBox"},{"url":"assets/commonUI/goldValue.png","key":"goldValue"},{"url":"assets/Game11/bg.png","key":"bg"},{"url":"assets/Game11/ground.png","key":"ground"},{"url":"assets/Game11/trackCircle.png","key":"trackCircle"},{"url":"assets/Game11/bgFull.png","key":"bgFull"}];
   constructor() {
     super({
       key: "Game11LoadScene"
@@ -36,7 +36,8 @@ export default class Game11LoadScene extends Phaser.Scene {
     this.load.json("trainboxShape","assets/Game11/trainboxShape.json");
     this.load.audio('bgm', 'assets/sounds/bgm-01.mp3');
     this.load.bitmapFont('ArialRoundedBold30', 'assets/font/ArialRoundedBold30/font.png', 'assets/font/ArialRoundedBold30/font.xml');
-    TipsParticlesEmitter.loadImg(this)
+    TipsParticlesEmitter.loadImg(this);
+    TryAginListenBtn.loadAssets(this);
     PlanAnims.loadImg(this);
     SellingGold.loadImg(this);
     this.assets.forEach((v) => {

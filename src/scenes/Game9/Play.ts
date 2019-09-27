@@ -1,7 +1,7 @@
 import 'phaser';
 import { Game9DataItem, Game9PhoneticSymbol } from '../../interface/Game9';
 import { cover, rotateTips, isHit } from '../../Public/jonny/core';
-import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold ,SuccessBtn} from '../../Public/jonny/components';
+import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold ,SuccessBtn,TryAginListenBtn} from '../../Public/jonny/components';
 import { EASE } from '../../Public/jonny/Animate';
 import PlanAnims from '../../Public/PlanAnims';
 import { CivaMen, Cookie, NullCookie } from '../../Public/jonny/game9';
@@ -34,7 +34,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   private btnExit: Button;  //退出按钮
   private btnSound: ButtonMusic; //音乐按钮
   private originalSoundBtn: Button; //原音按钮
-  private tryAginListenBtn: Button; //在听一次按钮
+  private tryAginListenBtn: TryAginListenBtn; //在听一次按钮
   private planAnims: PlanAnims;
   private gold: Gold;
   private successBtn: SuccessBtn;  //成功提交的按钮
@@ -111,10 +111,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.btnExit = new ButtonExit(this);
     this.btnSound = new ButtonMusic(this);
     this.originalSoundBtn = new Button(this, 25 + 60 * 0.5, 467 + 60 * 0.5, "originalSoundBtn").setAlpha(1);
-    this.tryAginListenBtn = new Button(this, 89, 435 + 50, "try-agin-btn").setAlpha(1);
-    this.tryAginListenBtn.minAlpha = 1;
-    this.tryAginListenBtn.setOrigin(0, 1);
-    this.tryAginListenBtn.setScale(0).setRotation((Math.PI / 180) * -30);
+    this.tryAginListenBtn = new TryAginListenBtn(this, 89, 435 + 50);
     this.layer0.add(bg);
     this.layer4.add([this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
     this.originalSoundBtn.on("pointerdown", this.playWord.bind(that));
@@ -263,26 +260,26 @@ export default class Game9PlayScene extends Phaser.Scene {
       })
     }
 
-    var taraginListenAni = this.tweens.timeline(<Phaser.Types.Tweens.TimelineBuilderConfig>{
-      targets: this.tryAginListenBtn,
-      paused: true,
-      tweens: [
-        {
-          scale: 1,
-          rotation: 0,
-          duration: 500,
-          ease: EASE.spring
-        },
-        {
-          rotation: Phaser.Math.DegToRad(-30),
-          yoyo: true,
-          repeat: 3,
-          duration: 500,
-          repeatDelay: 300,
-          ease: EASE.spring
-        }
-      ]
-    });
+    // var taraginListenAni = this.tweens.timeline(<Phaser.Types.Tweens.TimelineBuilderConfig>{
+    //   targets: this.tryAginListenBtn,
+    //   paused: true,
+    //   tweens: [
+    //     {
+    //       scale: 1,
+    //       rotation: 0,
+    //       duration: 500,
+    //       ease: EASE.spring
+    //     },
+    //     {
+    //       rotation: Phaser.Math.DegToRad(-30),
+    //       yoyo: true,
+    //       repeat: 3,
+    //       duration: 500,
+    //       repeatDelay: 300,
+    //       ease: EASE.spring
+    //     }
+    //   ]
+    // });
 
     let cookiesAni = () => {
       let cookiesAnimate: Promise<number>[] = [];
@@ -290,7 +287,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       Promise.all(cookiesAnimate).then((value) => {
         nullCookieAni();
         this.wordSpeaker.play();
-        taraginListenAni.play();
+        this.tryAginListenBtn.animate.play();
         this.civaMen.startJumpIn(1, [140]);
       })
       this.cookies.forEach(cookie => {

@@ -234,7 +234,7 @@ export default class TipsParticlesEmitter {
         scene.load.image('btnAgain','assets/commonUI/btnAgain.png');
         scene.load.image('btnAgainOnce','assets/commonUI/btnAgainOnce.png');
         scene.load.image('btnChange','assets/commonUI/btnChange.png');
-        scene.load.audio('success','assets/Game5/success.mp3');
+        scene.load.audio('success','assets/sounds/newJoin/goodJob.mp3');
         scene.load.audio('clickMp3','assets/sounds/clickMp3.mp3');
     }
 }
