@@ -405,15 +405,20 @@ export default class Game11PlayScene extends Phaser.Scene {
       if(this.parentContainer === that.layer3 && this.y < -265){    //拖拽上去成功的动作
         that.layer3.remove(this);
         that.layer2.add(this);
-        this.setPosition(
-          that.nullTrainboxs[0].x,
-          that.nullTrainboxs[0].y,
-        );
+        
+        for(let i = 0;i<that.nullTrainboxs.length&&this.isDrogUp===0;i++){
+          if(that.nullTrainboxs[i].trainbox===null){
+            this.setPosition(that.nullTrainboxs[i].x, that.nullTrainboxs[i].y); 
+            that.nullTrainboxs[i].trainbox = this; 
+            this.isDrogUp = 1;
+          }
+        }
+       
         this.initPositionUp = new Phaser.Math.Vector2(
           this.x,
           this.y
-        );
-        this.isDrogUp = 1;
+       );
+
       }else if(this.parentContainer === that.layer2 && this.y > 216){   //拖拽上去后又拖拽下来
         that.layer2.remove(this);
         that.layer3.add(this);
