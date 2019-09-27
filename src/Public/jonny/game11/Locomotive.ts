@@ -3,9 +3,6 @@ import "phaser";
 export class Locomotive extends Phaser.GameObjects.Image{
     public body: Phaser.Physics.Arcade.Body;
     pitStop:Phaser.Tweens.Timeline;
-    /**
-     * 注册点为 (0.5,1);
-     */
     constructor(scene: Phaser.Scene, x: number=0, y: number=0, texture: string="locomotive"){
         super(scene,x,y,texture);
         this.init();
@@ -28,7 +25,7 @@ export class Locomotive extends Phaser.GameObjects.Image{
     init(){
         this.setScale(1,0.98);
         this.setOrigin(0.5,1);
-        this.setPosition(1167.75,280);
+        this.setPosition(1167.75,93.7);
     }
 
     public admission():Promise<any>{
@@ -38,7 +35,7 @@ export class Locomotive extends Phaser.GameObjects.Image{
                     targets:this,
                     duration:5000,
                     ease:"Sine.easeOut",
-                    x:180,
+                    x:0,
                     onStart:()=>{
                        this.pitStop.play(); 
                     },

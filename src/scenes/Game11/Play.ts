@@ -1,11 +1,10 @@
 import 'phaser';
 import { Game11DataItem, } from '../../interface/Game11';
-import { cover, rotateTips, Bounds, isHit } from '../../Public/jonny/core';
-import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
-import { EASE } from '../../Public/jonny/Animate';
+import { cover, rotateTips, isHit } from '../../Public/jonny/core';
+import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn} from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Locomotive, TrainBox, Stage, TrackCircle } from '../../Public/jonny/game11';
+import { Locomotive, TrainBox, TrackCircle,NullTrainBox} from '../../Public/jonny/game11';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -48,6 +47,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   //动态开始
   private sentenceSpeaker: Phaser.Sound.BaseSound;   //句子播放器
   private trainboxs: TrainBox[]; //车厢序列
+  private nullTrainboxs: NullTrainBox[] = []; //空车厢序列
   private locomotivel: Locomotive; //火车头
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
@@ -113,7 +113,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   update(time: number, delta: number): void {
     this.btnSound.mountUpdate();
     // if (!this.oneWheel) {
-    //   this.eliminateJitter();
+       this.eliminateJitter();
     // }
   }
 
@@ -121,20 +121,23 @@ export default class Game11PlayScene extends Phaser.Scene {
    * 消除抖动,可选
    */
   eliminateJitter() {
-    this.trainboxs.forEach(v => {
-      if (v.body.bounds.min.x <= 0 + v.shape.radius) {
-        v.body.isStatic = true;
-        v.x = v.body.bounds.max.x * 0.5;
-      } else if (v.body.bounds.max.y >= this.well[0].bounds.min.y) {
-        v.body.isStatic = true;
-        v.y = v.initPosition.y;
-      } else if (v.body.bounds.max.y >= this.well[2].bounds.min.y && v.body.bounds.max.y <= this.well[2].bounds.max.y) {
-        v.body.isStatic = true;
-        v.y = this.well[2].bounds.min.y - v.shape.radius;
-      } else if (v.x + v.shape.radius >= W * 4) {
-        v.x = W * 4 - v.shape.radius;
+      if(this.layer0.x > 0){
+        this.layer0.x = 0;
       }
-    });
+    // this.trainboxs.forEach(v => {
+    //   if (v.body.bounds.min.x <= 0 + v.shape.radius) {
+    //     v.body.isStatic = true;
+    //     v.x = v.body.bounds.max.x * 0.5;
+    //   } else if (v.body.bounds.max.y >= this.well[0].bounds.min.y) {
+    //     v.body.isStatic = true;
+    //     v.y = v.initPosition.y;
+    //   } else if (v.body.bounds.max.y >= this.well[2].bounds.min.y && v.body.bounds.max.y <= this.well[2].bounds.max.y) {
+    //     v.body.isStatic = true;
+    //     v.y = this.well[2].bounds.min.y - v.shape.radius;
+    //   } else if (v.x + v.shape.radius >= W * 4) {
+    //     v.x = W * 4 - v.shape.radius;
+    //   }
+    // });
   }
 
   /**
@@ -161,6 +164,7 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     for (let i = 0; i < 5; i++) {
       this[`layer${i}`] = new Phaser.GameObjects.Container(this);
+      this[`layer${i}`].name = `layer${i}`;
       this[`layer${i}`].setDepth(i)
       this.add.existing(this[`layer${i}`]);
     }
@@ -221,9 +225,8 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.trainboxs.push(trainBox);
       this.layer3.add(trainBox);
     })
-    console.log(this.layer3);
 
-
+    //符号车厢--------
     let symbolRegExp = /[?!,.]/g;
     let symbols = sentenceName.match(symbolRegExp);
     symbols.forEach(v => {
@@ -234,6 +237,18 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.trainboxs.push(symbolsTrainBox);
       this.layer3.add(symbolsTrainBox);
     })
+
+    //空车厢-------
+    let nullTrainboxLength:number = vocabularies.length + symbols.length;
+    for(let i = 0;i<nullTrainboxLength;i++){
+        //let _x = this.locomotivel.x + offsetX * i;
+        let _x = 257 + offsetX*i;
+        let nullTrainbox = new NullTrainBox(this,_x,0,"trainBox"); 
+        this.nullTrainboxs.push(nullTrainbox);
+    }
+    this.layer2.add(this.nullTrainboxs);
+    this.layer2.setPosition(172,177);
+
 
     //创建用户反馈
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
@@ -305,23 +320,44 @@ export default class Game11PlayScene extends Phaser.Scene {
     let that = this;
 
     let trainBoxsLength = this.trainboxs.map(v=>(v.list[0] as Phaser.GameObjects.Image).width).reduce((a,b)=>a+b+5);
-    let limtX:number = trainBoxsLength * -1 + 1024 - (<Phaser.GameObjects.Image>that.trainboxs[that.trainboxs.length - 1].list[0]).width*0.5;
 
     let stageShape = new Phaser.Geom.Rectangle(0, 240 * 0.5 * -1, trainBoxsLength, 240);
+
+
+    this.layer2.setInteractive(stageShape, Phaser.Geom.Rectangle.Contains);
+    this.layer2.setData("bounds",this.layer3.getBounds());
+
     this.layer3.setInteractive(stageShape, Phaser.Geom.Rectangle.Contains);
-    this.layer3.setData("bounds",this.layer3.getBounds())
+    this.layer3.setData("bounds",this.layer3.getBounds());
+    
+    this.input.setDraggable([this.layer2,this.layer3], true);
 
-    this.input.setDraggable(this.layer3, true);
-    this.layer3.on("drag", layerMove);
+    let layer2InitX = this.layer2.x;
+    let layer3InitX = this.layer3.x;
 
-    function layerMove(pointer, dragX) {
+    let layer3LimitX = (trainBoxsLength * -1 + 1024 - (<Phaser.GameObjects.Image>that.trainboxs[that.trainboxs.length - 1].list[0]).width*0.5) - 200;
+    let layer2LimitX = layer3LimitX - 200;
+
+    this.layer2.on("drag", layerMove2);
+    this.layer3.on("drag", layerMove3);
+
+    function layerMove2(this:Phaser.GameObjects.Container,pointer, dragX){
       this.x = dragX;
-      if (this.x >= 0) {
-        this.x = 0;
-      } else if (this.x <= limtX) {
-        this.x = limtX;
+      if (this.x >= layer2InitX) {
+        this.x = layer2InitX;
+      } else if (this.x <= layer2LimitX) {
+        this.x = layer2LimitX;
       } else {
-        // that.layer0.x = dragX * 0.04;
+          that.layer0.x = dragX * 0.04;
+      }
+    }
+
+    function layerMove3(this:Phaser.GameObjects.Container,pointer, dragX) {
+      this.x = dragX;
+      if (this.x >= layer3InitX) {
+        this.x = layer3InitX;
+      } else if (this.x <= layer3LimitX) {
+        this.x = layer3LimitX;
       }
     }
   }
