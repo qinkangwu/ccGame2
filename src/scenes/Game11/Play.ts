@@ -1,7 +1,7 @@
 import 'phaser';
 import { Game11DataItem, } from '../../interface/Game11';
 import { cover, rotateTips, Bounds, isHit } from '../../Public/jonny/core';
-import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn,TryAginListenBtn } from '../../Public/jonny/components';
+import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
 import { EASE } from '../../Public/jonny/Animate';
 import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
@@ -23,12 +23,14 @@ export default class Game11PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
 
   private ccData: Array<Game11DataItem> = [];
-  private oneWheel:boolean = false;  //一轮是否结束
+  private oneWheel: boolean = false;  //一轮是否结束
   private times: number = 0;  //次数
 
   //静态开始
   private bgm: Phaser.Sound.BaseSound; //背景音乐
   private clickSound: Phaser.Sound.BaseSound; //点击音效
+  private bgFull1: Phaser.GameObjects.Image; //背景图片 
+  private bgFull2: Phaser.GameObjects.Image; //背景图片 
   private bg1: Phaser.GameObjects.Image; //背景图片
   private bg2: Phaser.GameObjects.Image; //背景图片
   private bg3: Phaser.GameObjects.Image; //背景图片
@@ -55,27 +57,31 @@ export default class Game11PlayScene extends Phaser.Scene {
    * stage
    */
   private gameStage: Stage;
+
   /**
-   * bg
+   * 云背景
    */
   private layer0: Phaser.GameObjects.Container;
+
   /**
-   *trainbox 下,
+   * 铁轨背景
    */
   private layer1: Phaser.GameObjects.Container;
+
   /**
-   *trainbox 上,
+   * 火车，火车头
    */
   private layer2: Phaser.GameObjects.Container;
-  /**
-   * 火车头
-   */
-  private layer3: Phaser.GameObjects.Container;
 
   /**
    * UI
    */
-  private layer4: Phaser.GameObjects.Container;
+  private layer3: Phaser.GameObjects.Container;
+
+  // /**
+  //  * UI
+  //  */
+  // private layer4: Phaser.GameObjects.Container;
 
   constructor() {
     super({
@@ -111,7 +117,7 @@ export default class Game11PlayScene extends Phaser.Scene {
 
   update(time: number, delta: number): void {
     this.btnSound.mountUpdate();
-    if(!this.oneWheel){
+    if (!this.oneWheel) {
       this.eliminateJitter();
     }
   }
@@ -139,7 +145,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   /**
    * 首次才创建
    */
-  firstCreate():void{
+  firstCreate(): void {
     this.bgm = this.sound.add('bgm');
     this.bgm.addMarker({
       name: "start",
@@ -164,38 +170,45 @@ export default class Game11PlayScene extends Phaser.Scene {
       this[`layer${i}`] = new Phaser.GameObjects.Container(this);
       this[`layer${i}`].setDepth(1 + i)
     }
-    this.gameStage.add([this.layer0, this.layer1, this.layer2, this.layer3]);
+    this.gameStage.add([this.layer1, this.layer2]);
+
+    this.add.existing(this.layer0);
     this.add.existing(this.gameStage);
-    this.add.existing(this.layer4);
+    this.add.existing(this.layer3);
 
     // this.matter.world.setBounds(100, 0, 1024*3, 520);
 
+    this.bgFull1 = new Phaser.GameObjects.Image(this, 0, 0, "bgFull").setOrigin(0);
+    this.bgFull2 = new Phaser.GameObjects.Image(this, 1024, 0, "bgFull").setOrigin(0).setFlipX(true);
+    this.layer0.add([this.bgFull1, this.bgFull2]).setDepth(0);
+
     this.bg1 = new Phaser.GameObjects.Image(this, 0, 0, "bg").setOrigin(0);
     this.bg2 = new Phaser.GameObjects.Image(this, 1024, 0, "bg").setOrigin(0).setFlipX(true);
-    this.bg3 = new Phaser.GameObjects.Image(this, 1024*2, 0, "bg").setOrigin(0);
-    this.bg4 = new Phaser.GameObjects.Image(this, 1024*3, 0, "bg").setOrigin(0).setFlipX(true);
+    this.bg3 = new Phaser.GameObjects.Image(this, 1024 * 2, 0, "bg").setOrigin(0);
+    this.bg4 = new Phaser.GameObjects.Image(this, 1024 * 3, 0, "bg").setOrigin(0).setFlipX(true);
+    this.layer1.add([this.bg1, this.bg2, this.bg3, this.bg4]);
+
     this.btnExit = new ButtonExit(this);
     this.btnSound = new ButtonMusic(this);
     this.originalSoundBtn = new Button(this, 25 + 60 * 0.5, 467 + 60 * 0.5, "originalSoundBtn").setAlpha(1);
     this.tryAginListenBtn = new TryAginListenBtn(this, 89, 435 + 50);
-    this.layer0.add([this.bg1,this.bg2,this.bg3,this.bg4]);
-    this.layer4.add([this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
-    this.originalSoundBtn.on("pointerdown", this.playSentence.bind(that));
+    this.layer3.add([this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
 
+    this.originalSoundBtn.on("pointerdown", this.playSentence.bind(that));
 
     this.clickSound = this.sound.add('click');
     this.planAnims = new PlanAnims(this, this.ccData.length);
     this.gold = new Gold(this, goldValue);   //设置金币
     this.successBtn = new SuccessBtn(this, 939 + 60 * 0.5, 552 * 0.5);
     this.successBtn.on("pointerdown", this.successBtnPointerdown.bind(this));
-    this.layer4.add([this.successBtn, this.gold]);
+    this.layer3.add([this.successBtn, this.gold]);
 
     //静止物体
-    this.well[0] = this.matter.add.rectangle(1024 * 4 * 0.5, 550, 1024 * 4, 50, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "ground" ,render:{visible:true}});  //地面
+    this.well[0] = this.matter.add.rectangle(1024 * 4 * 0.5, 550, 1024 * 4, 50, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "ground", render: { visible: true } });  //地面
 
     this.well[1] = this.matter.add.rectangle(326.5, 136.65, 15, 271.2, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "leftWell" });  //墙
 
-    this.well[2] = this.matter.add.rectangle(1024 * 4 * 0.5, 292, 1024 * 4, 20, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "rails",render: { visible: true }});  //铁轨
+    this.well[2] = this.matter.add.rectangle(1024 * 4 * 0.5, 292, 1024 * 4, 20, { isStatic: true, density: 100, restitution: 0, frictionStatic: 0, label: "rails", render: { visible: true } });  //铁轨
 
     this.well[2]._bounds = new Bounds(new Phaser.Geom.Rectangle(
       this.well[2].bounds.min.x,
@@ -203,7 +216,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.well[2].bounds.max.x - this.well[2].bounds.min.x,
       this.well[2].bounds.max.y - this.well[2].bounds.min.y
     ));
-    
+
     console.log(this.well[2]);
 
   }
@@ -233,7 +246,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name, _shape.trainBox);
       trainBox.name = data.name;
       this.trainboxs.push(trainBox);
-      this.layer1.add(trainBox);
+      this.layer2.add(trainBox);
     })
 
     let symbolRegExp = /[?!,.]/g;
@@ -244,7 +257,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       let symbolsTrainBox = new TrainBox(this, _tx, _y, "symbolTrainBox", v, _shape.trainBox);
       symbolsTrainBox.name = v;
       this.trainboxs.push(symbolsTrainBox);
-      this.layer1.add(symbolsTrainBox);
+      this.layer2.add(symbolsTrainBox);
     })
 
     //创建用户反馈
@@ -324,7 +337,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     }
 
     function collisionActive(e, obj1, obj2) {
-     
+
     }
 
     function collisionEnd(e, obj1, obj2) {
@@ -337,6 +350,8 @@ export default class Game11PlayScene extends Phaser.Scene {
    * 执行滚动条的互动
    */
   private scrollEvent(): void {
+    let that = this;
+
     let stageShape = new Phaser.Geom.Rectangle(0, 0, 1024 * 4, 552);
     this.gameStage.setInteractive(stageShape, Phaser.Geom.Rectangle.Contains);
     this.input.setDraggable(this.gameStage, true);
@@ -351,9 +366,10 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.x = dragX;
       if (this.x >= 0) {
         this.x = 0;
-      }
-      if (this.x <= 1024 * 3 * -1) {
+      } else if (this.x <= 1024 * 3 * -1) {
         this.x = 1024 * 3 * -1;
+      } else {
+        that.layer0.x = dragX * 0.04;
       }
     }
   }
@@ -373,9 +389,9 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.x = dragX;
       this.y = dragY;
       if (isHit(this.syncBounds(), that.well[2]._bounds)) {
-          if(this.isDrogUp===0){
-            this.isDrogUp = 1;
-          } 
+        if (this.isDrogUp === 0) {
+          this.isDrogUp = 1;
+        }
       }
     }
 
@@ -396,9 +412,9 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
-      if(that.checkoutDragEnd() === that.trainboxs.length){     //拖拽结束
-          that.dragEnd();
-      } 
+      if (that.checkoutDragEnd() === that.trainboxs.length) {     //拖拽结束
+        that.dragEnd();
+      }
       this.body.gravity = new Phaser.Math.Vector2(0, 500);
       this.body.isStatic = false;
     }
@@ -414,12 +430,12 @@ export default class Game11PlayScene extends Phaser.Scene {
   /**
    * 检查拖拽是否已经结束
    */
-  private checkoutDragEnd():number{
-     var length:number = 0;
-     this.trainboxs.forEach(trainbox=>{
-      length = length + trainbox.isDrogUp; 
-     })
-     return length;
+  private checkoutDragEnd(): number {
+    var length: number = 0;
+    this.trainboxs.forEach(trainbox => {
+      length = length + trainbox.isDrogUp;
+    })
+    return length;
   }
 
   /**
@@ -427,8 +443,8 @@ export default class Game11PlayScene extends Phaser.Scene {
    */
   private dragEnd(): void {
     // console.log("拖拽结束");
-     this.successBtn.setAlpha(1);
-     this.successBtn.animate.play();
+    this.successBtn.setAlpha(1);
+    this.successBtn.animate.play();
   }
 
   /**
@@ -470,18 +486,18 @@ export default class Game11PlayScene extends Phaser.Scene {
   /**
    * 火车开走
    */
-   private trainboxGetOut():void{
-     //this.locomotivel
+  private trainboxGetOut(): void {
+    //this.locomotivel
     this.oneWheel = true;
-     this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-       targets:new Array(this.locomotivel).concat(<any[]>this.trainboxs),
-       x:-500,
-       duration:1000,
-       onComplete:()=>{
-         this.nextRound();
-       }
-     })
-   } 
+    this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+      targets: new Array(this.locomotivel).concat(<any[]>this.trainboxs),
+      x: -500,
+      duration: 1000,
+      onComplete: () => {
+        this.nextRound();
+      }
+    })
+  }
 
   /**
    * 错误的结果处理
@@ -512,9 +528,9 @@ export default class Game11PlayScene extends Phaser.Scene {
         duration: 500,
         x: trainbox.initPosition.x,
         y: trainbox.initPosition.y,
-        onComplete:()=>{
+        onComplete: () => {
           trainbox.isDrogUp = 0;
-          trainbox.isTrack = false; 
+          trainbox.isTrack = false;
         }
       })
     })
