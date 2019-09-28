@@ -242,7 +242,10 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     //坐标点layer3 集合
     this.layer3Coords = (this.layer3.list as TrainBox[])
-      .map(v => v.initPosition)
+      .map(v => {
+        v.startPosition = v.initPosition;
+        return v.initPosition;
+      })
       .map(v => new Vec2(v.x, v.y));
 
     //空车厢-------
@@ -261,12 +264,6 @@ export default class Game11PlayScene extends Phaser.Scene {
       return new Vec2(v.x, v.y)
     });
     this.layer2Coords.shift();
-
-    // console.log(this.layer2Coords);
-    // console.log(this.layer3Coords);
-
-
-
 
     //创建用户反馈
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
@@ -647,11 +644,12 @@ export default class Game11PlayScene extends Phaser.Scene {
    */
   private resetStart() {
     this.trainboxs.forEach(trainbox => {
+      //trainbox.body.setEnable(false);
       this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
         targets: trainbox,
         duration: 500,
-        x: trainbox.initPosition.x,
-        y: trainbox.initPosition.y,
+        x: trainbox.startPosition.x,
+        y: trainbox.startPosition.y,
         onComplete: () => {
           trainbox.isDrogUp = 0;
           trainbox.isTrack = false;
