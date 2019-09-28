@@ -6,7 +6,7 @@ export class NullTrainBox extends Phaser.GameObjects.Image{
     //public hasBox:boolean = false;
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string){
         super(scene, x, y, texture);
-        this.setAlpha(0.2);
+        this.setAlpha(0.1);
     }
 
     public syncBounds(): Bounds {

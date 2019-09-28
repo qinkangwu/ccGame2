@@ -455,14 +455,6 @@ export default class Game11PlayScene extends Phaser.Scene {
         sortFuc.down();
         this.isDrogUp = 1;
 
-        // for (let i = 0; i < that.nullTrainboxs.length && this.isDrogUp === 0; i++) {
-        //   if (that.nullTrainboxs[i].hasBox === false) {
-        //     this.setPosition(that.nullTrainboxs[i].x, that.nullTrainboxs[i].y);
-        //     that.nullTrainboxs[i].hasBox = true;
-        //     this.upIndex = i;
-        //     this.isDrogUp = 1;
-        //   }
-        // }
         this.initPosition = new Vec2(
           this.x,
           this.y
@@ -474,15 +466,10 @@ export default class Game11PlayScene extends Phaser.Scene {
         sortFuc.down();
         sortFuc.up();
 
-        // this.setPosition(
-        //   this.initPositionDown.x,
-        //   this.initPositionDown.y
-        // );
         this.initPosition = new Vec2(
           this.x,
           this.y
         );
-        //that.nullTrainboxs[this.upIndex].hasBox = false;
         this.isDrogUp = 0;
       } else if (this.parentContainer === that.layer3 && this.y > -265) {   // up => up
         this.setPosition(
@@ -508,40 +495,34 @@ export default class Game11PlayScene extends Phaser.Scene {
       trainbox.on("dragend", DrogEvent.onDragEnd);
     }
 
-    var downUpReplace = (upObj: TrainBox, downObj: TrainBox) => {
-      let upObjX = upObj.initPosition.x;
-      let upObjY = upObj.initPosition.y;
-      //let upBody = upObj.body;
+    var replace = (objA: TrainBox, objB: TrainBox) => {
+      let objAX = objA.initPosition.x;
+      let objAY = objA.initPosition.y;
 
-      upObj.x = upObj.initPosition.x = downObj.initPosition.x;
-      upObj.y = upObj.initPosition.y = downObj.initPosition.y;
-      downObj.x = downObj.initPosition.x = upObjX;
-      downObj.y = downObj.initPosition.y = upObjY;
+      objA.initPosition.x = objA.x = objB.initPosition.x;
+      objA.initPosition.y = objA.y = objB.initPosition.y;
+      objB.initPosition.x = objB.x = objAX;
+      objB.initPosition.y = objB.y = objAY;
 
-      // upObj.body = downObj.body;
-      // downObj.body = upBody;
+      objA.interactive = false;
+      objB.interactive = false;
 
-      upObj.interactive = false;
-      downObj.interactive = false;
-
-      upObj.isHit = true;
-      downObj.isHit = true;
-
-      //upObj.body.setEnable(false);
-      //downObj.body.
+      objA.isHit = true;
+      objB.isHit = true;
 
       setTimeout(() => {
-        upObj.interactive = true;
-        downObj.interactive = true;
+        objA.interactive = true;
+        objB.interactive = true;
 
-        upObj.isHit = false;
-        downObj.isHit = false;
-
-        upObj.setBody();
-        downObj.setBody();
-
-        console.log(upObj);
+        objA.isHit = false;
+        objB.isHit = false;
       }, 1000)
+    }
+
+    var downUpReplace = (upObj: TrainBox, downObj: TrainBox) => {
+      upObj.isDrogUp = 0;
+      downObj.isDrogUp = 1;
+      replace(upObj,downObj); 
     }
 
     var bbHandler = (obj1: TrainBox, obj2: TrainBox) => {
@@ -558,6 +539,13 @@ export default class Game11PlayScene extends Phaser.Scene {
           that.layer3.remove(obj2);that.layer3.addAt(obj1,obj2Index);
           that.layer2.remove(obj1);that.layer2.addAt(obj2,obj1Index);
           downUpReplace(obj1, obj2);
+        }else{
+          let layer = obj1.parentContainer;
+          let obj1Index = layer.list.indexOf(obj1);
+          let obj2Index = layer.list.indexOf(obj2); 
+           layer.remove(obj2);layer.addAt(obj2,obj1Index);
+           layer.remove(obj1);layer.addAt(obj1,obj2Index);
+          replace(obj1,obj2);
         }
       }
     }
@@ -662,8 +650,8 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
         targets: trainbox,
         duration: 500,
-        x: trainbox.initPositionDown.x,
-        y: trainbox.initPositionDown.y,
+        x: trainbox.initPosition.x,
+        y: trainbox.initPosition.y,
         onComplete: () => {
           trainbox.isDrogUp = 0;
           trainbox.isTrack = false;
