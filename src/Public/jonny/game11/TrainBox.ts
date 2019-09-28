@@ -9,6 +9,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
     public shape: Phaser.Geom.Circle;
     public interactive: Boolean;
     //public parentContainerIndex:number;   //所在容器的序列号
+    public upIndex:number = null;   //在上面的序号
     public initPositionDown: Vec2;
     public initPositionUp: Vec2;
     public startPosition: Vec2;

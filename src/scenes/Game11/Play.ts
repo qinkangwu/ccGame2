@@ -415,11 +415,14 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     var sortFuc = {
       up: () => {
-        const OFFSETINDEX = this.layer2Coords.length;
-        for (let i = 0; i < this.layer2.list.length; i++) {
-          let trainbox = (this.layer2.list[i + OFFSETINDEX] as TrainBox);
-          this.moveTo(trainbox,this.layer2Coords[i].x,this.layer2Coords[i].y,()=>{
-            trainbox.initPositionUp = new Vec2(trainbox.x, trainbox.y);
+        const OFFSETINDEX = this.layer2Coords.length + 1;
+        if(this.layer2.list,this.layer2.list[OFFSETINDEX] === undefined){
+          return false;
+        }
+        for (let i = OFFSETINDEX; i < this.layer2.list.length; i++) {
+          let trainbox = (this.layer2.list[i] as TrainBox);
+           this.moveTo(trainbox,this.layer2Coords[i - OFFSETINDEX].x,this.layer2Coords[i - OFFSETINDEX].y,()=>{
+             trainbox.initPositionUp = new Vec2(trainbox.x, trainbox.y);
           })
         }
       },
@@ -447,6 +450,7 @@ export default class Game11PlayScene extends Phaser.Scene {
           if (that.nullTrainboxs[i].hasBox === false) {
             this.setPosition(that.nullTrainboxs[i].x, that.nullTrainboxs[i].y);
             that.nullTrainboxs[i].hasBox = true;
+            this.upIndex = i;
             this.isDrogUp = 1;
           }
         }
@@ -457,6 +461,9 @@ export default class Game11PlayScene extends Phaser.Scene {
       } else if (this.parentContainer === that.layer2 && this.y > 216) {   // up => down
         that.layer2.remove(this);
         that.layer3.add(this);
+
+        sortFuc.up();
+
         this.setPosition(
           this.initPositionDown.x,
           this.initPositionDown.y
@@ -465,6 +472,7 @@ export default class Game11PlayScene extends Phaser.Scene {
           this.x,
           this.y
         );
+        that.nullTrainboxs[this.upIndex].hasBox = false;
         this.isDrogUp = 0;
       } else if (this.parentContainer === that.layer3 && this.y > -265) {   // up => up
         this.setPosition(
