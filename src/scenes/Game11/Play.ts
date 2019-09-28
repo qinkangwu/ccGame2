@@ -508,43 +508,57 @@ export default class Game11PlayScene extends Phaser.Scene {
       trainbox.on("dragend", DrogEvent.onDragEnd);
     }
 
+    var downUpReplace = (upObj: TrainBox, downObj: TrainBox) => {
+      let upObjX = upObj.initPosition.x;
+      let upObjY = upObj.initPosition.y;
+      //let upBody = upObj.body;
+
+      upObj.x = upObj.initPosition.x = downObj.initPosition.x;
+      upObj.y = upObj.initPosition.y = downObj.initPosition.y;
+      downObj.x = downObj.initPosition.x = upObjX;
+      downObj.y = downObj.initPosition.y = upObjY;
+
+      // upObj.body = downObj.body;
+      // downObj.body = upBody;
+
+      upObj.interactive = false;
+      downObj.interactive = false;
+
+      upObj.isHit = true;
+      downObj.isHit = true;
+
+      //upObj.body.setEnable(false);
+      //downObj.body.
+
+      setTimeout(() => {
+        upObj.interactive = true;
+        downObj.interactive = true;
+
+        upObj.isHit = false;
+        downObj.isHit = false;
+
+        upObj.setBody();
+        downObj.setBody();
+
+        console.log(upObj);
+      }, 1000)
+    }
+
     var bbHandler = (obj1: TrainBox, obj2: TrainBox) => {
       if (obj1.isHit === false && obj2.isHit === false) {
-        var replace = () => {
-          let obj1X = obj1.initPosition.x;
-          let obj1Y = obj1.initPosition.y;
-
-          obj1.x = obj1.initPosition.x = obj2.initPosition.x;
-          obj1.y = obj1.initPosition.y = obj2.initPosition.y;
-
-          obj2.x = obj2.initPosition.x = obj1X;
-          obj2.y = obj2.initPosition.y = obj1Y;
-
-          obj1.interactive = false;
-          obj2.interactive = false;
-
-          obj1.isHit = true;
-          obj2.isHit = true;
-
-          setTimeout(() => {
-            obj1.interactive = true;
-            obj2.interactive = true;
-
-            obj1.isHit = false;
-            obj2.isHit = false;
-          }, 1000)
-        }
-
         if (obj1.parentContainer === that.layer3 && obj2.parentContainer === that.layer2) {   //上下替换
-          that.layer3.remove(obj1); that.layer2.add(obj1);
-          that.layer2.remove(obj2); that.layer3.add(obj2);
+          let obj1Index = that.layer3.list.indexOf(obj1);
+          let obj2Index = that.layer2.list.indexOf(obj2);
+          that.layer2.remove(obj2); that.layer2.addAt(obj1,obj2Index);
+          that.layer3.remove(obj1);that.layer3.addAt(obj2,obj1Index);
+          downUpReplace(obj2, obj1);
         } else if (obj1.parentContainer === that.layer2 && obj2.parentContainer === that.layer3) {   //上下替换
-          that.layer3.remove(obj2); that.layer2.add(obj2);
-          that.layer2.remove(obj1); that.layer3.add(obj1);
+          let obj1Index = that.layer2.list.indexOf(obj1);
+          let obj2Index = that.layer3.list.indexOf(obj2);
+          that.layer3.remove(obj2);that.layer3.addAt(obj1,obj2Index);
+          that.layer2.remove(obj1);that.layer2.addAt(obj2,obj1Index);
+          downUpReplace(obj1, obj2);
         }
-
-        replace();
-
       }
     }
     var collider = this.physics.add.overlap(this.trainboxs, this.trainboxs, bbHandler, null, this);

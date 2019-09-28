@@ -67,11 +67,13 @@ export class TrainBox extends Phaser.GameObjects.Container {
 
     }
 
-    private setBody() {
+    public setBody() {
         this.scene.physics.world.enable(this);
         this.body.setCircle(193 * 0.2, 193 * 0.2 * -1, 193 * 0.2 * -1);
+        this.body.allowDrag = true;
         this.body.isCircle = true;
     }
+
 
     public static loadImg(scene: Phaser.Scene) {
         scene.load.image("symbolTrainBox", "assets/Game11/symbolTrainBox.png");
