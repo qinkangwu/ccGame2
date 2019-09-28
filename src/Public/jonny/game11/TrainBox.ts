@@ -1,4 +1,4 @@
-import { Bounds } from "../core";
+import { Bounds,Vec2 } from "../core";
 import "phaser";
 /**
   * 注册点为火车车厢的车底(0.5,1);
@@ -8,16 +8,17 @@ export class TrainBox extends Phaser.GameObjects.Container {
     public text: Phaser.GameObjects.BitmapText;
     public shape: Phaser.Geom.Circle;
     public interactive: Boolean;
-    public initPositionDown: Phaser.Math.Vector2;
-    public initPositionUp: Phaser.Math.Vector2;
-    public startPosition: Phaser.Math.Vector2;
-    public movePosition: Phaser.Math.Vector2;
+    //public parentContainerIndex:number;   //所在容器的序列号
+    public initPositionDown: Vec2;
+    public initPositionUp: Vec2;
+    public startPosition: Vec2;
+    public movePosition: Vec2;
     public matterShape: Object;
     public isTrack: Boolean;  //是否被轨迹球跟踪过，探知答案！
     public isDrogUp: number;  //是否被拖到轨道上去了,是为1，否为0
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, text: string, matterShape: object) {
         super(scene, x, y);
-        this.initPositionDown = new Phaser.Math.Vector2(x, y);
+        this.initPositionDown = new Vec2(x, y);
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, texture);
         this.text = new Phaser.GameObjects.BitmapText(scene, 0, 0 - 28, "ArialRoundedBold30", text, 30).setOrigin(0.5);
         this.text.tint = 0xFF7F3A;
