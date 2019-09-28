@@ -319,12 +319,12 @@ export default class Game11PlayScene extends Phaser.Scene {
   /**
    * 移动程序
    */
-  public moveTo(obj, x: number, y: number, callback: any = () => { }) {
+  public moveTo(obj, x: number, y: number, callback: any = () => { }, duration: number = 500) {
     this.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
       targets: obj,
       x: x,
       y: y,
-      duration: 500,
+      duration: duration,
       ease: "Sine.easeOut",
       onComplete: callback
     })
@@ -414,24 +414,25 @@ export default class Game11PlayScene extends Phaser.Scene {
     }
 
     var sortFuc = {
-      up: () => {
+      up: (box: TrainBox = null) => {
         const OFFSETINDEX = this.layer2Coords.length + 1;
-        if(this.layer2.list,this.layer2.list[OFFSETINDEX] === undefined){
+        if (this.layer2.list, this.layer2.list[OFFSETINDEX] === undefined) {
           return false;
         }
         for (let i = OFFSETINDEX; i < this.layer2.list.length; i++) {
           let trainbox = (this.layer2.list[i] as TrainBox);
-           this.moveTo(trainbox,this.layer2Coords[i - OFFSETINDEX].x,this.layer2Coords[i - OFFSETINDEX].y,()=>{
-             trainbox.initPositionUp = new Vec2(trainbox.x, trainbox.y);
-          })
+          let duration = trainbox === box ? 0 : 500;
+          this.moveTo(trainbox, this.layer2Coords[i - OFFSETINDEX].x, this.layer2Coords[i - OFFSETINDEX].y, () => {
+            trainbox.initPositionUp = new Vec2(trainbox.x, trainbox.y);
+          }, duration)
         }
       },
       down: () => {
         for (let i = 0; i < this.layer3.list.length; i++) {
           let trainbox = (this.layer3.list[i] as TrainBox);
-          this.moveTo(trainbox,this.layer3Coords[i].x,this.layer3Coords[i].y,()=>{
+          this.moveTo(trainbox, this.layer3Coords[i].x, this.layer3Coords[i].y, () => {
             trainbox.initPositionDown = new Vec2(trainbox.x, trainbox.y);
-          });
+          }, 500);
         }
       }
     }
@@ -444,16 +445,18 @@ export default class Game11PlayScene extends Phaser.Scene {
         that.layer3.remove(this);
         that.layer2.add(this);
 
+        sortFuc.up(this);
         sortFuc.down();
+        this.isDrogUp = 1;
 
-        for (let i = 0; i < that.nullTrainboxs.length && this.isDrogUp === 0; i++) {
-          if (that.nullTrainboxs[i].hasBox === false) {
-            this.setPosition(that.nullTrainboxs[i].x, that.nullTrainboxs[i].y);
-            that.nullTrainboxs[i].hasBox = true;
-            this.upIndex = i;
-            this.isDrogUp = 1;
-          }
-        }
+        // for (let i = 0; i < that.nullTrainboxs.length && this.isDrogUp === 0; i++) {
+        //   if (that.nullTrainboxs[i].hasBox === false) {
+        //     this.setPosition(that.nullTrainboxs[i].x, that.nullTrainboxs[i].y);
+        //     that.nullTrainboxs[i].hasBox = true;
+        //     this.upIndex = i;
+        //     this.isDrogUp = 1;
+        //   }
+        // }
         this.initPositionUp = new Vec2(
           this.x,
           this.y
@@ -462,17 +465,18 @@ export default class Game11PlayScene extends Phaser.Scene {
         that.layer2.remove(this);
         that.layer3.add(this);
 
+        sortFuc.down();
         sortFuc.up();
 
-        this.setPosition(
-          this.initPositionDown.x,
-          this.initPositionDown.y
-        );
+        // this.setPosition(
+        //   this.initPositionDown.x,
+        //   this.initPositionDown.y
+        // );
         this.initPositionDown = new Vec2(
           this.x,
           this.y
         );
-        that.nullTrainboxs[this.upIndex].hasBox = false;
+        //that.nullTrainboxs[this.upIndex].hasBox = false;
         this.isDrogUp = 0;
       } else if (this.parentContainer === that.layer3 && this.y > -265) {   // up => up
         this.setPosition(
