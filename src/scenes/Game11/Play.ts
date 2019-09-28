@@ -233,7 +233,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     let symbols = sentenceName.match(symbolRegExp);
     symbols.forEach(v => {
       let lastTrainbox: TrainBox = this.trainboxs[this.trainboxs.length - 1];
-      let _tx = lastTrainbox.initPositionDown.x + offsetX;
+      let _tx = lastTrainbox.initPosition.x + offsetX;
       let symbolsTrainBox = new TrainBox(this, _tx, _y, "symbolTrainBox", v, _shape.trainBox);
       symbolsTrainBox.name = v;
       this.trainboxs.push(symbolsTrainBox);
@@ -242,7 +242,7 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     //坐标点layer3 集合
     this.layer3Coords = (this.layer3.list as TrainBox[])
-      .map(v => v.initPositionDown)
+      .map(v => v.initPosition)
       .map(v => new Vec2(v.x, v.y));
 
     //空车厢-------
@@ -386,6 +386,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   private dragEvent(): void {
     let that = this;
     let working: boolean = false;   //碰撞器是否在工作
+    let _layer2List: TrainBox[]; //上面车厢的副本 
 
     DrogEvent.onDrag = function (this: TrainBox, pointer, dragX, dragY) {
       if (!this.interactive) {
@@ -411,6 +412,11 @@ export default class Game11PlayScene extends Phaser.Scene {
         return false;
       }
       this.startPosition = new Vec2(pointer.x, pointer.y);
+      _layer2List = (that.layer2.list as TrainBox[]).map((v, i) => {
+        if (i >= that.layer2Coords.length + 1) {
+          return v;
+        }
+      });
     }
 
     var sortFuc = {
@@ -423,7 +429,7 @@ export default class Game11PlayScene extends Phaser.Scene {
           let trainbox = (this.layer2.list[i] as TrainBox);
           let duration = trainbox === box ? 0 : 500;
           this.moveTo(trainbox, this.layer2Coords[i - OFFSETINDEX].x, this.layer2Coords[i - OFFSETINDEX].y, () => {
-            trainbox.initPositionUp = new Vec2(trainbox.x, trainbox.y);
+            trainbox.initPosition = new Vec2(trainbox.x, trainbox.y);
           }, duration)
         }
       },
@@ -431,7 +437,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         for (let i = 0; i < this.layer3.list.length; i++) {
           let trainbox = (this.layer3.list[i] as TrainBox);
           this.moveTo(trainbox, this.layer3Coords[i].x, this.layer3Coords[i].y, () => {
-            trainbox.initPositionDown = new Vec2(trainbox.x, trainbox.y);
+            trainbox.initPosition = new Vec2(trainbox.x, trainbox.y);
           }, 500);
         }
       }
@@ -457,7 +463,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         //     this.isDrogUp = 1;
         //   }
         // }
-        this.initPositionUp = new Vec2(
+        this.initPosition = new Vec2(
           this.x,
           this.y
         );
@@ -472,7 +478,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         //   this.initPositionDown.x,
         //   this.initPositionDown.y
         // );
-        this.initPositionDown = new Vec2(
+        this.initPosition = new Vec2(
           this.x,
           this.y
         );
@@ -480,13 +486,13 @@ export default class Game11PlayScene extends Phaser.Scene {
         this.isDrogUp = 0;
       } else if (this.parentContainer === that.layer3 && this.y > -265) {   // up => up
         this.setPosition(
-          this.initPositionDown.x,
-          this.initPositionDown.y
+          this.initPosition.x,
+          this.initPosition.y
         );
       } else if (this.parentContainer === that.layer2 && this.y < 216) {   // down => down
         this.setPosition(
-          this.initPositionUp.x,
-          this.initPositionUp.y
+          this.initPosition.x,
+          this.initPosition.y
         );
       }
 
@@ -501,7 +507,49 @@ export default class Game11PlayScene extends Phaser.Scene {
       trainbox.on("drag", DrogEvent.onDrag);
       trainbox.on("dragend", DrogEvent.onDragEnd);
     }
+
+    var bbHandler = (obj1: TrainBox, obj2: TrainBox) => {
+      if (obj1.isHit === false && obj2.isHit === false) {
+        var replace = () => {
+          let obj1X = obj1.initPosition.x;
+          let obj1Y = obj1.initPosition.y;
+
+          obj1.x = obj1.initPosition.x = obj2.initPosition.x;
+          obj1.y = obj1.initPosition.y = obj2.initPosition.y;
+
+          obj2.x = obj2.initPosition.x = obj1X;
+          obj2.y = obj2.initPosition.y = obj1Y;
+
+          obj1.interactive = false;
+          obj2.interactive = false;
+
+          obj1.isHit = true;
+          obj2.isHit = true;
+
+          setTimeout(() => {
+            obj1.interactive = true;
+            obj2.interactive = true;
+
+            obj1.isHit = false;
+            obj2.isHit = false;
+          }, 1000)
+        }
+
+        if (obj1.parentContainer === that.layer3 && obj2.parentContainer === that.layer2) {   //上下替换
+          that.layer3.remove(obj1); that.layer2.add(obj1);
+          that.layer2.remove(obj2); that.layer3.add(obj2);
+        } else if (obj1.parentContainer === that.layer2 && obj2.parentContainer === that.layer3) {   //上下替换
+          that.layer3.remove(obj2); that.layer2.add(obj2);
+          that.layer2.remove(obj1); that.layer3.add(obj1);
+        }
+
+        replace();
+
+      }
+    }
+    var collider = this.physics.add.overlap(this.trainboxs, this.trainboxs, bbHandler, null, this);
   }
+
 
   /**
    * 检查拖拽是否已经结束
