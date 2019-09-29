@@ -1,4 +1,4 @@
-import { Bounds,Vec2 } from "../core";
+import { Bounds, Vec2 } from "../core";
 import "phaser";
 /**
   * 注册点为火车车厢的车底(0.5,1);
@@ -14,21 +14,21 @@ export class TrainBox extends Phaser.GameObjects.Container {
     //public initPositionDown: Vec2;
     public initPosition: Vec2;
     public startPosition: Vec2;
-    // public movePosition: Vec2;
+    public movePosition: Vec2;
     // public matterShape: Object;
     public isTrack: boolean;  //是否被轨迹球跟踪过，探知答案！
     public isDrogUp: number;  //是否被拖到轨道上去了,是为1，否为0
-    public isHit:boolean = false;  //是否被碰撞
+    public isHit: boolean = false;  //是否被碰撞
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, text: string, matterShape: object) {
         super(scene, x, y);
         this.initPosition = new Vec2(x, y);
+        this.startPosition = new Vec2(x, y);
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, texture);
         this.text = new Phaser.GameObjects.BitmapText(scene, 0, 0 - 28, "ArialRoundedBold30", text, 30).setOrigin(0.5);
         this.text.tint = 0xFF7F3A;
         this.isTrack = false;
         this.isDrogUp = 0;
         this.shape = new Phaser.Geom.Circle(0, 0, 193 * 0.5);
-        this.matterShape = matterShape;
         this.add([this.bg, this.text]);
         this.init();
         //this.drawHitArea();
@@ -64,7 +64,26 @@ export class TrainBox extends Phaser.GameObjects.Container {
                 })
             }
         })
+    }
 
+    public backStart(): Promise<any> {
+        return Promise.resolve({
+            then: resolve => {
+                this.scene.physics.world.disable(this);
+                this.scene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+                    targets: this,
+                    duration: 500,
+                    ease: "Sine.easeInOut",
+                    x: this.startPosition.x,
+                    y: this.startPosition.y,
+                    onComplete: () => {
+                        this.isDrogUp = 0;
+                        this.isTrack = false;
+                        resolve("ok");
+                    }
+                })
+            }
+        })
     }
 
     public setBody() {
