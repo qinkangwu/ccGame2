@@ -46,7 +46,6 @@ export default class Game11PlayScene extends Phaser.Scene {
   private planAnims: PlanAnims;
   private gold: Gold;
   private successBtn: SuccessBtn;  //成功提交的按钮
-  private well: any[] = [];  //墙与地
   //静态结束
 
   //动态开始
@@ -56,7 +55,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   private locomotivel: Locomotive; //火车头
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
-  private trackCircle: TrackCircle; //轨迹球
+  //private trackCircle: TrackCircle; //轨迹球
 
   /**
    * 云背景
@@ -616,16 +615,17 @@ export default class Game11PlayScene extends Phaser.Scene {
    * 正确的结果处理
    */
   private isRight(): void {
-    this.sellingGold = new SellingGold(this, {
-      callback: () => {
-        this.sellingGold.golds.destroy();
-        this.trainboxGetOut();
-        this.setGoldValue(3);
-      }
-    });
-    this.tipsParticlesEmitter.success(() => {
-      this.sellingGold.goodJob(3);
-    })
+    this.trainboxGetOut();
+    // this.sellingGold = new SellingGold(this, {
+    //   callback: () => {
+    //     this.sellingGold.golds.destroy();
+    //     this.trainboxGetOut();
+    //     this.setGoldValue(3);
+    //   }
+    // });
+    // this.tipsParticlesEmitter.success(() => {
+    //   this.sellingGold.goodJob(3);
+    // })
   }
 
   /**
@@ -634,14 +634,15 @@ export default class Game11PlayScene extends Phaser.Scene {
   private trainboxGetOut(): void {
     //this.locomotivel
     this.oneWheel = true;
-    this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-      targets: new Array(this.locomotivel).concat(<any[]>this.trainboxs),
-      x: -500,
-      duration: 1000,
-      onComplete: () => {
-        this.nextRound();
-      }
-    })
+     // init work 制作正确的回调方法 
+    // this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+    //   targets: new Array(this.locomotivel).concat(<any[]>this.trainboxs),
+    //   x: -500,
+    //   duration: 1000,
+    //   onComplete: () => {
+    //     //this.nextRound();
+    //   }
+    // })
   }
 
   /**
@@ -716,30 +717,19 @@ export default class Game11PlayScene extends Phaser.Scene {
    * 判断拖拽的结果，是否准确
    */
   private checkoutResult(): Promise<string> {
-
-    let answer: string[] | string = [];
-
-    let collisionFuc = () => {
-      this.trainboxs.forEach(trainbox => {
-        if (isHit(this.trackCircle.syncBounds(), trainbox.syncBounds()) && !trainbox.isTrack) {
-          (<string[]>answer).push(trainbox.name);
-          trainbox.isTrack = true;
-        }
-      })
-    }
+    let answer:string = "";
     return new Promise((resolve, reject) => {
-      this.trackCircle = new TrackCircle(this, 150, 150, "trackCircle");
-      this.layer1.add(this.trackCircle);
-      this.trackCircle.animate(collisionFuc, () => {
-        answer = (answer as string[]).join("");
-        console.log(answer);
+      this.layer2.sort("x");
+      this.layer2.list.forEach(box=>{
+        answer+=box.name;
+      })
+      console.log(answer);
         if (answer === this.ccData[index].name) {
           resolve("this is ok!");
         } else {
           reject("this is wrong");
         }
       });
-    })
   }
 
   /**
