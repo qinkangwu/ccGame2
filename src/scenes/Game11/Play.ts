@@ -28,6 +28,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   private layer2Coords: Vec2[] = [];  //layer2的初始化坐标点
   private layer2InitX: number;
   private layer3InitX: number;
+  private layer3andInitX: number;
 
   //静态开始
   private bgm: Phaser.Sound.BaseSound; //背景音乐
@@ -68,6 +69,11 @@ export default class Game11PlayScene extends Phaser.Scene {
   private layer1: Phaser.GameObjects.Container;
 
   /**
+   * 空车厢
+   */
+  private layer1and:Phaser.GameObjects.Container;
+
+  /**
    * 火车头与上面的火车车厢
    */
   private layer2: Phaser.GameObjects.Container;
@@ -76,6 +82,11 @@ export default class Game11PlayScene extends Phaser.Scene {
    * 下面的火车车厢
    */
   private layer3: Phaser.GameObjects.Container;
+
+  /**
+   * 火车头
+   */
+  private layer3and:Phaser.GameObjects.Container;
 
   /**
    * UI
@@ -166,12 +177,21 @@ export default class Game11PlayScene extends Phaser.Scene {
   createStage() {
     let that = this;
 
-    for (let i = 0; i < 5; i++) {
-      this[`layer${i}`] = new Phaser.GameObjects.Container(this);
-      this[`layer${i}`].name = `layer${i}`;
-      this[`layer${i}`].setDepth(i)
-      this.add.existing(this[`layer${i}`]);
-    }
+    this.layer0 = new Phaser.GameObjects.Container(this).setDepth(0);
+    this.layer1 = new Phaser.GameObjects.Container(this).setDepth(1);
+    this.layer1and = new Phaser.GameObjects.Container(this).setDepth(2);
+    this.layer2 = new Phaser.GameObjects.Container(this).setDepth(3);
+    this.layer3 = new Phaser.GameObjects.Container(this).setDepth(4);
+    this.layer3and = new Phaser.GameObjects.Container(this).setDepth(5);
+    this.layer4 = new Phaser.GameObjects.Container(this).setDepth(6);
+
+    this.add.existing(this.layer0);
+    this.add.existing(this.layer1);
+    this.add.existing(this.layer1and);
+    this.add.existing(this.layer2);
+    this.add.existing(this.layer3);
+    this.add.existing(this.layer3and);
+    this.add.existing(this.layer4);
 
     this.bgFull1 = new Phaser.GameObjects.Image(this, 0, 0, "bgFull").setOrigin(0);
     this.bgFull2 = new Phaser.GameObjects.Image(this, 1024, 0, "bgFull").setOrigin(0).setFlipX(true);
@@ -212,7 +232,11 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     //火车头
     this.locomotivel = new Locomotive(this, _shape.locomotive);
-    this.layer2.add(this.locomotivel);
+    this.locomotivel.x = 0 + 1000;
+    this.locomotivel.y = 127.05;
+    this.layer3and.add(this.locomotivel);
+    this.layer3and.setPosition(175,142);
+    this.layer3andInitX = this.layer3and.x;
 
     let vocabularies = this.ccData[index].vocabularies.sort(() => Math.random() - 0.5);
 
@@ -221,9 +245,9 @@ export default class Game11PlayScene extends Phaser.Scene {
     let _y = 0;
     let offsetX = 220 + 5; // 5 是缝隙
 
-    this.layer3.y = 430;
+    this.layer3.setPosition(210,430);
     vocabularies.forEach((data, i) => {
-      let _x = 211.5 + offsetX * i;
+      let _x = offsetX * i;
       let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name, _shape.trainBox);
       trainBox.name = data.name;
       this.trainboxs.push(trainBox);
@@ -253,19 +277,19 @@ export default class Game11PlayScene extends Phaser.Scene {
     //空车厢-------
     let nullTrainboxLength: number = vocabularies.length + symbols.length;
     for (let i = 0; i < nullTrainboxLength; i++) {
-      //let _x = this.locomotivel.x + offsetX * i;
-      let _x = 257 + offsetX * i;
+      let _x = offsetX * i;
       let nullTrainbox = new NullTrainBox(this, _x, 0, "trainBox");
+      nullTrainbox.visible = false;
       this.nullTrainboxs.push(nullTrainbox);
     }
-    this.layer2.add(this.nullTrainboxs);
-    this.layer2.setPosition(172, 177);
+    this.layer1and.add(this.nullTrainboxs);
+    this.layer1and.setPosition(426, 177);
+    this.layer2.setPosition(426, 177);
 
     //坐标点layer2 集合
-    this.layer2Coords = (this.layer2.list as Phaser.GameObjects.Container[]).map(v => {
+    this.layer2Coords = (this.layer1and.list as Phaser.GameObjects.Container[]).map(v => {
       return new Vec2(v.x, v.y)
     });
-    this.layer2Coords.shift();
 
     //创建用户反馈
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
@@ -358,10 +382,13 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.layer2.on("drag", layerMove2);
     this.layer3.on("drag", layerMove3);
 
+    let offsetX = that.layer2.x - that.layer3and.x;
     function layerMove2(this: Phaser.GameObjects.Container, pointer, dragX) {
+      that.layer3and.x = dragX - offsetX;
       this.x = dragX;
       if (this.x >= that.layer2InitX) {
         this.x = that.layer2InitX;
+        that.layer3and.x = that.layer3andInitX;
       } else if (this.x <= layer2LimitX) {
         this.x = layer2LimitX;
       } else {
@@ -385,14 +412,13 @@ export default class Game11PlayScene extends Phaser.Scene {
   private sort(): { up: Function, down: Function } {
     return {
       up: (box: TrainBox = null) => {
-        const OFFSETINDEX = this.layer2Coords.length + 1;
-        if (this.layer2.list, this.layer2.list[OFFSETINDEX] === undefined) {
+        if (this.layer2.list, this.layer2.list[0] === undefined) {
           return false;
         }
-        for (let i = OFFSETINDEX; i < this.layer2.list.length; i++) {
+        for (let i = 0; i < this.layer2.list.length; i++) {
           let trainbox = (this.layer2.list[i] as TrainBox);
           let duration = trainbox === box ? 0 : 500;
-          this.moveTo(trainbox, this.layer2Coords[i - OFFSETINDEX].x, this.layer2Coords[i - OFFSETINDEX].y, () => {
+          this.moveTo(trainbox, this.layer2Coords[i].x, this.layer2Coords[i].y, () => {
             trainbox.initPosition = new Vec2(trainbox.x, trainbox.y);
             this.layer2.sort("x");
           }, duration)
@@ -416,7 +442,6 @@ export default class Game11PlayScene extends Phaser.Scene {
   private dragEvent(): void {
     let that = this;
     let working: boolean = false;   //碰撞器是否在工作
-    let _layer2List: TrainBox[]; //上面车厢的副本 
 
     DrogEvent.onDrag = function (this: TrainBox, pointer, dragX, dragY) {
       if (!this.interactive) {
@@ -425,13 +450,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.movePosition = new Vec2(dragX, dragY);
       this.x = dragX;
       this.y = dragY;
-      console.log(this.y);
-
-      // if (isHit(this.syncBounds(), that.well[2]._bounds)) {
-      //   if (this.isDrogUp === 0) {
-      //     this.isDrogUp = 1;
-      //   }
-      // }
+      console.log(this.x,this.y);
     }
 
     DrogEvent.onDragStart = function (pointer, startX, startY) {
@@ -442,11 +461,6 @@ export default class Game11PlayScene extends Phaser.Scene {
         return false;
       }
       this.startPosition = new Vec2(pointer.x, pointer.y);
-      _layer2List = (that.layer2.list as TrainBox[]).map((v, i) => {
-        if (i >= that.layer2Coords.length + 1) {
-          return v;
-        }
-      });
     }
 
 
@@ -664,6 +678,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.sort().down();
     this.layer2.x = this.layer2InitX;
     this.layer3.x = this.layer3InitX;
+    this.layer3and.x = this.layer3andInitX;
     this.successBtn.setAlpha(0);
     this.successBtn.interactive = true;
   }
@@ -689,9 +704,6 @@ export default class Game11PlayScene extends Phaser.Scene {
    * 下一道题
    */
   private nextRound(): void {
-    // this.layer1.destroy();
-    // this.layer2.destroy();
-    // this.layer3.destroy();
     index += 1;
     this.oneWheel = false;
     this.scene.start('Game11PlayScene', {

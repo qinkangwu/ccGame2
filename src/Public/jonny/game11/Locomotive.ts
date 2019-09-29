@@ -25,7 +25,7 @@ export class Locomotive extends Phaser.GameObjects.Image{
     init(){
         this.setScale(1,0.98);
         this.setOrigin(0.5,1);
-        this.setPosition(1167.75,93.7);
+        //this.setPosition(1167.75,93.7);
     }
 
     public admission():Promise<any>{
