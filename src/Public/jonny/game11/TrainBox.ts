@@ -19,6 +19,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
     public isTrack: boolean;  //是否被轨迹球跟踪过，探知答案！
     public isDrogUp: number;  //是否被拖到轨道上去了,是为1，否为0
     public isHit: boolean = false;  //是否被碰撞
+    public isDroging:boolean = false;  //是否在拖拽的状态
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, text: string, matterShape: object) {
         super(scene, x, y);
         this.initPosition = new Vec2(x, y);

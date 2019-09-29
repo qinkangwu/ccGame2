@@ -70,7 +70,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   /**
    * 空车厢
    */
-  private layer1and:Phaser.GameObjects.Container;
+  private layer1and: Phaser.GameObjects.Container;
 
   /**
    * 火车头与上面的火车车厢
@@ -85,7 +85,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   /**
    * 火车头
    */
-  private layer3and:Phaser.GameObjects.Container;
+  private layer3and: Phaser.GameObjects.Container;
 
   /**
    * UI
@@ -112,6 +112,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.trainboxs = [];
     this.createStage();
     this.createActors();
+    //this.firstCreate();  //test
     if (index === 0) {
       this.scene.pause();
       rotateTips.init();
@@ -234,7 +235,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.locomotivel.x = 0 + 1000;
     this.locomotivel.y = 127.05;
     this.layer3and.add(this.locomotivel);
-    this.layer3and.setPosition(175,142);
+    this.layer3and.setPosition(175, 142);
     this.layer3andInitX = this.layer3and.x;
 
     let vocabularies = this.ccData[index].vocabularies.sort(() => Math.random() - 0.5);
@@ -244,7 +245,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     let _y = 0;
     let offsetX = 220 + 5; // 5 是缝隙
 
-    this.layer3.setPosition(210,430);
+    this.layer3.setPosition(210, 430);
     vocabularies.forEach((data, i) => {
       let _x = offsetX * i;
       let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name, _shape.trainBox);
@@ -449,16 +450,17 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.movePosition = new Vec2(dragX, dragY);
       this.x = dragX;
       this.y = dragY;
-      console.log(this.x,this.y);
+      console.log(this.x, this.y);
     }
 
-    DrogEvent.onDragStart = function (pointer, startX, startY) {
+    DrogEvent.onDragStart = function (this: TrainBox, pointer, startX, startY) {
       if (/\w/.test(this.name)) {
         that.playWord(this.name);
       }
       if (!this.interactive) {
         return false;
       }
+      this.isDroging = true;
       this.startPosition = new Vec2(pointer.x, pointer.y);
     }
 
@@ -467,6 +469,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
+      this.isDroging = false;
       if (this.parentContainer === that.layer3 && this.y < -265) {    // down => up
         that.layer3.remove(this);
         that.layer2.add(this);
@@ -479,6 +482,21 @@ export default class Game11PlayScene extends Phaser.Scene {
           this.x,
           this.y
         );
+
+        
+        that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+          duration: 200,
+          targets: [that.layer2,that.layer3and],
+          x:`-=225`,
+        });
+
+        that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+          duration: 200,
+          targets: that.layer0,
+          x:`-=5`,
+        });
+
+
       } else if (this.parentContainer === that.layer2 && this.y > 216) {   // up => down
         that.layer2.remove(this);
         that.layer3.add(this);
@@ -519,21 +537,21 @@ export default class Game11PlayScene extends Phaser.Scene {
       let objAX = objA.initPosition.x;
       let objAY = objA.initPosition.y;
 
-      objA.initPosition.x = objA.x = objB.initPosition.x;
-      objA.initPosition.y = objA.y = objB.initPosition.y;
-      objB.initPosition.x = objB.x = objAX;
-      objB.initPosition.y = objB.y = objAY;
-
       objA.interactive = false;
       objB.interactive = false;
 
       objA.isHit = true;
       objB.isHit = true;
 
+      objA.initPosition.x = objA.x = objB.initPosition.x;
+      objA.initPosition.y = objA.y = objB.initPosition.y;
+      objB.initPosition.x = objB.x = objAX;
+      objB.initPosition.y = objB.y = objAY;
+
+
       setTimeout(() => {
         objA.interactive = true;
         objB.interactive = true;
-
         objA.isHit = false;
         objB.isHit = false;
       }, 1000)
@@ -615,34 +633,56 @@ export default class Game11PlayScene extends Phaser.Scene {
    * 正确的结果处理
    */
   private isRight(): void {
-    this.trainboxGetOut();
-    // this.sellingGold = new SellingGold(this, {
-    //   callback: () => {
-    //     this.sellingGold.golds.destroy();
-    //     this.trainboxGetOut();
-    //     this.setGoldValue(3);
-    //   }
-    // });
-    // this.tipsParticlesEmitter.success(() => {
-    //   this.sellingGold.goodJob(3);
-    // })
+    this.trainboxGetOut().then(() => {
+      this.sellingGold = new SellingGold(this, {
+        callback: () => {
+          this.sellingGold.golds.destroy();
+          this.setGoldValue(3);
+          this.nextRound();
+        }
+      });
+      this.sellingGold.golds.setDepth(6);
+      this.tipsParticlesEmitter.success(() => {
+        this.sellingGold.goodJob(3);
+      })
+    })
+
   }
 
   /**
    * 火车开走
    */
-  private trainboxGetOut(): void {
-    //this.locomotivel
-    this.oneWheel = true;
-     // init work 制作正确的回调方法 
-    // this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-    //   targets: new Array(this.locomotivel).concat(<any[]>this.trainboxs),
-    //   x: -500,
-    //   duration: 1000,
-    //   onComplete: () => {
-    //     //this.nextRound();
-    //   }
-    // })
+  private trainboxGetOut(): Promise<any> {
+    var animate = {
+      then: resolve => {
+        this.oneWheel = true;
+        this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+          duration: 500,
+          targets: this.layer3and,
+          x: this.layer3andInitX
+        })
+        this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+          duration: 500,
+          targets: this.layer2,
+          x: this.layer2InitX
+        })
+        setTimeout(() => {
+          this.playSentence();
+        }, 1000);
+        this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+          duration: 3000,
+          delay: 3000,
+          targets: [this.layer3and, this.layer2],
+          x: `-=${this.layer2.getBounds().width + this.layer3and.getBounds().width}`,
+          onComplete: () => {
+            resolve("ok");
+          }
+        })
+      }
+    }
+
+    return Promise.resolve(animate);
+
   }
 
   /**
@@ -717,19 +757,19 @@ export default class Game11PlayScene extends Phaser.Scene {
    * 判断拖拽的结果，是否准确
    */
   private checkoutResult(): Promise<string> {
-    let answer:string = "";
+    let answer: string = "";
     return new Promise((resolve, reject) => {
       this.layer2.sort("x");
-      this.layer2.list.forEach(box=>{
-        answer+=box.name;
+      this.layer2.list.forEach(box => {
+        answer += box.name;
       })
       console.log(answer);
-        if (answer === this.ccData[index].name) {
-          resolve("this is ok!");
-        } else {
-          reject("this is wrong");
-        }
-      });
+      if (answer === this.ccData[index].name) {
+        resolve("this is ok!");
+      } else {
+        reject("this is wrong");
+      }
+    });
   }
 
   /**
