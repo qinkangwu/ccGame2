@@ -394,6 +394,7 @@ export default class Game11PlayScene extends Phaser.Scene {
           let duration = trainbox === box ? 0 : 500;
           this.moveTo(trainbox, this.layer2Coords[i - OFFSETINDEX].x, this.layer2Coords[i - OFFSETINDEX].y, () => {
             trainbox.initPosition = new Vec2(trainbox.x, trainbox.y);
+            this.layer2.sort("x");
           }, duration)
         }
       },
@@ -402,6 +403,7 @@ export default class Game11PlayScene extends Phaser.Scene {
           let trainbox = (this.layer3.list[i] as TrainBox);
           this.moveTo(trainbox, this.layer3Coords[i].x, this.layer3Coords[i].y, () => {
             trainbox.initPosition = new Vec2(trainbox.x, trainbox.y);
+            this.layer3.sort("x");
           }, 500);
         }
       }
