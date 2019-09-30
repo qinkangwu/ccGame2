@@ -504,6 +504,38 @@ export default class Game11PlayScene extends Phaser.Scene {
             }
           }
         })
+      },
+      leftToRight: (myBox: TrainBox, layer: Phaser.GameObjects.Container) => {
+        let _layerList = layer.list.map(v=>{
+          if(v!==myBox){
+            return v;
+          }
+        });
+        let _index = _layerList.indexOf(undefined);
+        _layerList.splice(_index,1);
+        (_layerList as TrainBox[]).forEach(box => {
+          if (isHit(myBox.syncBodyBounds(), box.syncBodyBounds())) {
+            if (!myBox.isHit) {
+              console.log("碰撞");
+              myBox.interactive = false;
+              myBox.isHit = true;
+              let boxX = box.x;
+              let boxY = box.y;
+              myBox.x = boxX;
+              myBox.y = boxY;
+              that.moveTo(box, myBox.initPosition.x, myBox.initPosition.y, 500, () => {
+                box.initPosition.x = box.x;
+                box.initPosition.y = box.y;
+                myBox.initPosition.x = myBox.x;
+                myBox.initPosition.y = myBox.y;
+                layer.sort("x");
+                myBox.isHit = false;
+                myBox.interactive = true;
+              }
+              );
+            }
+          }
+        })
       }
     }
 
@@ -514,10 +546,15 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.movePosition = new Vec2(dragX, dragY);
       this.x = dragX;
       this.y = dragY;
-      if (this.parentContainer === that.layer3) {
+      console.log(this.y);
+      if (this.parentContainer === that.layer3 && this.y < -140) {
         collision.downToUp(this);
-      } else if (this.parentContainer === that.layer2) {
+      } else if (this.parentContainer === that.layer2 && this.y > 140) {
         collision.upToDown(this);
+      } else if (this.parentContainer === that.layer3 && this.y > -140) {
+        collision.leftToRight(this, that.layer3);
+      } else if(this.parentContainer === that.layer2 && this.y < 140){
+        collision.leftToRight(this, that.layer2);
       }
     }
 
