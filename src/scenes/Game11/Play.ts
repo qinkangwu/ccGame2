@@ -342,7 +342,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   /**
    * 移动程序
    */
-  public moveTo(obj, x: number, y: number, callback: any = () => { }, duration: number = 500) {
+  public moveTo(obj, x: number, y: number, duration: number = 500,callback: any = () => { }) {
     this.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
       targets: obj,
       x: x,
@@ -410,30 +410,31 @@ export default class Game11PlayScene extends Phaser.Scene {
    * 重新排序
    */
   private sort(): { up: Function, down: Function } {
-    return {
+
+    let sortExe = (layer:Phaser.GameObjects.Container,layerCoords:Vec2[],box:TrainBox) => {
+      for (let i = 0; i < layer.list.length; i++) {
+        let trainbox = (layer.list[i] as TrainBox);
+        let duration = trainbox === box ? 0 : 500;
+        this.moveTo(trainbox, layerCoords[i].x, layerCoords[i].y, duration,() => {
+          trainbox.initPosition = new Vec2(trainbox.x, trainbox.y);
+          layer.sort("x");
+        } )
+      }
+    }
+
+    let sortObj = {
       up: (box: TrainBox = null) => {
         if (this.layer2.list, this.layer2.list[0] === undefined) {
           return false;
         }
-        for (let i = 0; i < this.layer2.list.length; i++) {
-          let trainbox = (this.layer2.list[i] as TrainBox);
-          let duration = trainbox === box ? 0 : 500;
-          this.moveTo(trainbox, this.layer2Coords[i].x, this.layer2Coords[i].y, () => {
-            trainbox.initPosition = new Vec2(trainbox.x, trainbox.y);
-            this.layer2.sort("x");
-          }, duration)
-        }
+        sortExe(this.layer2,this.layer2Coords,box);
       },
-      down: () => {
-        for (let i = 0; i < this.layer3.list.length; i++) {
-          let trainbox = (this.layer3.list[i] as TrainBox);
-          this.moveTo(trainbox, this.layer3Coords[i].x, this.layer3Coords[i].y, () => {
-            trainbox.initPosition = new Vec2(trainbox.x, trainbox.y);
-            this.layer3.sort("x");
-          }, 500);
-        }
+      down: (box: TrainBox = null) => {
+        sortExe(this.layer3,this.layer3Coords,box);
       }
     }
+
+    return sortObj;
   }
 
   /**
@@ -505,7 +506,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         that.layer2.remove(this);
         that.layer3.add(this);
 
-        that.sort().down();
+        that.sort().down(this);
         that.sort().up();
 
         this.initPosition = new Vec2(
