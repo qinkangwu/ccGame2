@@ -422,7 +422,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       }
     }
 
-    let sortObj = {
+    return  {
       up: (box: TrainBox = null) => {
         if (this.layer2.list, this.layer2.list[0] === undefined) {
           return false;
@@ -433,8 +433,6 @@ export default class Game11PlayScene extends Phaser.Scene {
         sortExe(this.layer3,this.layer3Coords,box);
       }
     }
-
-    return sortObj;
   }
 
   /**
