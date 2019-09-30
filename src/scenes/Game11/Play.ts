@@ -448,6 +448,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         return false;
       }
       this.movePosition = new Vec2(dragX, dragY);
+      console.log("drag", dragX, dragY);
       this.x = dragX;
       this.y = dragY;
       console.log(this.x, this.y);
@@ -470,6 +471,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         return false;
       }
       this.isDroging = false;
+      //console.log(this.getWorldTransformMatrix());
       if (this.parentContainer === that.layer3 && this.y < -265) {    // down => up
         that.layer3.remove(this);
         that.layer2.add(this);
@@ -483,17 +485,19 @@ export default class Game11PlayScene extends Phaser.Scene {
           this.y
         );
 
-        
-        that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-          duration: 200,
-          targets: [that.layer2,that.layer3and],
-          x:`-=225`,
-        });
+        if (that.layer2.list.length > 2) {
+          that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+            duration: 200,
+            targets: [that.layer2, that.layer3and],
+            x: `-=225`,
+          });
+        }
+
 
         that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
           duration: 200,
           targets: that.layer0,
-          x:`-=5`,
+          x: `-=5`,
         });
 
 
