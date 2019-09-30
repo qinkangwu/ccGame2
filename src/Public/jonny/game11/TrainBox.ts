@@ -13,6 +13,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
     //public upIndex:number = null;   //在上面的序号
     //public initPositionDown: Vec2;
     public initPosition: Vec2;
+    public worldTransformMatrix:Phaser.GameObjects.Components.TransformMatrix;  //世界矩阵
     public startPosition: Vec2;
     public movePosition: Vec2;
     // public matterShape: Object;
@@ -89,9 +90,9 @@ export class TrainBox extends Phaser.GameObjects.Container {
 
     public setBody() {
         this.scene.physics.world.enable(this);
-        this.body.setCircle(193 * 0.2, 193 * 0.2 * -1, 193 * 0.2 * -1);
+        this.body.setSize(100,100);
+        this.body.setOffset(-50,-50);
         this.body.allowDrag = true;
-        this.body.isCircle = true;
     }
 
 
@@ -102,5 +103,17 @@ export class TrainBox extends Phaser.GameObjects.Container {
 
     public syncBounds(): Bounds {
         return new Bounds(this.getBounds());
+    }
+
+    public syncBodyBounds():Bounds{
+      //console.log(this.body.x,this.body.y,this.body.width,this.body.height);
+        return new Bounds(
+            new Phaser.Geom.Rectangle(
+                this.body.x,
+                this.body.y,
+                this.body.width,
+                this.body.height
+            )
+        )
     }
 }

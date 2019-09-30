@@ -342,7 +342,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   /**
    * 移动程序
    */
-  public moveTo(obj, x: number, y: number, duration: number = 500,callback: any = () => { }) {
+  public moveTo(obj, x: number, y: number, duration: number = 500, callback: any = () => { }) {
     this.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
       targets: obj,
       x: x,
@@ -411,26 +411,26 @@ export default class Game11PlayScene extends Phaser.Scene {
    */
   private sort(): { up: Function, down: Function } {
 
-    let sortExe = (layer:Phaser.GameObjects.Container,layerCoords:Vec2[],box:TrainBox) => {
+    let sortExe = (layer: Phaser.GameObjects.Container, layerCoords: Vec2[], box: TrainBox) => {
       for (let i = 0; i < layer.list.length; i++) {
         let trainbox = (layer.list[i] as TrainBox);
         let duration = trainbox === box ? 0 : 500;
-        this.moveTo(trainbox, layerCoords[i].x, layerCoords[i].y, duration,() => {
+        this.moveTo(trainbox, layerCoords[i].x, layerCoords[i].y, duration, () => {
           trainbox.initPosition = new Vec2(trainbox.x, trainbox.y);
           layer.sort("x");
-        } )
+        })
       }
     }
 
-    return  {
+    return {
       up: (box: TrainBox = null) => {
         if (this.layer2.list, this.layer2.list[0] === undefined) {
           return false;
         }
-        sortExe(this.layer2,this.layer2Coords,box);
+        sortExe(this.layer2, this.layer2Coords, box);
       },
       down: (box: TrainBox = null) => {
-        sortExe(this.layer3,this.layer3Coords,box);
+        sortExe(this.layer3, this.layer3Coords, box);
       }
     }
   }
@@ -442,15 +442,83 @@ export default class Game11PlayScene extends Phaser.Scene {
     let that = this;
     let working: boolean = false;   //碰撞器是否在工作
 
+    let collision = {
+      downToUp: (myBox: TrainBox) => {
+        (that.layer2.list as TrainBox[]).forEach(box => {
+          if (isHit(myBox.syncBodyBounds(), box.syncBodyBounds())) {
+            if (!myBox.isHit) {
+              console.log("碰撞");
+              myBox.interactive = false;
+              myBox.isHit = true;
+              let boxX = box.getWorldTransformMatrix().tx - that.layer3.x;
+              let boxY = box.getWorldTransformMatrix().ty - that.layer3.y;
+              myBox.x = boxX;
+              myBox.y = boxY;
+              that.moveTo(box, myBox.worldTransformMatrix.tx - that.layer2.x, myBox.worldTransformMatrix.ty - that.layer2.y, 500, () => {
+                that.layer2.remove(box); that.layer3.add(box);
+                that.layer3.remove(myBox); that.layer2.add(myBox);
+                let _boxX = box.initPosition.x;
+                let _boxY = box.initPosition.y;
+                box.initPosition.x = box.x = myBox.initPosition.x;
+                box.initPosition.y = box.y = myBox.initPosition.y;
+                myBox.initPosition.x = myBox.x = _boxX;
+                myBox.initPosition.y = myBox.y = _boxY;
+                that.layer2.sort("x"); that.layer3.sort("x");
+                myBox.isHit = false;
+                myBox.interactive = true;
+                myBox.isDrogUp = 1;
+                box.isDrogUp = 0;
+              }
+              );
+            }
+          }
+        })
+      },
+      upToDown: (myBox: TrainBox) => {
+        (that.layer3.list as TrainBox[]).forEach(box => {
+          if (isHit(myBox.syncBodyBounds(), box.syncBodyBounds())) {
+            if (!myBox.isHit) {
+              console.log("碰撞");
+              myBox.interactive = false;
+              myBox.isHit = true;
+              let boxX = box.getWorldTransformMatrix().tx - that.layer2.x;
+              let boxY = box.getWorldTransformMatrix().ty - that.layer2.y;
+              myBox.x = boxX;
+              myBox.y = boxY;
+              that.moveTo(box, myBox.worldTransformMatrix.tx - that.layer3.x, myBox.worldTransformMatrix.ty - that.layer3.y, 500, () => {
+                that.layer3.remove(box); that.layer2.add(box);
+                that.layer2.remove(myBox); that.layer3.add(myBox);
+                let _boxX = box.initPosition.x;
+                let _boxY = box.initPosition.y;
+                box.initPosition.x = box.x = myBox.initPosition.x;
+                box.initPosition.y = box.y = myBox.initPosition.y;
+                myBox.initPosition.x = myBox.x = _boxX;
+                myBox.initPosition.y = myBox.y = _boxY;
+                that.layer2.sort("x"); that.layer3.sort("x");
+                myBox.isHit = false;
+                myBox.interactive = true;
+                myBox.isDrogUp = 0;
+                box.isDrogUp = 1;
+              }
+              );
+            }
+          }
+        })
+      }
+    }
+
     DrogEvent.onDrag = function (this: TrainBox, pointer, dragX, dragY) {
       if (!this.interactive) {
         return false;
       }
       this.movePosition = new Vec2(dragX, dragY);
-      console.log("drag", dragX, dragY);
       this.x = dragX;
       this.y = dragY;
-      console.log(this.x, this.y);
+      if (this.parentContainer === that.layer3) {
+        collision.downToUp(this);
+      } else if (this.parentContainer === that.layer2) {
+        collision.upToDown(this);
+      }
     }
 
     DrogEvent.onDragStart = function (this: TrainBox, pointer, startX, startY) {
@@ -462,6 +530,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       }
       this.isDroging = true;
       this.startPosition = new Vec2(pointer.x, pointer.y);
+      this.worldTransformMatrix = this.getWorldTransformMatrix();
     }
 
 
@@ -469,8 +538,8 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
+      // console.log(this.syncBodyBounds());
       this.isDroging = false;
-      //console.log(this.getWorldTransformMatrix());
       if (this.parentContainer === that.layer3 && this.y < -265) {    // down => up
         that.layer3.remove(this);
         that.layer2.add(this);
@@ -536,61 +605,6 @@ export default class Game11PlayScene extends Phaser.Scene {
       trainbox.on("dragend", DrogEvent.onDragEnd);
     }
 
-    var replace = (objA: TrainBox, objB: TrainBox) => {
-      let objAX = objA.initPosition.x;
-      let objAY = objA.initPosition.y;
-
-      objA.interactive = false;
-      objB.interactive = false;
-
-      objA.isHit = true;
-      objB.isHit = true;
-
-      objA.initPosition.x = objA.x = objB.initPosition.x;
-      objA.initPosition.y = objA.y = objB.initPosition.y;
-      objB.initPosition.x = objB.x = objAX;
-      objB.initPosition.y = objB.y = objAY;
-
-
-      setTimeout(() => {
-        objA.interactive = true;
-        objB.interactive = true;
-        objA.isHit = false;
-        objB.isHit = false;
-      }, 1000)
-    }
-
-    var downUpReplace = (upObj: TrainBox, downObj: TrainBox) => {
-      upObj.isDrogUp = 0;
-      downObj.isDrogUp = 1;
-      replace(upObj, downObj);
-    }
-
-    var bbHandler = (obj1: TrainBox, obj2: TrainBox) => {
-      if (obj1.isHit === false && obj2.isHit === false) {
-        if (obj1.parentContainer === that.layer3 && obj2.parentContainer === that.layer2) {   //上下替换
-          let obj1Index = that.layer3.list.indexOf(obj1);
-          let obj2Index = that.layer2.list.indexOf(obj2);
-          that.layer2.remove(obj2); that.layer2.addAt(obj1, obj2Index);
-          that.layer3.remove(obj1); that.layer3.addAt(obj2, obj1Index);
-          downUpReplace(obj2, obj1);
-        } else if (obj1.parentContainer === that.layer2 && obj2.parentContainer === that.layer3) {   //上下替换
-          let obj1Index = that.layer2.list.indexOf(obj1);
-          let obj2Index = that.layer3.list.indexOf(obj2);
-          that.layer3.remove(obj2); that.layer3.addAt(obj1, obj2Index);
-          that.layer2.remove(obj1); that.layer2.addAt(obj2, obj1Index);
-          downUpReplace(obj1, obj2);
-        } else {
-          let layer = obj1.parentContainer;
-          let obj1Index = layer.list.indexOf(obj1);
-          let obj2Index = layer.list.indexOf(obj2);
-          layer.remove(obj2); layer.addAt(obj2, obj1Index);
-          layer.remove(obj1); layer.addAt(obj1, obj2Index);
-          replace(obj1, obj2);
-        }
-      }
-    }
-    var collider = this.physics.add.overlap(this.trainboxs, this.trainboxs, bbHandler, null, this);
   }
 
 
