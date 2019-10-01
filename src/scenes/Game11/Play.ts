@@ -443,27 +443,26 @@ export default class Game11PlayScene extends Phaser.Scene {
     let working: boolean = false;   //碰撞器是否在工作
 
     let collision = {
-      downToUp: (myBox: TrainBox) => {
-        (that.layer2.list as TrainBox[]).forEach(box => {
+      replace:(myBox: TrainBox,layerSource:Phaser.GameObjects.Container,layerTarget:Phaser.GameObjects.Container)=>{
+        (layerTarget.list as TrainBox[]).forEach(box => {
           if (isHit(myBox.syncBodyBounds(), box.syncBodyBounds())) {
             if (!myBox.isHit) {
-              console.log("碰撞");
               myBox.interactive = false;
               myBox.isHit = true;
-              let boxX = box.getWorldTransformMatrix().tx - that.layer3.x;
-              let boxY = box.getWorldTransformMatrix().ty - that.layer3.y;
+              let boxX = box.getWorldTransformMatrix().tx - layerSource.x;
+              let boxY = box.getWorldTransformMatrix().ty - layerSource.y;
               myBox.x = boxX;
               myBox.y = boxY;
-              that.moveTo(box, myBox.worldTransformMatrix.tx - that.layer2.x, myBox.worldTransformMatrix.ty - that.layer2.y, 500, () => {
-                that.layer2.remove(box); that.layer3.add(box);
-                that.layer3.remove(myBox); that.layer2.add(myBox);
+              that.moveTo(box, myBox.worldTransformMatrix.tx - layerTarget.x, myBox.worldTransformMatrix.ty - layerTarget.y, 500, () => {
+                layerTarget.remove(box); layerSource.add(box);
+                layerSource.remove(myBox); layerTarget.add(myBox);
                 let _boxX = box.initPosition.x;
                 let _boxY = box.initPosition.y;
                 box.initPosition.x = box.x = myBox.initPosition.x;
                 box.initPosition.y = box.y = myBox.initPosition.y;
                 myBox.initPosition.x = myBox.x = _boxX;
                 myBox.initPosition.y = myBox.y = _boxY;
-                that.layer2.sort("x"); that.layer3.sort("x");
+                layerSource.sort("x"); layerTarget.sort("x");
                 myBox.isHit = false;
                 myBox.interactive = true;
                 myBox.isDrogUp = 1;
@@ -472,38 +471,13 @@ export default class Game11PlayScene extends Phaser.Scene {
               );
             }
           }
-        })
+        }) 
+      },
+      downToUp: (myBox: TrainBox) => {
+        collision.replace(myBox,this.layer3,this.layer2); 
       },
       upToDown: (myBox: TrainBox) => {
-        (that.layer3.list as TrainBox[]).forEach(box => {
-          if (isHit(myBox.syncBodyBounds(), box.syncBodyBounds())) {
-            if (!myBox.isHit) {
-              console.log("碰撞");
-              myBox.interactive = false;
-              myBox.isHit = true;
-              let boxX = box.getWorldTransformMatrix().tx - that.layer2.x;
-              let boxY = box.getWorldTransformMatrix().ty - that.layer2.y;
-              myBox.x = boxX;
-              myBox.y = boxY;
-              that.moveTo(box, myBox.worldTransformMatrix.tx - that.layer3.x, myBox.worldTransformMatrix.ty - that.layer3.y, 500, () => {
-                that.layer3.remove(box); that.layer2.add(box);
-                that.layer2.remove(myBox); that.layer3.add(myBox);
-                let _boxX = box.initPosition.x;
-                let _boxY = box.initPosition.y;
-                box.initPosition.x = box.x = myBox.initPosition.x;
-                box.initPosition.y = box.y = myBox.initPosition.y;
-                myBox.initPosition.x = myBox.x = _boxX;
-                myBox.initPosition.y = myBox.y = _boxY;
-                that.layer2.sort("x"); that.layer3.sort("x");
-                myBox.isHit = false;
-                myBox.interactive = true;
-                myBox.isDrogUp = 0;
-                box.isDrogUp = 1;
-              }
-              );
-            }
-          }
-        })
+        collision.replace(myBox,this.layer2,this.layer3);  
       },
       leftToRight: (myBox: TrainBox, layer: Phaser.GameObjects.Container) => {
         let _layerList = layer.list.filter(v=>{
