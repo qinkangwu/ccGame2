@@ -506,13 +506,12 @@ export default class Game11PlayScene extends Phaser.Scene {
         })
       },
       leftToRight: (myBox: TrainBox, layer: Phaser.GameObjects.Container) => {
-        let _layerList = layer.list.map(v=>{
+        let _layerList = layer.list.filter(v=>{
           if(v!==myBox){
             return v;
           }
         });
-        let _index = _layerList.indexOf(undefined);
-        _layerList.splice(_index,1);
+
         (_layerList as TrainBox[]).forEach(box => {
           if (isHit(myBox.syncBodyBounds(), box.syncBodyBounds())) {
             if (!myBox.isHit) {
