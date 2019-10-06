@@ -15,6 +15,12 @@ export default class Game12PlayScene extends Phaser.Scene {
     private leftContentText : Phaser.GameObjects.Text; //左边飞船文本
     private rightContentText : Phaser.GameObjects.Text; //右边飞船文本
     private max : number = 10; //最大值
+    private dragX : number = 0 ; //拖拽x
+    private dragY : number = 0 ; //拖拽y
+    private objCurrentX : number = 0 ; //对象当前的x
+    private objCurrentY : number = 0 ; //对象当前的y
+    private obj2CurrentX : number = 0 ; //文本对象当前的x
+    private obj2CurrentY : number = 0 ; //文本对象当前的y
     constructor() {
       super({
         key: "Game12PlayScene"
@@ -52,14 +58,24 @@ export default class Game12PlayScene extends Phaser.Scene {
         alpha : 1,
         duration : 500
       });
-      this.itemArr[i].on('dragstart',()=>{
-        console.log('start');
+      this.itemArr[i].depth = 1 ;
+      this.itemTextArr[i].depth = 1;
+      this.itemArr[i].on('dragstart',(...args)=>{
+        this.dragX = args[0].worldX;
+        this.dragY = args[0].worldY;
+        this.objCurrentX = this.itemArr[i].x;
+        this.objCurrentY = this.itemArr[i].y;
+        this.obj2CurrentX = this.itemTextArr[i].x;
+        this.obj2CurrentY = this.itemTextArr[i].y;
       });
-      this.itemArr[i].on('drag',()=>{
-        console.log('draging');
+      this.itemArr[i].on('drag',(...args)=>{
+        this.itemArr[i].x = this.objCurrentX + (args[0].worldX - this.dragX);
+        this.itemTextArr[i].x = this.obj2CurrentX + (args[0].worldX - this.dragX);
+        this.itemArr[i].y = this.objCurrentY + (args[0].worldY - this.dragY);
+        this.itemTextArr[i].y = this.obj2CurrentY + (args[0].worldY - this.dragY);
       });
-      this.itemArr[i].on('dragend',()=>{
-        console.log('end');
+      this.itemArr[i].on('dragend',(...args)=>{
+        
       });
     }
 
@@ -120,9 +136,9 @@ export default class Game12PlayScene extends Phaser.Scene {
     private createContent () : void {
       for(let i = 0 ; i < 10 ; i ++){
         if(i < 5){
-          this.itemArr.push(this.add.image(149.5 + (i * 115) + (i * 63),328.5 - W,'content').setOrigin(.5).setInteractive({draggable : true}));
+          this.itemArr.push(this.physics.add.image(149.5 + (i * 115) + (i * 63),328.5 - W,'content').setOrigin(.5).setInteractive({draggable : true}));
         }else{
-          this.itemArr.push(this.add.image(149.5 + ((i - 5) * 115) + ((i - 5) * 63),468.5 - W,'content').setOrigin(.5).setInteractive({draggable : true}));
+          this.itemArr.push(this.physics.add.image(149.5 + ((i - 5) * 115) + ((i - 5) * 63),468.5 - W,'content').setOrigin(.5).setInteractive({draggable : true}));
         }
         this.itemTextArr.push(this.add.text(this.itemArr[i].x,this.itemArr[i].y + 18,'banana',{
           fontSize: "26px",
