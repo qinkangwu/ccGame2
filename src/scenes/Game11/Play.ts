@@ -505,6 +505,12 @@ export default class Game11PlayScene extends Phaser.Scene {
       }
     }
 
+    let insert = {
+      upToDown:(myBox:TrainBox)=>{
+        console.log(myBox.getWorldTransformMatrix().tx,myBox.getWorldTransformMatrix().ty);
+      }
+    }
+
 
     DrogEvent.onDrag = function (this: TrainBox, pointer, dragX, dragY) {
       if (!this.interactive) {
@@ -516,6 +522,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (this.parentContainer === that.layer3 && this.y < -140) {
         collision.downToUp(this);
       } else if (this.parentContainer === that.layer2 && this.y > 140) {
+        insert.upToDown(this);
         collision.upToDown(this);
       } else if (this.parentContainer === that.layer3 && this.y > -140) {
         collision.leftToRight(this, that.layer3);

@@ -81,8 +81,8 @@ export class TrainBox extends Phaser.GameObjects.Container {
 
     public setBody() {
         this.scene.physics.world.enable(this);
-        this.body.setSize(100,100);
-        this.body.setOffset(-50,-50);
+        this.body.setSize(218,193);
+        this.body.setOffset(-218*0.5,-193*0.5);
         this.body.allowDrag = true;
     }
 
@@ -97,13 +97,12 @@ export class TrainBox extends Phaser.GameObjects.Container {
     }
 
     public syncBodyBounds():Bounds{
-      //console.log(this.body.x,this.body.y,this.body.width,this.body.height);
         return new Bounds(
             new Phaser.Geom.Rectangle(
-                this.body.x,
-                this.body.y,
-                this.body.width,
-                this.body.height
+                this.body.x+100,
+                this.body.y+100,
+                this.body.width-100,
+                this.body.height-100
             )
         )
     }
