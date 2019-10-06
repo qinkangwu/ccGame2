@@ -13,9 +13,8 @@ export class TrainBox extends Phaser.GameObjects.Container {
     public worldTransformMatrix:Phaser.GameObjects.Components.TransformMatrix;  //世界矩阵
     public startPosition: Vec2;
     public movePosition: Vec2;
-    public isTrack: boolean;  //是否被轨迹球跟踪过，探知答案！
     public isHit: boolean = false;  //是否被碰撞
-    public isDroging:boolean = false;  //是否在拖拽的状态
+    public isDroging:number= 0;  //是否在拖拽的状态
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, text: string, matterShape: object) {
         super(scene, x, y);
         this.initPosition = new Vec2(x, y);
@@ -23,7 +22,6 @@ export class TrainBox extends Phaser.GameObjects.Container {
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, texture);
         this.text = new Phaser.GameObjects.BitmapText(scene, 0, 0 - 28, "ArialRoundedBold30", text, 30).setOrigin(0.5);
         this.text.tint = 0xFF7F3A;
-        this.isTrack = false;
         this.shape = new Phaser.Geom.Circle(0, 0, 193 * 0.5);
         this.add([this.bg, this.text]);
         this.init();

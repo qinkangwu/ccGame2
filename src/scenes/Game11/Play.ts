@@ -4,7 +4,7 @@ import { cover, rotateTips, isHit, Vec2 } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Locomotive, TrainBox, TrackCircle, NullTrainBox } from '../../Public/jonny/game11';
+import { Locomotive, TrainBox,NullTrainBox } from '../../Public/jonny/game11';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -55,7 +55,6 @@ export default class Game11PlayScene extends Phaser.Scene {
   private locomotivel: Locomotive; //火车头
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
-  //private trackCircle: TrackCircle; //轨迹球
 
   /**
    * 云背景
@@ -362,7 +361,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.layer2InitX = this.layer2.x;
     this.layer3InitX = this.layer3.x;
 
-    let layerLimitXFuc: Function = (layer:Phaser.GameObjects.Container): number => {
+    let layerLimitXFuc: Function = (layer: Phaser.GameObjects.Container): number => {
       //@ts-ignore
       let _list = (layer.list as TrainBox[]).map(v => v.list[0].width);
       let _length = _list.length === 0 ? 0 : _list.reduce((a, b) => a + b);
@@ -375,10 +374,10 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     let offsetX = that.layer2.x - that.layer3and.x;
     function layerMove2(this: Phaser.GameObjects.Container, pointer, dragX) {
-      if(that.layer2.list.length === 0){
+      if (that.layer2.list.length === 0) {
         return false;
       }
-      let layer2LimitX = layerLimitXFuc(that.layer2)*-1 + 400;
+      let layer2LimitX = layerLimitXFuc(that.layer2) * -1 + 400;
       this.x = dragX;
       if (this.x >= that.layer2InitX) {
         this.x = that.layer2InitX;
@@ -392,7 +391,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     }
 
     function layerMove3(this: Phaser.GameObjects.Container, pointer, dragX) {
-      let layer3LimitX = layerLimitXFuc(that.layer3)*-1 + 400;
+      let layer3LimitX = layerLimitXFuc(that.layer3) * -1 + 400;
       this.x = dragX;
       if (this.x >= that.layer3InitX) {
         this.x = that.layer3InitX;
@@ -514,7 +513,6 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.movePosition = new Vec2(dragX, dragY);
       this.x = dragX;
       this.y = dragY;
-      console.log(this.y);
       if (this.parentContainer === that.layer3 && this.y < -140) {
         collision.downToUp(this);
       } else if (this.parentContainer === that.layer2 && this.y > 140) {
@@ -533,7 +531,6 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
-      this.isDroging = true;
       this.startPosition = new Vec2(pointer.x, pointer.y);
       this.worldTransformMatrix = this.getWorldTransformMatrix();
     }
@@ -543,11 +540,9 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
-      this.isDroging = false;
       if (this.parentContainer === that.layer3 && this.y < -265) {    // down => up
         that.layer3.remove(this);
         that.layer2.add(this);
-
         that.sort().up(this);
         that.sort().down();
 
@@ -741,7 +736,6 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (box.parentContainer === this.layer2) {
         this.layer2.remove(box);
         this.layer3.add(box);
-        box.isTrack = false;
       }
     })
     this.sort().down();
