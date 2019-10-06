@@ -127,32 +127,18 @@ export default class Game11PlayScene extends Phaser.Scene {
 
   update(time: number, delta: number): void {
     this.btnSound.mountUpdate();
-    // if (!this.oneWheel) {
-    this.eliminateJitter();
-    // }
+    this.resize();
   }
 
+
+
   /**
-   * 消除抖动,可选
+   * 重置尺寸
    */
-  eliminateJitter() {
+  resize() {
     if (this.layer0.x > 0) {
       this.layer0.x = 0;
     }
-    // this.trainboxs.forEach(v => {
-    //   if (v.body.bounds.min.x <= 0 + v.shape.radius) {
-    //     v.body.isStatic = true;
-    //     v.x = v.body.bounds.max.x * 0.5;
-    //   } else if (v.body.bounds.max.y >= this.well[0].bounds.min.y) {
-    //     v.body.isStatic = true;
-    //     v.y = v.initPosition.y;
-    //   } else if (v.body.bounds.max.y >= this.well[2].bounds.min.y && v.body.bounds.max.y <= this.well[2].bounds.max.y) {
-    //     v.body.isStatic = true;
-    //     v.y = this.well[2].bounds.min.y - v.shape.radius;
-    //   } else if (v.x + v.shape.radius >= W * 4) {
-    //     v.x = W * 4 - v.shape.radius;
-    //   }
-    // });
   }
 
   /**
@@ -465,8 +451,6 @@ export default class Game11PlayScene extends Phaser.Scene {
                 layerSource.sort("x"); layerTarget.sort("x");
                 myBox.isHit = false;
                 myBox.interactive = true;
-                myBox.isDrogUp = 1;
-                box.isDrogUp = 0;
               }
               );
             }
@@ -512,6 +496,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       }
     }
 
+
     DrogEvent.onDrag = function (this: TrainBox, pointer, dragX, dragY) {
       if (!this.interactive) {
         return false;
@@ -548,7 +533,6 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
-      // console.log(this.syncBodyBounds());
       this.isDroging = false;
       if (this.parentContainer === that.layer3 && this.y < -265) {    // down => up
         that.layer3.remove(this);
@@ -556,7 +540,6 @@ export default class Game11PlayScene extends Phaser.Scene {
 
         that.sort().up(this);
         that.sort().down();
-        this.isDrogUp = 1;
 
         this.initPosition = new Vec2(
           this.x,
@@ -590,7 +573,6 @@ export default class Game11PlayScene extends Phaser.Scene {
           this.x,
           this.y
         );
-        this.isDrogUp = 0;
       } else if (this.parentContainer === that.layer3 && this.y > -265) {   // up => up
         this.setPosition(
           this.initPosition.x,
@@ -603,8 +585,10 @@ export default class Game11PlayScene extends Phaser.Scene {
         );
       }
 
-      if (that.checkoutDragEnd() === that.trainboxs.length) {     // drog end
+      if (that.checkoutDragEnd() === 0) {     // drog end
         that.dragEnd();
+      }else{
+        that.cancelDragEnd();
       }
     }
 
@@ -623,8 +607,16 @@ export default class Game11PlayScene extends Phaser.Scene {
    */
   private checkoutDragEnd(): number {
     var length: number = 0;
-    length = this.trainboxs.map(v => v.isDrogUp).reduce((a, b) => a + b);
+    length = this.layer3.list.length;
     return length;
+  }
+
+  /**
+   * 退出拖拽结束的状态
+   */
+  private cancelDragEnd(): void {
+    this.successBtn.setAlpha(0);
+    this.successBtn.animate.pause();
   }
 
   /**
@@ -739,7 +731,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (box.parentContainer === this.layer2) {
         this.layer2.remove(box);
         this.layer3.add(box);
-        box.isDrogUp = 0;
+        //box.isDrogUp = 0;
         box.isTrack = false;
       }
     })

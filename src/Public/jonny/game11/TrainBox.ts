@@ -9,16 +9,11 @@ export class TrainBox extends Phaser.GameObjects.Container {
     public text: Phaser.GameObjects.BitmapText;
     public shape: Phaser.Geom.Circle;
     public interactive: Boolean;
-    //public parentContainerIndex:number;   //所在容器的序列号
-    //public upIndex:number = null;   //在上面的序号
-    //public initPositionDown: Vec2;
     public initPosition: Vec2;
     public worldTransformMatrix:Phaser.GameObjects.Components.TransformMatrix;  //世界矩阵
     public startPosition: Vec2;
     public movePosition: Vec2;
-    // public matterShape: Object;
     public isTrack: boolean;  //是否被轨迹球跟踪过，探知答案！
-    public isDrogUp: number;  //是否被拖到轨道上去了,是为1，否为0
     public isHit: boolean = false;  //是否被碰撞
     public isDroging:boolean = false;  //是否在拖拽的状态
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, text: string, matterShape: object) {
@@ -29,7 +24,6 @@ export class TrainBox extends Phaser.GameObjects.Container {
         this.text = new Phaser.GameObjects.BitmapText(scene, 0, 0 - 28, "ArialRoundedBold30", text, 30).setOrigin(0.5);
         this.text.tint = 0xFF7F3A;
         this.isTrack = false;
-        this.isDrogUp = 0;
         this.shape = new Phaser.Geom.Circle(0, 0, 193 * 0.5);
         this.add([this.bg, this.text]);
         this.init();
@@ -79,7 +73,6 @@ export class TrainBox extends Phaser.GameObjects.Container {
                     x: this.startPosition.x,
                     y: this.startPosition.y,
                     onComplete: () => {
-                        this.isDrogUp = 0;
                         this.isTrack = false;
                         resolve("ok");
                     }
