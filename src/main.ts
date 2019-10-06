@@ -27,7 +27,7 @@ const initHandle = (arr : object[],physics:string) : void=>{
       default: physics,
       arcade: {
         gravity: { y: 0 },
-        debug: false
+        debug:true 
       },
       matter:{
         gravity:{
@@ -70,7 +70,7 @@ const loadOnDemand = (menu : string ) : void=>{
       //@ts-ignore
       sceneArr.push(r2.default);
     })
-    if(path==="Game11"){
+    if(path==="NERVER"){
       initHandle(sceneArr,"matter");
     }else{
       initHandle(sceneArr,"arcade");
