@@ -362,11 +362,11 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.layer2InitX = this.layer2.x;
     this.layer3InitX = this.layer3.x;
 
-    let layer3LimitX = (trainBoxsLength * -1 + 1024 - (<Phaser.GameObjects.Image>that.trainboxs[that.trainboxs.length - 1].list[0]).width * 0.5) - 200;
-
-    let layer2LimitXFuc: Function = (): number => {
+    //let layer3LimitX = (trainBoxsLength * -1 + 1024 - (<Phaser.GameObjects.Image>that.trainboxs[that.trainboxs.length - 1].list[0]).width * 0.5) - 200;
+    
+    let layerLimitXFuc: Function = (layer:Phaser.GameObjects.Container): number => {
       //@ts-ignore
-      let _list = (that.layer2.list as TrainBox[]).map(v => v.list[0].width);
+      let _list = (layer.list as TrainBox[]).map(v => v.list[0].width);
       let _length = _list.length === 0 ? 0 : _list.reduce((a, b) => a + b);
       return _length;
     };
@@ -380,7 +380,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       if(that.layer2.list.length === 0){
         return false;
       }
-      let layer2LimitX = layer2LimitXFuc()*-1 + 400;
+      let layer2LimitX = layerLimitXFuc(that.layer2)*-1 + 400;
       this.x = dragX;
       if (this.x >= that.layer2InitX) {
         this.x = that.layer2InitX;
@@ -394,6 +394,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     }
 
     function layerMove3(this: Phaser.GameObjects.Container, pointer, dragX) {
+      let layer3LimitX = layerLimitXFuc(that.layer3)*-1 + 400;
       this.x = dragX;
       if (this.x >= that.layer3InitX) {
         this.x = that.layer3InitX;
