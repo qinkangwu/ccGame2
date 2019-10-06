@@ -362,8 +362,6 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.layer2InitX = this.layer2.x;
     this.layer3InitX = this.layer3.x;
 
-    //let layer3LimitX = (trainBoxsLength * -1 + 1024 - (<Phaser.GameObjects.Image>that.trainboxs[that.trainboxs.length - 1].list[0]).width * 0.5) - 200;
-    
     let layerLimitXFuc: Function = (layer:Phaser.GameObjects.Container): number => {
       //@ts-ignore
       let _list = (layer.list as TrainBox[]).map(v => v.list[0].width);
@@ -704,7 +702,7 @@ export default class Game11PlayScene extends Phaser.Scene {
           duration: 3000,
           delay: 3000,
           targets: [this.layer3and, this.layer2],
-          x: `-=${this.layer2.getBounds().width + this.layer3and.getBounds().width}`,
+          x: `-=${this.layer2.getBounds().width}`,
           onComplete: () => {
             resolve("ok");
           }
@@ -723,7 +721,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.times += 1;
     if (this.times === 1) {
       this.tryAgin();
-    } else if (this.times === 2) {
+    } else if (this.times >= 2) {
       this.ohNo();
     }
   }
@@ -743,7 +741,6 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (box.parentContainer === this.layer2) {
         this.layer2.remove(box);
         this.layer3.add(box);
-        //box.isDrogUp = 0;
         box.isTrack = false;
       }
     })
@@ -777,6 +774,7 @@ export default class Game11PlayScene extends Phaser.Scene {
    */
   private nextRound(): void {
     index += 1;
+    this.times = 0;
     this.oneWheel = false;
     this.scene.start('Game11PlayScene', {
       data: this.ccData,
