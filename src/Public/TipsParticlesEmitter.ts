@@ -98,7 +98,7 @@ export default class TipsParticlesEmitter {
 
     public tryAgain(cb : Function) : void {
       if(this.lock) return;
-      this.playMusic('success');
+      this.playMusic('TryAgain');
       this.lock = true;
       this.config && this.config.renderBefore && this.config.renderBefore();
       this.tips = this.scene.add.sprite(W / 2 , 208 ,'tipsTryagain')
@@ -162,7 +162,7 @@ export default class TipsParticlesEmitter {
 
     public error (nextCb : Function , tryagainCb : Function) : void {
       if(this.lock) return;
-      this.playMusic('success');
+      this.playMusic('ohNo');
       this.lock = true;
       this.config && this.config.renderBefore && this.config.renderBefore();
       this.tips = this.scene.add.sprite(W / 2 , 208 - H ,'tipsNo')
@@ -235,6 +235,8 @@ export default class TipsParticlesEmitter {
         scene.load.image('btnAgainOnce','assets/commonUI/btnAgainOnce.png');
         scene.load.image('btnChange','assets/commonUI/btnChange.png');
         scene.load.audio('success','assets/sounds/newJoin/goodJob.mp3');
+        scene.load.audio('TryAgain','assets/sounds/newJoin/TryAgain.mp3');
+        scene.load.audio('ohNo','assets/sounds/newJoin/ohNo.mp3');
         scene.load.audio('clickMp3','assets/sounds/clickMp3.mp3');
     }
 }
