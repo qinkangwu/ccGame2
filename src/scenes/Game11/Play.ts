@@ -363,14 +363,24 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.layer3InitX = this.layer3.x;
 
     let layer3LimitX = (trainBoxsLength * -1 + 1024 - (<Phaser.GameObjects.Image>that.trainboxs[that.trainboxs.length - 1].list[0]).width * 0.5) - 200;
-    let layer2LimitX = layer3LimitX - 200;
+
+    let layer2LimitXFuc: Function = (): number => {
+      //@ts-ignore
+      let _list = (that.layer2.list as TrainBox[]).map(v => v.list[0].width);
+      let _length = _list.length === 0 ? 0 : _list.reduce((a, b) => a + b);
+      return _length;
+    };
+
 
     this.layer2.on("drag", layerMove2);
     this.layer3.on("drag", layerMove3);
 
     let offsetX = that.layer2.x - that.layer3and.x;
     function layerMove2(this: Phaser.GameObjects.Container, pointer, dragX) {
-      that.layer3and.x = dragX - offsetX;
+      if(that.layer2.list.length === 0){
+        return false;
+      }
+      let layer2LimitX = layer2LimitXFuc()*-1 + 400;
       this.x = dragX;
       if (this.x >= that.layer2InitX) {
         this.x = that.layer2InitX;
@@ -379,6 +389,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         this.x = layer2LimitX;
       } else {
         that.layer0.x = dragX * 0.04;
+        that.layer3and.x = dragX - offsetX;
       }
     }
 
@@ -429,7 +440,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     let working: boolean = false;   //碰撞器是否在工作
 
     let collision = {
-      replace:(myBox: TrainBox,layerSource:Phaser.GameObjects.Container,layerTarget:Phaser.GameObjects.Container)=>{
+      replace: (myBox: TrainBox, layerSource: Phaser.GameObjects.Container, layerTarget: Phaser.GameObjects.Container) => {
         (layerTarget.list as TrainBox[]).forEach(box => {
           if (isHit(myBox.syncBodyBounds(), box.syncBodyBounds())) {
             if (!myBox.isHit) {
@@ -455,17 +466,17 @@ export default class Game11PlayScene extends Phaser.Scene {
               );
             }
           }
-        }) 
+        })
       },
       downToUp: (myBox: TrainBox) => {
-        collision.replace(myBox,this.layer3,this.layer2); 
+        collision.replace(myBox, this.layer3, this.layer2);
       },
       upToDown: (myBox: TrainBox) => {
-        collision.replace(myBox,this.layer2,this.layer3);  
+        collision.replace(myBox, this.layer2, this.layer3);
       },
       leftToRight: (myBox: TrainBox, layer: Phaser.GameObjects.Container) => {
-        let _layerList = layer.list.filter(v=>{
-          if(v!==myBox){
+        let _layerList = layer.list.filter(v => {
+          if (v !== myBox) {
             return v;
           }
         });
@@ -511,7 +522,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         collision.upToDown(this);
       } else if (this.parentContainer === that.layer3 && this.y > -140) {
         collision.leftToRight(this, that.layer3);
-      } else if(this.parentContainer === that.layer2 && this.y < 140){
+      } else if (this.parentContainer === that.layer2 && this.y < 140) {
         collision.leftToRight(this, that.layer2);
       }
     }
@@ -587,7 +598,7 @@ export default class Game11PlayScene extends Phaser.Scene {
 
       if (that.checkoutDragEnd() === 0) {     // drog end
         that.dragEnd();
-      }else{
+      } else {
         that.cancelDragEnd();
       }
     }
