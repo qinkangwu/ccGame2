@@ -387,21 +387,28 @@ export default class Game11PlayScene extends Phaser.Scene {
     };
 
 
+    //let layer2LimitX:number;
+    let offsetX = that.layer2.x - that.layer3and.x;
+
+    this.layer2.on("dragstart", layerMove2Start);
     this.layer2.on("drag", layerMove2);
     this.layer3.on("drag", layerMove3);
 
-    let offsetX = that.layer2.x - that.layer3and.x;
+
+    function layerMove2Start(){
+      this.setData("limitX",(layerLimitXFuc(that.layer2))* -1 );
+    }
+
     function layerMove2(this: Phaser.GameObjects.Container, pointer, dragX) {
       if (that.layer2.list.length === 0) {
         return false;
       }
-      let layer2LimitX = layerLimitXFuc(that.layer2) * -1 + 400;
       this.x = dragX;
       if (this.x >= that.layer2InitX) {
         this.x = that.layer2InitX;
         that.layer3and.x = that.layer3andInitX;
-      } else if (this.x <= layer2LimitX) {
-        this.x = layer2LimitX;
+      } else if (this.x <= this.getData("limitX")) {
+        this.x = this.getData("limitX");
       } else {
         that.layer0.x = dragX * 0.04;
         that.layer3and.x = dragX - offsetX;
@@ -603,6 +610,21 @@ export default class Game11PlayScene extends Phaser.Scene {
 
         that.sort().down(this);
         that.sort().up();
+
+        // if (that.layer2.list.length > 2) {
+        //   that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+        //     duration: 200,
+        //     targets: [that.layer2, that.layer3and],
+        //     x: `+=225`,
+        //   });
+        // }
+
+
+        // that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+        //   duration: 200,
+        //   targets: that.layer0,
+        //   x: `+=5`,
+        // });
 
         that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
         this.initPosition = new Vec2(

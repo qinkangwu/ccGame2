@@ -1,7 +1,7 @@
 import { Bounds, Vec2 } from "../core";
 import "phaser";
 /**
-  * 注册点为火车车厢的车底(0.5,1);
+  * 注册点为火车车厢的车底(0.5);
   */
 export class TrainBox extends Phaser.GameObjects.Container {
     public body: Phaser.Physics.Arcade.Body;
