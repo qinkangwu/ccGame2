@@ -235,6 +235,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       let _x = offsetX * i;
       let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name, _shape.trainBox);
       trainBox.name = data.name;
+      trainBox.tipsArrowUp.setAlpha(0);
       this.trainboxs.push(trainBox);
       this.layer3.add(trainBox);
     })
@@ -247,6 +248,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       let _tx = lastTrainbox.initPosition.x + offsetX;
       let symbolsTrainBox = new TrainBox(this, _tx, _y, "symbolTrainBox", v, _shape.trainBox);
       symbolsTrainBox.name = v;
+      symbolsTrainBox.tipsArrowUp.setAlpha(0);
       this.trainboxs.push(symbolsTrainBox);
       this.layer3.add(symbolsTrainBox);
     })
@@ -291,6 +293,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.scrollEvent();
       this.dragEvent();
       this.tryAginListenBtn.animate.play();
+      this.tipsArrowUpAnimateFuc(this.trainboxs,true);
       //this.matterCollision();   //可选
     }
 
@@ -304,6 +307,21 @@ export default class Game11PlayScene extends Phaser.Scene {
           trainbox.admission();
         })
       })
+  }
+
+  /**
+   * 箭头动画的显示与隐藏
+   */
+  private tipsArrowUpAnimateFuc(list:TrainBox[],display:boolean):void{
+    list.forEach(box=>{
+        if(display){
+           box.tipsArrowUp.setAlpha(1);
+           box.tipsArrowAnimate.resume();
+        }else{
+          box.tipsArrowUp.setAlpha(0);
+          box.tipsArrowAnimate.pause(); 
+        }
+    })
   }
 
   /**
@@ -460,6 +478,7 @@ export default class Game11PlayScene extends Phaser.Scene {
                 layerSource.sort("x"); layerTarget.sort("x");
                 myBox.isHit = false;
                 myBox.interactive = true;
+                that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
               }
               );
             }
@@ -497,11 +516,13 @@ export default class Game11PlayScene extends Phaser.Scene {
                 layer.sort("x");
                 myBox.isHit = false;
                 myBox.interactive = true;
+                that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
               }
               );
             }
           }
         })
+
       }
     }
 
@@ -540,6 +561,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       }
       this.startPosition = new Vec2(pointer.x, pointer.y);
       this.worldTransformMatrix = this.getWorldTransformMatrix();
+      that.tipsArrowUpAnimateFuc(that.trainboxs,false);
     }
 
 
@@ -553,6 +575,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         that.sort().up(this);
         that.sort().down();
 
+        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
         this.initPosition = new Vec2(
           this.x,
           this.y
@@ -581,6 +604,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         that.sort().down(this);
         that.sort().up();
 
+        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
         this.initPosition = new Vec2(
           this.x,
           this.y
@@ -590,11 +614,13 @@ export default class Game11PlayScene extends Phaser.Scene {
           this.initPosition.x,
           this.initPosition.y
         );
+        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
       } else if (this.parentContainer === that.layer2 && this.y < 216) {   // down => down
         this.setPosition(
           this.initPosition.x,
           this.initPosition.y
         );
+        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
       }
 
       if (that.checkoutDragEnd() === 0) {     // drog end

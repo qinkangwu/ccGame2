@@ -15,6 +15,8 @@ export class TrainBox extends Phaser.GameObjects.Container {
     public movePosition: Vec2;
     public isHit: boolean = false;  //是否被碰撞
     public isDroging:number= 0;  //是否在拖拽的状态
+    public tipsArrowUp:Phaser.GameObjects.Image; //指示
+    public tipsArrowAnimate:Phaser.Tweens.Tween; //指示动画
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, text: string, matterShape: object) {
         super(scene, x, y);
         this.initPosition = new Vec2(x, y);
@@ -23,10 +25,19 @@ export class TrainBox extends Phaser.GameObjects.Container {
         this.text = new Phaser.GameObjects.BitmapText(scene, 0, 0 - 28, "ArialRoundedBold30", text, 30).setOrigin(0.5);
         this.text.tint = 0xFF7F3A;
         this.shape = new Phaser.Geom.Circle(0, 0, 193 * 0.5);
-        this.add([this.bg, this.text]);
+        this.tipsArrowUp = new Phaser.GameObjects.Image(scene,0,-117,"tipsArrowUp");
+        this.tipsArrowAnimate = this.scene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+            targets:this.tipsArrowUp,
+            duration:500,
+            paused:true,
+            repeat:-1,
+            y:`-=10`,
+            yoyo:true
+        });
+        this.add([this.tipsArrowUp,this.bg, this.text]);
         this.init();
-        //this.drawHitArea();
         this.setBody();
+        //this.drawHitArea();
     }
 
     private init() {
@@ -106,4 +117,5 @@ export class TrainBox extends Phaser.GameObjects.Container {
             )
         )
     }
+
 }
