@@ -228,6 +228,7 @@ export default class Game4PlayScene extends Phaser.Scene {
         }else{
           this.tips.tryAgain(()=>{
             this.setPopAndQuiver(true);
+            this.playMusic('tipsSounds2');
           });
           this.playMusic('wrong');
           this.shootLock = false;
@@ -379,6 +380,8 @@ export default class Game4PlayScene extends Phaser.Scene {
               let firstIndex : number = this.errorWords.findIndex((r)=>r === this.words[0]);
               let firstItem : Phaser.Physics.Arcade.Sprite = this.ballonSprites[firstIndex];
               this.createGuideAnims = new CreateGuideAnims(this,firstItem.x + 50,firstItem.y + 50);
+              //@ts-ignore
+              this.playMusic('tipsSounds');
             }
           }
         })   

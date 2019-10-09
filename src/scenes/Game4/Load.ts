@@ -45,6 +45,8 @@ export default class Game4LoadScene extends Phaser.Scene {
     this.load.audio('bgm','assets/Game4/bgm.mp3');
     this.load.audio('shoot','assets/Game4/shoot.mp3');
     this.load.audio('wrong','assets/Game4/wrong.mp3');
+    this.load.audio('tipsSounds','assets/sounds/newJoin/ClickOnTheBalloonToShootDontLetTheWolfRunAway.mp3');
+    this.load.audio('tipsSounds2','assets/sounds/newJoin/PayAttentionToTheBlueBag.mp3');
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;

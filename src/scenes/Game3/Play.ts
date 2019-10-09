@@ -2,6 +2,8 @@ import 'phaser';
 import { game3DataInterface, game3BookMenus } from '../../interface/Game3';
 import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
+import CreateBtnClass from "../../Public/CreateBtnClass";
+import PathGuideAnims from '../../Public/PathGuideAnims';
 
 const W = 1024;
 const H = 552;
@@ -34,6 +36,8 @@ export default class Game3PlayScene extends Phaser.Scene {
     private noteArr : Array<Phaser.GameObjects.Image> = []; //音符数组
     private fiveLinesArr : Array<Phaser.GameObjects.Image> = []; //五线谱数组
     private bgObj : Phaser.GameObjects.Image ; //背景对象
+    private bgm : Phaser.Sound.BaseSound ; //bgm
+    private pathGuideAnims : PathGuideAnims; //路径金光动画
     constructor() {
       super({
         key: "Game3PlayScene"
@@ -51,6 +55,7 @@ export default class Game3PlayScene extends Phaser.Scene {
       //加载音频文件
       this.loadMusic(this.ccData);
       this.getBookMenu();
+      PathGuideAnims.loadImg(this);
     }
     
   
@@ -62,6 +67,10 @@ export default class Game3PlayScene extends Phaser.Scene {
       // this.drawTopWord(); //音标气泡
       this.createAnims(); //创建动画
       this.createEmitter(); //创建粒子发射器
+      this.createBgm(); //创建背景音乐
+      new CreateBtnClass(this,{
+        bgm : this.bgm
+      });
       this.tweens.add({
         targets : this.bgObj,
         ease: 'Sine.easeInOut',
@@ -77,6 +86,15 @@ export default class Game3PlayScene extends Phaser.Scene {
         alpha : 1,
         delay : 800,
         duration : 800
+      })
+    }
+
+    private createBgm () : void {
+      this.bgm = this.sound.add('bgm');
+      //@ts-ignore
+      this.bgm.play({
+        loop : true,
+        volume : .2
       })
     }
 
@@ -464,8 +482,8 @@ export default class Game3PlayScene extends Phaser.Scene {
         let img : Phaser.GameObjects.Image = this.add.image( sprite.x + 116.5,sprite.y - 11,'icons',`key${imgKey}.png`).setDepth(100).setOrigin(.5,0).setDisplaySize(67,119);
         this.imgsArr.push(img);
       }
-      isRenderCenter && this.arrowArr.push(this.add.image(35.5,480,'leftIcon').setDisplaySize(51,32));
-      isRenderCenter && this.arrowArr.push(this.add.image(W - 36.5,480,'rightIcon').setDisplaySize(51,32));
+      this.arrowArr.push(this.add.image(35.5,480,'leftIcon').setDisplaySize(35.7,22.4));
+      this.arrowArr.push(this.add.image(W - 36.5,480,'rightIcon').setDisplaySize(35.7,22.4));
     }
 
     // private drawBottomKeys(isLeft : boolean = false) : void{
@@ -526,6 +544,28 @@ export default class Game3PlayScene extends Phaser.Scene {
             alpha : 1,
             ease: 'Sine.easeInOut',
             duration: 500,
+            onComplete : ()=>{
+              this.pathGuideAnims = new PathGuideAnims(this,[
+                {
+                  x : 0 ,
+                  y : 300
+                },{
+                  x : W - 10, 
+                  y : 300
+                },{
+                  x : W - 10 , 
+                  y : 540
+                },{
+                  x : 0 , 
+                  y : 540
+                },
+                {
+                  x : 0 ,
+                  y : 300
+                }
+              ]);
+              this.pathGuideAnims.show();
+            }
           })
         }
       })
