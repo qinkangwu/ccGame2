@@ -82,7 +82,6 @@ export class TrainBox extends Phaser.GameObjects.Container {
                     x: this.startPosition.x,
                     y: this.startPosition.y,
                     onComplete: () => {
-                        this.isTrack = false;
                         resolve("ok");
                     }
                 })
