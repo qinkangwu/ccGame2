@@ -4,7 +4,7 @@ import { cover, rotateTips, isHit, Vec2 } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Locomotive, TrainBox, TrackCircle, NullTrainBox } from '../../Public/jonny/game11';
+import { Locomotive, TrainBox,NullTrainBox } from '../../Public/jonny/game11';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -55,7 +55,6 @@ export default class Game11PlayScene extends Phaser.Scene {
   private locomotivel: Locomotive; //火车头
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
-  //private trackCircle: TrackCircle; //轨迹球
 
   /**
    * 云背景
@@ -236,6 +235,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       let _x = offsetX * i;
       let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name, _shape.trainBox);
       trainBox.name = data.name;
+      trainBox.tipsArrowUp.setAlpha(0);
       this.trainboxs.push(trainBox);
       this.layer3.add(trainBox);
     })
@@ -248,6 +248,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       let _tx = lastTrainbox.initPosition.x + offsetX;
       let symbolsTrainBox = new TrainBox(this, _tx, _y, "symbolTrainBox", v, _shape.trainBox);
       symbolsTrainBox.name = v;
+      symbolsTrainBox.tipsArrowUp.setAlpha(0);
       this.trainboxs.push(symbolsTrainBox);
       this.layer3.add(symbolsTrainBox);
     })
@@ -292,6 +293,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.scrollEvent();
       this.dragEvent();
       this.tryAginListenBtn.animate.play();
+      this.tipsArrowUpAnimateFuc(this.trainboxs,true);
       //this.matterCollision();   //可选
     }
 
@@ -305,6 +307,21 @@ export default class Game11PlayScene extends Phaser.Scene {
           trainbox.admission();
         })
       })
+  }
+
+  /**
+   * 箭头动画的显示与隐藏
+   */
+  private tipsArrowUpAnimateFuc(list:TrainBox[],display:boolean):void{
+    list.forEach(box=>{
+        if(display){
+           box.tipsArrowUp.setAlpha(1);
+           box.tipsArrowAnimate.resume();
+        }else{
+          box.tipsArrowUp.setAlpha(0);
+          box.tipsArrowAnimate.pause(); 
+        }
+    })
   }
 
   /**
@@ -362,7 +379,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.layer2InitX = this.layer2.x;
     this.layer3InitX = this.layer3.x;
 
-    let layerLimitXFuc: Function = (layer:Phaser.GameObjects.Container): number => {
+    let layerLimitXFuc: Function = (layer: Phaser.GameObjects.Container): number => {
       //@ts-ignore
       let _list = (layer.list as TrainBox[]).map(v => v.list[0].width);
       let _length = _list.length === 0 ? 0 : _list.reduce((a, b) => a + b);
@@ -370,21 +387,28 @@ export default class Game11PlayScene extends Phaser.Scene {
     };
 
 
+    //let layer2LimitX:number;
+    let offsetX = that.layer2.x - that.layer3and.x;
+
+    this.layer2.on("dragstart", layerMove2Start);
     this.layer2.on("drag", layerMove2);
     this.layer3.on("drag", layerMove3);
 
-    let offsetX = that.layer2.x - that.layer3and.x;
+
+    function layerMove2Start(){
+      this.setData("limitX",(layerLimitXFuc(that.layer2))* -1 );
+    }
+
     function layerMove2(this: Phaser.GameObjects.Container, pointer, dragX) {
-      if(that.layer2.list.length === 0){
+      if (that.layer2.list.length === 0) {
         return false;
       }
-      let layer2LimitX = layerLimitXFuc(that.layer2)*-1 + 400;
       this.x = dragX;
       if (this.x >= that.layer2InitX) {
         this.x = that.layer2InitX;
         that.layer3and.x = that.layer3andInitX;
-      } else if (this.x <= layer2LimitX) {
-        this.x = layer2LimitX;
+      } else if (this.x <= this.getData("limitX")) {
+        this.x = this.getData("limitX");
       } else {
         that.layer0.x = dragX * 0.04;
         that.layer3and.x = dragX - offsetX;
@@ -392,7 +416,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     }
 
     function layerMove3(this: Phaser.GameObjects.Container, pointer, dragX) {
-      let layer3LimitX = layerLimitXFuc(that.layer3)*-1 + 400;
+      let layer3LimitX = layerLimitXFuc(that.layer3) * -1 + 400;
       this.x = dragX;
       if (this.x >= that.layer3InitX) {
         this.x = that.layer3InitX;
@@ -461,6 +485,7 @@ export default class Game11PlayScene extends Phaser.Scene {
                 layerSource.sort("x"); layerTarget.sort("x");
                 myBox.isHit = false;
                 myBox.interactive = true;
+                that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
               }
               );
             }
@@ -498,11 +523,19 @@ export default class Game11PlayScene extends Phaser.Scene {
                 layer.sort("x");
                 myBox.isHit = false;
                 myBox.interactive = true;
+                that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
               }
               );
             }
           }
         })
+
+      }
+    }
+
+    let insert = {
+      upToDown:(myBox:TrainBox)=>{
+        console.log(myBox.getWorldTransformMatrix().tx,myBox.getWorldTransformMatrix().ty);
       }
     }
 
@@ -514,10 +547,10 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.movePosition = new Vec2(dragX, dragY);
       this.x = dragX;
       this.y = dragY;
-      console.log(this.y);
       if (this.parentContainer === that.layer3 && this.y < -140) {
         collision.downToUp(this);
       } else if (this.parentContainer === that.layer2 && this.y > 140) {
+        insert.upToDown(this);
         collision.upToDown(this);
       } else if (this.parentContainer === that.layer3 && this.y > -140) {
         collision.leftToRight(this, that.layer3);
@@ -533,9 +566,9 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
-      this.isDroging = true;
       this.startPosition = new Vec2(pointer.x, pointer.y);
       this.worldTransformMatrix = this.getWorldTransformMatrix();
+      that.tipsArrowUpAnimateFuc(that.trainboxs,false);
     }
 
 
@@ -543,14 +576,13 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
-      this.isDroging = false;
       if (this.parentContainer === that.layer3 && this.y < -265) {    // down => up
         that.layer3.remove(this);
         that.layer2.add(this);
-
         that.sort().up(this);
         that.sort().down();
 
+        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
         this.initPosition = new Vec2(
           this.x,
           this.y
@@ -579,6 +611,22 @@ export default class Game11PlayScene extends Phaser.Scene {
         that.sort().down(this);
         that.sort().up();
 
+        // if (that.layer2.list.length > 2) {
+        //   that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+        //     duration: 200,
+        //     targets: [that.layer2, that.layer3and],
+        //     x: `+=225`,
+        //   });
+        // }
+
+
+        // that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+        //   duration: 200,
+        //   targets: that.layer0,
+        //   x: `+=5`,
+        // });
+
+        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
         this.initPosition = new Vec2(
           this.x,
           this.y
@@ -588,11 +636,13 @@ export default class Game11PlayScene extends Phaser.Scene {
           this.initPosition.x,
           this.initPosition.y
         );
+        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
       } else if (this.parentContainer === that.layer2 && this.y < 216) {   // down => down
         this.setPosition(
           this.initPosition.x,
           this.initPosition.y
         );
+        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
       }
 
       if (that.checkoutDragEnd() === 0) {     // drog end
@@ -741,7 +791,6 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (box.parentContainer === this.layer2) {
         this.layer2.remove(box);
         this.layer3.add(box);
-        box.isTrack = false;
       }
     })
     this.sort().down();

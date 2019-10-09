@@ -37,6 +37,7 @@ export default class Game9LoadScene extends Phaser.Scene {
     this.load.audio('correct', 'assets/sounds/successMp3.mp3');
     this.load.audio('click', 'assets/sounds/clickMp3.mp3');
     this.load.audio('wrong', 'assets/sounds/failMp3.mp3');
+    this.load.audio("tipsSound",'assets/sounds/newJoin/ListenToThePronunciationAndSelectTheCorrectPhoneticSymbol.mp3');
     this.load.bitmapFont('GenJyuuGothic47', 'assets/font/GenJyuuGothic47/font.png', 'assets/font/GenJyuuGothic47/font.xml');
     TipsParticlesEmitter.loadImg(this)
     TryAginListenBtn.loadAssets(this);

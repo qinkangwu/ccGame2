@@ -1,7 +1,7 @@
 import { Bounds, Vec2 } from "../core";
 import "phaser";
 /**
-  * 注册点为火车车厢的车底(0.5,1);
+  * 注册点为火车车厢的车底(0.5);
   */
 export class TrainBox extends Phaser.GameObjects.Container {
     public body: Phaser.Physics.Arcade.Body;
@@ -13,9 +13,10 @@ export class TrainBox extends Phaser.GameObjects.Container {
     public worldTransformMatrix:Phaser.GameObjects.Components.TransformMatrix;  //世界矩阵
     public startPosition: Vec2;
     public movePosition: Vec2;
-    public isTrack: boolean;  //是否被轨迹球跟踪过，探知答案！
     public isHit: boolean = false;  //是否被碰撞
-    public isDroging:boolean = false;  //是否在拖拽的状态
+    public isDroging:number= 0;  //是否在拖拽的状态
+    public tipsArrowUp:Phaser.GameObjects.Image; //指示
+    public tipsArrowAnimate:Phaser.Tweens.Tween; //指示动画
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, text: string, matterShape: object) {
         super(scene, x, y);
         this.initPosition = new Vec2(x, y);
@@ -23,12 +24,20 @@ export class TrainBox extends Phaser.GameObjects.Container {
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, texture);
         this.text = new Phaser.GameObjects.BitmapText(scene, 0, 0 - 28, "ArialRoundedBold30", text, 30).setOrigin(0.5);
         this.text.tint = 0xFF7F3A;
-        this.isTrack = false;
         this.shape = new Phaser.Geom.Circle(0, 0, 193 * 0.5);
-        this.add([this.bg, this.text]);
+        this.tipsArrowUp = new Phaser.GameObjects.Image(scene,0,-117,"tipsArrowUp");
+        this.tipsArrowAnimate = this.scene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+            targets:this.tipsArrowUp,
+            duration:500,
+            paused:true,
+            repeat:-1,
+            y:`-=10`,
+            yoyo:true
+        });
+        this.add([this.tipsArrowUp,this.bg, this.text]);
         this.init();
-        //this.drawHitArea();
         this.setBody();
+        //this.drawHitArea();
     }
 
     private init() {
@@ -73,7 +82,6 @@ export class TrainBox extends Phaser.GameObjects.Container {
                     x: this.startPosition.x,
                     y: this.startPosition.y,
                     onComplete: () => {
-                        this.isTrack = false;
                         resolve("ok");
                     }
                 })
@@ -83,8 +91,8 @@ export class TrainBox extends Phaser.GameObjects.Container {
 
     public setBody() {
         this.scene.physics.world.enable(this);
-        this.body.setSize(100,100);
-        this.body.setOffset(-50,-50);
+        this.body.setSize(218,193);
+        this.body.setOffset(-218*0.5,-193*0.5);
         this.body.allowDrag = true;
     }
 
@@ -99,14 +107,14 @@ export class TrainBox extends Phaser.GameObjects.Container {
     }
 
     public syncBodyBounds():Bounds{
-      //console.log(this.body.x,this.body.y,this.body.width,this.body.height);
         return new Bounds(
             new Phaser.Geom.Rectangle(
-                this.body.x,
-                this.body.y,
-                this.body.width,
-                this.body.height
+                this.body.x+100,
+                this.body.y+100,
+                this.body.width-100,
+                this.body.height-100
             )
         )
     }
+
 }

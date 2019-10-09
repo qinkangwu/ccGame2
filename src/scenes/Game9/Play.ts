@@ -1,7 +1,7 @@
 import 'phaser';
 import { Game9DataItem, Game9PhoneticSymbol } from '../../interface/Game9';
 import { cover, rotateTips, isHit } from '../../Public/jonny/core';
-import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold ,SuccessBtn,TryAginListenBtn} from '../../Public/jonny/components';
+import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
 import { EASE } from '../../Public/jonny/Animate';
 import PlanAnims from '../../Public/PlanAnims';
 import { CivaMen, Cookie, NullCookie } from '../../Public/jonny/game9';
@@ -84,6 +84,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       this.scene.pause();
       rotateTips.init();
       cover(this, "cover", () => {
+        this.playPhonetic("tipsSound");
         this.planAnims.show(index + 1, this.gameStart)
       });
     } else {
@@ -296,7 +297,6 @@ export default class Game9PlayScene extends Phaser.Scene {
     }
 
     cookiesAni();
-
   }
 
   /**

@@ -1,5 +1,4 @@
 import "phaser";
-import { TrainBox } from "./Trainbox";
 import { Bounds } from "../core";
 
 export class NullTrainBox extends Phaser.GameObjects.Image{
