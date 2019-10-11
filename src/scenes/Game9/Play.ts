@@ -360,6 +360,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       this.y = dragY;
       that.nullCookies.forEach(nullCookie => {
         if (isHit(this.syncBounds(), nullCookie.syncBounds())) {
+          //console.log("彭慌啊");
           if (nullCookie.cookie && this.name !== nullCookie.cookie.name && this.hit === 0.5 && !hitB) {
             hitB = true;
             this.interactive = false;
@@ -395,6 +396,27 @@ export default class Game9PlayScene extends Phaser.Scene {
         return false;
       }
       //that.clickSound.play();
+      
+      that.nullCookies.forEach(nullCookie =>{
+        if (isHit(this.syncBounds(), nullCookie.syncBounds())){
+          console.log('2hit');
+          if(nullCookie.cookie && this.name === nullCookie.cookie.name && this.hit === 0.5 && !hitB){
+            hitB = true;
+            this.interactive = false;
+            this.setPosition(
+              nullCookie.x,
+              nullCookie.y
+            );
+            this.hit = 1;
+            setTimeout(()=>{
+              this.hit = 0.5;
+              this.interactive = true;
+              hitB = false;
+            },500);
+          }
+        } 
+      })
+      
       if (this.hit === 0 || this.hit === 0.5) {
         that.moveTo(this, this.initPosition.x, this.initPosition.y, () => {
           if (this.hit === 0.5) {
@@ -448,7 +470,7 @@ export default class Game9PlayScene extends Phaser.Scene {
         args[0].interactive = true;
         args[0].hit = 0.5;
         working = false;
-      }, 1000);
+      }, 500);
 
       let collideCookie = args[1].cookie;
       if (collideCookie !== null && collideCookie.hit === 0.5) {
