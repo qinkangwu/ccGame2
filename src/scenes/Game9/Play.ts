@@ -231,7 +231,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       this.layer1.add(_nullCookieImg);
       this.nullCookies.push(_nullCookieImg);
       this.physics.world.enable(_nullCookieImg);
-      (<Phaser.Physics.Arcade.Body>_nullCookieImg.body).setSize(_nullCookieImg.width * 0.2, _nullCookieImg.height * 0.2);
+      (<Phaser.Physics.Arcade.Body>_nullCookieImg.body).setSize(_nullCookieImg.width * 0.55, _nullCookieImg.height * 0.55);
     });
     console.log("正确答案", debug)
 
@@ -253,8 +253,6 @@ export default class Game9PlayScene extends Phaser.Scene {
    */
   private gameStart(): void {
     console.log("game start");
-   // var ableTips = [0,0]; //是否可以出现提示
-
     var nullCookieAni = () => {
       this.nullCookies.forEach((nullcookie, i) => {
         this.tweens.add({

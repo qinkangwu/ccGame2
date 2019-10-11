@@ -9,7 +9,7 @@ export class TrackCircle extends Phaser.GameObjects.Image {
         super(scene, x, y, texture);
         this.initPosition = new Phaser.Math.Vector2(x, y);
         this.targetPosition = new Phaser.Math.Vector2(1024 * 3, y);
-        //this.visible = false;
+        this.visible = false;
     }
     animate(collisionFuc: Function, completeFuc: Function) {
         this.cookies = [];
