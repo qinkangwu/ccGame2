@@ -8,6 +8,7 @@ import PathGuideAnims from '../../Public/PathGuideAnims';
 const W = 1024;
 const H = 552;
 const initW = W + 100;
+let initDragNum : number = 0 ;
 
 export default class Game3PlayScene extends Phaser.Scene {
     private ccData : Array<game3DataInterface> = [];   //音标数据
@@ -38,6 +39,7 @@ export default class Game3PlayScene extends Phaser.Scene {
     private bgObj : Phaser.GameObjects.Image ; //背景对象
     private bgm : Phaser.Sound.BaseSound ; //bgm
     private pathGuideAnims : PathGuideAnims; //路径金光动画
+    private outerKeyArr : Array<Phaser.GameObjects.Sprite> = [] ; //多余的键盘
     constructor() {
       super({
         key: "Game3PlayScene"
@@ -163,6 +165,7 @@ export default class Game3PlayScene extends Phaser.Scene {
       this.dragTimer = Date.now();
       //@ts-ignore
       this.scene.dragStartHandle.objX = this.scene.keySpritesArr[0].x;
+      initDragNum = 0;
     }
 
     private dragMoveHandle (...args) : void {
@@ -172,6 +175,10 @@ export default class Game3PlayScene extends Phaser.Scene {
       //@ts-ignore
       this.scene.dragX = args[0].worldX;
       //@ts-ignore
+      initDragNum += x ;
+      //@ts-ignore
+      if((initDragNum > 0 && initDragNum > 200) || (initDragNum < 0 && initDragNum < -200) ) return;
+      //@ts-ignore
       this.scene.keySpritesArr.map((r : Phaser.GameObjects.Sprite,i : number)=>{
         r.x += x;
       });
@@ -180,6 +187,10 @@ export default class Game3PlayScene extends Phaser.Scene {
         r.x += x;
       })
 
+      //@ts-ignore
+      this.scene.outerKeyArr.map((r : Phaser.GameObjects.Sprite,i : number)=>{
+        r.x += x;
+      })
       //@ts-ignore
       this.scene.imgsArr.map((r : Phaser.GameObjects.Image,i : number)=>{
         r.x += x;
@@ -290,6 +301,8 @@ export default class Game3PlayScene extends Phaser.Scene {
     private dragEndHandle (...args) : void {
       //拖拽结束
       //@ts-ignore
+      initDragNum = 0;
+      //@ts-ignore
       let isLeft : boolean = this.scene.keySpritesArr[0].x < this.scene.dragStartHandle.objX;
       //@ts-ignore
       let childX : number = this.scene.dragStartHandle.objX - this.scene.keySpritesArr[0].x;
@@ -300,7 +313,7 @@ export default class Game3PlayScene extends Phaser.Scene {
         //@ts-ignore
         this.scene.tweens.add({
           //@ts-ignore
-          targets : this.scene.keySpritesArr.concat(this.scene.textsArr,this.scene.imgsArr),
+          targets : this.scene.keySpritesArr.concat(this.scene.textsArr,this.scene.imgsArr,this.scene.outerKeyArr),
           x :`+=${childX}`,
           ease: 'Sine.easeInOut',
           duration: 300
@@ -482,6 +495,10 @@ export default class Game3PlayScene extends Phaser.Scene {
         let img : Phaser.GameObjects.Image = this.add.image( sprite.x + 116.5,sprite.y - 11,'icons',`key${imgKey}.png`).setDepth(100).setOrigin(.5,0).setDisplaySize(67,119);
         this.imgsArr.push(img);
       }
+      this.outerKeyArr.push(
+        this.add.sprite(-262 ,this.keySpritesArr[0].y,'keys').setOrigin(0).setDisplaySize(110,219),
+        this.add.sprite( 1176  ,this.keySpritesArr[0].y,'keys').setOrigin(0).setDisplaySize(110,219),
+      )
       this.arrowArr.push(this.add.image(35.5,480,'leftIcon').setDisplaySize(35.7,22.4));
       this.arrowArr.push(this.add.image(W - 36.5,480,'rightIcon').setDisplaySize(35.7,22.4));
     }
@@ -533,6 +550,14 @@ export default class Game3PlayScene extends Phaser.Scene {
     // }
 
     private animsLayoutHandle (isLeft : boolean = false) : void {
+      this.outerKeyArr.length > 2 && this.time.addEvent({
+        delay : 200,
+        callback : ()=>{
+          this.outerKeyArr[0].destroy();
+          this.outerKeyArr[1].destroy();
+          this.outerKeyArr.splice(0,2);
+        }
+      })
       this.tweens.add({
         targets : [...this.keySpritesArr,...this.imgsArr,...this.textsArr],
         x : `+=${isLeft && -initW || initW}`,
@@ -545,7 +570,7 @@ export default class Game3PlayScene extends Phaser.Scene {
             ease: 'Sine.easeInOut',
             duration: 500,
             onComplete : ()=>{
-              this.pathGuideAnims = new PathGuideAnims(this,[
+              this.pathGuideAnims = this.pathGuideAnims || new PathGuideAnims(this,[
                 {
                   x : 0 ,
                   y : 300
@@ -564,7 +589,10 @@ export default class Game3PlayScene extends Phaser.Scene {
                   y : 300
                 }
               ]);
-              this.pathGuideAnims.show();
+              //@ts-ignore
+              !this.animsLayoutHandle.lock && this.pathGuideAnims.show();
+              //@ts-ignore
+              this.animsLayoutHandle.lock = true;
             }
           })
         }
