@@ -4,7 +4,7 @@ import { cover, rotateTips, isHit } from '../../Public/jonny/core';
 import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
 import { EASE } from '../../Public/jonny/Animate';
 import PlanAnims from '../../Public/PlanAnims';
-import { CivaMen, Cookie, NullCookie,TrackCircle } from '../../Public/jonny/game9';
+import { CivaMen, Cookie, NullCookie, TrackCircle } from '../../Public/jonny/game9';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
 const vol = 0.3; //背景音乐的音量
@@ -47,7 +47,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   private civaMen: CivaMen; //机器人 
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
-  private trackCircle:TrackCircle;  //碰撞的轨迹球
+  private trackCircle: TrackCircle;  //碰撞的轨迹球
   //动态开始
 
   //层次
@@ -116,7 +116,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.tryAginListenBtn = new TryAginListenBtn(this, 89, 435 + 50);
     this.layer0.add(bg);
     this.layer4.add([this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
-    this.originalSoundBtn.on("pointerdown", ()=>{
+    this.originalSoundBtn.on("pointerdown", () => {
       this.tryAginListenBtn.ableTips[0] = 1;
       this.playWord.call(that);
     });
@@ -231,7 +231,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       this.layer1.add(_nullCookieImg);
       this.nullCookies.push(_nullCookieImg);
       this.physics.world.enable(_nullCookieImg);
-      (<Phaser.Physics.Arcade.Body>_nullCookieImg.body).setSize(_nullCookieImg.width * 0.55, _nullCookieImg.height * 0.55);
+      (<Phaser.Physics.Arcade.Body>_nullCookieImg.body).setSize(_nullCookieImg.width * 0.25, _nullCookieImg.height * 0.25);
     });
     console.log("正确答案", debug)
 
@@ -244,7 +244,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
 
     //创建轨迹球
-    this.trackCircle = new TrackCircle(this,0,472,"trackCircle");
+    this.trackCircle = new TrackCircle(this, 0, 472, "trackCircle");
     this.layer4.add(this.trackCircle);
   }
 
@@ -289,25 +289,25 @@ export default class Game9PlayScene extends Phaser.Scene {
   /**
    * 轨迹球扫描底部的饼干
    */
-  private scanCookie():void{
-    var collisionFuc = ()=>{
-      this.cookies.forEach(cookie=>{
-        let _isHit = isHit(this.trackCircle.syncBounds(),cookie.syncBounds());
-        if(_isHit){
+  private scanCookie(): void {
+    var collisionFuc = () => {
+      this.cookies.forEach(cookie => {
+        let _isHit = isHit(this.trackCircle.syncBounds(), cookie.syncBounds());
+        if (_isHit) {
           this.trackCircle.cookies.push(cookie.name);
         }
       })
     }
 
-    var complete = ()=>{
-        let _cookies = this.trackCircle.cookies.filter((v,i,arr)=>arr.indexOf(v)===i);
-        if(_cookies.length===this.nullCookies.length){
-          this.trackCircle.cookies = _cookies;
-          this.dragEnd(); 
-        }
+    var complete = () => {
+      let _cookies = this.trackCircle.cookies.filter((v, i, arr) => arr.indexOf(v) === i);
+      if (_cookies.length === this.nullCookies.length) {
+        this.trackCircle.cookies = _cookies;
+        this.dragEnd();
+      }
     }
 
-    this.trackCircle.animate(collisionFuc,complete);
+    this.trackCircle.animate(collisionFuc, complete);
   }
 
   /**
@@ -348,7 +348,6 @@ export default class Game9PlayScene extends Phaser.Scene {
   private dragEvent(): void {
     let that = this;
     let working: boolean = false;   //碰撞器是否在工作
-    //let hits: number = 0; //碰撞次数
     let hitB: boolean = false;
     this.physics.world.enable(this.cookies);
 
@@ -360,7 +359,6 @@ export default class Game9PlayScene extends Phaser.Scene {
       this.y = dragY;
       that.nullCookies.forEach(nullCookie => {
         if (isHit(this.syncBounds(), nullCookie.syncBounds())) {
-          //console.log("彭慌啊");
           if (nullCookie.cookie && this.name !== nullCookie.cookie.name && this.hit === 0.5 && !hitB) {
             hitB = true;
             this.interactive = false;
@@ -377,6 +375,20 @@ export default class Game9PlayScene extends Phaser.Scene {
               hitB = false;
               console.log("finsh");
             })
+          } else if (nullCookie.cookie === null && this.hit === 0.5 && !hitB) {
+            hitB = true;
+            this.interactive = false;
+            this.setPosition(
+              nullCookie.x,
+              nullCookie.y
+            );
+            setTimeout(() => {
+              this.nullCookie.cookie = null;
+              this.nullCookie = nullCookie;
+              nullCookie.cookie = this;
+              this.interactive = true;
+              hitB = false;
+            }, 500);
           }
         }
       })
@@ -387,7 +399,6 @@ export default class Game9PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
-      //that.clickSound.play();
     }
 
 
@@ -395,12 +406,10 @@ export default class Game9PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
-      //that.clickSound.play();
-      
-      that.nullCookies.forEach(nullCookie =>{
-        if (isHit(this.syncBounds(), nullCookie.syncBounds())){
-          console.log('2hit');
-          if(nullCookie.cookie && this.name === nullCookie.cookie.name && this.hit === 0.5 && !hitB){
+
+      that.nullCookies.forEach(nullCookie => {
+        if (isHit(this.syncBounds(), nullCookie.syncBounds())) {
+          if (nullCookie.cookie && this.name === nullCookie.cookie.name && this.hit === 0.5 && !hitB) {
             hitB = true;
             this.interactive = false;
             this.setPosition(
@@ -408,15 +417,15 @@ export default class Game9PlayScene extends Phaser.Scene {
               nullCookie.y
             );
             this.hit = 1;
-            setTimeout(()=>{
+            setTimeout(() => {
               this.hit = 0.5;
               this.interactive = true;
               hitB = false;
-            },500);
+            }, 500);
           }
-        } 
+        }
       })
-      
+
       if (this.hit === 0 || this.hit === 0.5) {
         that.moveTo(this, this.initPosition.x, this.initPosition.y, () => {
           if (this.hit === 0.5) {
@@ -638,12 +647,12 @@ export default class Game9PlayScene extends Phaser.Scene {
    */
   private checkoutResult(): Promise<string> {
     return new Promise((resolve, reject) => {
-      this.nullCookies.forEach(nullCookie => {
-        if (nullCookie.name !== nullCookie.cookie.name) {
-          reject("结果错误");
-        }
-      })
-      resolve("结果正确");
+      let isRight:boolean = this.nullCookies.every((nullCookiev,i)=>this.trackCircle.cookies[i] === nullCookiev.name);
+      if(isRight){
+        resolve("结果正确");
+      }else{
+        reject("结果错误"); 
+      }
     })
   }
 
