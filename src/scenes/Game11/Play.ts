@@ -292,7 +292,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     var nextFuc = () => {
       this.scrollEvent();
       this.dragEvent();
-      this.tryAginListenBtn.animate.play();
+      //this.tryAginListenBtn.animate.play();
       this.tipsArrowUpAnimateFuc(this.trainboxs,true);
       //this.matterCollision();   //可选
     }

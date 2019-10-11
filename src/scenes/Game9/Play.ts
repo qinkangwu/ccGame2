@@ -4,7 +4,7 @@ import { cover, rotateTips, isHit } from '../../Public/jonny/core';
 import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
 import { EASE } from '../../Public/jonny/Animate';
 import PlanAnims from '../../Public/PlanAnims';
-import { CivaMen, Cookie, NullCookie } from '../../Public/jonny/game9';
+import { CivaMen, Cookie, NullCookie, TrackCircle } from '../../Public/jonny/game9';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
 const vol = 0.3; //背景音乐的音量
@@ -47,6 +47,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   private civaMen: CivaMen; //机器人 
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
+  private trackCircle: TrackCircle;  //碰撞的轨迹球
   //动态开始
 
   //层次
@@ -115,7 +116,10 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.tryAginListenBtn = new TryAginListenBtn(this, 89, 435 + 50);
     this.layer0.add(bg);
     this.layer4.add([this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
-    this.originalSoundBtn.on("pointerdown", this.playWord.bind(that));
+    this.originalSoundBtn.on("pointerdown", () => {
+      this.tryAginListenBtn.ableTips[0] = 1;
+      this.playWord.call(that);
+    });
 
     this.bgm = this.sound.add('bgm');
     this.bgm.addMarker({
@@ -227,7 +231,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       this.layer1.add(_nullCookieImg);
       this.nullCookies.push(_nullCookieImg);
       this.physics.world.enable(_nullCookieImg);
-      (<Phaser.Physics.Arcade.Body>_nullCookieImg.body).setSize(_nullCookieImg.width * 0.2, _nullCookieImg.height * 0.2);
+      (<Phaser.Physics.Arcade.Body>_nullCookieImg.body).setSize(_nullCookieImg.width * 0.25, _nullCookieImg.height * 0.25);
     });
     console.log("正确答案", debug)
 
@@ -238,6 +242,10 @@ export default class Game9PlayScene extends Phaser.Scene {
 
     //创建用户反馈
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
+
+    //创建轨迹球
+    this.trackCircle = new TrackCircle(this, 0, 472, "trackCircle");
+    this.layer4.add(this.trackCircle);
   }
 
   /**
@@ -261,34 +269,13 @@ export default class Game9PlayScene extends Phaser.Scene {
       })
     }
 
-    // var taraginListenAni = this.tweens.timeline(<Phaser.Types.Tweens.TimelineBuilderConfig>{
-    //   targets: this.tryAginListenBtn,
-    //   paused: true,
-    //   tweens: [
-    //     {
-    //       scale: 1,
-    //       rotation: 0,
-    //       duration: 500,
-    //       ease: EASE.spring
-    //     },
-    //     {
-    //       rotation: Phaser.Math.DegToRad(-30),
-    //       yoyo: true,
-    //       repeat: 3,
-    //       duration: 500,
-    //       repeatDelay: 300,
-    //       ease: EASE.spring
-    //     }
-    //   ]
-    // });
-
     let cookiesAni = () => {
       let cookiesAnimate: Promise<number>[] = [];
       cookiesAnimate = this.cookies.map(cookie => cookie.animate);
       Promise.all(cookiesAnimate).then((value) => {
         nullCookieAni();
         this.wordSpeaker.play();
-        this.tryAginListenBtn.animate.play();
+        this.tryAginListenBtn.checkout(1);
         this.civaMen.startJumpIn(1, [140]);
       })
       this.cookies.forEach(cookie => {
@@ -297,6 +284,30 @@ export default class Game9PlayScene extends Phaser.Scene {
     }
 
     cookiesAni();
+  }
+
+  /**
+   * 轨迹球扫描底部的饼干
+   */
+  private scanCookie(): void {
+    var collisionFuc = () => {
+      this.cookies.forEach(cookie => {
+        let _isHit = isHit(this.trackCircle.syncBounds(), cookie.syncBounds());
+        if (_isHit) {
+          this.trackCircle.cookies.push(cookie.name);
+        }
+      })
+    }
+
+    var complete = () => {
+      let _cookies = this.trackCircle.cookies.filter((v, i, arr) => arr.indexOf(v) === i);
+      if (_cookies.length === this.nullCookies.length) {
+        this.trackCircle.cookies = _cookies;
+        this.dragEnd();
+      }
+    }
+
+    this.trackCircle.animate(collisionFuc, complete);
   }
 
   /**
@@ -337,7 +348,6 @@ export default class Game9PlayScene extends Phaser.Scene {
   private dragEvent(): void {
     let that = this;
     let working: boolean = false;   //碰撞器是否在工作
-    //let hits: number = 0; //碰撞次数
     let hitB: boolean = false;
     this.physics.world.enable(this.cookies);
 
@@ -365,6 +375,20 @@ export default class Game9PlayScene extends Phaser.Scene {
               hitB = false;
               console.log("finsh");
             })
+          } else if (nullCookie.cookie === null && this.hit === 0.5 && !hitB) {
+            hitB = true;
+            this.interactive = false;
+            this.setPosition(
+              nullCookie.x,
+              nullCookie.y
+            );
+            setTimeout(() => {
+              this.nullCookie.cookie = null;
+              this.nullCookie = nullCookie;
+              nullCookie.cookie = this;
+              this.interactive = true;
+              hitB = false;
+            }, 500);
           }
         }
       })
@@ -375,15 +399,42 @@ export default class Game9PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
-      that.clickSound.play();
-    }
 
+      if(this.hit===0){
+        that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+          targets:this,
+          scale:1.2,
+          yoyo:true,
+          duration:100,
+        })
+      }
+     
+    }
 
     DrogEvent.cookieOnDragEnd = function (this: Cookie) {
       if (!this.interactive) {
         return false;
       }
-      that.clickSound.play();
+
+      that.nullCookies.forEach(nullCookie => {
+        if (isHit(this.syncBounds(), nullCookie.syncBounds())) {
+          if (nullCookie.cookie && this.name === nullCookie.cookie.name && this.hit === 0.5 && !hitB) {
+            hitB = true;
+            this.interactive = false;
+            this.setPosition(
+              nullCookie.x,
+              nullCookie.y
+            );
+            this.hit = 1;
+            setTimeout(() => {
+              this.hit = 0.5;
+              this.interactive = true;
+              hitB = false;
+            }, 500);
+          }
+        }
+      })
+
       if (this.hit === 0 || this.hit === 0.5) {
         that.moveTo(this, this.initPosition.x, this.initPosition.y, () => {
           if (this.hit === 0.5) {
@@ -437,7 +488,7 @@ export default class Game9PlayScene extends Phaser.Scene {
         args[0].interactive = true;
         args[0].hit = 0.5;
         working = false;
-      }, 1000);
+      }, 500);
 
       let collideCookie = args[1].cookie;
       if (collideCookie !== null && collideCookie.hit === 0.5) {
@@ -455,13 +506,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       args[1].cookie = args[0];
       args[1].collision = 1;
 
-      that.nullCookies.forEach((nullCookie, i) => {
-        let result = nullCookie.collision;
-        hits += result;
-        if (hits === that.nullCookies.length) {
-          that.dragEnd();
-        }
-      })
+      this.scanCookie();
     }
   }
 
@@ -478,6 +523,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.civaMen.round.times += 1;
     this.successBtn.setAlpha(1);
     this.successBtn.animate.play();
+    this.tryAginListenBtn.checkout(2);
   }
 
   /**
@@ -487,6 +533,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     if (!this.successBtn.interactive) {
       return false;
     }
+    this.tryAginListenBtn.ableTips[1] = 1;
     this.successBtn.interactive = false;
     this.successBtn.animate.stop();
     this.checkoutResult()
@@ -609,12 +656,12 @@ export default class Game9PlayScene extends Phaser.Scene {
    */
   private checkoutResult(): Promise<string> {
     return new Promise((resolve, reject) => {
-      this.nullCookies.forEach(nullCookie => {
-        if (nullCookie.name !== nullCookie.cookie.name) {
-          reject("结果错误");
-        }
-      })
-      resolve("结果正确");
+      let isRight:boolean = this.nullCookies.every((nullCookiev,i)=>this.trackCircle.cookies[i] === nullCookiev.name);
+      if(isRight){
+        resolve("结果正确");
+      }else{
+        reject("结果错误"); 
+      }
     })
   }
 

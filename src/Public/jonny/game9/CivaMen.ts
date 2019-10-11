@@ -38,7 +38,7 @@ export class CivaMen extends Phaser.GameObjects.Image {
         }
         this.x = x;
         this.y = y;
-        this.duration = 1000;
+        this.duration = 500;
         this._times = 0;
         this.round = {
             times:0,
