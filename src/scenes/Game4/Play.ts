@@ -88,7 +88,11 @@ export default class Game4PlayScene extends Phaser.Scene {
         });
         this.goldObj = new Gold(this,20);
         this.add.existing(this.goldObj);
-        this.tips = new TipsParticlesEmitter(this)
+        this.tips = new TipsParticlesEmitter(this,{
+          renderBefore : ()=>{
+            this.input.off('pointerdown');
+          }
+        })
         this.goldObj.setText(this.goldNum -= 1);
       })
       this.createBackgroundImage(); //背景图
@@ -226,10 +230,6 @@ export default class Game4PlayScene extends Phaser.Scene {
             this.allBallonIsFinish();
           }
         }else{
-          this.tips.tryAgain(()=>{
-            this.setPopAndQuiver(true);
-            this.playMusic('tipsSounds2');
-          });
           this.playMusic('wrong');
           this.shootLock = false;
           this.clickLock = true;
@@ -237,6 +237,15 @@ export default class Game4PlayScene extends Phaser.Scene {
           this.arrowObj.destroy();
           this.createArrow();
           this.createCollide();
+          if(this.quiverNum === 0 ){
+            this.tips.error(this.nextWordHandle.bind(this),this.tryAgainHandle.bind(this))
+            return;
+          }
+          this.tips.tryAgain(()=>{
+            this.setPopAndQuiver(true);
+            this.playMusic('tipsSounds2');
+            this.clickHandle();
+          });
         }
       }
     }
@@ -489,6 +498,7 @@ export default class Game4PlayScene extends Phaser.Scene {
     private tryAgainHandle () : void {
       this.quiverNum = this.words.length + 3;
       this.changeQuiverNums(this.quiverNum);
+      this.clickHandle();
     }
 
 
@@ -526,6 +536,7 @@ export default class Game4PlayScene extends Phaser.Scene {
       this.drawAnimsHandle();
       this.setPopAndQuiver();
       this.changeQuiverNums(this.quiverNum); 
+      this.clickHandle();
     }
 
     private clickHandle () : void {
@@ -549,6 +560,7 @@ export default class Game4PlayScene extends Phaser.Scene {
             duration : 300,
             ease : 'Sine.easeInOut',
             onComplete : ()=>{
+              this.playMusic('goodJob');
               let goldAnims = new SellingGold(this,{
                 callback : ()=>{
                     goldAnims.golds.destroy();

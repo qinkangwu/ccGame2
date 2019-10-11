@@ -4,6 +4,7 @@ import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
 import CreateBtnClass from "../../Public/CreateBtnClass";
 import PathGuideAnims from '../../Public/PathGuideAnims';
+import CreateGuideAnims from "../../Public/CreateGuideAnims";
 
 const W = 1024;
 const H = 552;
@@ -38,7 +39,8 @@ export default class Game3PlayScene extends Phaser.Scene {
     private fiveLinesArr : Array<Phaser.GameObjects.Image> = []; //五线谱数组
     private bgObj : Phaser.GameObjects.Image ; //背景对象
     private bgm : Phaser.Sound.BaseSound ; //bgm
-    private pathGuideAnims : PathGuideAnims; //路径金光动画
+    private createGuideAnims : CreateGuideAnims; //引导动画引用
+    // private pathGuideAnims : PathGuideAnims; //路径金光动画
     private outerKeyArr : Array<Phaser.GameObjects.Sprite> = [] ; //多余的键盘
     constructor() {
       super({
@@ -57,7 +59,7 @@ export default class Game3PlayScene extends Phaser.Scene {
       //加载音频文件
       this.loadMusic(this.ccData);
       this.getBookMenu();
-      PathGuideAnims.loadImg(this);
+      // PathGuideAnims.loadImg(this);
     }
     
   
@@ -396,7 +398,12 @@ export default class Game3PlayScene extends Phaser.Scene {
     private pointerDownHandle (...args) : void{
       //鼠标按下事件
       this.timer = Date.now();
+      //@ts-ignore
+      this.scene.createGuideAnims && this.scene.createGuideAnims.hideHandle();
+      //@ts-ignore
+      this.scene.createGuideAnims && (this.scene.createGuideAnims = null); 
     }
+    
     private pointeUpHandle (...args) : void{
       //@ts-ignore
       if(Date.now() - this.timer < 200){
@@ -570,27 +577,8 @@ export default class Game3PlayScene extends Phaser.Scene {
             ease: 'Sine.easeInOut',
             duration: 500,
             onComplete : ()=>{
-              this.pathGuideAnims = this.pathGuideAnims || new PathGuideAnims(this,[
-                {
-                  x : 0 ,
-                  y : 300
-                },{
-                  x : W - 10, 
-                  y : 300
-                },{
-                  x : W - 10 , 
-                  y : 540
-                },{
-                  x : 0 , 
-                  y : 540
-                },
-                {
-                  x : 0 ,
-                  y : 300
-                }
-              ]);
               //@ts-ignore
-              !this.animsLayoutHandle.lock && this.pathGuideAnims.show();
+              !this.animsLayoutHandle.lock && (this.createGuideAnims = new CreateGuideAnims(this,500, H - 100));
               //@ts-ignore
               this.animsLayoutHandle.lock = true;
             }
