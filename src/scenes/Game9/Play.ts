@@ -115,7 +115,10 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.tryAginListenBtn = new TryAginListenBtn(this, 89, 435 + 50);
     this.layer0.add(bg);
     this.layer4.add([this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
-    this.originalSoundBtn.on("pointerdown", this.playWord.bind(that));
+    this.originalSoundBtn.on("pointerdown", ()=>{
+      this.tryAginListenBtn.ableTips[0] = 1;
+      this.playWord.call(that);
+    });
 
     this.bgm = this.sound.add('bgm');
     this.bgm.addMarker({
@@ -245,6 +248,8 @@ export default class Game9PlayScene extends Phaser.Scene {
    */
   private gameStart(): void {
     console.log("game start");
+   // var ableTips = [0,0]; //是否可以出现提示
+
     var nullCookieAni = () => {
       this.nullCookies.forEach((nullcookie, i) => {
         this.tweens.add({
@@ -288,7 +293,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       Promise.all(cookiesAnimate).then((value) => {
         nullCookieAni();
         this.wordSpeaker.play();
-        this.tryAginListenBtn.animate.play();
+        this.tryAginListenBtn.checkout(1);
         this.civaMen.startJumpIn(1, [140]);
       })
       this.cookies.forEach(cookie => {
@@ -375,7 +380,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
-      that.clickSound.play();
+      //that.clickSound.play();
     }
 
 
@@ -383,7 +388,7 @@ export default class Game9PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
-      that.clickSound.play();
+      //that.clickSound.play();
       if (this.hit === 0 || this.hit === 0.5) {
         that.moveTo(this, this.initPosition.x, this.initPosition.y, () => {
           if (this.hit === 0.5) {
@@ -478,6 +483,12 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.civaMen.round.times += 1;
     this.successBtn.setAlpha(1);
     this.successBtn.animate.play();
+    this.tryAginListenBtn.checkout(2);
+    // setTimeout(()=>{
+    //   if(){
+
+    //   }
+    // },5000);
   }
 
   /**
@@ -487,6 +498,7 @@ export default class Game9PlayScene extends Phaser.Scene {
     if (!this.successBtn.interactive) {
       return false;
     }
+    this.tryAginListenBtn.ableTips[1] = 1;
     this.successBtn.interactive = false;
     this.successBtn.animate.stop();
     this.checkoutResult()
