@@ -399,8 +399,17 @@ export default class Game9PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
-    }
 
+      if(this.hit===0){
+        that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+          targets:this,
+          scale:1.2,
+          yoyo:true,
+          duration:100,
+        })
+      }
+     
+    }
 
     DrogEvent.cookieOnDragEnd = function (this: Cookie) {
       if (!this.interactive) {
