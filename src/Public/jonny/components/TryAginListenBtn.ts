@@ -62,6 +62,7 @@ export class TryAginListenBtn extends Button {
       case 2:
         setTimeout(() => {
           if (this.ableTips[1] === 0) {
+            this.ableTips[1] = 1;  //只播放一次
             this.animate();
           }
         }, 5000);

@@ -24,13 +24,7 @@ export default class Game9PlayScene extends Phaser.Scene {
   private cookiesPool: Array<Game9PhoneticSymbol>;
 
   //静态开始
-  private stage: Phaser.GameObjects.Container; // 舞台
   private bgm: Phaser.Sound.BaseSound; //背景音乐
-  private clickSound: Phaser.Sound.BaseSound; //点击音效
-  private correctSound: Phaser.Sound.BaseSound; //正确音效
-  private wrongSound: Phaser.Sound.BaseSound; //错误音效
-  private cover: Phaser.GameObjects.Container;  //封面
-  private bg: Phaser.GameObjects.Image; //背景图片
   private btnExit: Button;  //退出按钮
   private btnSound: ButtonMusic; //音乐按钮
   private originalSoundBtn: Button; //原音按钮
@@ -95,7 +89,6 @@ export default class Game9PlayScene extends Phaser.Scene {
 
   update(time: number, delta: number): void {
     this.btnSound.mountUpdate();
-
   }
 
   /**
@@ -121,20 +114,18 @@ export default class Game9PlayScene extends Phaser.Scene {
       this.playWord.call(that);
     });
 
-    this.bgm = this.sound.add('bgm');
-    this.bgm.addMarker({
-      name: "start",
-      start: 0
-    } as Phaser.Types.Sound.SoundMarker);
-    let config: Phaser.Types.Sound.SoundConfig = {
-      loop: true,
-      volume: vol
+    if (index === 0) {
+      this.bgm = this.sound.add('bgm');
+      this.bgm.addMarker({
+        name: "start",
+        start: 0
+      } as Phaser.Types.Sound.SoundMarker);
+      let config: Phaser.Types.Sound.SoundConfig = {
+        loop: true,
+        volume: vol
+      }
+      this.bgm.play("start", config);
     }
-
-    this.bgm.play("start", config);
-    this.clickSound = this.sound.add('click');
-    this.correctSound = this.sound.add('correct');
-    this.wrongSound = this.sound.add('wrong');
 
     this.planAnims = new PlanAnims(this, this.ccData.length);
     this.gold = new Gold(this, goldValue);   //设置金币
@@ -301,7 +292,6 @@ export default class Game9PlayScene extends Phaser.Scene {
 
     var complete = () => {
       let _cookies = this.trackCircle.cookies.filter((v, i, arr) => arr.indexOf(v) === i);
-      console.log(_cookies);
       if (_cookies.length === this.nullCookies.length) {
         this.trackCircle.cookies = _cookies;
         this.dragEnd();
@@ -318,11 +308,6 @@ export default class Game9PlayScene extends Phaser.Scene {
     */
   private dragEnd(): void {
     console.log("拖拽结束");
-    // this.cookies.forEach(cookie => {
-    //   cookie.off("dragstart");
-    //   cookie.off("drag");
-    //   cookie.off("dragend");
-    // })
     this.successBtn.setAlpha(1);
     this.successBtn.animate.play();
     this.tryAginListenBtn.checkout(2);
@@ -334,7 +319,6 @@ export default class Game9PlayScene extends Phaser.Scene {
   private dragEndCancel(): void {
     console.log("thi is cancel");
     this.successBtn.setAlpha(0);
-    //this.successBtn.animate.stop();
   }
 
   /**
@@ -530,7 +514,6 @@ export default class Game9PlayScene extends Phaser.Scene {
             that.layer2.add(collideCookie);
             collideCookie.interactive = true;
             that.physics.world.enable(collideCookie);
-            this.scanCookie();
           });
         }
       }
