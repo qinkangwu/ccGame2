@@ -15,7 +15,7 @@ export class TrackCircle extends Phaser.GameObjects.Image {
         this.cookies = [];
         return this.scene.tweens.add({
             targets: this,
-            duration: 500,
+            duration: 300,
             x: 1024,
             onUpdate: () => {
                 collisionFuc();
