@@ -657,7 +657,8 @@ export default class Game9PlayScene extends Phaser.Scene {
    */
   private checkoutResult(): Promise<string> {
     return new Promise((resolve, reject) => {
-      let isRight: boolean = this.nullCookies.every((nullCookiev, i) => this.trackCircle.cookies[i] === nullCookiev.name);
+      // let isRight: boolean = this.nullCookies.every((nullCookiev, i) => this.trackCircle.cookies[i] === nullCookiev.name);
+      let isRight: boolean = this.nullCookies.every(nullCookie => nullCookie.cookie.name === nullCookie.name);
       if (isRight) {
         resolve("结果正确");
       } else {
