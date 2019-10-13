@@ -165,7 +165,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.layer0 = new Phaser.GameObjects.Container(this).setDepth(0);
     this.layer1 = new Phaser.GameObjects.Container(this).setDepth(1);
     this.layer1and = new Phaser.GameObjects.Container(this).setDepth(2);
-    this.layer2 = new Phaser.GameObjects.Container(this).setDepth(3);
+    this.layer2 = new Phaser.GameObjects.Container(this).setDepth(3); 
     this.layer3 = new Phaser.GameObjects.Container(this).setDepth(4);
     this.layer3and = new Phaser.GameObjects.Container(this).setDepth(5);
     this.layer4 = new Phaser.GameObjects.Container(this).setDepth(6);
@@ -404,6 +404,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         return false;
       }
       this.x = dragX;
+      console.log(this.x);
       if (this.x >= that.layer2InitX) {
         this.x = that.layer2InitX;
         that.layer3and.x = that.layer3andInitX;
