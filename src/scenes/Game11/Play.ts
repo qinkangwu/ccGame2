@@ -165,10 +165,15 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.layer0 = new Phaser.GameObjects.Container(this).setDepth(0);
     this.layer1 = new Phaser.GameObjects.Container(this).setDepth(1);
     this.layer1and = new Phaser.GameObjects.Container(this).setDepth(2);
-    this.layer2 = new Phaser.GameObjects.Container(this).setDepth(3); 
+    this.layer2 = new Phaser.GameObjects.Container(this).setDepth(3);
     this.layer3 = new Phaser.GameObjects.Container(this).setDepth(4);
     this.layer3and = new Phaser.GameObjects.Container(this).setDepth(5);
     this.layer4 = new Phaser.GameObjects.Container(this).setDepth(6);
+
+    this.layer1and.setPosition(426, 177);
+    this.layer2.setPosition(426, 177);
+    this.layer3and.setPosition(175, 142);
+    this.layer3.setPosition(210, 430);
 
     this.add.existing(this.layer0);
     this.add.existing(this.layer1);
@@ -220,7 +225,6 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.locomotivel.x = 0 + 1000;
     this.locomotivel.y = 127.05;
     this.layer3and.add(this.locomotivel);
-    this.layer3and.setPosition(175, 142);
     this.layer3andInitX = this.layer3and.x;
 
     let vocabularies = this.ccData[index].vocabularies.sort(() => Math.random() - 0.5);
@@ -230,7 +234,6 @@ export default class Game11PlayScene extends Phaser.Scene {
     let _y = 0;
     let offsetX = 220 + 5; // 5 是缝隙
 
-    this.layer3.setPosition(210, 430);
     vocabularies.forEach((data, i) => {
       let _x = offsetX * i;
       let trainBox = new TrainBox(this, _x, _y, "trainBox", data.name, _shape.trainBox);
@@ -270,8 +273,6 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.nullTrainboxs.push(nullTrainbox);
     }
     this.layer1and.add(this.nullTrainboxs);
-    this.layer1and.setPosition(426, 177);
-    this.layer2.setPosition(426, 177);
 
     //坐标点layer2 集合
     this.layer2Coords = (this.layer1and.list as Phaser.GameObjects.Container[]).map(v => {
@@ -356,6 +357,19 @@ export default class Game11PlayScene extends Phaser.Scene {
     })
   }
 
+  /**
+   * 实时刷新容器layer2,layer3的交互区域
+   */
+  private syncHitArea(): void {
+    const TrainboxWIDTH = 319;
+    let layers = [this.layer2, this.layer3];
+    let trainBoxsLength = this.layer3.list.length * TrainboxWIDTH;
+    layers.forEach(layer => {
+      let stageShape = new Phaser.Geom.Rectangle(0, 240 * 0.5 * -1, trainBoxsLength, 240);
+      layer.setInteractive(stageShape, Phaser.Geom.Rectangle.Contains);
+    })
+  }
+
 
   /**
    * 执行滚动条的互动
@@ -363,17 +377,25 @@ export default class Game11PlayScene extends Phaser.Scene {
   private scrollEvent(): void {
     let that = this;
 
-    let trainBoxsLength = this.trainboxs.map(v => (v.list[0] as Phaser.GameObjects.Image).width).reduce((a, b) => a + b + 5);
+    let trainBoxsLength = this.trainboxs.map(v => (v.list[0] as Phaser.GameObjects.Image).width).reduce((a, b) => a + b + 100);
 
     let stageShape = new Phaser.Geom.Rectangle(0, 240 * 0.5 * -1, trainBoxsLength, 240);
 
+    // let shape = new Phaser.GameObjects.Graphics(this);
+    // shape.lineStyle(1,0xff0000);
+    // shape.strokeRectShape(stageShape);
+    //this.layer2.add(shape);
 
-    this.layer2.setInteractive(stageShape, Phaser.Geom.Rectangle.Contains);
-    this.layer2.setData("bounds", this.layer3.getBounds());
 
-    this.layer3.setInteractive(stageShape, Phaser.Geom.Rectangle.Contains);
-    this.layer3.setData("bounds", this.layer3.getBounds());
+    // this.layer2.setInteractive(stageShape, Phaser.Geom.Rectangle.Contains);
+    // this.layer2.setData("bounds", this.layer3.getBounds());
 
+    // this.layer3.setInteractive(stageShape, Phaser.Geom.Rectangle.Contains);
+    // this.layer3.setData("bounds", this.layer3.getBounds());
+
+    // this.syncHitArea(this.layer2);
+    // this.syncHitArea(this.layer3);
+    this.syncHitArea();
     this.input.setDraggable([this.layer2, this.layer3], true);
 
     this.layer2InitX = this.layer2.x;
@@ -381,8 +403,8 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     let layerLimitXFuc: Function = (layer: Phaser.GameObjects.Container): number => {
       //@ts-ignore
-      let _list = (layer.list as TrainBox[]).map(v => v.list[0].width);
-      let _length = _list.length === 0 ? 0 : _list.reduce((a, b) => a + b);
+      let _list = (layer.list as TrainBox[]);
+      let _length = _list.length === 0 ? 0 : 225*(_list.length - 1);
       return _length;
     };
 
@@ -390,13 +412,13 @@ export default class Game11PlayScene extends Phaser.Scene {
     //let layer2LimitX:number;
     let offsetX = that.layer2.x - that.layer3and.x;
 
-    this.layer2.on("dragstart", layerMove2Start);
+    this.layer2.on("dragstart", layerMoveStart);
     this.layer2.on("drag", layerMove2);
+    this.layer3.on("dragstart", layerMoveStart);
     this.layer3.on("drag", layerMove3);
 
-
-    function layerMove2Start() {
-      this.setData("limitX", (layerLimitXFuc(that.layer2)) * -1);
+    function layerMoveStart(this: Phaser.GameObjects.Container, pointer, dragX) {
+      this.setData("limitX", (layerLimitXFuc(this)) * -1);
     }
 
     function layerMove2(this: Phaser.GameObjects.Container, pointer, dragX) {
@@ -404,7 +426,6 @@ export default class Game11PlayScene extends Phaser.Scene {
         return false;
       }
       this.x = dragX;
-      console.log(this.x);
       if (this.x >= that.layer2InitX) {
         this.x = that.layer2InitX;
         that.layer3and.x = that.layer3andInitX;
@@ -417,12 +438,11 @@ export default class Game11PlayScene extends Phaser.Scene {
     }
 
     function layerMove3(this: Phaser.GameObjects.Container, pointer, dragX) {
-      let layer3LimitX = layerLimitXFuc(that.layer3) * -1 + 400;
       this.x = dragX;
       if (this.x >= that.layer3InitX) {
         this.x = that.layer3InitX;
-      } else if (this.x <= layer3LimitX) {
-        this.x = layer3LimitX;
+      } else if (this.x <= this.getData("limitX")) {
+        this.x = this.getData("limitX");
       }
     }
   }
@@ -593,7 +613,7 @@ export default class Game11PlayScene extends Phaser.Scene {
           that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
             duration: 200,
             targets: [that.layer2, that.layer3and],
-            x: `-=225`,
+            x: `-=225`
           });
         }
 
