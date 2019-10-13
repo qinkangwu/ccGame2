@@ -381,20 +381,6 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     let stageShape = new Phaser.Geom.Rectangle(0, 240 * 0.5 * -1, trainBoxsLength, 240);
 
-    // let shape = new Phaser.GameObjects.Graphics(this);
-    // shape.lineStyle(1,0xff0000);
-    // shape.strokeRectShape(stageShape);
-    //this.layer2.add(shape);
-
-
-    // this.layer2.setInteractive(stageShape, Phaser.Geom.Rectangle.Contains);
-    // this.layer2.setData("bounds", this.layer3.getBounds());
-
-    // this.layer3.setInteractive(stageShape, Phaser.Geom.Rectangle.Contains);
-    // this.layer3.setData("bounds", this.layer3.getBounds());
-
-    // this.syncHitArea(this.layer2);
-    // this.syncHitArea(this.layer3);
     this.syncHitArea();
     this.input.setDraggable([this.layer2, this.layer3], true);
 
@@ -409,7 +395,6 @@ export default class Game11PlayScene extends Phaser.Scene {
     };
 
 
-    //let layer2LimitX:number;
     let offsetX = that.layer2.x - that.layer3and.x;
 
     this.layer2.on("dragstart", layerMoveStart);
