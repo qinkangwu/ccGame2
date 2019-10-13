@@ -4,7 +4,7 @@ import { cover, rotateTips, isHit, Vec2 } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Locomotive, TrainBox,NullTrainBox } from '../../Public/jonny/game11';
+import { Locomotive, TrainBox, NullTrainBox } from '../../Public/jonny/game11';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -292,8 +292,8 @@ export default class Game11PlayScene extends Phaser.Scene {
     var nextFuc = () => {
       this.scrollEvent();
       this.dragEvent();
-      //this.tryAginListenBtn.animate.play();
-      this.tipsArrowUpAnimateFuc(this.trainboxs,true);
+      this.tryAginListenBtn.checkout(1);
+      this.tipsArrowUpAnimateFuc(this.trainboxs, true);
       //this.matterCollision();   //可选
     }
 
@@ -312,15 +312,15 @@ export default class Game11PlayScene extends Phaser.Scene {
   /**
    * 箭头动画的显示与隐藏
    */
-  private tipsArrowUpAnimateFuc(list:TrainBox[],display:boolean):void{
-    list.forEach(box=>{
-        if(display){
-           box.tipsArrowUp.setAlpha(1);
-           box.tipsArrowAnimate.resume();
-        }else{
-          box.tipsArrowUp.setAlpha(0);
-          box.tipsArrowAnimate.pause(); 
-        }
+  private tipsArrowUpAnimateFuc(list: TrainBox[], display: boolean): void {
+    list.forEach(box => {
+      if (display) {
+        box.tipsArrowUp.setAlpha(1);
+        box.tipsArrowAnimate.resume();
+      } else {
+        box.tipsArrowUp.setAlpha(0);
+        box.tipsArrowAnimate.pause();
+      }
     })
   }
 
@@ -395,8 +395,8 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.layer3.on("drag", layerMove3);
 
 
-    function layerMove2Start(){
-      this.setData("limitX",(layerLimitXFuc(that.layer2))* -1 );
+    function layerMove2Start() {
+      this.setData("limitX", (layerLimitXFuc(that.layer2)) * -1);
     }
 
     function layerMove2(this: Phaser.GameObjects.Container, pointer, dragX) {
@@ -485,7 +485,7 @@ export default class Game11PlayScene extends Phaser.Scene {
                 layerSource.sort("x"); layerTarget.sort("x");
                 myBox.isHit = false;
                 myBox.interactive = true;
-                that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
+                that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
               }
               );
             }
@@ -523,7 +523,7 @@ export default class Game11PlayScene extends Phaser.Scene {
                 layer.sort("x");
                 myBox.isHit = false;
                 myBox.interactive = true;
-                that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
+                that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
               }
               );
             }
@@ -534,8 +534,8 @@ export default class Game11PlayScene extends Phaser.Scene {
     }
 
     let insert = {
-      upToDown:(myBox:TrainBox)=>{
-        console.log(myBox.getWorldTransformMatrix().tx,myBox.getWorldTransformMatrix().ty);
+      upToDown: (myBox: TrainBox) => {
+        console.log(myBox.getWorldTransformMatrix().tx, myBox.getWorldTransformMatrix().ty);
       }
     }
 
@@ -568,7 +568,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       }
       this.startPosition = new Vec2(pointer.x, pointer.y);
       this.worldTransformMatrix = this.getWorldTransformMatrix();
-      that.tipsArrowUpAnimateFuc(that.trainboxs,false);
+      that.tipsArrowUpAnimateFuc(that.trainboxs, false);
     }
 
 
@@ -582,7 +582,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         that.sort().up(this);
         that.sort().down();
 
-        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
+        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
         this.initPosition = new Vec2(
           this.x,
           this.y
@@ -611,22 +611,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         that.sort().down(this);
         that.sort().up();
 
-        // if (that.layer2.list.length > 2) {
-        //   that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-        //     duration: 200,
-        //     targets: [that.layer2, that.layer3and],
-        //     x: `+=225`,
-        //   });
-        // }
-
-
-        // that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-        //   duration: 200,
-        //   targets: that.layer0,
-        //   x: `+=5`,
-        // });
-
-        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
+        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
         this.initPosition = new Vec2(
           this.x,
           this.y
@@ -636,13 +621,13 @@ export default class Game11PlayScene extends Phaser.Scene {
           this.initPosition.x,
           this.initPosition.y
         );
-        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
+        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
       } else if (this.parentContainer === that.layer2 && this.y < 216) {   // down => down
         this.setPosition(
           this.initPosition.x,
           this.initPosition.y
         );
-        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list),true);
+        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
       }
 
       if (that.checkoutDragEnd() === 0) {     // drog end
@@ -686,6 +671,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     // console.log("拖拽结束");
     this.successBtn.setAlpha(1);
     this.successBtn.animate.play();
+    this.tryAginListenBtn.checkout(2);
   }
 
   /**
