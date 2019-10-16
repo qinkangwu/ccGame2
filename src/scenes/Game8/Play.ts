@@ -62,6 +62,7 @@ export default class Game8PlayScene extends Phaser.Scene {
   
     create(): void {
       new CreateMask(this,()=>{
+        this.playMusic('ListenMusic');
         this.renderTimeout(()=>{
           this.playMusic(this.ccData[this.currentIndex].id);
           this.baitAnims(); //注册动画
@@ -391,6 +392,7 @@ export default class Game8PlayScene extends Phaser.Scene {
         this.moveToHandle(obj);
       }else{
         //错误
+        this.playMusic('wrong');
         this.clickErrorWord(obj);
       }
     }
@@ -593,6 +595,7 @@ export default class Game8PlayScene extends Phaser.Scene {
 
     private chooseEndHandle() : void {
       //成功展示小鱼
+      this.playMusic('wowGoodLuck');
       //@ts-ignore
       this.itemClickHandle.clickLock = true;
       this.playMusic(this.ccData[this.currentIndex].id);

@@ -4,6 +4,8 @@ import apiPath from '../../lib/apiPath';
 import { game5DataItem } from "../../interface/Game5";
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 import { cover } from "../../Public/jonny/core";
+import { Gold } from "../../Public/jonny/components/Gold";
+import { SellingGold } from "../../Public/jonny/components/SellingGold";
 
 const W = 1024;
 const H = 552;
@@ -35,6 +37,11 @@ export default class Game5PlayScene extends Phaser.Scene {
     private lineObj : Phaser.GameObjects.Image ; //四线三格对象 
     private tips : TipsParticlesEmitter; //tip组件
     private tryTimes : number = 0; //尝试了几次
+    private goldNumber : object = {
+      n : 0
+    };
+    private goldObj : Gold ; //金币组件引用
+    private currentGoldNum : number = 0 ; //当前的金币数量
     constructor() {
       super({
         key: "Game5PlayScene"
@@ -47,6 +54,7 @@ export default class Game5PlayScene extends Phaser.Scene {
   
     preload(): void {
       TipsParticlesEmitter.loadImg(this);
+      SellingGold.loadImg(this); //全局组件加载Img
     }
     
   
@@ -65,6 +73,8 @@ export default class Game5PlayScene extends Phaser.Scene {
             this.area.setDepth(0);
           }
         }); //tip组件
+        this.goldObj = new Gold(this,this.currentGoldNum);
+        this.add.existing(this.goldObj);
         this.wordsAnims();//开始游戏展示word
         this.initEmitHandle(); //初始化事件
       });
@@ -150,8 +160,16 @@ export default class Game5PlayScene extends Phaser.Scene {
     private success (flag : boolean) : void {
       if(flag){
         this.tips.success(()=>{
-          this.tryTimes = 0;
-          this.onHandle();
+          let goldAnims = new SellingGold(this,{
+            callback : ()=>{
+              goldAnims.golds.destroy();
+              this.goldObj.setText(this.currentGoldNum+=1);
+              this.tryTimes = 0;
+              this.onHandle();
+            }
+          });
+          goldAnims.golds.setDepth(101);
+          goldAnims.goodJob(1);
         });
       }else{
         this.tryTimes = this.tryTimes + 1 > 2 ? 1 : this.tryTimes + 1;

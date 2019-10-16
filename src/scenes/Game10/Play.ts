@@ -254,6 +254,7 @@ export default class Game10PlayScene extends Phaser.Scene {
       //键盘点击事件
       let obj = args[0];
       if(!(obj instanceof Phaser.GameObjects.Sprite)) return;
+      this.playMusic('clickMp3');
       if(obj.getData('submitBtn')){
         //提交按钮
         obj.play('submit');

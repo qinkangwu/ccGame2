@@ -40,6 +40,7 @@ export default class Game5LoadScene extends Phaser.Scene {
     this.load.image('civa','assets/Game5/civa.png');
     this.load.image('line','assets/Game5/line.png');
     this.load.image('pen','assets/Game5/pen.png');
+    this.load.image('goldValue','assets/commonUI/goldValue.png');
     this.load.multiatlas('icons','assets/Game5/imgsJson.json','assets/Game5');
     // this.load.html('htmlDemo','assets/Game5/demo.html');
     this.load.image('guiji','assets/Game5/guiji2.png');

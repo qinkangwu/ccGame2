@@ -44,6 +44,10 @@ export default class Game8LoadScene extends Phaser.Scene {
     this.load.image('bgi','assets/Game8/bgi.png');
     this.load.image('bmf','assets/Game8/bmf.png');
     this.load.audio('bgm','assets/Game5/bgm.mp3');
+    this.load.audio('clickMp3','assets/Game5/click.mp3');
+    this.load.audio('ListenMusic','assets/sounds/newJoin/ListenToThePronunciationAndSelectTheCorrectPhoneticSymbol.mp3');
+    this.load.audio('wowGoodLuck','assets/sounds/newJoin/wowGoodLuck.mp3');
+    this.load.audio('wrong','assets/sounds/newJoin/wrong.mp3');
     this.load.multiatlas('game8Icons','assets/Game8/imgsJson.json','assets/Game8');
     this.load.multiatlas('game8Icons2','assets/Game8/imgsJson2.json','assets/Game8');
     this.load.image('goldValue','assets/commonUI/goldValue.png');
