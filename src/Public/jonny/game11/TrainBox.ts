@@ -15,6 +15,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
     public movePosition: Vec2;
     public isHit: boolean = false;  //是否被碰撞
     public isDroging:number= 0;  //是否在拖拽的状态
+    public insertObj:Phaser.GameObjects.Container = null; // 插入对象
     public tipsArrowUp:Phaser.GameObjects.Image; //指示
     public tipsArrowAnimate:Phaser.Tweens.Tween; //指示动画
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, text: string, matterShape: object) {
@@ -90,9 +91,10 @@ export class TrainBox extends Phaser.GameObjects.Container {
     }
 
     public setBody() {
+        let offset = 80;
         this.scene.physics.world.enable(this);
-        this.body.setSize(218,193);
-        this.body.setOffset(-218*0.5,-193*0.5);
+        this.body.setSize(218-offset,193-offset);
+        this.body.setOffset(-1*(218-offset)*0.5,-1*(193-offset)*0.5);
         this.body.allowDrag = true;
     }
 
@@ -109,10 +111,14 @@ export class TrainBox extends Phaser.GameObjects.Container {
     public syncBodyBounds():Bounds{
         return new Bounds(
             new Phaser.Geom.Rectangle(
-                this.body.x+100,
-                this.body.y+100,
-                this.body.width-100,
-                this.body.height-100
+                this.body.x,
+                this.body.y,
+                this.body.width,
+                this.body.height
+                // this.body.x+100,
+                // this.body.y+100,
+                // this.body.width-100,
+                // this.body.height-100
             )
         )
     }
