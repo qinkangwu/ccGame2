@@ -541,7 +541,18 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     let insert = {
       upToDown: (myBox: TrainBox) => {
-        console.log(myBox.getWorldTransformMatrix().tx, myBox.getWorldTransformMatrix().ty);
+        //console.log(myBox.getWorldTransformMatrix().tx, myBox.getWorldTransformMatrix().ty);
+        (this.layer3.list as TrainBox[]).forEach(box=>{
+          if (isHit(myBox.syncBodyBounds(), box.syncBodyBounds())) {
+            if(myBox.getWorldTransformMatrix().tx < box.getWorldTransformMatrix().tx && !myBox.isHit){
+              console.log(box.name);
+              if(myBox.insertObj===null){
+                myBox.insertObj = box;
+              }
+              box.x+=2;
+            }
+          } 
+        }) 
       }
     }
 
@@ -556,8 +567,8 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (this.parentContainer === that.layer3 && this.y < -140) {
         collision.downToUp(this);
       } else if (this.parentContainer === that.layer2 && this.y > 140) {
-        insert.upToDown(this);
-        collision.upToDown(this);
+         insert.upToDown(this);
+         //collision.upToDown(this);
       } else if (this.parentContainer === that.layer3 && this.y > -140) {
         collision.leftToRight(this, that.layer3);
       } else if (this.parentContainer === that.layer2 && this.y < 140) {
@@ -614,6 +625,15 @@ export default class Game11PlayScene extends Phaser.Scene {
         that.layer2.remove(this);
         that.layer3.add(this);
 
+        if(this.insertObj!==null){
+          this.setPosition(
+            (this.insertObj as TrainBox).initPosition.x,
+            (this.insertObj as TrainBox).initPosition.y
+          )
+          this.insertObj = null;
+          that.layer3.sort("x");
+        }
+
         that.sort().down(this);
         that.sort().up();
 
@@ -622,18 +642,23 @@ export default class Game11PlayScene extends Phaser.Scene {
           this.x,
           this.y
         );
-      } else if (this.parentContainer === that.layer3 && this.y > -265) {   // up => up
+      } else if (this.parentContainer === that.layer3 && this.y > -265) {   // down => down
         this.setPosition(
           this.initPosition.x,
           this.initPosition.y
         );
         that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
-      } else if (this.parentContainer === that.layer2 && this.y < 216) {   // down => down
+      } else if (this.parentContainer === that.layer2 && this.y < 216) {   // up => up
         this.setPosition(
           this.initPosition.x,
           this.initPosition.y
         );
         that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
+        if(this.insertObj!==null){
+          that.layer3.sort("x");
+          that.sort().down(); 
+          this.insertObj = null;
+        }
       }
 
       if (that.checkoutDragEnd() === 0) {     // drog end
