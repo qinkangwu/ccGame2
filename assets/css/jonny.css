@@ -10,7 +10,7 @@ div#rotateTips {
     position: fixed;
     width: 100%;
     height: 100%;
-    background: black;
+    background: #FF7043;
     top: 0;
     left: 0;
 }
@@ -20,7 +20,7 @@ img.rotateTipsImg {
   height: 30vw;
   left: 35vw;
   top: calc((100vh - 30vw) / 2 - 13vh);
-  top: -webkit-calc((100vh - 30vw) / 2 - 13vh);
+  top: -webkit-calc((100vh - 30vw) / 2);
   -webkit-animation-name: rotate;
   animation-name: rotate;
   -webkit-animation-duration: 0.75s;
@@ -34,9 +34,9 @@ img.rotateTipsImg {
   text-align: center;
   font-size: 1rem;
   letter-spacing: 0.2rem;
-  background: #484848;
-  padding: 10% 0%;
-  top: 62%;
+  background: #BF360C;
+  padding: 5% 0%;
+  top: 0%;
   position: absolute;
 }
 
