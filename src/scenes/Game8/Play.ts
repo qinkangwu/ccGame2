@@ -180,7 +180,7 @@ export default class Game8PlayScene extends Phaser.Scene {
     private renderLeftUI(init : boolean) : void {
       for(let i = 0 ; i < this.ccData[this.currentIndex].phoneticSymbols.length; i ++ ){
         this.leftPopArr.push(
-          this.add.image(55 - (init ? 200 : 0 ),H - 145 - ((i) * 65),'game8Icons2',`smallPop${i + 1}.png`)
+          this.add.image(55 - (init ? 200 : 0 ),H - 145 - ((i) * 65),`smallPop${i + 1}`)
             .setOrigin(.5)
             .setDisplaySize(60,60)
         )
@@ -189,12 +189,12 @@ export default class Game8PlayScene extends Phaser.Scene {
 
     private renderFishAndTimer () : void {
       this.goldObj.x = this.goldObj.x + 200;
-      this.smallFishMenu = this.add.image(971.45 + 200,339.25,'game8Icons2','smf.png').setOrigin(.5).setDisplaySize(75,66);
+      this.smallFishMenu = this.add.image(971.45 + 200,339.25,'smf').setOrigin(.5).setDisplaySize(75,66);
       this.smallFishText = this.add.text(this.smallFishMenu.x + 4,this.smallFishMenu.y + 19,`0/${this.ccData.length}`,{
         font: 'Bold 16px Arial Rounded MT',
         fill : '#ffffff',
       }).setOrigin(.5);
-      this.timerObj = this.add.image(971.45 + 200,244.5,'game8Icons2','timeout.png').setOrigin(.5);
+      this.timerObj = this.add.image(971.45 + 200,244.5,'timeout').setOrigin(.5).setDisplaySize(60,63);
       this.timerText = this.add.text(this.timerObj.x - 15,this.timerObj.y + 9,this.s_to_hs(this.timerNum),{
         fontSize: "14px",
         fontFamily:"Arial Rounded MT Bold",
@@ -518,7 +518,7 @@ export default class Game8PlayScene extends Phaser.Scene {
 
     private createSmallPopHandle (name : string) : void {
       //选择相应气泡 渲染到左边
-      this.choosePopArr[this.leftUiIndex] = this.add.image(this.leftPopArr[this.leftUiIndex].x,this.leftPopArr[this.leftUiIndex].y,'game8Icons2','smallPop.png')
+      this.choosePopArr[this.leftUiIndex] = this.add.image(this.leftPopArr[this.leftUiIndex].x,this.leftPopArr[this.leftUiIndex].y,'smallPop')
                                                 .setOrigin(.5)
                                                 .setDisplaySize(0,0)
                                                 .setDepth(100)

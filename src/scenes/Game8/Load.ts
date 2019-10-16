@@ -43,6 +43,13 @@ export default class Game8LoadScene extends Phaser.Scene {
   preload(): void {
     this.load.image('bgi','assets/Game8/bgi.png');
     this.load.image('bmf','assets/Game8/bmf.png');
+    this.load.image('smf','assets/Game8/smf.png');
+    this.load.image('smallPop','assets/Game8/smallPop.png');
+    this.load.image('timeout','assets/Game8/timeout.png');
+    this.load.image('smallPop1','assets/Game8/smallPop1.png');
+    this.load.image('smallPop2','assets/Game8/smallPop2.png');
+    this.load.image('smallPop3','assets/Game8/smallPop3.png');
+    this.load.image('smallPop4','assets/Game8/smallPop4.png');
     this.load.audio('bgm','assets/Game5/bgm.mp3');
     this.load.audio('clickMp3','assets/Game5/click.mp3');
     this.load.audio('ListenMusic','assets/sounds/newJoin/ListenToThePronunciationAndSelectTheCorrectPhoneticSymbol.mp3');
