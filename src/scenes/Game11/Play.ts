@@ -346,8 +346,8 @@ export default class Game11PlayScene extends Phaser.Scene {
   /**
    * 移动程序
    */
-  public moveTo(obj, x: number, y: number, duration: number = 500, callback: any = () => { }) {
-    this.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+  public moveTo(obj, x: number, y: number, duration: number = 500, callback: any = () => { }):Phaser.Tweens.Tween{
+   let _tween = this.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
       targets: obj,
       x: x,
       y: y,
@@ -355,6 +355,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       ease: "Sine.easeOut",
       onComplete: callback
     })
+    return _tween;
   }
 
   /**
@@ -390,7 +391,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     let layerLimitXFuc: Function = (layer: Phaser.GameObjects.Container): number => {
       //@ts-ignore
       let _list = (layer.list as TrainBox[]);
-      let _length = _list.length === 0 ? 0 : 225*(_list.length - 1);
+      let _length = _list.length === 0 ? 0 : 225 * (_list.length - 1);
       return _length;
     };
 
@@ -542,17 +543,18 @@ export default class Game11PlayScene extends Phaser.Scene {
     let insert = {
       upToDown: (myBox: TrainBox) => {
         //console.log(myBox.getWorldTransformMatrix().tx, myBox.getWorldTransformMatrix().ty);
-        (this.layer3.list as TrainBox[]).forEach(box=>{
+        (this.layer3.list as TrainBox[]).forEach(box => {
           if (isHit(myBox.syncBodyBounds(), box.syncBodyBounds())) {
-            if(myBox.getWorldTransformMatrix().tx < box.getWorldTransformMatrix().tx && !myBox.isHit){
+            if (myBox.getWorldTransformMatrix().tx < box.getWorldTransformMatrix().tx && !myBox.isHit) {
               console.log(box.name);
-              if(myBox.insertObj===null){
+              myBox.isHit = true;
+              if (myBox.insertObj === null) {
                 myBox.insertObj = box;
+                that.moveTo(box,box.x + 225*0.5,box.y);
               }
-              box.x+=2;
             }
-          } 
-        }) 
+          }
+        })
       }
     }
 
@@ -567,8 +569,8 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (this.parentContainer === that.layer3 && this.y < -140) {
         collision.downToUp(this);
       } else if (this.parentContainer === that.layer2 && this.y > 140) {
-         insert.upToDown(this);
-         //collision.upToDown(this);
+        insert.upToDown(this);
+        //collision.upToDown(this);
       } else if (this.parentContainer === that.layer3 && this.y > -140) {
         collision.leftToRight(this, that.layer3);
       } else if (this.parentContainer === that.layer2 && this.y < 140) {
@@ -625,11 +627,12 @@ export default class Game11PlayScene extends Phaser.Scene {
         that.layer2.remove(this);
         that.layer3.add(this);
 
-        if(this.insertObj!==null){
+        if (this.insertObj !== null) {
           this.setPosition(
             (this.insertObj as TrainBox).initPosition.x,
             (this.insertObj as TrainBox).initPosition.y
           )
+          this.isHit = false;
           this.insertObj = null;
           that.layer3.sort("x");
         }
@@ -654,9 +657,10 @@ export default class Game11PlayScene extends Phaser.Scene {
           this.initPosition.y
         );
         that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
-        if(this.insertObj!==null){
+        if (this.insertObj !== null) {
+          this.isHit = false;
           that.layer3.sort("x");
-          that.sort().down(); 
+          that.sort().down();
           this.insertObj = null;
         }
       }
