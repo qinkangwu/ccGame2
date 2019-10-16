@@ -542,7 +542,6 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     let insert = {
       upToDown: (myBox: TrainBox) => {
-        //console.log(myBox.getWorldTransformMatrix().tx, myBox.getWorldTransformMatrix().ty);
         (this.layer3.list as TrainBox[]).forEach(box => {
           if (isHit(myBox.syncBodyBounds(), box.syncBodyBounds())) {
             if (myBox.getWorldTransformMatrix().tx < box.getWorldTransformMatrix().tx && !myBox.isHit) {
