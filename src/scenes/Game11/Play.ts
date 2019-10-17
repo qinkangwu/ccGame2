@@ -554,6 +554,20 @@ export default class Game11PlayScene extends Phaser.Scene {
             }
           }
         })
+      },
+      downToUp: (myBox: TrainBox) => {
+        (this.layer2.list as TrainBox[]).forEach(box => {
+          if (isHit(myBox.syncBodyBounds(), box.syncBodyBounds())) {
+            if (myBox.getWorldTransformMatrix().tx < box.getWorldTransformMatrix().tx && !myBox.isHit) {
+              console.log(box.name);
+              myBox.isHit = true;
+              if (myBox.insertObj === null) {
+                myBox.insertObj = box;
+                that.moveTo(box, box.x + 225 * 0.5, box.y);
+              }
+            }
+          }
+        })
       }
     }
 
@@ -566,7 +580,8 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.x = dragX;
       this.y = dragY;
       if (this.parentContainer === that.layer3 && this.y < -140) {
-        collision.downToUp(this);
+        //collision.downToUp(this);
+        insert.downToUp(this);
       } else if (this.parentContainer === that.layer2 && this.y > 140) {
         insert.upToDown(this);
         //collision.upToDown(this);
@@ -599,6 +614,16 @@ export default class Game11PlayScene extends Phaser.Scene {
         that.layer2.add(this);
         that.sort().up(this);
         that.sort().down();
+
+        if (this.insertObj !== null) {
+          this.setPosition(
+            (this.insertObj as TrainBox).initPosition.x,
+            (this.insertObj as TrainBox).initPosition.y
+          )
+          this.isHit = false;
+          this.insertObj = null;
+          that.layer2.sort("x");
+        }
 
         that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
         this.initPosition = new Vec2(
@@ -650,6 +675,13 @@ export default class Game11PlayScene extends Phaser.Scene {
           this.initPosition.y
         );
         that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
+        if (this.insertObj !== null) {
+          console.log("here");
+          this.isHit = false;
+          that.layer2.sort("x");
+          that.sort().up();
+          this.insertObj = null;
+        }
       } else if (this.parentContainer === that.layer2 && this.y < 216) {   // up => up
         this.setPosition(
           this.initPosition.x,
