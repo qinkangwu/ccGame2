@@ -41,6 +41,8 @@ export default class Game12LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
+    this.load.audio('clickMp3','assets/Game5/click.mp3');
+    this.load.audio('wrong','assets/sounds/newJoin/wrong.mp3');
     this.load.audio('bgm','assets/Game7/bgm.mp3');
     this.load.image('bgi','assets/Game12/bgi.png');
     this.load.image('content','assets/Game12/content.png');
@@ -66,8 +68,7 @@ export default class Game12LoadScene extends Phaser.Scene {
   private getData () : void {
     //获取数据
     get(apiPath.getWordClass).then(res=>{
-      console.log(res);
-      // res && res.code === '0000' && (this.ccData = res.result);
+      res && res.code === '0000' && (this.ccData = res.result);
       this.dataLoadDone = true;
     })
   }
@@ -86,7 +87,9 @@ export default class Game12LoadScene extends Phaser.Scene {
             //   duration : 500,
             //   alpha : 0
             // })
-            this.scene.start('Game12PlayScene');
+            this.scene.start('Game12PlayScene',{
+              data : this.ccData
+            });
           }
           return;
         }

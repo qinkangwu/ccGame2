@@ -88,7 +88,7 @@ export default class TipsParticlesEmitter {
           ]
         });
         this.scene.time.addEvent({
-          delay : 1000,
+          delay : 2000,
           callback : ()=>{
             this.clearHandle();
             cb && cb.call(this.scene);
