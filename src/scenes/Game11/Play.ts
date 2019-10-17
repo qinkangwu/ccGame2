@@ -346,8 +346,8 @@ export default class Game11PlayScene extends Phaser.Scene {
   /**
    * 移动程序
    */
-  public moveTo(obj, x: number, y: number, duration: number = 500, callback: any = () => { }):Phaser.Tweens.Tween{
-   let _tween = this.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+  public moveTo(obj, x: number, y: number, duration: number = 500, callback: any = () => { }): Phaser.Tweens.Tween {
+    let _tween = this.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
       targets: obj,
       x: x,
       y: y,
@@ -549,7 +549,21 @@ export default class Game11PlayScene extends Phaser.Scene {
               myBox.isHit = true;
               if (myBox.insertObj === null) {
                 myBox.insertObj = box;
-                that.moveTo(box,box.x + 225*0.5,box.y);
+                that.moveTo(box, box.x + 225 * 0.5, box.y);
+              }
+            }
+          }
+        })
+      },
+      downToUp: (myBox: TrainBox) => {
+        (this.layer2.list as TrainBox[]).forEach(box => {
+          if (isHit(myBox.syncBodyBounds(), box.syncBodyBounds())) {
+            if (myBox.getWorldTransformMatrix().tx < box.getWorldTransformMatrix().tx && !myBox.isHit) {
+              console.log(box.name);
+              myBox.isHit = true;
+              if (myBox.insertObj === null) {
+                myBox.insertObj = box;
+                that.moveTo(box, box.x + 225 * 0.5, box.y);
               }
             }
           }
@@ -565,14 +579,16 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.movePosition = new Vec2(dragX, dragY);
       this.x = dragX;
       this.y = dragY;
-      if (this.parentContainer === that.layer3 && this.y < -140) {
-        collision.downToUp(this);
-      } else if (this.parentContainer === that.layer2 && this.y > 140) {
+      console.log(this.y);
+      if (this.parentContainer === that.layer3 && this.y < -140) {    //down to up
+        //collision.downToUp(this);
+        insert.downToUp(this);
+      } else if (this.parentContainer === that.layer2 && this.y > 140) {    //up to down
         insert.upToDown(this);
         //collision.upToDown(this);
-      } else if (this.parentContainer === that.layer3 && this.y > -140) {
+      } else if (this.parentContainer === that.layer3 && this.y > -20) {   //down => left to right
         collision.leftToRight(this, that.layer3);
-      } else if (this.parentContainer === that.layer2 && this.y < 140) {
+      } else if (this.parentContainer === that.layer2 && this.y < 20) {    //up => left to right
         collision.leftToRight(this, that.layer2);
       }
     }
@@ -594,11 +610,21 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
-      if (this.parentContainer === that.layer3 && this.y < -265) {    // down => up
+      if (this.parentContainer === that.layer3 && this.y < -140) {    // down => up
         that.layer3.remove(this);
         that.layer2.add(this);
         that.sort().up(this);
         that.sort().down();
+
+        if (this.insertObj !== null) {
+          this.setPosition(
+            (this.insertObj as TrainBox).initPosition.x,
+            (this.insertObj as TrainBox).initPosition.y
+          )
+          this.isHit = false;
+          this.insertObj = null;
+          that.layer2.sort("x");
+        }
 
         that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
         this.initPosition = new Vec2(
@@ -622,7 +648,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         });
 
 
-      } else if (this.parentContainer === that.layer2 && this.y > 216) {   // up => down
+      } else if (this.parentContainer === that.layer2 && this.y > 140) {   // up => down
         that.layer2.remove(this);
         that.layer3.add(this);
 
@@ -650,6 +676,13 @@ export default class Game11PlayScene extends Phaser.Scene {
           this.initPosition.y
         );
         that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
+        if (this.insertObj !== null) {
+          console.log("here");
+          this.isHit = false;
+          that.layer2.sort("x");
+          that.sort().up();
+          this.insertObj = null;
+        }
       } else if (this.parentContainer === that.layer2 && this.y < 216) {   // up => up
         this.setPosition(
           this.initPosition.x,
