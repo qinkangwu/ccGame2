@@ -579,15 +579,16 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.movePosition = new Vec2(dragX, dragY);
       this.x = dragX;
       this.y = dragY;
+      console.log(this.y);
       if (this.parentContainer === that.layer3 && this.y < -140) {    //down to up
         //collision.downToUp(this);
         insert.downToUp(this);
       } else if (this.parentContainer === that.layer2 && this.y > 140) {    //up to down
         insert.upToDown(this);
         //collision.upToDown(this);
-      } else if (this.parentContainer === that.layer3 && this.y > -140) {   //down => left to right
+      } else if (this.parentContainer === that.layer3 && this.y > -20) {   //down => left to right
         collision.leftToRight(this, that.layer3);
-      } else if (this.parentContainer === that.layer2 && this.y < 140) {    //up => left to right
+      } else if (this.parentContainer === that.layer2 && this.y < 20) {    //up => left to right
         collision.leftToRight(this, that.layer2);
       }
     }
