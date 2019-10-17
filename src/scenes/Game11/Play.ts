@@ -346,8 +346,8 @@ export default class Game11PlayScene extends Phaser.Scene {
   /**
    * 移动程序
    */
-  public moveTo(obj, x: number, y: number, duration: number = 500, callback: any = () => { }):Phaser.Tweens.Tween{
-   let _tween = this.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+  public moveTo(obj, x: number, y: number, duration: number = 500, callback: any = () => { }): Phaser.Tweens.Tween {
+    let _tween = this.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
       targets: obj,
       x: x,
       y: y,
@@ -549,7 +549,7 @@ export default class Game11PlayScene extends Phaser.Scene {
               myBox.isHit = true;
               if (myBox.insertObj === null) {
                 myBox.insertObj = box;
-                that.moveTo(box,box.x + 225*0.5,box.y);
+                that.moveTo(box, box.x + 225 * 0.5, box.y);
               }
             }
           }
