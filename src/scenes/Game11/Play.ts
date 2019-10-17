@@ -579,15 +579,15 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.movePosition = new Vec2(dragX, dragY);
       this.x = dragX;
       this.y = dragY;
-      if (this.parentContainer === that.layer3 && this.y < -140) {
+      if (this.parentContainer === that.layer3 && this.y < -140) {    //down to up
         //collision.downToUp(this);
         insert.downToUp(this);
-      } else if (this.parentContainer === that.layer2 && this.y > 140) {
+      } else if (this.parentContainer === that.layer2 && this.y > 140) {    //up to down
         insert.upToDown(this);
         //collision.upToDown(this);
-      } else if (this.parentContainer === that.layer3 && this.y > -140) {
+      } else if (this.parentContainer === that.layer3 && this.y > -140) {   //down => left to right
         collision.leftToRight(this, that.layer3);
-      } else if (this.parentContainer === that.layer2 && this.y < 140) {
+      } else if (this.parentContainer === that.layer2 && this.y < 140) {    //up => left to right
         collision.leftToRight(this, that.layer2);
       }
     }
@@ -609,7 +609,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
-      if (this.parentContainer === that.layer3 && this.y < -265) {    // down => up
+      if (this.parentContainer === that.layer3 && this.y < -140) {    // down => up
         that.layer3.remove(this);
         that.layer2.add(this);
         that.sort().up(this);
@@ -647,7 +647,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         });
 
 
-      } else if (this.parentContainer === that.layer2 && this.y > 216) {   // up => down
+      } else if (this.parentContainer === that.layer2 && this.y > 140) {   // up => down
         that.layer2.remove(this);
         that.layer3.add(this);
 
