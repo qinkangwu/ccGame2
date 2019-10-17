@@ -450,7 +450,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     }
 
     return {
-      up: (box: TrainBox = null) => {
+      up: (box: TrainBox = null) =>{
         if (this.layer2.list, this.layer2.list[0] === undefined) {
           return false;
         }
@@ -670,6 +670,20 @@ export default class Game11PlayScene extends Phaser.Scene {
           this.x,
           this.y
         );
+        if (that.layer2.list.length > 2) {
+          that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+            duration: 200,
+            targets: [that.layer2, that.layer3and],
+            x: `+=225`,
+            delay: 400
+          });
+          that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+            duration: 200,
+            targets: that.layer0,
+            x: `+=5`,
+            delay: 400
+          });
+        }
       } else if (this.parentContainer === that.layer3 && this.y > -265) {   // down => down
         this.setPosition(
           this.initPosition.x,
