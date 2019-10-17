@@ -91,7 +91,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
     }
 
     public setBody() {
-        let offset = 80;
+        let offset = 150;
         this.scene.physics.world.enable(this);
         this.body.setSize(218-offset,193-offset);
         this.body.setOffset(-1*(218-offset)*0.5,-1*(193-offset)*0.5);
