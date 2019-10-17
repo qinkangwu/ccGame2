@@ -691,7 +691,6 @@ export default class Game11PlayScene extends Phaser.Scene {
         );
         that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
         if (this.insertObj !== null) {
-          console.log("here");
           this.isHit = false;
           that.layer2.sort("x");
           that.sort().up();

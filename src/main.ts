@@ -37,7 +37,7 @@ const initHandle = (arr : object[],physics:string) : void=>{
       }
     },
     render:{
-      antialias:true
+      antialias:true,
     },
     //resolution:2,
     //transparent : true,
