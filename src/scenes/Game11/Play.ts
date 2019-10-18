@@ -517,9 +517,9 @@ export default class Game11PlayScene extends Phaser.Scene {
             if (!myBox.isHit) {
               console.log("碰撞");
               myBox.isHit = true;
-                let _myBoxInitPosition = Object.assign({},myBox.initPosition);
-                myBox.initPosition.x = box.initPosition.x;
-                myBox.initPosition.y = box.initPosition.y;
+              let _myBoxInitPosition = Object.assign({}, myBox.initPosition);
+              myBox.initPosition.x = box.initPosition.x;
+              myBox.initPosition.y = box.initPosition.y;
               that.moveTo(box, _myBoxInitPosition.x, _myBoxInitPosition.y, 500, () => {
                 myBox.initPosition.x = box.initPosition.x;
                 myBox.initPosition.y = box.initPosition.y;
@@ -566,6 +566,30 @@ export default class Game11PlayScene extends Phaser.Scene {
       }
     }
 
+    let drogEndFuc = {
+      UpDown: (parentLayer: Phaser.GameObjects.Container, targetLayer: Phaser.GameObjects.Container, box: TrainBox) => {
+          /**
+           * 暂时保留
+           */
+      },
+      leftRight: (box: TrainBox, layer: Phaser.GameObjects.Container) => {
+        box.setPosition(
+          box.initPosition.x,
+          box.initPosition.y
+        );
+
+        if (box.insertObj !== null) {
+          box.isHit = false;
+          layer.sort("x");
+          that.sort().up();
+          that.sort().down();
+          box.insertObj = null;
+        }
+
+        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
+      }
+    }
+
 
     DrogEvent.onDrag = function (this: TrainBox, pointer, dragX, dragY) {
       if (!this.interactive) {
@@ -574,13 +598,10 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.movePosition = new Vec2(dragX, dragY);
       this.x = dragX;
       this.y = dragY;
-      console.log(this.y);
       if (this.parentContainer === that.layer3 && this.y < -140) {    //down to up
-        //collision.downToUp(this);
         insert.downToUp(this);
       } else if (this.parentContainer === that.layer2 && this.y > 140) {    //up to down
         insert.upToDown(this);
-        //collision.upToDown(this);
       } else if (this.parentContainer === that.layer3 && this.y > -20) {   //down => left to right
         collision.leftToRight(this, that.layer3);
       } else if (this.parentContainer === that.layer2 && this.y < 20) {    //up => left to right
@@ -606,43 +627,43 @@ export default class Game11PlayScene extends Phaser.Scene {
         return false;
       }
       if (this.parentContainer === that.layer3 && this.y < -140) {    // down => up
-        that.layer3.remove(this);
-        that.layer2.add(this);
-        that.sort().up(this);
-        that.sort().down();
+          that.layer3.remove(this);
+          that.layer2.add(this);
+          if (this.insertObj !== null) {
+            this.setPosition(
+              (this.insertObj as TrainBox).initPosition.x,
+              (this.insertObj as TrainBox).initPosition.y
+            )
+            this.isHit = false;
+            this.insertObj = null;
+            that.layer2.sort("x");
+            that.layer3.sort("x");
+          }
 
-        if (this.insertObj !== null) {
-          this.setPosition(
-            (this.insertObj as TrainBox).initPosition.x,
-            (this.insertObj as TrainBox).initPosition.y
-          )
-          this.isHit = false;
-          this.insertObj = null;
-          that.layer2.sort("x");
-        }
+          that.sort().up(this);
+          that.sort().down();
 
-        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
-        this.initPosition = new Vec2(
-          this.x,
-          this.y
-        );
+          that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
 
-        if (that.layer2.list.length > 2) {
+          this.initPosition = new Vec2(
+            this.x,
+            this.y
+          );
+
+          if (that.layer2.list.length > 2) {
+            that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
+              duration: 200,
+              targets: [that.layer2, that.layer3and],
+              x: `-=225`
+            });
+          }
+
+
           that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
             duration: 200,
-            targets: [that.layer2, that.layer3and],
-            x: `-=225`
+            targets: that.layer0,
+            x: `-=5`,
           });
-        }
-
-
-        that.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
-          duration: 200,
-          targets: that.layer0,
-          x: `-=5`,
-        });
-
-
       } else if (this.parentContainer === that.layer2 && this.y > 140) {   // up => down
         that.layer2.remove(this);
         that.layer3.add(this);
@@ -677,32 +698,12 @@ export default class Game11PlayScene extends Phaser.Scene {
             targets: that.layer0,
             x: `+=5`,
             delay: 400
-          });
+         });
         }
       } else if (this.parentContainer === that.layer3 && this.y > -265) {   // down => down
-        this.setPosition(
-          this.initPosition.x,
-          this.initPosition.y
-        );
-        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
-        if (this.insertObj !== null) {
-          this.isHit = false;
-          that.layer2.sort("x");
-          that.sort().up();
-          this.insertObj = null;
-        }
+        drogEndFuc.leftRight(this, that.layer3);
       } else if (this.parentContainer === that.layer2 && this.y < 216) {   // up => up
-        this.setPosition(
-          this.initPosition.x,
-          this.initPosition.y
-        );
-        that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
-        if (this.insertObj !== null) {
-          this.isHit = false;
-          that.layer3.sort("x");
-          that.sort().down();
-          this.insertObj = null;
-        }
+        drogEndFuc.leftRight(this, that.layer2);
       }
 
       if (that.checkoutDragEnd() === 0) {     // drog end
