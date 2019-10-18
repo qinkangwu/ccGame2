@@ -450,7 +450,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     }
 
     return {
-      up: (box: TrainBox = null) =>{
+      up: (box: TrainBox = null) => {
         if (this.layer2.list, this.layer2.list[0] === undefined) {
           return false;
         }
@@ -516,23 +516,18 @@ export default class Game11PlayScene extends Phaser.Scene {
           if (isHit(myBox.syncBodyBounds(), box.syncBodyBounds())) {
             if (!myBox.isHit) {
               console.log("碰撞");
-              myBox.interactive = false;
               myBox.isHit = true;
-              let boxX = box.x;
-              let boxY = box.y;
-              myBox.x = boxX;
-              myBox.y = boxY;
-              that.moveTo(box, myBox.initPosition.x, myBox.initPosition.y, 500, () => {
+                let _myBoxInitPosition = Object.assign({},myBox.initPosition);
+                myBox.initPosition.x = box.initPosition.x;
+                myBox.initPosition.y = box.initPosition.y;
+              that.moveTo(box, _myBoxInitPosition.x, _myBoxInitPosition.y, 500, () => {
+                myBox.initPosition.x = box.initPosition.x;
+                myBox.initPosition.y = box.initPosition.y;
                 box.initPosition.x = box.x;
                 box.initPosition.y = box.y;
-                myBox.initPosition.x = myBox.x;
-                myBox.initPosition.y = myBox.y;
-                layer.sort("x");
                 myBox.isHit = false;
-                myBox.interactive = true;
-                that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
-              }
-              );
+                layer.sort("x");
+              });
             }
           }
         })
@@ -691,7 +686,6 @@ export default class Game11PlayScene extends Phaser.Scene {
         );
         that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
         if (this.insertObj !== null) {
-          console.log("here");
           this.isHit = false;
           that.layer2.sort("x");
           that.sort().up();
