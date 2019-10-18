@@ -25,7 +25,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, texture);
         this.text = new Phaser.GameObjects.BitmapText(scene, 0, 0 - 28, "ArialRoundedBold30", text, 30).setOrigin(0.5);
         this.text.tint = 0xFF7F3A;
-        this.shape = new Phaser.Geom.Circle(0, 0, 193 * 0.5);
+        this.shape = new Phaser.Geom.Circle(0, 0-20, 193 * 0.25);
         this.tipsArrowUp = new Phaser.GameObjects.Image(scene,0,-117,"tipsArrowUp");
         this.tipsArrowAnimate = this.scene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
             targets:this.tipsArrowUp,
