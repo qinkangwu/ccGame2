@@ -470,41 +470,41 @@ export default class Game11PlayScene extends Phaser.Scene {
     let working: boolean = false;   //碰撞器是否在工作
 
     let collision = {
-      replace: (myBox: TrainBox, layerSource: Phaser.GameObjects.Container, layerTarget: Phaser.GameObjects.Container) => {
-        (layerTarget.list as TrainBox[]).forEach(box => {
-          if (isHit(myBox.syncBodyBounds(), box.syncBodyBounds())) {
-            if (!myBox.isHit) {
-              myBox.interactive = false;
-              myBox.isHit = true;
-              let boxX = box.getWorldTransformMatrix().tx - layerSource.x;
-              let boxY = box.getWorldTransformMatrix().ty - layerSource.y;
-              myBox.x = boxX;
-              myBox.y = boxY;
-              that.moveTo(box, myBox.worldTransformMatrix.tx - layerTarget.x, myBox.worldTransformMatrix.ty - layerTarget.y, 500, () => {
-                layerTarget.remove(box); layerSource.add(box);
-                layerSource.remove(myBox); layerTarget.add(myBox);
-                let _boxX = box.initPosition.x;
-                let _boxY = box.initPosition.y;
-                box.initPosition.x = box.x = myBox.initPosition.x;
-                box.initPosition.y = box.y = myBox.initPosition.y;
-                myBox.initPosition.x = myBox.x = _boxX;
-                myBox.initPosition.y = myBox.y = _boxY;
-                layerSource.sort("x"); layerTarget.sort("x");
-                myBox.isHit = false;
-                myBox.interactive = true;
-                that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
-              }
-              );
-            }
-          }
-        })
-      },
-      downToUp: (myBox: TrainBox) => {
-        collision.replace(myBox, this.layer3, this.layer2);
-      },
-      upToDown: (myBox: TrainBox) => {
-        collision.replace(myBox, this.layer2, this.layer3);
-      },
+      //replace: (myBox: TrainBox, layerSource: Phaser.GameObjects.Container, layerTarget: Phaser.GameObjects.Container) => {
+        // (layerTarget.list as TrainBox[]).forEach(box => {
+        //   if (isHit(myBox.syncBodyBounds(), box.syncBodyBounds())) {
+        //     if (!myBox.isHit) {
+        //       myBox.interactive = false;
+        //       myBox.isHit = true;
+        //       let boxX = box.getWorldTransformMatrix().tx - layerSource.x;
+        //       let boxY = box.getWorldTransformMatrix().ty - layerSource.y;
+        //       myBox.x = boxX;
+        //       myBox.y = boxY;
+        //       that.moveTo(box, myBox.worldTransformMatrix.tx - layerTarget.x, myBox.worldTransformMatrix.ty - layerTarget.y, 500, () => {
+        //         layerTarget.remove(box); layerSource.add(box);
+        //         layerSource.remove(myBox); layerTarget.add(myBox);
+        //         let _boxX = box.initPosition.x;
+        //         let _boxY = box.initPosition.y;
+        //         box.initPosition.x = box.x = myBox.initPosition.x;
+        //         box.initPosition.y = box.y = myBox.initPosition.y;
+        //         myBox.initPosition.x = myBox.x = _boxX;
+        //         myBox.initPosition.y = myBox.y = _boxY;
+        //         layerSource.sort("x"); layerTarget.sort("x");
+        //         myBox.isHit = false;
+        //         myBox.interactive = true;
+        //         that.tipsArrowUpAnimateFuc(<TrainBox[]>(that.layer3.list), true);
+        //       }
+        //       );
+        //     }
+        //   }
+        // })
+      //},
+      // downToUp: (myBox: TrainBox) => {
+      //   //collision.replace(myBox, this.layer3, this.layer2);
+      // },
+      // upToDown: (myBox: TrainBox) => {
+      //   //collision.replace(myBox, this.layer2, this.layer3);
+      // },
       leftToRight: (myBox: TrainBox, layer: Phaser.GameObjects.Container) => {
         let _layerList = layer.list.filter(v => {
           if (v !== myBox) {
