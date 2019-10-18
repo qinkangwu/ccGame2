@@ -38,7 +38,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
         this.add([this.tipsArrowUp,this.bg, this.text]);
         this.init();
         this.setBody();
-        //this.drawHitArea();
+        this.drawHitArea();
     }
 
     private init() {
