@@ -18,7 +18,9 @@ const initHandle = (arr : object[],physics:string) : void=>{
     parent: 'content',
     scale: {
       mode: Phaser.Scale.FIT,
-      autoCenter: Phaser.Scale.CENTER_BOTH
+      autoCenter: Phaser.Scale.CENTER_BOTH,
+      width : 1024,
+      height : 552
     },
     dom : {
       createContainer : true

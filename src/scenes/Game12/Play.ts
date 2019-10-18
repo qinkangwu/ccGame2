@@ -3,6 +3,8 @@ import apiPath from '../../lib/apiPath';
 import CreateBtnClass from '../../Public/CreateBtnClass';
 import CreateMask from '../../Public/CreateMask';
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
+import { Gold } from "../../Public/jonny/components/Gold";
+import { SellingGold } from "../../Public/jonny/components/SellingGold";
 import { Item } from '../../interface/Game12';
 
 const W = 1024;
@@ -21,6 +23,7 @@ export default class Game12PlayScene extends Phaser.Scene {
     private max : number = 10; //最大值
     private dragX : number = 0 ; //拖拽x
     private dragY : number = 0 ; //拖拽y
+    private goldObj : Gold ; //金币组件引用
     private objCurrentX : number = 0 ; //对象当前的x
     private objCurrentY : number = 0 ; //对象当前的y
     private obj2CurrentX : number = 0 ; //文本对象当前的x
@@ -31,6 +34,9 @@ export default class Game12PlayScene extends Phaser.Scene {
     private dragIndex : number; //拖拽物体的索引
     private currentIndex : number = 0 ; //当前索引
     private wordsArr : object[] = []; //文字数组
+    private currentGoldNum : number = 0 ; //当前的金币数量
+    private currentLifeNum : number = 3 ; //默认生命值
+    private lifeTextObj : Phaser.GameObjects.Text; //生命文本对象
     constructor() {
       super({
         key: "Game12PlayScene"
@@ -43,6 +49,8 @@ export default class Game12PlayScene extends Phaser.Scene {
   
     preload(): void {
       TipsParticlesEmitter.loadImg(this);
+      Gold.loadImg(this);
+      SellingGold.loadImg(this); //全局组件加载Img
     }
     
   
@@ -55,9 +63,21 @@ export default class Game12PlayScene extends Phaser.Scene {
         bgm : this.bgm,
       }); //公共按钮组件
       this.createTopContent() ; //创建上面的内容
+      this.goldObj = new Gold(this,this.currentGoldNum);
+      this.add.existing(this.goldObj);
       this.loadMusic(this.ccData);
       this.createContent(); //创建下面的内容
       this.initAnims(); //初始化动画
+      this.createLifeObj(); //生命消耗对象
+    }
+
+    private createLifeObj () : void {
+      this.add.image(969 , 242 , 'life').setOrigin(.5).setDisplaySize(60,60);
+      this.lifeTextObj = this.add.text( 964 , 249 , this.currentLifeNum.toString() , {
+        fontSize: "16px",
+        fontFamily:"STYuanti-SC-Bold,STYuanti-SC",
+        fill : '#ffffff'
+      }).setResolution(2);
     }
 
     private loadMusic (data : Array<Item>) : void {
@@ -76,87 +96,85 @@ export default class Game12PlayScene extends Phaser.Scene {
         r && r.off('drag');
         r && r.off('dragend');
       });
-      let i = Phaser.Math.Between(1,this.max) - 1;
-      this.tweens.add({
-        targets : this.itemTextArr[i],
-        ease : 'Sine.easeInOut',
-        alpha : 1,
-        duration : 600,
-        onComplete : ()=>{
-          this.itemArr[i].setDepth(1);
-          this.itemTextArr[i].setDepth(1);
-          this.itemArr[i].on('dragstart',(...args)=>{
-            this.dragX = args[0].worldX;
-            this.dragY = args[0].worldY;
-            this.objCurrentX = this.itemArr[i].x;
-            this.objCurrentY = this.itemArr[i].y;
-            this.obj2CurrentX = this.itemTextArr[i].x;
-            this.obj2CurrentY = this.itemTextArr[i].y;
-            this.overlapLock = true;
-            this.isOverlap = false;
-            this.overlapIndex = -1;
-          });
-          this.itemArr[i].on('drag',(...args)=>{
-            this.itemArr[i].x = this.objCurrentX + (args[0].worldX - this.dragX);
-            this.itemTextArr[i].x = this.obj2CurrentX + (args[0].worldX - this.dragX);
-            this.itemArr[i].y = this.objCurrentY + (args[0].worldY - this.dragY);
-            this.itemTextArr[i].y = this.obj2CurrentY + (args[0].worldY - this.dragY);
-          });
-          this.itemArr[i].on('dragend',(...args)=>{
-            this.overlapLock = false;
-            this.time.addEvent({
-              delay : 200,
-              callback : ()=>{
-                // console.log(this.ccData[this.overlapIndex + this.currentIndex].wordTypeCode,this.wordsArr[this.dragIndex].wordType);
-                if(this.overlapIndex === -1){
-                  this.resetItemObj(i);
-                  this.playMusic('wrong');
-                  return;
-                }
-                //@ts-ignore
-                if(this.ccData[this.overlapIndex + this.currentIndex].wordTypeCode === this.wordsArr[this.dragIndex].wordType){
-                  this.isOverlap = true;
-                }else{
-                  this.isOverlap = false;
-                }
-                if(this.isOverlap){
-                  //重叠
-                  //@ts-ignore
-                  this.playMusic(this.wordsArr[this.dragIndex].id);
-                  this.itemArr[i].destroy();
-                  this.itemTextArr[i].destroy();
-                  this.itemArr.splice(i,1);
-                  this.itemTextArr.splice(i,1);
-                  this.max -= 1;
-                  console.log(this.ccData[this.overlapIndex],this.wordsArr[this.dragIndex])                  
-                  if(this.itemArr.length === 0 ){
-                    console.log('数据处理完毕');
-                    this.tips.success(()=>{
-                      this.currentIndex = this.currentIndex + 2 >= this.ccData.length ? 0 : this.currentIndex + 2;
-                      this.leftContentText.setText(this.ccData[this.currentIndex].wordTypeName);
-                      this.rightContentText.setText(this.ccData[this.currentIndex + 1].wordTypeName);
-                      this.itemArr.map((r,i)=>{
-                        r && r.destroy();
-                        this.itemTextArr[i] && this.itemTextArr[i].destroy();
-                      });
-                      this.itemArr.length = 0 ;
-                      this.itemTextArr.length = 0;
-                      this.createContent(); //创建下面的内容
-                      this.initAnims(); //初始化动画
-                    })
-                  }else{
-                    this.chooseItemHandle();
-                  }
-                }else{
-                  //不重叠
-                  this.resetItemObj(i);
-                  this.playMusic('wrong');
-                }
+      this.itemArr.map((r,i)=>{
+        this.itemArr[i].setDepth(1);
+        this.itemTextArr[i].setDepth(1);
+        this.itemArr[i].on('dragstart',(...args)=>{
+          this.dragX = args[0].worldX;
+          this.dragY = args[0].worldY;
+          this.objCurrentX = this.itemArr[i].x;
+          this.objCurrentY = this.itemArr[i].y;
+          this.obj2CurrentX = this.itemTextArr[i].x;
+          this.obj2CurrentY = this.itemTextArr[i].y;
+          this.overlapLock = true;
+          this.isOverlap = false;
+          this.overlapIndex = -1;
+          this.tweens.add({
+            targets : [this.itemArr[i],this.itemTextArr[i]],
+            scaleX : 1.3,
+            ease : 'Sine.easeInOut',
+            duration : 300,
+            yoyo : true
+          })
+        });
+        this.itemArr[i].on('drag',(...args)=>{
+          this.itemArr[i].x = this.objCurrentX + (args[0].worldX - this.dragX);
+          this.itemTextArr[i].x = this.obj2CurrentX + (args[0].worldX - this.dragX);
+          this.itemArr[i].y = this.objCurrentY + (args[0].worldY - this.dragY);
+          this.itemTextArr[i].y = this.obj2CurrentY + (args[0].worldY - this.dragY);
+        });
+        this.itemArr[i].on('dragend',(...args)=>{
+          this.overlapLock = false;
+          this.time.addEvent({
+            delay : 200,
+            callback : ()=>{
+              // console.log(this.ccData[this.overlapIndex + this.currentIndex].wordTypeCode,this.wordsArr[this.dragIndex].wordType);
+              if(this.overlapIndex === -1){
+                this.resetItemObj(i);
+                return;
               }
-            })
-          });
-        }
-      });
+              //@ts-ignore
+              if(this.ccData[this.overlapIndex + this.currentIndex].wordTypeCode === this.wordsArr[this.dragIndex].wordType){
+                this.isOverlap = true;
+              }else{
+                this.isOverlap = false;
+              }
+              if(this.isOverlap){
+                //重叠
+                //@ts-ignore
+                this.playMusic(this.wordsArr[this.dragIndex].id);
+                this.itemArr[i].destroy();
+                this.itemTextArr[i].destroy();
+                this.itemArr.splice(i,1);
+                this.itemTextArr.splice(i,1);
+                this.max -= 1;
+                if(this.itemArr.length === 0 ){
+                  console.log('数据处理完毕');
+                  this.tips.success(()=>{
+                    this.currentIndex = this.currentIndex + 2 >= this.ccData.length ? 0 : this.currentIndex + 2;
+                    this.leftContentText.setText(this.ccData[this.currentIndex].wordTypeName);
+                    this.rightContentText.setText(this.ccData[this.currentIndex + 1].wordTypeName);
+                    this.itemArr.map((r,i)=>{
+                      r && r.destroy();
+                      this.itemTextArr[i] && this.itemTextArr[i].destroy();
+                    });
+                    this.itemArr.length = 0 ;
+                    this.itemTextArr.length = 0;
+                    this.createContent(); //创建下面的内容
+                    this.initAnims(); //初始化动画
+                  })
+                }else{
+                  this.chooseItemHandle();
+                }
+              }else{
+                //不重叠
+                this.resetItemObj(i);
+                this.playMusic('wrong');
+              }
+            }
+          })
+        });
+      })
     }
     
     private playMusic (sourceKey : string) : void {
@@ -201,14 +219,14 @@ export default class Game12PlayScene extends Phaser.Scene {
       this.rightContent = this.physics.add.image(775.5,129.5,'rightContent').setOrigin(.5).setAlpha(0).setData('index',1);
       this.leftContentText = this.add.text(this.leftContetn.x , this.leftContetn.y , this.ccData[this.currentIndex].wordTypeName, {
         fontSize: "79px",
-        fontFamily:"Arial Rounded MT Bold",
+        fontFamily:"STYuanti-SC-Bold,STYuanti-SC",
         fill : '#ffffff',
-      }).setOrigin(.5).setAlpha(0);
+      }).setOrigin(.5).setAlpha(0).setResolution(2);
       this.rightContentText = this.add.text(this.rightContent.x , this.rightContent.y , this.ccData[this.currentIndex + 1].wordTypeName, {
         fontSize: "79px",
-        fontFamily:"Arial Rounded MT Bold",
+        fontFamily:"STYuanti-SC-Bold,STYuanti-SC",
         fill : '#ffffff',
-      }).setOrigin(.5).setAlpha(0);
+      }).setOrigin(.5).setAlpha(0).setResolution(2);
     }
 
     private initAnims () : void {
@@ -276,10 +294,10 @@ export default class Game12PlayScene extends Phaser.Scene {
         }
         //@ts-ignore
         this.itemTextArr.push(this.add.text(this.itemArr[i].x,this.itemArr[i].y + 18,this.wordsArr[i].name,{
-          fontSize: "26px",
+          fontSize: "22px",
           fontFamily:"Arial Rounded MT Bold",
           fill : '#ED6C35',
-        }).setOrigin(.5).setAlpha(0));
+        }).setOrigin(.5).setAlpha(1).setResolution(2));
       }
     }
 
