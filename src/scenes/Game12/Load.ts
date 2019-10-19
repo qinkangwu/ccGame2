@@ -42,7 +42,7 @@ export default class Game12LoadScene extends Phaser.Scene {
 
   preload(): void {
     this.load.audio('clickMp3','assets/Game5/click.mp3');
-    this.load.audio('wrong','assets/sounds/newJoin/wrong.mp3');
+    this.load.audio('wrong','assets/Game4/wrong.mp3');
     this.load.audio('bgm','assets/Game7/bgm.mp3');
     this.load.image('bgi','assets/Game12/bgi.png');
     this.load.image('life','assets/Game12/life.png');

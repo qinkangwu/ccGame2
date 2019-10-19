@@ -34,9 +34,14 @@ export default class Game12PlayScene extends Phaser.Scene {
     private dragIndex : number; //拖拽物体的索引
     private currentIndex : number = 0 ; //当前索引
     private wordsArr : object[] = []; //文字数组
-    private currentGoldNum : number = 0 ; //当前的金币数量
+    private currentGoldNum : number = 10 ; //当前的金币数量
     private currentLifeNum : number = 3 ; //默认生命值
     private lifeTextObj : Phaser.GameObjects.Text; //生命文本对象
+    private tweensLock : boolean = false; //动画锁
+    private processLock : boolean = false; //控制锁----动画运行当中的锁
+    private dragLock : boolean = false ; //拖拽锁
+    private errorNum : number = 0 ; //三次机会用完次数 控制tryagain 和 error
+    private sholdGetGoldNum : number = 3 ; //应获取的金币数量
     constructor() {
       super({
         key: "Game12PlayScene"
@@ -91,6 +96,8 @@ export default class Game12PlayScene extends Phaser.Scene {
     }
 
     private chooseItemHandle () : void {
+      this.tweensLock = false;
+      this.processLock = false;
       this.itemArr.map((r,i)=>{
         r && r.off('dragstart');
         r && r.off('drag');
@@ -109,13 +116,6 @@ export default class Game12PlayScene extends Phaser.Scene {
           this.overlapLock = true;
           this.isOverlap = false;
           this.overlapIndex = -1;
-          this.tweens.add({
-            targets : [this.itemArr[i],this.itemTextArr[i]],
-            scaleX : 1.3,
-            ease : 'Sine.easeInOut',
-            duration : 300,
-            yoyo : true
-          })
         });
         this.itemArr[i].on('drag',(...args)=>{
           this.itemArr[i].x = this.objCurrentX + (args[0].worldX - this.dragX);
@@ -125,10 +125,11 @@ export default class Game12PlayScene extends Phaser.Scene {
         });
         this.itemArr[i].on('dragend',(...args)=>{
           this.overlapLock = false;
+          this.tweensLock = true;
+          this.processLock = true;
           this.time.addEvent({
             delay : 200,
             callback : ()=>{
-              // console.log(this.ccData[this.overlapIndex + this.currentIndex].wordTypeCode,this.wordsArr[this.dragIndex].wordType);
               if(this.overlapIndex === -1){
                 this.resetItemObj(i);
                 return;
@@ -143,38 +144,64 @@ export default class Game12PlayScene extends Phaser.Scene {
                 //重叠
                 //@ts-ignore
                 this.playMusic(this.wordsArr[this.dragIndex].id);
-                this.itemArr[i].destroy();
-                this.itemTextArr[i].destroy();
-                this.itemArr.splice(i,1);
-                this.itemTextArr.splice(i,1);
-                this.max -= 1;
-                if(this.itemArr.length === 0 ){
-                  console.log('数据处理完毕');
-                  this.tips.success(()=>{
-                    this.currentIndex = this.currentIndex + 2 >= this.ccData.length ? 0 : this.currentIndex + 2;
-                    this.leftContentText.setText(this.ccData[this.currentIndex].wordTypeName);
-                    this.rightContentText.setText(this.ccData[this.currentIndex + 1].wordTypeName);
-                    this.itemArr.map((r,i)=>{
-                      r && r.destroy();
-                      this.itemTextArr[i] && this.itemTextArr[i].destroy();
+                this.tweens.add({
+                  targets : [this.itemArr[i],this.itemTextArr[i]],
+                  ease : 'Sine.easeInOut', 
+                  duration : 300,
+                  scaleX : 0,
+                  scaleY : 0,
+                  alpha : 0,
+                  onComplete : ()=>{
+                    this.itemArr[i].destroy();
+                    this.itemTextArr[i].destroy();
+                    this.wordsArr.splice(i,1);
+                    this.itemArr.splice(i,1);
+                    this.itemArr.map((r2,i2)=>{
+                      r2.setData('index',i2);
                     });
-                    this.itemArr.length = 0 ;
-                    this.itemTextArr.length = 0;
-                    this.createContent(); //创建下面的内容
-                    this.initAnims(); //初始化动画
-                  })
-                }else{
-                  this.chooseItemHandle();
-                }
+                    this.itemTextArr.splice(i,1);
+                    this.max -= 1;
+                    if(this.itemArr.length === 0 ){
+                      console.log('数据处理完毕');
+                      this.tips.success(()=>{
+                        let goldAnims = new SellingGold(this,{
+                          callback : ()=>{
+                            this.clearInit();
+                            this.createContent(); //创建下面的内容
+                            this.initAnims(); //初始化动画
+                            this.goldObj.setText(this.currentGoldNum+=this.sholdGetGoldNum);
+                          }
+                        });
+                        goldAnims.golds.setDepth(101);
+                        goldAnims.goodJob(this.sholdGetGoldNum);
+                      })
+                    }else{
+                      this.chooseItemHandle();
+                    }
+                  }
+                })
               }else{
                 //不重叠
-                this.resetItemObj(i);
+                this.resetItemObj(i,true);
                 this.playMusic('wrong');
               }
             }
           })
         });
       })
+    }
+
+    private clearInit() : void {
+      //清空显示列表
+      this.currentIndex = this.currentIndex + 2 >= this.ccData.length ? 0 : this.currentIndex + 2;
+      this.leftContentText.setText(this.ccData[this.currentIndex].wordTypeName);
+      this.rightContentText.setText(this.ccData[this.currentIndex + 1].wordTypeName);
+      this.itemArr.map((r,i)=>{
+        r && r.destroy();
+        this.itemTextArr[i] && this.itemTextArr[i].destroy();
+      });
+      this.itemArr.length = 0 ;
+      this.itemTextArr.length = 0;
     }
     
     private playMusic (sourceKey : string) : void {
@@ -183,21 +210,109 @@ export default class Game12PlayScene extends Phaser.Scene {
       mp3.play();
     }
 
-    private resetItemObj (i : number) : void {
-      this.tweens.add({
-        targets : [this.itemArr[i]],
-        x : this.objCurrentX,
-        y : this.objCurrentY,
-        duration : 500,
-        ease : 'Sine.easeInOut',
-      });
-      this.tweens.add({
-        targets : [this.itemTextArr[i]],
-        x : this.obj2CurrentX,
-        y : this.obj2CurrentY,
-        duration : 500,
-        ease : 'Sine.easeInOut',
-      });
+    private tryAgainHandle () : void {
+      this.currentLifeNum = 3;
+      this.goldObj.setText(this.currentGoldNum-=1);
+      this.lifeTextObj.setText(this.currentLifeNum.toString());
+      this.currentIndex -= 2;
+      this.clearInit();
+      this.createContent(); //创建下面的内容
+      this.initAnims(); //初始化动画
+    }
+
+    private resetItemObj (i : number,flag? : boolean) : void {
+      if(flag){
+        this.currentLifeNum -= 1;
+        if(this.currentLifeNum === 0 ){
+          this.errorNum ++ ;
+          if(this.errorNum === 1){
+            this.tips.tryAgain(()=>{
+              this.tryAgainHandle();
+            })
+          }else{
+            this.tips.error(()=>{
+              this.goldObj.setText(this.currentGoldNum-=1);
+              this.currentLifeNum = 3;
+              this.lifeTextObj.setText(this.currentLifeNum.toString());
+              this.clearInit();
+              this.createContent(); //创建下面的内容
+              this.initAnims(); //初始化动画
+            },()=>{
+              this.tryAgainHandle();
+            })
+          }
+        }
+        this.lifeTextObj.setText(this.currentLifeNum.toString());
+        this.tweens.timeline({
+          targets : [this.itemArr[i],this.itemTextArr[i]],
+          ease : 'Sine.easeInOut',
+          duration :100,
+          tweens : [
+            {
+              x : '+=20'
+            },
+            {
+              x : '-=40'
+            },
+            {
+              x : '+=30'
+            },
+            {
+              x : '-=20'
+            },
+            {
+              x : '+=10'
+            }
+          ],
+          onComplete : ()=>{
+            this.tweens.add({
+              targets : [this.itemArr[i]],
+              x : this.objCurrentX,
+              y : this.objCurrentY,
+              duration : 500,
+              ease : 'Sine.easeInOut',
+              onComplete : ()=>{
+                this.tweensLock = false;
+                this.processLock = false;
+              }
+            });
+            this.tweens.add({
+              targets : [this.itemTextArr[i]],
+              x : this.obj2CurrentX,
+              y : this.obj2CurrentY,
+              duration : 500,
+              ease : 'Sine.easeInOut',
+              onComplete : ()=>{
+                this.tweensLock = false;
+                this.processLock = false;
+              }
+            });
+          }
+        });
+      }else{
+        this.tweens.add({
+          targets : [this.itemArr[i]],
+          x : this.objCurrentX,
+          y : this.objCurrentY,
+          duration : 500,
+          ease : 'Sine.easeInOut',
+          onComplete : ()=>{
+            this.tweensLock = false;
+            this.processLock = false;
+          }
+        });
+        this.tweens.add({
+          targets : [this.itemTextArr[i]],
+          x : this.obj2CurrentX,
+          y : this.obj2CurrentY,
+          duration : 500,
+          ease : 'Sine.easeInOut',
+          onComplete : ()=>{
+            this.tweensLock = false;
+            this.processLock = false;
+          }
+        });
+      }
     }
 
     private createBgm () : void{
@@ -257,6 +372,21 @@ export default class Game12PlayScene extends Phaser.Scene {
 
     private createOverlap() : void {
       this.physics.add.overlap(this.itemArr,[this.leftContetn,this.rightContent],(...args)=>{
+        if(!this.tweensLock){
+          this.tweensLock = true;
+          this.processLock = true;
+          this.tweens.add({
+            targets : [args[1],args[0],this.itemTextArr[args[0].getData('index')]].concat(args[1].getData('index') === 0 ? [this.leftContentText] : [this.rightContentText]),
+            ease : 'Sine.easeInOut',
+            scaleX : 1.3,
+            scaleY : 1.3,
+            duration : 300,
+            yoyo : true,
+            onComplete : ()=>{
+              this.processLock = false;
+            }
+          });
+        };
         if(this.overlapLock) return;
         if(
         //@ts-ignore
@@ -302,5 +432,14 @@ export default class Game12PlayScene extends Phaser.Scene {
     }
 
     update(time: number , delta : number): void {
+      if(this.processLock) return;
+      if (this.leftContetn.body.embedded || this.rightContent.body.embedded) {
+        this.leftContetn.body.touching.none = false;
+        this.rightContent.body.touching.none = false;
+      }
+      if ((this.leftContetn.body.touching.none && !this.leftContetn.body.wasTouching.none) && (this.rightContent.body.touching.none && !this.rightContent.body.wasTouching.none)) {
+        // Collision just ended
+        this.tweensLock = false;
+      }
     }
   };
