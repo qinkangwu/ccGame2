@@ -193,13 +193,13 @@ export default class Game8PlayScene extends Phaser.Scene {
       this.smallFishText = this.add.text(this.smallFishMenu.x + 4,this.smallFishMenu.y + 19,`0/${this.ccData.length}`,{
         font: 'Bold 16px Arial Rounded MT',
         fill : '#ffffff',
-      }).setOrigin(.5);
+      }).setOrigin(.5).setResolution(2);
       this.timerObj = this.add.image(971.45 + 200,244.5,'timeout').setOrigin(.5).setDisplaySize(60,63);
       this.timerText = this.add.text(this.timerObj.x - 15,this.timerObj.y + 9,this.s_to_hs(this.timerNum),{
         fontSize: "14px",
         fontFamily:"Arial Rounded MT Bold",
         fill : '#ffffff'
-      })
+      }).setResolution(2);
     }
 
     private loadMusic (data : Array<item>) : void {
@@ -274,7 +274,7 @@ export default class Game8PlayScene extends Phaser.Scene {
         fontSize: "100px",
         fontFamily:"Arial Rounded MT Bold",
         fill : '#ffffff'
-      }).setOrigin(.5).setScale(0).setDepth(2001);
+      }).setOrigin(.5).setScale(0).setDepth(2001).setResolution(2);
       this.tweens.timeline({
         targets : this.timeoutText,
         ease : 'Sine.easeInOut',
@@ -462,7 +462,7 @@ export default class Game8PlayScene extends Phaser.Scene {
         fontSize: "60px",
         fontFamily:"Arial Rounded MT Bold",
         fill : '#0F6BEF'
-      }).setOrigin(.5).setAlpha(0);
+      }).setOrigin(.5).setAlpha(0).setResolution(2);
       this.bigFish = this.add.image(W / 2 , H / 2 , 'game8Icons2', 'bmf.png').setOrigin(.5).setAlpha(0);
     }
 
@@ -526,7 +526,7 @@ export default class Game8PlayScene extends Phaser.Scene {
       this.chooseTextArr[this.leftUiIndex] = this.add.text(this.choosePopArr[this.leftUiIndex].x,this.choosePopArr[this.leftUiIndex].y,name,{
         font: 'Bold 23px Arial Rounded MT',
         fill : '#017FF8',
-      }).setOrigin(.5).setDepth(101).setScale(0);
+      }).setOrigin(.5).setDepth(101).setScale(0).setResolution(2);
       this.leftPopArr[this.leftUiIndex].destroy();
       this.tweens.timeline({
         targets : [this.chooseTextArr[this.leftUiIndex]],
@@ -769,7 +769,7 @@ export default class Game8PlayScene extends Phaser.Scene {
           this.add.text(this.popArr[i].x,this.popArr[i].y,contentData[i].name,{
             font: 'Bold 60px Arial Rounded MT',
             fill : '#0080F5',
-          }).setOrigin(.5).setAlpha(1).setScale(0)
+          }).setOrigin(.5).setAlpha(1).setScale(0).setResolution(2)
         )
       }
     }
