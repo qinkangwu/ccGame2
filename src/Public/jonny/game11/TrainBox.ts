@@ -25,7 +25,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, texture);
         this.text = new Phaser.GameObjects.BitmapText(scene, 0, 0 - 28, "ArialRoundedBold30", text, 30).setOrigin(0.5);
         this.text.tint = 0xFF7F3A;
-        this.shape = new Phaser.Geom.Circle(0, 0-20, 193 * 0.25);
+        this.shape = new Phaser.Geom.Circle(0, 0-20, 193 * 0.3);
         this.tipsArrowUp = new Phaser.GameObjects.Image(scene,0,-117,"tipsArrowUp");
         this.tipsArrowAnimate = this.scene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
             targets:this.tipsArrowUp,
@@ -38,7 +38,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
         this.add([this.tipsArrowUp,this.bg, this.text]);
         this.init();
         this.setBody();
-        //this.drawHitArea();
+        this.drawHitArea();
     }
 
     private init() {
@@ -50,7 +50,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
 
     private drawHitArea() {
         let graphics = new Phaser.GameObjects.Graphics(this.scene);
-        graphics.lineStyle(1, 0xff0000);
+        graphics.lineStyle(1, 0x0000ff);
         graphics.strokeCircle(this.shape.x, this.shape.y, this.shape.radius);
         this.add(graphics);
     }
@@ -91,7 +91,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
     }
 
     public setBody() {
-        let offset = 80;
+        let offset = 100;
         this.scene.physics.world.enable(this);
         this.body.setSize(218-offset,193-offset);
         this.body.setOffset(-1*(218-offset)*0.5,-1*(193-offset)*0.5);

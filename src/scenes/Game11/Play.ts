@@ -603,6 +603,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
+      console.log("拖拽中...");
       this.setPosition(dragX, dragY);
       this.movePosition = new Vec2(this.x, this.y);
       if (this.parentContainer === that.layer3 && this.y < -140) {    //down to up
