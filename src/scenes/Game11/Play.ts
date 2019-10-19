@@ -606,15 +606,29 @@ export default class Game11PlayScene extends Phaser.Scene {
       console.log("拖拽中...");
       this.setPosition(dragX, dragY);
       this.movePosition = new Vec2(this.x, this.y);
-      if (this.parentContainer === that.layer3 && this.y < -140) {    //down to up
-        insert.downToUp(this);
-      } else if (this.parentContainer === that.layer2 && this.y > 140) {    //up to down
-        insert.upToDown(this);
-      } else if (this.parentContainer === that.layer3 && this.y > -20) {   //down => left to right
-        collision.leftToRight(this, that.layer3);
-      } else if (this.parentContainer === that.layer2 && this.y < 20) {    //up => left to right
-        collision.leftToRight(this, that.layer2);
+      // if (this.parentContainer === that.layer3 && this.y < -140) {    //down to up
+      //   insert.downToUp(this);
+      // } else if (this.parentContainer === that.layer2 && this.y > 140) {    //up to down
+      //   insert.upToDown(this);
+      // } else if (this.parentContainer === that.layer3 && this.y > -20) {   //down => left to right
+      //   collision.leftToRight(this, that.layer3);
+      // } else if (this.parentContainer === that.layer2 && this.y < 20) {    //up => left to right
+      //   collision.leftToRight(this, that.layer2);
+      // }
+    }
+
+    let ticker: any = (_myBox: TrainBox) => {   //实时监听
+      let myBox: TrainBox = _myBox;
+      if (myBox.parentContainer === that.layer3 && myBox.y < -140) {    //down to up
+        insert.downToUp(myBox);
+      } else if (myBox.parentContainer === that.layer2 && myBox.y > 140) {    //up to down
+        insert.upToDown(myBox);
+      } else if (myBox.parentContainer === that.layer3 && myBox.y > -20) {   //down => left to right
+        collision.leftToRight(myBox, that.layer3);
+      } else if (myBox.parentContainer === that.layer2 && myBox.y < 20) {    //up => left to right
+        collision.leftToRight(myBox, that.layer2);
       }
+      ticker.id = window.requestAnimationFrame(ticker.bind(null, myBox));
     }
 
     DrogEvent.onDragStart = function (this: TrainBox, pointer, startX, startY) {
@@ -630,6 +644,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       that.layer2.setData("limitX", that.layerLimitXFuc(that.layer2));
       that.layer3.setData("limitX", that.layerLimitXFuc(that.layer3));
       console.log(that.layer2.getData("limitX"));
+      ticker(this);
     }
 
 
@@ -637,6 +652,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       if (!this.interactive) {
         return false;
       }
+      window.cancelAnimationFrame(ticker.id);
       if (this.parentContainer === that.layer3 && this.y < -140) {    // down => up
         that.layer3.remove(this);
         that.layer2.add(this);
