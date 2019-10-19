@@ -116,6 +116,13 @@ export default class Game12PlayScene extends Phaser.Scene {
           this.overlapLock = true;
           this.isOverlap = false;
           this.overlapIndex = -1;
+          this.tweens.add({
+            targets : [this.itemArr[i],this.itemTextArr[i]],
+            ease : 'Sine.easeInOut',
+            duration : 300,
+            scaleX : 1.3,
+            yoyo : true
+          })
         });
         this.itemArr[i].on('drag',(...args)=>{
           this.itemArr[i].x = this.objCurrentX + (args[0].worldX - this.dragX);
@@ -330,8 +337,8 @@ export default class Game12PlayScene extends Phaser.Scene {
     }
 
     private createTopContent() : void {
-      this.leftContetn = this.physics.add.image(228.5,129.5,'leftContent').setOrigin(.5).setAlpha(0).setData('index',0);
-      this.rightContent = this.physics.add.image(775.5,129.5,'rightContent').setOrigin(.5).setAlpha(0).setData('index',1);
+      this.leftContetn = this.physics.add.image(228.5,129.5,'leftContent').setOrigin(.5).setAlpha(0).setData('index',0).setSize(70,70);
+      this.rightContent = this.physics.add.image(775.5,129.5,'rightContent').setOrigin(.5).setAlpha(0).setData('index',1).setSize(70,70);
       this.leftContentText = this.add.text(this.leftContetn.x , this.leftContetn.y , this.ccData[this.currentIndex].wordTypeName, {
         fontSize: "79px",
         fontFamily:"STYuanti-SC-Bold,STYuanti-SC",
@@ -376,7 +383,7 @@ export default class Game12PlayScene extends Phaser.Scene {
           this.tweensLock = true;
           this.processLock = true;
           this.tweens.add({
-            targets : [args[1],args[0],this.itemTextArr[args[0].getData('index')]].concat(args[1].getData('index') === 0 ? [this.leftContentText] : [this.rightContentText]),
+            targets : [args[1]].concat(args[1].getData('index') === 0 ? [this.leftContentText] : [this.rightContentText]),
             ease : 'Sine.easeInOut',
             scaleX : 1.3,
             scaleY : 1.3,
