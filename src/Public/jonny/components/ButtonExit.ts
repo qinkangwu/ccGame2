@@ -1,5 +1,6 @@
 import 'phaser';
 import {Button} from './Button';
+import {CONSTANT} from '../core';
 
 /**
   * 在加载文件同时，纹理key必须为 btnExit,注册点为中心,可以修改属性minAlpha
@@ -19,6 +20,6 @@ export default class ButtonExit extends Button {
     }
   
     exitGame(): void {
-        alert("Game Exit");
+        window.location.href = CONSTANT.INDEX_URL;
     }
   }

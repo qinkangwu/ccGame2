@@ -3,7 +3,7 @@ import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
 import { EASE, StaticAni } from '../../Public/jonny/Animate';
-import { cover, rotateTips } from '../../Public/jonny/core';
+import { cover, rotateTips,CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import { config } from '../../interface/TipsParticlesEmitter';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
@@ -750,7 +750,10 @@ export default class Game6PlayScene extends Phaser.Scene {
     this.status = null;
     ableStop = 0;
     index += 1;
-    index = index % this.phoneticData.length;
+    if (index > this.phoneticData.length - 1) {
+      window.location.href = CONSTANT.INDEX_URL;
+    }
+    //index = index % this.phoneticData.length;
     if (keyword === "success") {
       sellingGold.goodJob(3);
     }
