@@ -301,6 +301,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.locomotivel.admission()
       .then(() => {
         let trainboxAnimates: Promise<any>[] = this.trainboxs.map(trainbox => trainbox.admission());
+        this.playSentence(); 
         Promise.all(trainboxAnimates).then(() => {
           nextFuc();
         })
