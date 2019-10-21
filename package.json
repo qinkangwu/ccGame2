@@ -28,6 +28,7 @@
     "webpack": "3.11.0"
   },
   "dependencies": {
-    "phaser": "3.18.1"
+    "phaser": "3.18.1",
+    "rxjs": "^6.5.3"
   }
 }
