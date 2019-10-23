@@ -29,7 +29,7 @@ const initHandle = (arr : object[],physics:string) : void=>{
       default: physics,
       arcade: {
         gravity: { y: 0 },
-        debug:true
+        debug : false
       },
       matter:{
         gravity:{

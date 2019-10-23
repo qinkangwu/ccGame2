@@ -39,6 +39,8 @@ export default class Game10PlayScene extends Phaser.Scene {
     private goldObj : Gold ; //金币组件引用
     private currentGoldNum : number = 0 ; //当前的金币数量
     private errorNum : number = 0 ; //错误的次数
+    private contentOuter : Phaser.GameObjects.Image; //图片框
+    private contentOuter2 : Phaser.GameObjects.Image; //框夹子
     constructor() {
       super({
         key: "Game10PlayScene"
@@ -157,6 +159,7 @@ export default class Game10PlayScene extends Phaser.Scene {
         repeat : 0,
         yoyo : true
       });
+      this.playContentOuterAnims();
     }
 
     private createGold () : void {
@@ -346,6 +349,36 @@ export default class Game10PlayScene extends Phaser.Scene {
         fontFamily:"Arial Rounded MT Bold",
         fill : '#77F0FF',
       }).setOrigin(.5);
+      this.contentOuter = this.add.image(280,215,'contentOuter').setOrigin(.5).setScale(.5);
+      this.contentOuter2 = this.add.image(this.contentOuter.x + 150, 0, 'contentOuter2').setOrigin(.5,0).setScale(.5);
+    }
+
+    private playContentOuterAnims () : void {
+      this.tweens.timeline({
+        targets : [this.contentOuter,this.contentOuter2,this.imgObj],
+        ease : 'Sine.easeInOut',
+        duration :100,
+        tweens : [
+          {
+            x : '+=20'
+          },
+          {
+            x : '-=40'
+          },
+          {
+            x : '+=30'
+          },
+          {
+            x : '-=20'
+          },
+          {
+            x : '+=10'
+          }
+        ],
+        onComplete : ()=>{
+          
+        }
+      });
     }
 
     private clearGraphics() : void {
