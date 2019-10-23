@@ -1,6 +1,6 @@
 import 'phaser';
 import { Game11DataItem, } from '../../interface/Game11';
-import { cover, rotateTips, isHit, Vec2 } from '../../Public/jonny/core';
+import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
@@ -301,6 +301,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.locomotivel.admission()
       .then(() => {
         let trainboxAnimates: Promise<any>[] = this.trainboxs.map(trainbox => trainbox.admission());
+        this.playSentence(); 
         Promise.all(trainboxAnimates).then(() => {
           nextFuc();
         })
@@ -790,7 +791,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     // console.log("拖拽结束");
     this.successBtn.setAlpha(1);
     this.successBtn.animate.play();
-    this.tryAginListenBtn.checkout(2);
+    //this.tryAginListenBtn.checkout(2);   //诡异，暂时关闭
   }
 
   /**
@@ -928,6 +929,9 @@ export default class Game11PlayScene extends Phaser.Scene {
    */
   private nextRound(): void {
     index += 1;
+    if (index > this.ccData.length - 1) {
+      window.location.href = CONSTANT.INDEX_URL;
+    }
     this.times = 0;
     this.oneWheel = false;
     this.scene.start('Game11PlayScene', {
