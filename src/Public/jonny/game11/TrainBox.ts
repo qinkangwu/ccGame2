@@ -38,7 +38,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
         this.add([this.tipsArrowUp,this.bg, this.text]);
         this.init();
         this.setBody();
-        this.drawHitArea();
+        //this.drawHitArea();
     }
 
     private init() {
@@ -115,10 +115,6 @@ export class TrainBox extends Phaser.GameObjects.Container {
                 this.body.y,
                 this.body.width,
                 this.body.height
-                // this.body.x+100,
-                // this.body.y+100,
-                // this.body.width-100,
-                // this.body.height-100
             )
         )
     }
