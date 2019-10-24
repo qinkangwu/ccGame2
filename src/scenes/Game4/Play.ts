@@ -230,6 +230,7 @@ export default class Game4PlayScene extends Phaser.Scene {
             this.allBallonIsFinish();
           }
         }else{
+          let sum : number = 0 ;
           this.playMusic('wrong');
           this.shootLock = false;
           this.clickLock = true;
@@ -237,7 +238,10 @@ export default class Game4PlayScene extends Phaser.Scene {
           this.arrowObj.destroy();
           this.createArrow();
           this.createCollide();
-          if(this.quiverNum === 0 ){
+          this.ballonSprites.map((r,i)=>{
+            r && (sum += 1);
+          });
+          if(this.quiverNum === 0 || this.quiverNum < sum){
             this.tips.error(this.nextWordHandle.bind(this),this.tryAgainHandle.bind(this))
             return;
           }
@@ -498,7 +502,9 @@ export default class Game4PlayScene extends Phaser.Scene {
     private tryAgainHandle () : void {
       this.quiverNum = this.words.length + 3;
       this.changeQuiverNums(this.quiverNum);
-      this.clickHandle();
+      this.ccDataIndex -= 1;
+      this.goldNum -= this.quiverNum;
+      this.nextWordHandle();
     }
 
 
@@ -506,13 +512,13 @@ export default class Game4PlayScene extends Phaser.Scene {
       //下一个词
       // ballonSprites,lineSprites,wolfObj
       this.ballonSprites.map((r,i)=>{
-        r.destroy();
+        r && r.destroy();
       });
       this.lineSprites.map((r,i)=>{
-        r.destroy();
+        r && r.destroy();
       })
       this.textArr.map((r,i)=>{
-        r.destroy();
+        r && r.destroy();
       })
       this.ballonSprites.length = 0;
       this.lineSprites.length = 0;
