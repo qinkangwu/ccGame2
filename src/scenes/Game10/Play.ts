@@ -69,7 +69,14 @@ export default class Game10PlayScene extends Phaser.Scene {
       this.renderKeyBorad(); //渲染键盘
       this.renderImg(); //渲染图片
       this.loadMusic(this.ccData); //加载音频
-      this.tips = new TipsParticlesEmitter(this); //tip组件
+      this.tips = new TipsParticlesEmitter(this,{
+        renderBefore : ()=>{
+          this.submitBtn.off('pointerdown');
+          this.keywordsArr.map((r,i)=>{
+            r.off('pointerdown')
+          });
+        }
+      }); //tip组件
       this.goldObj = new Gold(this,this.currentGoldNum);
       this.add.existing(this.goldObj);
       new CreateBtnClass(this,{
@@ -274,6 +281,10 @@ export default class Game10PlayScene extends Phaser.Scene {
             });
             goldAnims.golds.setDepth(101);
             goldAnims.goodJob(5);
+            this.submitBtn.on('pointerdown',this.itemClickHandle.bind(this,this.submitBtn));
+            this.keywordsArr.map((r,i)=>{
+              r.on('pointerdown',this.itemClickHandle.bind(this,r))
+            });
           })
         }else{
           //失败
@@ -283,15 +294,27 @@ export default class Game10PlayScene extends Phaser.Scene {
               this.renderKeyBorad(); //开始下一个单词的布局
               this.initAnims();
               this.renderWordGraphics();
+              this.submitBtn.on('pointerdown',this.itemClickHandle.bind(this,this.submitBtn));
+              this.keywordsArr.map((r,i)=>{
+                r.on('pointerdown',this.itemClickHandle.bind(this,r))
+              });
             })
           }else{
             this.tips.error(()=>{
               this.nextWordHandle();
+              this.submitBtn.on('pointerdown',this.itemClickHandle.bind(this,this.submitBtn));
+              this.keywordsArr.map((r,i)=>{
+                r.on('pointerdown',this.itemClickHandle.bind(this,r))
+              });
             },()=>{
               this.clearRenderBorad(); //清空当前键盘布局
               this.renderKeyBorad(); //开始下一个单词的布局
               this.initAnims();
               this.renderWordGraphics();
+              this.submitBtn.on('pointerdown',this.itemClickHandle.bind(this,this.submitBtn));
+              this.keywordsArr.map((r,i)=>{
+                r.on('pointerdown',this.itemClickHandle.bind(this,r))
+              });
             });
           }
         }

@@ -107,6 +107,8 @@ export default class Game12PlayScene extends Phaser.Scene {
         this.itemArr[i].setDepth(1);
         this.itemTextArr[i].setDepth(1);
         this.itemArr[i].on('dragstart',(...args)=>{
+          console.log(this.dragLock);
+          if(this.dragLock) return;
           this.dragX = args[0].worldX;
           this.dragY = args[0].worldY;
           this.objCurrentX = this.itemArr[i].x;
@@ -125,12 +127,14 @@ export default class Game12PlayScene extends Phaser.Scene {
           })
         });
         this.itemArr[i].on('drag',(...args)=>{
+          if(this.dragLock) return;
           this.itemArr[i].x = this.objCurrentX + (args[0].worldX - this.dragX);
           this.itemTextArr[i].x = this.obj2CurrentX + (args[0].worldX - this.dragX);
           this.itemArr[i].y = this.objCurrentY + (args[0].worldY - this.dragY);
           this.itemTextArr[i].y = this.obj2CurrentY + (args[0].worldY - this.dragY);
         });
         this.itemArr[i].on('dragend',(...args)=>{
+          if(this.dragLock) return;
           this.overlapLock = false;
           this.tweensLock = true;
           this.processLock = true;
@@ -228,6 +232,7 @@ export default class Game12PlayScene extends Phaser.Scene {
     }
 
     private resetItemObj (i : number,flag? : boolean) : void {
+      this.dragLock = true;
       if(flag){
         this.currentLifeNum -= 1;
         if(this.currentLifeNum === 0 ){
@@ -281,6 +286,7 @@ export default class Game12PlayScene extends Phaser.Scene {
               onComplete : ()=>{
                 this.tweensLock = false;
                 this.processLock = false;
+                this.dragLock = false;
               }
             });
             this.tweens.add({
@@ -292,6 +298,7 @@ export default class Game12PlayScene extends Phaser.Scene {
               onComplete : ()=>{
                 this.tweensLock = false;
                 this.processLock = false;
+                this.dragLock = false;
               }
             });
           }
@@ -306,6 +313,7 @@ export default class Game12PlayScene extends Phaser.Scene {
           onComplete : ()=>{
             this.tweensLock = false;
             this.processLock = false;
+            this.dragLock = false;
           }
         });
         this.tweens.add({
@@ -317,6 +325,7 @@ export default class Game12PlayScene extends Phaser.Scene {
           onComplete : ()=>{
             this.tweensLock = false;
             this.processLock = false;
+            this.dragLock = false;
           }
         });
       }
