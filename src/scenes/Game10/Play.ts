@@ -294,27 +294,15 @@ export default class Game10PlayScene extends Phaser.Scene {
               this.renderKeyBorad(); //开始下一个单词的布局
               this.initAnims();
               this.renderWordGraphics();
-              this.submitBtn.on('pointerdown',this.itemClickHandle.bind(this,this.submitBtn));
-              this.keywordsArr.map((r,i)=>{
-                r.on('pointerdown',this.itemClickHandle.bind(this,r))
-              });
             })
           }else{
             this.tips.error(()=>{
               this.nextWordHandle();
-              this.submitBtn.on('pointerdown',this.itemClickHandle.bind(this,this.submitBtn));
-              this.keywordsArr.map((r,i)=>{
-                r.on('pointerdown',this.itemClickHandle.bind(this,r))
-              });
             },()=>{
               this.clearRenderBorad(); //清空当前键盘布局
               this.renderKeyBorad(); //开始下一个单词的布局
               this.initAnims();
               this.renderWordGraphics();
-              this.submitBtn.on('pointerdown',this.itemClickHandle.bind(this,this.submitBtn));
-              this.keywordsArr.map((r,i)=>{
-                r.on('pointerdown',this.itemClickHandle.bind(this,r))
-              });
             });
           }
         }
