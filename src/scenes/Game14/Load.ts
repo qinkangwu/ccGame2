@@ -15,7 +15,7 @@ export default class Game14LoadScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: "Game12LoadScene"
+      key: "Game14LoadScene"
     });
   }
 
@@ -39,6 +39,13 @@ export default class Game14LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
+    this.load.audio('bgm', 'assets/sounds/bgm-03.mp3');
+    this.load.image('bgi','assets/Game14/bgi.png');
+    this.load.image('mode1','assets/Game14/mode1.png');
+    this.load.image('mode2','assets/Game14/mode2.png');
+    this.load.multiatlas('pics','assets/Game14/imgsJson.json','assets/Game14');
+    this.load.image('mode1Pic1','assets/Game14/mode1Pic1.png');
+    this.load.image('mode1Pic2','assets/Game14/mode1Pic2.png');
     this.load.on('complete',()=>{
       //资源加载完成的回调
       this.imgLoadDone = true;
@@ -74,7 +81,7 @@ export default class Game14LoadScene extends Phaser.Scene {
             //   duration : 500,
             //   alpha : 0
             // })
-            this.scene.start('Game12PlayScene');
+            this.scene.start('Game14PlayScene');
           }
           return;
         }
