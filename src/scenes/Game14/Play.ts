@@ -1,7 +1,10 @@
+import 'phaser';
 import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import CreateBtnClass from '../../Public/CreateBtnClass';
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
+import { Gold } from "../../Public/jonny/components/Gold";
+import { SellingGold } from "../../Public/jonny/components/SellingGold";
 
 const W = 1024;
 const H = 552;
@@ -19,6 +22,10 @@ export default class Game14PlayScene extends Phaser.Scene {
     private clickLock : boolean = false ; //点击锁
     private chooseCardIndexArr : number[] = [] ; //选择的索引数组
     private tips : TipsParticlesEmitter; //tip组件
+    private errorNum : number = 3; //失败次数
+    private goldObj : Gold ; //金币组件引用
+    private currentGoldNum : number = 10 ; //当前的金币数量
+    private sholdGetGoldNum : number = 3 ; //应获取的金币数量
     constructor() {
       super({
         key: "Game14PlayScene"
@@ -41,6 +48,8 @@ export default class Game14PlayScene extends Phaser.Scene {
       }); //公共按钮组件
       this.tips = new TipsParticlesEmitter(this); //tip组件
       this.createMode(); //模式按钮
+      this.goldObj = new Gold(this,this.currentGoldNum);
+      this.add.existing(this.goldObj);
       this.input.on('pointerdown',(...args)=>{
         console.log(args);
       })

@@ -595,7 +595,6 @@ export default class Game8PlayScene extends Phaser.Scene {
 
     private chooseEndHandle() : void {
       //成功展示小鱼
-      this.playMusic('wowGoodLuck');
       //@ts-ignore
       this.itemClickHandle.clickLock = true;
       this.playMusic(this.ccData[this.currentIndex].id);
@@ -666,6 +665,7 @@ export default class Game8PlayScene extends Phaser.Scene {
             duration : 300,
             alpha : 1,
             onComplete : ()=>{
+              this.playMusic('wowGoodLuck');
               this.time.addEvent({
                 delay : 500,
                 callback : ()=>{

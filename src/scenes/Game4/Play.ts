@@ -547,6 +547,7 @@ export default class Game4PlayScene extends Phaser.Scene {
 
     private clickHandle () : void {
       //点击场景触发
+      this.input.off('pointerdown');
       this.input.on('pointerdown',(...args)=>{
         //@ts-ignore
         if(args[1].length === 0 || args[1][0] instanceof Phaser.GameObjects.Image ) return;
