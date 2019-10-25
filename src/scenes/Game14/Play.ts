@@ -1,10 +1,11 @@
 import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import CreateBtnClass from '../../Public/CreateBtnClass';
+import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 
 const W = 1024;
 const H = 552;
-const data = ['banana','apple','banana','apple']
+const data = ['banana','apple','banana','apple','scene','text','scene','text']
 
 export default class Game14PlayScene extends Phaser.Scene {
     private bgm : Phaser.Sound.BaseSound ; //背景音乐
@@ -17,6 +18,7 @@ export default class Game14PlayScene extends Phaser.Scene {
     private zoneArr : Phaser.GameObjects.Zone[] = [] ; //点击区域数组
     private clickLock : boolean = false ; //点击锁
     private chooseCardIndexArr : number[] = [] ; //选择的索引数组
+    private tips : TipsParticlesEmitter; //tip组件
     constructor() {
       super({
         key: "Game14PlayScene"
@@ -27,6 +29,7 @@ export default class Game14PlayScene extends Phaser.Scene {
     }
   
     preload(): void {
+      TipsParticlesEmitter.loadImg(this);
     }
     
   
@@ -36,6 +39,7 @@ export default class Game14PlayScene extends Phaser.Scene {
       new CreateBtnClass(this,{
         bgm : this.bgm,
       }); //公共按钮组件
+      this.tips = new TipsParticlesEmitter(this); //tip组件
       this.createMode(); //模式按钮
       this.input.on('pointerdown',(...args)=>{
         console.log(args);
@@ -64,7 +68,7 @@ export default class Game14PlayScene extends Phaser.Scene {
           fontSize: "38.5px",
           fontFamily:"Arial Rounded MT Bold",
           fill : '#2773F2',
-        }).setOrigin(.5))
+        }).setOrigin(.5).setResolution(2))
         this.zoneArr.push(this.add.zone(this.cardArr[i].x,this.cardArr[i].y,218,326).setOrigin(.5).setDepth(1).setInteractive());
       })
       this.tweens.add({
@@ -164,18 +168,34 @@ export default class Game14PlayScene extends Phaser.Scene {
       mp3.play();
     }
 
+    private clearHandle () : void {
+      this.cardArr.length = 0;
+      this.wordArr.length = 0;
+      this.zoneArr.length = 0;
+    }
+
     private successHandle () : void {
       //匹配正确
       this.chooseCardIndexArr.map((r,i)=>{
         this.cardArr[r].destroy();
         this.wordArr[r].destroy();
         this.zoneArr[r].destroy();
-      })
+      });
+      if(this.cardArr.every((r)=>{
+        return r.active === false
+      })){
+        this.tips.success(()=>{
+          this.clearHandle();
+          this.chooseMode === 'mode1' && this.createMode1();
+          this.chooseMode === 'mode2' && this.createMode2();
+        })
+      }
       this.chooseCardIndexArr.length = 0;
     }
 
     private errorHandle() : void {
       //匹配错误
+      this.playMusic('wrongMusic');
       this.chooseCardIndexArr.map((r,i)=>{
         this.wordArr[r].alpha = 0;
         this.tweens.add({
@@ -205,9 +225,67 @@ export default class Game14PlayScene extends Phaser.Scene {
 
     private createMode2() : void {
       //8牌模式
+      for(let i = 0 ; i < 8 ; i ++){
+        if(i < 4){
+          this.cardArr.push(
+            this.add.quad(234.5 + (i * 185 ),146.5 - H,'pics','pic2.png').setDisplaySize(150,224)
+          )
+        }else{
+          this.cardArr.push(
+            this.add.quad(234.5 + ((i - 4) * 185 ),405.5 - H,'pics','pic2.png').setDisplaySize(150,224)
+          )
+        }
+        this.wordArr.push(this.add.text(this.cardArr[i].x,this.cardArr[i].y,data[i],{
+          fontSize: "29.5px",
+          fontFamily:"Arial Rounded MT Bold",
+          fill : '#2773F2',
+        }).setOrigin(.5).setResolution(2));
+        this.zoneArr.push(this.add.zone(this.cardArr[i].x,this.cardArr[i].y,150,224).setOrigin(.5).setDepth(1).setInteractive());
+      }
+      this.tweens.add({
+        targets : [...this.cardArr,...this.wordArr,...this.zoneArr],
+        duration : 500,
+        y : `+=${H}`,
+        ease : 'Sine.easeInOut',
+        onComplete : ()=>{
+          this.time.addEvent({
+            delay : 2000,
+            callback : ()=>{
+              this.cardArr.map((r,i)=>{
+                this.wordArr[i].alpha = 0;
+                this.tweens.add({
+                  targets : r,
+                  duration : 300,
+                  ease : 'Sine.easeInOut',
+                  topLeftX : `+=218`,
+                  topRightX : `-=218`,
+                  bottomLeftX : '+=218',
+                  bottomRightX : `-=218`,
+                  onComplete : ()=>{
+                    r.setFrame('pic1.png');
+                    this.tweens.add({
+                      targets : r,
+                      duration : 300,
+                      ease : 'Sine.easeInOut',
+                      topLeftX : `-=218`,
+                      topRightX : `+=218`,
+                      bottomLeftX : '-=218',
+                      bottomRightX : `+=218`,
+                      onComplete : ()=>{
+                        this.zoneArr[i].on('pointerdown',this.flipCardHandle.bind(this,'mode2',i));
+                      }
+                    })
+                  }
+                })
+              })
+            }
+          })
+        }
+      })
     }
 
     private chooseModeEndHandle(mode : string) : void {
+      this.chooseMode = mode;
       this.tweens.add({
         targets : [this.mode1,this.mode2],
         duration : 500,
