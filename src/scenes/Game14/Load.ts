@@ -45,6 +45,7 @@ export default class Game14LoadScene extends Phaser.Scene {
     this.load.audio('wrongMusic','assets/Game4/wrong.mp3');
     this.load.image('mode1','assets/Game14/mode1.png');
     this.load.image('mode2','assets/Game14/mode2.png');
+    this.load.image('goldValue','assets/commonUI/goldValue.png');
     this.load.multiatlas('pics','assets/Game14/imgsJson.json','assets/Game14');
     this.load.image('mode1Pic1','assets/Game14/mode1Pic1.png');
     this.load.image('mode1Pic2','assets/Game14/mode1Pic2.png');

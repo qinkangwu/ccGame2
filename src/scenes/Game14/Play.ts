@@ -22,10 +22,11 @@ export default class Game14PlayScene extends Phaser.Scene {
     private clickLock : boolean = false ; //点击锁
     private chooseCardIndexArr : number[] = [] ; //选择的索引数组
     private tips : TipsParticlesEmitter; //tip组件
-    private errorNum : number = 3; //失败次数
+    private errorNum : number = 0; //失败次数
     private goldObj : Gold ; //金币组件引用
     private currentGoldNum : number = 10 ; //当前的金币数量
     private sholdGetGoldNum : number = 3 ; //应获取的金币数量
+    private sholdTry : boolean = true; //能否再试
     constructor() {
       super({
         key: "Game14PlayScene"
@@ -37,6 +38,8 @@ export default class Game14PlayScene extends Phaser.Scene {
   
     preload(): void {
       TipsParticlesEmitter.loadImg(this);
+      Gold.loadImg(this);
+      SellingGold.loadImg(this); //全局组件加载Img
     }
     
   
@@ -194,9 +197,18 @@ export default class Game14PlayScene extends Phaser.Scene {
         return r.active === false
       })){
         this.tips.success(()=>{
-          this.clearHandle();
-          this.chooseMode === 'mode1' && this.createMode1();
-          this.chooseMode === 'mode2' && this.createMode2();
+          let goldAnims = new SellingGold(this,{
+            callback : ()=>{
+              goldAnims.golds.destroy();
+              this.goldObj.setText(this.currentGoldNum+=this.sholdGetGoldNum);
+              this.sholdGetGoldNum = 3;
+              this.clearHandle();
+              this.chooseMode === 'mode1' && this.createMode1();
+              this.chooseMode === 'mode2' && this.createMode2();
+            }
+          });
+          goldAnims.golds.setDepth(101);
+          goldAnims.goodJob(this.sholdGetGoldNum);
         })
       }
       this.chooseCardIndexArr.length = 0;
@@ -205,6 +217,31 @@ export default class Game14PlayScene extends Phaser.Scene {
     private errorHandle() : void {
       //匹配错误
       this.playMusic('wrongMusic');
+      this.errorNum ++ ;
+      if((this.chooseMode === 'mode1' && this.errorNum >= 3) || (this.chooseMode === 'mode2' && this.errorNum >= 10) ){
+        //错误到了一定次数
+        this.sholdTry && this.tips.tryAgain(this.tryAgain.bind(this));
+        !this.sholdTry && this.tipsErrorHandle();
+        return;
+      };
+      this.errorDetail();
+    }
+
+    private tipsErrorHandle() : void {
+      this.goldObj.setText(this.currentGoldNum -= 1);
+      this.tips.error(()=>{
+
+      },this.tryAgain.bind(this))
+    }
+
+    private tryAgain() : void {
+      this.sholdTry = false;
+      this.sholdGetGoldNum = 1;
+      this.errorNum = 0;
+      this.errorDetail();
+    }
+
+    private errorDetail () : void {
       this.chooseCardIndexArr.map((r,i)=>{
         this.wordArr[r].alpha = 0;
         this.tweens.add({
