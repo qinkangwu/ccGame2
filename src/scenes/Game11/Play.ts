@@ -100,6 +100,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   init(res: { data: any[], index: number }) {
     index = res.index;
     this.ccData = res.data;
+    console.log(this.ccData);
     console.log("正确答案", this.ccData[index].name);
   }
 
