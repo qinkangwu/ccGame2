@@ -83,7 +83,7 @@ export default class Game13LoadScene extends Phaser.Scene {
             delete v.starttime;
             delete v.studentanswer;
             delete v.questiontype;
-            v.questioncontent = v.questioncontent.replace(/[\?\？]\s*/, "?\n").replace(/^\s/,"").replace(/^[-—]+/,"").replace(/\s*_+\s*/,"___").replace(/\s*/," ").replace(/\s_*\s/,"___").replace(/\?_+/,"?\n").replace(/\n$/,"").replace(/^\s/,"").replace(/\?\s*[—-]+/,"?\n").replace(/↵\s+/,"\n")
+            v.questioncontent = v.questioncontent.replace(/[\?\？]\s*/, "?\n").replace(/^\s/,"").replace(/^[-—]+/,"").replace(/\s*_+\s*/,"___").replace(/\s*/," ").replace(/\s_*\s/,"___").replace(/\?_+/,"?\n").replace(/\n$/,"").replace(/^\s/,"").replace(/\?\s*[—-]+/,"?\n").replace(/↵\s+/,"\n");
             return v;
           })
       }
@@ -107,10 +107,10 @@ export default class Game13LoadScene extends Phaser.Scene {
     //   this.centerText.setText(`${e}%`);
     // })
     // this._loader.on("complete", () => {
-      this.scene.start('Game13PlayScene', {
-        data: this.ccData,
-        index: 0
-      });
+      // this.scene.start('Game13PlayScene', {
+      //   data: this.ccData,
+      //   index: 0
+      // });
     //});
     //this._loader.start();
   }

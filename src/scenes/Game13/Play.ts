@@ -1,10 +1,10 @@
 import 'phaser';
-import { Game11DataItem, } from '../../interface/Game11';
+import { QueryTopic } from '../../interface/Game13';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Locomotive, TrainBox, NullTrainBox } from '../../Public/jonny/game11';
+//import { Locomotive, TrainBox, NullTrainBox } from '../../Public/jonny/game11';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -12,33 +12,17 @@ const H = 552;
 var index: number; //题目的指针，默认为0
 var goldValue: number = 3; //金币的值
 
-class DrogEvent {
-  public static onDragStart: Function;
-  public static onDragEnd: Function;
-  public static onDrag: Function;
-}
 
-export default class Game11PlayScene extends Phaser.Scene {
+export default class Game13PlayScene extends Phaser.Scene {
   private status: string;//存放过程的状态
 
-  private ccData: Array<Game11DataItem> = [];
-  private oneWheel: boolean = false;  //一轮是否结束
+  private ccData: Array<QueryTopic> = [];
   private times: number = 0;  //次数
-  private layer3Coords: Vec2[] = [];  //layer3的初始化坐标点
-  private layer2Coords: Vec2[] = [];  //layer2的初始化坐标点
-  private layer2InitX: number;
-  private layer3InitX: number;
-  private layer3andInitX: number;
 
   //静态开始
   private bgm: Phaser.Sound.BaseSound; //背景音乐
   private clickSound: Phaser.Sound.BaseSound; //点击音效
-  private bgFull1: Phaser.GameObjects.Image; //背景图片 
-  private bgFull2: Phaser.GameObjects.Image; //背景图片 
-  private bg1: Phaser.GameObjects.Image; //背景图片
-  private bg2: Phaser.GameObjects.Image; //背景图片
-  private bg3: Phaser.GameObjects.Image; //背景图片
-  private bg4: Phaser.GameObjects.Image; //背景图片
+  private bg: Phaser.GameObjects.Image; //背景图片 
   private btnExit: Button;  //退出按钮
   private btnSound: ButtonMusic; //音乐按钮
   private originalSoundBtn: Button; //原音按钮
@@ -49,42 +33,28 @@ export default class Game11PlayScene extends Phaser.Scene {
   //静态结束
 
   //动态开始
-  private sentenceSpeaker: Phaser.Sound.BaseSound;   //句子播放器
-  private trainboxs: TrainBox[]; //车厢序列
-  private nullTrainboxs: NullTrainBox[] = []; //空车厢序列
-  private locomotivel: Locomotive; //火车头
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
 
   /**
-   * 云背景
+   * 背景
    */
   private layer0: Phaser.GameObjects.Container;
 
   /**
-   * 铁轨背景
+   * 汽车，水枪、拖把
    */
   private layer1: Phaser.GameObjects.Container;
 
   /**
-   * 空车厢
-   */
-  private layer1and: Phaser.GameObjects.Container;
-
-  /**
-   * 火车头与上面的火车车厢
+   * 光
    */
   private layer2: Phaser.GameObjects.Container;
 
   /**
-   * 下面的火车车厢
+   * 答题板
    */
   private layer3: Phaser.GameObjects.Container;
-
-  /**
-   * 火车头
-   */
-  private layer3and: Phaser.GameObjects.Container;
 
   /**
    * UI
@@ -93,14 +63,13 @@ export default class Game11PlayScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: "Game11PlayScene"
+      key: "Game13PlayScene"
     });
   }
 
   init(res: { data: any[], index: number }) {
     index = res.index;
     this.ccData = res.data;
-    console.log("正确答案", this.ccData[index].name);
   }
 
   preload(): void {
@@ -108,7 +77,6 @@ export default class Game11PlayScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.trainboxs = [];
     this.createStage();
     this.createActors();
     //this.firstCreate();  //test
@@ -116,7 +84,7 @@ export default class Game11PlayScene extends Phaser.Scene {
       this.scene.pause();
       rotateTips.init();
       this.firstCreate();
-      cover(this, "Game11", () => {
+      cover(this, "Game13", () => {
         this.planAnims.show(index + 1, this.gameStart)
       });
     } else {
@@ -164,42 +132,27 @@ export default class Game11PlayScene extends Phaser.Scene {
 
     this.layer0 = new Phaser.GameObjects.Container(this).setDepth(0);
     this.layer1 = new Phaser.GameObjects.Container(this).setDepth(1);
-    this.layer1and = new Phaser.GameObjects.Container(this).setDepth(2);
-    this.layer2 = new Phaser.GameObjects.Container(this).setDepth(3);
-    this.layer3 = new Phaser.GameObjects.Container(this).setDepth(4);
-    this.layer3and = new Phaser.GameObjects.Container(this).setDepth(5);
-    this.layer4 = new Phaser.GameObjects.Container(this).setDepth(6);
-
-    this.layer1and.setPosition(426, 177);
-    this.layer2.setPosition(426, 177);
-    this.layer3and.setPosition(175, 142);
-    this.layer3.setPosition(210, 430);
+    this.layer2 = new Phaser.GameObjects.Container(this).setDepth(2);
+    this.layer3 = new Phaser.GameObjects.Container(this).setDepth(3);
+    this.layer4 = new Phaser.GameObjects.Container(this).setDepth(4);
 
     this.add.existing(this.layer0);
     this.add.existing(this.layer1);
-    this.add.existing(this.layer1and);
     this.add.existing(this.layer2);
     this.add.existing(this.layer3);
-    this.add.existing(this.layer3and);
     this.add.existing(this.layer4);
 
-    this.bgFull1 = new Phaser.GameObjects.Image(this, 0, 0, "bgFull").setOrigin(0);
-    this.bgFull2 = new Phaser.GameObjects.Image(this, 1024, 0, "bgFull").setOrigin(0).setFlipX(true);
-    this.layer0.add([this.bgFull1, this.bgFull2]).setDepth(0);
+    this.bg = new Phaser.GameObjects.Image(this, 0, 0, "bg").setOrigin(0);
+    this.layer0.add(this.bg);
 
-    this.bg1 = new Phaser.GameObjects.Image(this, 0, 0, "bg").setOrigin(0);
-    this.bg2 = new Phaser.GameObjects.Image(this, 1024, 0, "bg").setOrigin(0).setFlipX(true);
-    this.bg3 = new Phaser.GameObjects.Image(this, 1024 * 2, 0, "bg").setOrigin(0);
-    this.bg4 = new Phaser.GameObjects.Image(this, 1024 * 3, 0, "bg").setOrigin(0).setFlipX(true);
-    this.layer1.add([this.bg1, this.bg2, this.bg3, this.bg4]);
 
     this.btnExit = new ButtonExit(this);
     this.btnSound = new ButtonMusic(this);
-    this.originalSoundBtn = new Button(this, 25 + 60 * 0.5, 467 + 60 * 0.5, "originalSoundBtn").setAlpha(1);
-    this.tryAginListenBtn = new TryAginListenBtn(this, 89, 435 + 50);
+    //this.originalSoundBtn = new Button(this, 25 + 60 * 0.5, 467 + 60 * 0.5, "originalSoundBtn").setAlpha(1);
+    //this.tryAginListenBtn = new TryAginListenBtn(this, 89, 435 + 50);
     this.layer4.add([this.btnExit, this.btnSound, this.originalSoundBtn, this.tryAginListenBtn]);
 
-    this.originalSoundBtn.on("pointerdown", this.playSentence.bind(that));
+    //this.originalSoundBtn.on("pointerdown", this.playSentence.bind(that));
 
     this.clickSound = this.sound.add('click');
     this.planAnims = new PlanAnims(this, this.ccData.length);
@@ -934,7 +887,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     }
     this.times = 0;
     this.oneWheel = false;
-    this.scene.start('Game11PlayScene', {
+    this.scene.start('Game13PlayScene', {
       data: this.ccData,
       index: index
     });
