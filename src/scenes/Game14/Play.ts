@@ -16,6 +16,7 @@ export default class Game14PlayScene extends Phaser.Scene {
     private picArr : Phaser.GameObjects.Image[] = [] ; //图片数组
     private zoneArr : Phaser.GameObjects.Zone[] = [] ; //点击区域数组
     private clickLock : boolean = false ; //点击锁
+    private chooseCardIndexArr : number[] = [] ; //选择的索引数组
     constructor() {
       super({
         key: "Game14PlayScene"
@@ -109,7 +110,10 @@ export default class Game14PlayScene extends Phaser.Scene {
 
     private flipCardHandle (mode : string , index : number) : void {
       //点击翻转卡片
-      if(this.cardArr[index].frame.name === 'pic2.png' || this.clickLock) return;
+      if(this.cardArr[index].frame.name === 'pic2.png' || this.clickLock || this.chooseCardIndexArr.length === 2) return;
+      this.playMusic('clickMp3');
+      this.clickLock = true;
+      this.chooseCardIndexArr.push(index);
       this.tweens.add({
         targets : this.cardArr[index],
         duration : 300,
@@ -130,10 +134,73 @@ export default class Game14PlayScene extends Phaser.Scene {
             bottomRightX : `+=218`,
             onComplete : ()=>{
               this.wordArr[index].alpha = 1;
+              this.clickLock = false ;
+              if(this.chooseCardIndexArr.length === 2){
+                if(this.wordArr[this.chooseCardIndexArr[0]].text === this.wordArr[this.chooseCardIndexArr[1]].text){
+                  this.time.addEvent({
+                    delay : 500,
+                    callback : ()=>{
+                      this.successHandle();
+                    }
+                  })
+                }else{
+                  this.time.addEvent({
+                    delay : 500,
+                    callback : ()=>{
+                      this.errorHandle();
+                    }
+                  })
+                }
+              }
             }
           });
         }
       })
+    }
+
+    private playMusic (sourceKey : string) : void {
+      //播放音频
+      let mp3 : Phaser.Sound.BaseSound = this.sound.add(sourceKey);
+      mp3.play();
+    }
+
+    private successHandle () : void {
+      //匹配正确
+      this.chooseCardIndexArr.map((r,i)=>{
+        this.cardArr[r].destroy();
+        this.wordArr[r].destroy();
+        this.zoneArr[r].destroy();
+      })
+      this.chooseCardIndexArr.length = 0;
+    }
+
+    private errorHandle() : void {
+      //匹配错误
+      this.chooseCardIndexArr.map((r,i)=>{
+        this.wordArr[r].alpha = 0;
+        this.tweens.add({
+          targets : this.cardArr[r],
+          duration : 300,
+          ease : 'Sine.easeInOut',
+          topLeftX : `+=218`,
+          topRightX : `-=218`,
+          bottomLeftX : '+=218',
+          bottomRightX : `-=218`,
+          onComplete : ()=>{
+            this.cardArr[r].setFrame('pic1.png');
+            this.tweens.add({
+              targets : this.cardArr[r],
+              duration : 300,
+              ease : 'Sine.easeInOut',
+              topLeftX : `-=218`,
+              topRightX : `+=218`,
+              bottomLeftX : '-=218',
+              bottomRightX : `+=218`,
+            })
+          }
+        })
+      })
+      this.chooseCardIndexArr.length = 0 ;
     }
 
     private createMode2() : void {
