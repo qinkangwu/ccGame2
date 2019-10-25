@@ -76,8 +76,7 @@ export default class Game13PlayScene extends Phaser.Scene {
 
   create(): void {
     this.createStage();
-    //this.createActors();
-    //this.firstCreate();  //test
+    this.createActors();
     if (index === 0) {
       this.scene.pause();
       rotateTips.init();
@@ -159,6 +158,10 @@ export default class Game13PlayScene extends Phaser.Scene {
    * 创建演员们
    */
   createActors(): void {
+    //创建汽车
+    
+
+
     //创建用户反馈
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
   }
