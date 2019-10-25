@@ -78,7 +78,7 @@ export default class Game11LoadScene extends Phaser.Scene {
             return v;
           })
           .filter(v=>{
-            return v.vocabularies.length < 9;   //过滤长度大于9的数据
+            return v.vocabularies.length < 6;   //过滤长度大于9的数据
           })
       }
     }).then(() => {
