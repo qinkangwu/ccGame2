@@ -4,8 +4,7 @@ import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/cor
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { ClearCar, DirtyCar, WaterGun, CarMask } from '../../Public/jonny/game13/';
-//import { Locomotive, TrainBox, NullTrainBox } from '../../Public/jonny/game11';
+import { ClearCar, DirtyCar, WaterGun, CarMask, OrderUI } from '../../Public/jonny/game13/';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -15,7 +14,7 @@ var goldValue: number = 3; //金币的值
 
 
 export default class Game13PlayScene extends Phaser.Scene {
-  private ccData: Array<QueryTopic> = [];
+  private ccData: QueryTopic[] = [];
   private times: number = 0;  //次数
 
   //静态开始
@@ -34,7 +33,8 @@ export default class Game13PlayScene extends Phaser.Scene {
   private dirtyCar: DirtyCar;   //肮脏的车
   private waterGun: WaterGun;  //水枪
   private carMask: CarMask;
-  //private orderUI:Phaser.GameObjects.Image;
+  private orderUI: OrderUI;
+  public prevAnswer: Phaser.GameObjects.Container = null;
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
 
@@ -62,6 +62,7 @@ export default class Game13PlayScene extends Phaser.Scene {
   init(res: { data: any[], index: number }) {
     index = res.index;
     this.ccData = res.data;
+    console.log(this.ccData);
   }
 
   preload(): void {
@@ -149,6 +150,10 @@ export default class Game13PlayScene extends Phaser.Scene {
 
     //创建用户反馈
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
+
+    //创建题板
+    this.orderUI = new OrderUI(this, this.ccData[index]);
+    this.layer3.add(this.orderUI);
   }
 
   /**
@@ -158,8 +163,30 @@ export default class Game13PlayScene extends Phaser.Scene {
     let ready = async () => {
       await this.dirtyCar.admission();
       this.clearCar.visible = true;
+      await this.orderUI.admission();
+      this.orderUI.answers.forEach(answer => {
+        answer.on("pointerdown", this.touchAnswer.bind(this, answer));
+      });
     };
     ready();
+  }
+
+  /**
+    * 点击答案
+    */
+  public touchAnswer(answer: Phaser.GameObjects.Container){
+    if (this.prevAnswer) {
+      //@ts-ignore
+      this.prevAnswer.list[0].visible = false;
+      //@ts-ignore
+      this.prevAnswer.list[1].setTint(0xFF6E09);
+    }
+    this.prevAnswer = answer;
+    //@ts-ignore
+    answer.list[0].visible = true;
+    //@ts-ignore
+    answer.list[1].setTint(0xffffff);
+    this.testEnd(); 
   }
 
 
@@ -176,15 +203,6 @@ export default class Game13PlayScene extends Phaser.Scene {
       onComplete: callback
     })
     return _tween;
-  }
-
-
-  /**
-   * 检查做题是否已经结束
-   */
-  private checkoutTesrEnd() {
-
-
   }
 
   /**
@@ -234,6 +252,7 @@ export default class Game13PlayScene extends Phaser.Scene {
     }
 
     let animate = async () => {
+      await this.orderUI.leave();
       await this.waterGun.admission();
       await this.carMask.admission();
       this.waterGun.boom();
@@ -312,9 +331,14 @@ export default class Game13PlayScene extends Phaser.Scene {
    * 判断做题结果是否正确
    */
   private checkoutResult(): Promise<string> {
-    let answer: string = "";
+    //let answer: string = "";
+    let isRightValue:string = this.prevAnswer.getData("isRight"); 
     return new Promise((resolve, reject) => {
-
+      if(isRightValue === "1"){
+        resolve("is right");
+      }else{
+        reject("is wrong");
+      }
     });
   }
 

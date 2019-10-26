@@ -43,7 +43,7 @@ export default class Game13LoadScene extends Phaser.Scene {
 
   preload(): void {
     this.load.audio('bgm', 'assets/sounds/bgm-04.mp3');
-    this.load.bitmapFont('ArialRoundedBold30', 'assets/font/ArialRoundedBold30/font.png', 'assets/font/ArialRoundedBold30/font.xml');
+    this.load.bitmapFont('STYuantiSC40', 'assets/font/STYuantiSC40/font.png', 'assets/font/STYuantiSC40/font.xml');
     TipsParticlesEmitter.loadImg(this);
     TryAginListenBtn.loadAssets(this);
     PlanAnims.loadImg(this);
