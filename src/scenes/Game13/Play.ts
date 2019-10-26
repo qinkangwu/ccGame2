@@ -4,6 +4,7 @@ import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/cor
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
+import { ClearCar, DirtyCar, WaterGun } from '../../Public/jonny/game13/';
 //import { Locomotive, TrainBox, NullTrainBox } from '../../Public/jonny/game11';
 
 const vol = 0.3; //背景音乐的音量
@@ -23,14 +24,18 @@ export default class Game13PlayScene extends Phaser.Scene {
   private bg: Phaser.GameObjects.Image; //背景图片 
   private btnExit: Button;  //退出按钮
   private btnSound: ButtonMusic; //音乐按钮
-  private originalSoundBtn: Button; //原音按钮
-  private tryAginListenBtn: TryAginListenBtn; //在听一次按钮
   private planAnims: PlanAnims;
   private gold: Gold;
   private successBtn: SuccessBtn;  //成功提交的按钮
   //静态结束
 
   //动态开始
+  private clearCar: ClearCar; //干净的车
+  private dirtyCar: DirtyCar;   //肮脏的车
+  private light: Phaser.GameObjects.Image;      //光
+  private rag: Phaser.GameObjects.Image;       //拖把
+  private waterGun: WaterGun;  //水枪
+  //private orderUI:Phaser.GameObjects.Image;
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
 
@@ -38,16 +43,6 @@ export default class Game13PlayScene extends Phaser.Scene {
    * 背景
    */
   private layer0: Phaser.GameObjects.Container;
-
-  /**
-   * 汽车，水枪、拖把
-   */
-  private layer1: Phaser.GameObjects.Container;
-
-  /**
-   * 光
-   */
-  private layer2: Phaser.GameObjects.Container;
 
   /**
    * 答题板
@@ -91,19 +86,9 @@ export default class Game13PlayScene extends Phaser.Scene {
 
   update(time: number, delta: number): void {
     this.btnSound.mountUpdate();
-    this.resize();
   }
 
 
-
-  /**
-   * 重置尺寸
-   */
-  resize() {
-    if (this.layer0.x > 0) {
-      this.layer0.x = 0;
-    }
-  }
 
   /**
    * 首次才创建
@@ -128,14 +113,10 @@ export default class Game13PlayScene extends Phaser.Scene {
     let that = this;
 
     this.layer0 = new Phaser.GameObjects.Container(this).setDepth(0);
-    this.layer1 = new Phaser.GameObjects.Container(this).setDepth(1);
-    this.layer2 = new Phaser.GameObjects.Container(this).setDepth(2);
     this.layer3 = new Phaser.GameObjects.Container(this).setDepth(3);
     this.layer4 = new Phaser.GameObjects.Container(this).setDepth(4);
 
     this.add.existing(this.layer0);
-    this.add.existing(this.layer1);
-    this.add.existing(this.layer2);
     this.add.existing(this.layer3);
     this.add.existing(this.layer4);
 
@@ -158,8 +139,13 @@ export default class Game13PlayScene extends Phaser.Scene {
    * 创建演员们
    */
   createActors(): void {
-    //创建汽车
-    
+    this.clearCar = new ClearCar(this);
+    this.add.existing(this.clearCar);
+    this.dirtyCar = new DirtyCar(this);
+    this.add.existing(this.dirtyCar);
+    this.waterGun = new WaterGun(this);
+    this.add.existing(this.waterGun);
+
 
 
     //创建用户反馈
@@ -170,7 +156,11 @@ export default class Game13PlayScene extends Phaser.Scene {
    * 游戏开始
    */
   private gameStart(): void {
-
+    let ready = async () => {
+      await this.dirtyCar.admission();
+      await this.waterGun.admission();
+    };
+    ready();
   }
 
 
