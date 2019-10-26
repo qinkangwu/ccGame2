@@ -4,7 +4,7 @@ import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/cor
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { ClearCar, DirtyCar, WaterGun ,CarMask} from '../../Public/jonny/game13/';
+import { ClearCar, DirtyCar, WaterGun, CarMask } from '../../Public/jonny/game13/';
 //import { Locomotive, TrainBox, NullTrainBox } from '../../Public/jonny/game11';
 
 const vol = 0.3; //背景音乐的音量
@@ -33,7 +33,7 @@ export default class Game13PlayScene extends Phaser.Scene {
   private clearCar: ClearCar; //干净的车
   private dirtyCar: DirtyCar;   //肮脏的车
   private waterGun: WaterGun;  //水枪
-  private carMask:CarMask; 
+  private carMask: CarMask;
   //private orderUI:Phaser.GameObjects.Image;
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
@@ -144,7 +144,7 @@ export default class Game13PlayScene extends Phaser.Scene {
     this.add.existing(this.dirtyCar);
     this.waterGun = new WaterGun(this);
     this.add.existing(this.waterGun);
-    this.carMask = new CarMask(this,false);
+    this.carMask = new CarMask(this, false);
     this.dirtyCar.mask = this.carMask;
 
     //创建用户反馈
@@ -158,18 +158,9 @@ export default class Game13PlayScene extends Phaser.Scene {
     let ready = async () => {
       await this.dirtyCar.admission();
       this.clearCar.visible = true;
-      await this.waterGun.admission();
-      await this.carMask.admission();
-      this.waterGun.boom();
-      await this.carMask.carWash();
-      await this.carMask.washOver();
-      await this.clearCar.flash();
-      await this.waterGun.leave();
-      await this.clearCar.leave();
     };
     ready();
   }
-
 
 
   /**
@@ -241,6 +232,20 @@ export default class Game13PlayScene extends Phaser.Scene {
         this.sellingGold.goodJob(3);
       })
     }
+
+    let animate = async () => {
+      await this.waterGun.admission();
+      await this.carMask.admission();
+      this.waterGun.boom();
+      await this.carMask.carWash();
+      await this.carMask.washOver();
+      await this.clearCar.flash();
+      await this.waterGun.leave();
+      await this.clearCar.leave();
+      nextFuc();
+    }
+
+    animate();
   }
 
   /**
