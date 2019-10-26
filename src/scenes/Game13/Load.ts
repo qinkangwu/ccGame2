@@ -48,6 +48,7 @@ export default class Game13LoadScene extends Phaser.Scene {
     TryAginListenBtn.loadAssets(this);
     PlanAnims.loadImg(this);
     SellingGold.loadImg(this);
+    this.load.atlas('flares', 'assets/Game13/flares.png', 'assets/Game13/flares.json');
     this.assets.forEach((v) => {
       this.load.image(v.key, v.url);
     })

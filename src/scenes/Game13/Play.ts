@@ -32,8 +32,6 @@ export default class Game13PlayScene extends Phaser.Scene {
   //动态开始
   private clearCar: ClearCar; //干净的车
   private dirtyCar: DirtyCar;   //肮脏的车
-  private light: Phaser.GameObjects.Image;      //光
-  private rag: Phaser.GameObjects.Image;       //拖把
   private waterGun: WaterGun;  //水枪
   private carMask:CarMask; 
   //private orderUI:Phaser.GameObjects.Image;
@@ -162,8 +160,12 @@ export default class Game13PlayScene extends Phaser.Scene {
       this.clearCar.visible = true;
       await this.waterGun.admission();
       await this.carMask.admission();
+      this.waterGun.boom();
       await this.carMask.carWash();
       await this.carMask.washOver();
+      await this.clearCar.flash();
+      await this.waterGun.leave();
+      await this.clearCar.leave();
     };
     ready();
   }
