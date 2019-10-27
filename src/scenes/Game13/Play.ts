@@ -290,7 +290,6 @@ export default class Game13PlayScene extends Phaser.Scene {
    * 重置开始状态
    */
   private resetStart() {
-
     this.successBtn.setAlpha(0);
     this.successBtn.interactive = true;
   }
@@ -317,6 +316,7 @@ export default class Game13PlayScene extends Phaser.Scene {
    */
   private nextRound(): void {
     index += 1;
+    this.prevAnswer = null;
     if (index > this.ccData.length - 1) {
       window.location.href = CONSTANT.INDEX_URL;
     }

@@ -46,7 +46,6 @@ export class CarMask extends Phaser.Display.Masks.GeometryMask {
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.geometryMask,
                 x: 1464,
-                delay:2000,
                 duration: 4000,
                 onUpdate:()=>{
                     count+=1;
