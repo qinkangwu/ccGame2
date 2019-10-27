@@ -316,6 +316,7 @@ export default class Game13PlayScene extends Phaser.Scene {
    */
   private nextRound(): void {
     index += 1;
+    //index = 7; //test
     this.prevAnswer = null;
     if (index > this.ccData.length - 1) {
       window.location.href = CONSTANT.INDEX_URL;

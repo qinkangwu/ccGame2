@@ -10,7 +10,7 @@ export class OrderUI extends Phaser.GameObjects.Container {
         super(scene, 510, 777);  //normal position is 510,290
         this.queryTopic = queryTopic;
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, "orderUI");
-        this.topic = new Phaser.GameObjects.BitmapText(scene, -335, -70, "STYuantiSC40", queryTopic.questioncontent, 45, 0).setOrigin(0, 0.5);
+        this.topic = new Phaser.GameObjects.BitmapText(scene, -335, -90, "STYuantiSC40", queryTopic.questioncontent, 45, 0).setOrigin(0);
         this.topic.setTint(0xFF6E09);
         this.createAnswer();
         this.add([this.bg, this.topic]);
@@ -25,10 +25,11 @@ export class OrderUI extends Phaser.GameObjects.Container {
             _bg.fillStyle(0xFF6E09, 1);
             _bg.fillRoundedRect(0 - 166 * 0.5, 0 - 74.5 * 0.5, 166, 74.5, 10);
             _bg.visible = false;
-            let _text = new Phaser.GameObjects.BitmapText(this.scene, 0, 7, "STYuantiSC40", answer.answercontent, 45, 0.5).setOrigin(0.5);
+            let _textSize = answer.answercontent.length <= 11 ? 30 : 25; 
+            let _text = new Phaser.GameObjects.BitmapText(this.scene, 0, 7, "STYuantiSC40", answer.answercontent,_textSize, 1).setOrigin(0.5);
             _text.setTint(0xFF6E09);
             _answer.add([_bg, _text]);
-            _answer.setInteractive( new Phaser.Geom.Circle(0, 0,74.5*0.7),Phaser.Geom.Circle.Contains);
+            _answer.setInteractive(new Phaser.Geom.Circle(0, 0, 74.5 * 0.7), Phaser.Geom.Circle.Contains);
             this.answers.push(_answer);
         })
     }
@@ -53,16 +54,16 @@ export class OrderUI extends Phaser.GameObjects.Container {
     /**
     * 退场
     */
-   public leave(): Promise<number> {
-    return new Promise<number>(resolve => {
-        this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
-            targets: this,
-            y: 777,
-            duration: 500,
-            onComplete: () => {
-                resolve(1);
-            }
-        });
-    })
-}
+    public leave(): Promise<number> {
+        return new Promise<number>(resolve => {
+            this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+                targets: this,
+                y: 777,
+                duration: 500,
+                onComplete: () => {
+                    resolve(1);
+                }
+            });
+        })
+    }
 }

@@ -84,7 +84,7 @@ export default class Game13LoadScene extends Phaser.Scene {
             delete v.starttime;
             delete v.studentanswer;
             delete v.questiontype;
-            v.questioncontent = v.questioncontent.replace(/[\?\？]\s*/, "?\n").replace(/^\s/,"").replace(/^[-—]+/,"").replace(/\s*_+\s*/,"___").replace(/\s*/," ").replace(/\s_*\s/,"___").replace(/\?_+/,"?\n").replace(/\n$/,"").replace(/^\s/,"").replace(/\?\s*[—-]+/,"?\n").replace(/↵\s+/,"\n");
+            v.questioncontent = v.questioncontent.replace(/[\?\？]\s*/, "?\n").replace(/^[-—]+/,"").replace(/\s{2,}/," ").replace(/\?_+/,"?\n").replace(/\n$/,"").replace(/^\s/,"").replace(/\?\s*[—-]+/,"?\n").replace(/\n\s+/,"\n");
             return v;
           })
       }
