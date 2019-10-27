@@ -20,6 +20,7 @@ export default class Game13PlayScene extends Phaser.Scene {
   //静态开始
   private bgm: Phaser.Sound.BaseSound; //背景音乐
   private clickSound: Phaser.Sound.BaseSound; //点击音效
+  private successMp3: Phaser.Sound.BaseSound; //成功音效
   private bg: Phaser.GameObjects.Image; //背景图片 
   private btnExit: Button;  //退出按钮
   private btnSound: ButtonMusic; //音乐按钮
@@ -88,8 +89,6 @@ export default class Game13PlayScene extends Phaser.Scene {
     this.btnSound.mountUpdate();
   }
 
-
-
   /**
    * 首次才创建
    */
@@ -127,7 +126,8 @@ export default class Game13PlayScene extends Phaser.Scene {
     this.btnSound = new ButtonMusic(this);
     this.layer4.add([this.btnExit, this.btnSound]);
 
-    this.clickSound = this.sound.add('click');
+    this.clickSound = this.sound.add('clickMp3');
+    this.successMp3 = this.sound.add('successMp3');
     this.planAnims = new PlanAnims(this, this.ccData.length);
     this.gold = new Gold(this, goldValue);   //设置金币
     this.successBtn = new SuccessBtn(this, 939 + 60 * 0.5, 552 * 0.5);
@@ -175,6 +175,7 @@ export default class Game13PlayScene extends Phaser.Scene {
     * 点击答案
     */
   public touchAnswer(answer: Phaser.GameObjects.Container){
+    this.clickSound.play()
     if (this.prevAnswer) {
       //@ts-ignore
       this.prevAnswer.list[0].visible = false;
@@ -257,6 +258,7 @@ export default class Game13PlayScene extends Phaser.Scene {
       await this.carMask.admission();
       this.waterGun.boom();
       await this.carMask.carWash();
+      this.successMp3.play();
       await this.carMask.washOver();
       await this.clearCar.flash();
       await this.waterGun.leave();
