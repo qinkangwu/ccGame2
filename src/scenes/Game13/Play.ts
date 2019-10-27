@@ -19,8 +19,6 @@ export default class Game13PlayScene extends Phaser.Scene {
 
   //静态开始
   private bgm: Phaser.Sound.BaseSound; //背景音乐
-  private clickSound: Phaser.Sound.BaseSound; //点击音效
-  private successMp3: Phaser.Sound.BaseSound; //成功音效
   private bg: Phaser.GameObjects.Image; //背景图片 
   private btnExit: Button;  //退出按钮
   private btnSound: ButtonMusic; //音乐按钮
@@ -126,8 +124,6 @@ export default class Game13PlayScene extends Phaser.Scene {
     this.btnSound = new ButtonMusic(this);
     this.layer4.add([this.btnExit, this.btnSound]);
 
-    this.clickSound = this.sound.add('clickMp3');
-    this.successMp3 = this.sound.add('successMp3');
     this.planAnims = new PlanAnims(this, this.ccData.length);
     this.gold = new Gold(this, goldValue);   //设置金币
     this.successBtn = new SuccessBtn(this, 939 + 60 * 0.5, 552 * 0.5);
@@ -136,9 +132,23 @@ export default class Game13PlayScene extends Phaser.Scene {
   }
 
   /**
+   * 单次播放的音频播放器
+   */
+  private audioPlay(key:string):Promise<number>{
+    return new Promise<number>(resolve=>{
+      let _tempSound:Phaser.Sound.BaseSound = this.sound.add(key);
+      _tempSound.on("complete",function (this:Phaser.Sound.BaseSound){
+        this.destroy();
+        resolve(1);
+      });
+      _tempSound.play();
+    })
+  }
+
+  /**
    * 创建演员们
    */
-  createActors(): void {
+  private createActors(): void {
     this.clearCar = new ClearCar(this);
     this.add.existing(this.clearCar);
     this.dirtyCar = new DirtyCar(this);
@@ -175,7 +185,7 @@ export default class Game13PlayScene extends Phaser.Scene {
     * 点击答案
     */
   public touchAnswer(answer: Phaser.GameObjects.Container){
-    this.clickSound.play()
+    this.audioPlay("clickMp3");
     if (this.prevAnswer) {
       //@ts-ignore
       this.prevAnswer.list[0].visible = false;
@@ -253,12 +263,13 @@ export default class Game13PlayScene extends Phaser.Scene {
     }
 
     let animate = async () => {
+      await this.audioPlay("right");
       await this.orderUI.leave();
       await this.waterGun.admission();
       await this.carMask.admission();
       this.waterGun.boom();
       await this.carMask.carWash();
-      this.successMp3.play();
+      this.audioPlay("successMp3");
       await this.carMask.washOver();
       await this.clearCar.flash();
       await this.waterGun.leave();
@@ -272,7 +283,8 @@ export default class Game13PlayScene extends Phaser.Scene {
   /**
    * 错误的结果处理
    */
-  private isWrong(): void {
+  private async isWrong(){
+    await this.audioPlay("wrong");
     this.times += 1;
     if (this.times === 1) {
       this.tryAgin();
