@@ -222,9 +222,9 @@ export default class Game11PlayScene extends Phaser.Scene {
     let _shape = this.cache.json.get("trainboxShape");
 
     //火车头
-    this.locomotivel = new Locomotive(this, _shape.locomotive);
-    this.locomotivel.x = 0 + 1000;
-    this.locomotivel.y = 127.05;
+    this.locomotivel = new Locomotive(this,`${index+1}/${this.ccData.length}`);
+    // this.locomotivel.x = 0 + 1000;
+    // this.locomotivel.y = 142;
     this.layer3and.add(this.locomotivel);
     this.layer3andInitX = this.layer3and.x;
 
