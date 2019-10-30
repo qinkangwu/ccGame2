@@ -3,7 +3,7 @@ import { Game11DataItem, } from '../../interface/Game11';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Locomotive, TrainBox, NullTrainBox, SentenceUI } from '../../Public/jonny/game11';
+import { Locomotive, TrainBox, NullTrainBox, SentenceUI } from '../../Public/jonny/game11/';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
