@@ -1,4 +1,5 @@
 import 'phaser';
+import { Observable } from 'rxjs';
 import { QueryTopic } from '../../interface/Game13';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
@@ -221,15 +222,13 @@ export default class Game13PlayScene extends Phaser.Scene {
     this.orderUI.answers.forEach(answer => {
       answer.disableInteractive();
     });
-    this.checkoutResult()
-      .then(msg => {    //正确
-        console.log(msg)
+    this.checkoutResult().subscribe(value => {
+      if (value) {
         this.isRight();
-      })
-      .catch(err => {   //错误
-        console.log(err)
+      } else {
         this.isWrong();
-      });
+      }
+    })
   }
 
   /**
@@ -334,14 +333,13 @@ export default class Game13PlayScene extends Phaser.Scene {
   /**
    * 判断做题结果是否正确
    */
-  private checkoutResult(): Promise<string> {
-    //let answer: string = "";
+  private checkoutResult(): Observable<boolean> {
     let isRightValue: string = this.prevAnswer.getData("isRight");
-    return new Promise((resolve, reject) => {
+    return Observable.create(subscriber => {
       if (isRightValue === "1") {
-        resolve("is right");
+        subscriber.next(true);
       } else {
-        reject("is wrong");
+        subscriber.next(false);
       }
     });
   }
