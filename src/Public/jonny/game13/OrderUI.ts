@@ -10,7 +10,7 @@ export class OrderUI extends Phaser.GameObjects.Container {
         super(scene, 510, 777);  //normal position is 510,290
         this.queryTopic = queryTopic;
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, "orderUI");
-        this.topic = new Phaser.GameObjects.BitmapText(scene, -335, -90, "STYuantiSC40", queryTopic.questioncontent, 45, 0).setOrigin(0);
+        this.topic = new Phaser.GameObjects.BitmapText(scene, -335, -90, "ArialRoundedBold", queryTopic.questioncontent, 45, 0).setOrigin(0);
         this.topic.setTint(0xFF6E09);
         this.createAnswer();
         this.add([this.bg, this.topic]);
@@ -26,7 +26,7 @@ export class OrderUI extends Phaser.GameObjects.Container {
             _bg.fillRoundedRect(0 - 166 * 0.5, 0 - 74.5 * 0.5, 166, 74.5, 10);
             _bg.visible = false;
             let _textSize = answer.answercontent.length <= 11 ? 30 : 25; 
-            let _text = new Phaser.GameObjects.BitmapText(this.scene, 0, 7, "STYuantiSC40", answer.answercontent,_textSize, 1).setOrigin(0.5);
+            let _text = new Phaser.GameObjects.BitmapText(this.scene, 0, 7, "ArialRoundedBold", answer.answercontent,_textSize, 1).setOrigin(0.5);
             _text.setTint(0xFF6E09);
             _answer.add([_bg, _text]);
             _answer.setInteractive(new Phaser.Geom.Circle(0, 0, 74.5 * 0.7), Phaser.Geom.Circle.Contains);

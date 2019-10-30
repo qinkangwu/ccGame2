@@ -47,7 +47,7 @@ export default class Game13LoadScene extends Phaser.Scene {
     this.load.audio('clickMp3', 'assets/sounds/clickMp3.mp3');
     this.load.audio('right', 'assets/sounds/newJoin/right.mp3');
     this.load.audio('wrong', 'assets/sounds/newJoin/wrong.mp3');
-    this.load.bitmapFont('STYuantiSC40', 'assets/font/STYuantiSC40/font.png', 'assets/font/STYuantiSC40/font.xml');
+    this.load.bitmapFont('ArialRoundedBold', 'assets/font/ArialRoundedBold/font.png', 'assets/font/ArialRoundedBold/font.xml');
     TipsParticlesEmitter.loadImg(this);
     TryAginListenBtn.loadAssets(this);
     PlanAnims.loadImg(this);
