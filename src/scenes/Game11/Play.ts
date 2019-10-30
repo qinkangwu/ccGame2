@@ -2,7 +2,7 @@ import 'phaser';
 import { Game11DataItem, } from '../../interface/Game11';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
-import PlanAnims from '../../Public/PlanAnims';
+//import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 import { Locomotive, TrainBox, NullTrainBox } from '../../Public/jonny/game11';
 
@@ -43,7 +43,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   private btnSound: ButtonMusic; //音乐按钮
   private originalSoundBtn: Button; //原音按钮
   private tryAginListenBtn: TryAginListenBtn; //在听一次按钮
-  private planAnims: PlanAnims;
+  //private planAnims: PlanAnims;
   private gold: Gold;
   private successBtn: SuccessBtn;  //成功提交的按钮
   //静态结束
@@ -118,10 +118,12 @@ export default class Game11PlayScene extends Phaser.Scene {
       rotateTips.init();
       this.firstCreate();
       cover(this, "Game11", () => {
-        this.planAnims.show(index + 1, this.gameStart)
+        //this.planAnims.show(index + 1, this.gameStart)
+        this.gameStart();
       });
     } else {
-      this.planAnims.show(index + 1, this.gameStart);
+      //this.planAnims.show(index + 1, this.gameStart);
+        this.gameStart();
     }
   }
 
@@ -203,7 +205,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.originalSoundBtn.on("pointerdown", this.playSentence.bind(that));
 
     this.clickSound = this.sound.add('click');
-    this.planAnims = new PlanAnims(this, this.ccData.length);
+    //this.planAnims = new PlanAnims(this, this.ccData.length);
     this.gold = new Gold(this, goldValue);   //设置金币
     this.successBtn = new SuccessBtn(this, 939 + 60 * 0.5, 552 * 0.5);
     this.successBtn.on("pointerdown", this.successBtnPointerdown.bind(this));
