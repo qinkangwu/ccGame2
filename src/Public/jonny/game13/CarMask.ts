@@ -31,7 +31,7 @@ export class CarMask extends Phaser.Display.Masks.GeometryMask {
         return new Promise<number>(resolve => {
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.rag,
-                y: 475,
+                y: 475-140,
                 duration: 500,
                 onComplete: () => {
                     resolve(1);
@@ -48,8 +48,8 @@ export class CarMask extends Phaser.Display.Masks.GeometryMask {
                 x: 1464,
                 duration: 4000,
                 onUpdate:()=>{
-                    count+=1;
-                    this.rag.y+=Math.sin(count)*5;
+                    count+=0.3;
+                    this.rag.y+=Math.sin(count)*40;
                     this.rag.x = this.geometryMask.x - 500;
                 },
                 onComplete: () => {
