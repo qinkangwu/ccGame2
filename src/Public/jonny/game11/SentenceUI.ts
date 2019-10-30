@@ -1,4 +1,4 @@
-import "Phaser";
+import "phaser";
 
 export class SentenceUI extends Phaser.GameObjects.Container{
     public bg:Phaser.GameObjects.Graphics;
