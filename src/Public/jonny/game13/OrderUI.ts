@@ -60,6 +60,7 @@ export class OrderUI extends Phaser.GameObjects.Container {
                 targets: this,
                 y: 777,
                 duration: 500,
+                ease:"Sine.easeOut",
                 onComplete: () => {
                     resolve(1);
                 }
