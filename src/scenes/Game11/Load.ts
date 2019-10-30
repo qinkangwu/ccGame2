@@ -37,6 +37,7 @@ export default class Game11LoadScene extends Phaser.Scene {
     this.load.json("trainboxShape", "assets/Game11/trainboxShape.json");
     this.load.audio('bgm', 'assets/sounds/bgm-03.mp3');
     this.load.bitmapFont('ArialRoundedBold30', 'assets/font/ArialRoundedBold30/font.png', 'assets/font/ArialRoundedBold30/font.xml');
+    this.load.bitmapFont('ArialRoundedBold', 'assets/font/ArialRoundedBold/font.png', 'assets/font/ArialRoundedBold/font.xml');
     Locomotive.loadImg(this);
     TipsParticlesEmitter.loadImg(this);
     TryAginListenBtn.loadAssets(this);
@@ -68,7 +69,7 @@ export default class Game11LoadScene extends Phaser.Scene {
             delete v.id;
             delete v.videoId;
             delete v.imgKey;
-            v.name = v.name.replace(/\s/g, "");
+            //v.name = v.name.replace(/\s/g, "");
             v.vocabularies.map(_v => {
               delete _v.id;
               delete _v.videoId;

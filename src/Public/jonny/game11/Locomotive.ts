@@ -7,7 +7,7 @@ export class Locomotive extends Phaser.GameObjects.Container{
     public text:Phaser.GameObjects.BitmapText;
     pitStop:Phaser.Tweens.Timeline;
     constructor(scene: Phaser.Scene,text:string){
-        super(scene,1000,142);
+        super(scene,1000,134);
         this.init();
         this.bg = new Phaser.GameObjects.Image(scene,0,0,"locomotive").setOrigin(0.5,1);
         this.dialog = new Phaser.GameObjects.Image(scene,90,-200,"dialog");
