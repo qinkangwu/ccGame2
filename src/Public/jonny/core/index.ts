@@ -4,6 +4,7 @@ import {rotateTips} from "./rotateTips";
 import {Bounds,isHit} from "./IsHit";
 import { Vec2 } from "./Math";
 import {CONSTANT} from "./constant";
+import {EASE,StaticAni,TweenAni} from "./Animate";
 
 export {
     resize,
@@ -12,6 +13,9 @@ export {
     Bounds,
     isHit,
     Vec2,
-    CONSTANT
+    CONSTANT,
+    EASE,
+    StaticAni,
+    TweenAni 
 }
 

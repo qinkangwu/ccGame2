@@ -1,5 +1,5 @@
 import "phaser";
-import { EASE } from "../Animate";
+import { EASE } from "../core/Animate";
 import { Button } from "./Button";
 
 export class TryAginListenBtn extends Button {

@@ -1,4 +1,5 @@
 import "phaser";
+import {EASE} from "../core/";
 
 export class WaterGun extends Phaser.GameObjects.Image {
     public particles:Phaser.GameObjects.Particles.ParticleEmitterManager;
@@ -38,6 +39,7 @@ export class WaterGun extends Phaser.GameObjects.Image {
                 y: 255 * 0.5,
                 delay: 500,
                 duration: 500,
+                ease:EASE.spring,
                 onComplete: () => {
                     this.emitter.stop();
                     resolve(1);

@@ -1,5 +1,5 @@
 import "phaser";
-import { EASE } from '../Animate'
+import { EASE } from '../core/Animate'
 import { Gold } from "./Gold";
 
 interface Config {
