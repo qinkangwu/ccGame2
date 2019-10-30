@@ -3,7 +3,7 @@ import { Game11DataItem, } from '../../interface/Game11';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Locomotive, TrainBox, NullTrainBox, Sentence } from '../../Public/jonny/game11';
+import { Locomotive, TrainBox, NullTrainBox, SentenceUI } from '../../Public/jonny/game11';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -53,7 +53,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   private locomotivel: Locomotive; //火车头
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
-  private sentence: Sentence;  //句子UI
+  private sentence: SentenceUI;  //句子UI
   /**
    * 云背景
    */
@@ -278,7 +278,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     });
 
     // create sentence ui
-    this.sentence = new Sentence(this, this.ccData[index].name);
+    this.sentence = new SentenceUI(this, this.ccData[index].name);
     this.layer4.add(this.sentence);
 
 

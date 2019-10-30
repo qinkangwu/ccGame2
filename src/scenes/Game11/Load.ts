@@ -5,7 +5,7 @@ import { Assets, Game11DataItem, GetSentenceData } from '../../interface/Game11'
 import { resize } from '../../Public/jonny/core';
 import { SellingGold, TryAginListenBtn } from '../../Public/jonny/components';
 import { Locomotive} from '../../Public/jonny/game11';
-import PlanAnims from '../../Public/PlanAnims';
+//import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
 const W = 1024;
@@ -41,7 +41,7 @@ export default class Game11LoadScene extends Phaser.Scene {
     Locomotive.loadImg(this);
     TipsParticlesEmitter.loadImg(this);
     TryAginListenBtn.loadAssets(this);
-    PlanAnims.loadImg(this);
+    //PlanAnims.loadImg(this);
     SellingGold.loadImg(this);
     this.assets.forEach((v) => {
       this.load.image(v.key, v.url);
