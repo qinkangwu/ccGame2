@@ -1,7 +1,7 @@
 import 'phaser';
 import { QueryTopic } from '../../interface/Game13';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
-import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
+import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 import { ClearCar, DirtyCar, WaterGun, CarMask, OrderUI } from '../../Public/jonny/game13/';
@@ -24,7 +24,6 @@ export default class Game13PlayScene extends Phaser.Scene {
   private btnSound: ButtonMusic; //音乐按钮
   private planAnims: PlanAnims;
   private gold: Gold;
-  private successBtn: SuccessBtn;  //成功提交的按钮
   //静态结束
 
   //动态开始
@@ -126,18 +125,16 @@ export default class Game13PlayScene extends Phaser.Scene {
 
     this.planAnims = new PlanAnims(this, this.ccData.length);
     this.gold = new Gold(this, goldValue);   //设置金币
-    this.successBtn = new SuccessBtn(this, 939 + 60 * 0.5, 552 * 0.5);
-    this.successBtn.on("pointerdown", this.successBtnPointerdown.bind(this));
-    this.layer4.add([this.successBtn, this.gold]);
+    this.layer4.add(this.gold);
   }
 
   /**
    * 单次播放的音频播放器
    */
-  private audioPlay(key:string):Promise<number>{
-    return new Promise<number>(resolve=>{
-      let _tempSound:Phaser.Sound.BaseSound = this.sound.add(key);
-      _tempSound.on("complete",function (this:Phaser.Sound.BaseSound){
+  private audioPlay(key: string): Promise<number> {
+    return new Promise<number>(resolve => {
+      let _tempSound: Phaser.Sound.BaseSound = this.sound.add(key);
+      _tempSound.on("complete", function (this: Phaser.Sound.BaseSound) {
         this.destroy();
         resolve(1);
       });
@@ -184,7 +181,7 @@ export default class Game13PlayScene extends Phaser.Scene {
   /**
     * 点击答案
     */
-  public touchAnswer(answer: Phaser.GameObjects.Container){
+  public touchAnswer(answer: Phaser.GameObjects.Container) {
     this.audioPlay("clickMp3");
     if (this.prevAnswer) {
       //@ts-ignore
@@ -197,7 +194,7 @@ export default class Game13PlayScene extends Phaser.Scene {
     answer.list[0].visible = true;
     //@ts-ignore
     answer.list[1].setTint(0xffffff);
-    this.testEnd(); 
+    this.testEnd();
   }
 
 
@@ -216,23 +213,14 @@ export default class Game13PlayScene extends Phaser.Scene {
     return _tween;
   }
 
-  /**
-   * 做题结束
-   */
-  private testEnd() {
-    this.successBtn.setAlpha(1);
-    this.successBtn.animate.play();
-  }
 
   /**
-   *  successBtnPointerdown 
+   *  已经选择题目，并执行结果
    */
-  private successBtnPointerdown() {
-    if (!this.successBtn.interactive) {
-      return false;
-    }
-    this.successBtn.interactive = false;
-    this.successBtn.animate.stop();
+  private testEnd() {
+    this.orderUI.answers.forEach(answer => {
+      answer.disableInteractive();
+    });
     this.checkoutResult()
       .then(msg => {    //正确
         console.log(msg)
@@ -283,7 +271,7 @@ export default class Game13PlayScene extends Phaser.Scene {
   /**
    * 错误的结果处理
    */
-  private async isWrong(){
+  private async isWrong() {
     await this.audioPlay("wrong");
     this.times += 1;
     if (this.times === 1) {
@@ -304,8 +292,9 @@ export default class Game13PlayScene extends Phaser.Scene {
    * 重置开始状态
    */
   private resetStart() {
-    this.successBtn.setAlpha(0);
-    this.successBtn.interactive = true;
+    this.orderUI.answers.forEach(answer => {
+      answer.setInteractive();
+    });
   }
 
   /**
@@ -347,11 +336,11 @@ export default class Game13PlayScene extends Phaser.Scene {
    */
   private checkoutResult(): Promise<string> {
     //let answer: string = "";
-    let isRightValue:string = this.prevAnswer.getData("isRight"); 
+    let isRightValue: string = this.prevAnswer.getData("isRight");
     return new Promise((resolve, reject) => {
-      if(isRightValue === "1"){
+      if (isRightValue === "1") {
         resolve("is right");
-      }else{
+      } else {
         reject("is wrong");
       }
     });
