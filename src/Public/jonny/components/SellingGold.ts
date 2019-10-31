@@ -84,7 +84,7 @@ export class SellingGold {
                         targets: [goldCoinsLight, goldCoins],
                         scale: 1,
                         ease: "Sine.easeOut",
-                        duration: 1000
+                        duration: 700
                     }
                 ]
             })

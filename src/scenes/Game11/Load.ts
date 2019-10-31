@@ -3,7 +3,7 @@ import apiPath from '../../lib/apiPath';
 import { get } from '../../lib/http';
 import { Assets, Game11DataItem, GetSentenceData } from '../../interface/Game11';
 import { resize } from '../../Public/jonny/core';
-import { SellingGold, TryAginListenBtn } from '../../Public/jonny/components';
+import { SellingGold, TryAginListenBtn ,Particles} from '../../Public/jonny/components';
 import { Locomotive} from '../../Public/jonny/game11';
 //import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
@@ -42,6 +42,7 @@ export default class Game11LoadScene extends Phaser.Scene {
     TipsParticlesEmitter.loadImg(this);
     TryAginListenBtn.loadAssets(this);
     //PlanAnims.loadImg(this);
+    Particles.loadImg(this);
     SellingGold.loadImg(this);
     this.assets.forEach((v) => {
       this.load.image(v.key, v.url);
