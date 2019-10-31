@@ -5,19 +5,23 @@ export class OrderUI extends Phaser.GameObjects.Container {
     public bg: Phaser.GameObjects.Image;
     public topic: Phaser.GameObjects.BitmapText;
     public answers: Phaser.GameObjects.Container[] = [];
+    public topicIndexText:Phaser.GameObjects.BitmapText;
     private queryTopic: QueryTopic;
-    constructor(scene: Phaser.Scene, queryTopic: QueryTopic) {
+    constructor(scene: Phaser.Scene, queryTopic: QueryTopic,topicIndex:string="1/19") {
         super(scene, 510, 777);  //normal position is 510,290
         this.queryTopic = queryTopic;
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, "orderUI");
         this.topic = new Phaser.GameObjects.BitmapText(scene, -335, -90, "ArialRoundedBold", queryTopic.questioncontent, 45, 0).setOrigin(0);
         this.topic.setTint(0xFF6E09);
+        this.topicIndexText = new Phaser.GameObjects.BitmapText(this.scene,-324,-168.95,"ArialRoundedBold",topicIndex,30,1).setOrigin(0.5);
+        this.topicIndexText.tint = 0xFF6E09;
         this.createAnswer();
-        this.add([this.bg, this.topic]);
+        this.add([this.bg, this.topic,this.topicIndexText]);
         this.add(this.answers);
     }
 
     private createAnswer() {
+        let answerIndex:string[] = ["A","B","C","D"];
         this.queryTopic.answers.forEach((answer, index) => {
             let _answer = new Phaser.GameObjects.Container(this.scene, -270 + index * 270, 132);
             _answer.setData("isRight", answer.isright);
@@ -26,7 +30,7 @@ export class OrderUI extends Phaser.GameObjects.Container {
             _bg.fillRoundedRect(0 - 166 * 0.5, 0 - 74.5 * 0.5, 166, 74.5, 10);
             _bg.visible = false;
             let _textSize = answer.answercontent.length <= 11 ? 30 : 25; 
-            let _text = new Phaser.GameObjects.BitmapText(this.scene, 0, 7, "ArialRoundedBold", answer.answercontent,_textSize, 1).setOrigin(0.5);
+            let _text = new Phaser.GameObjects.BitmapText(this.scene, 0, 7, "ArialRoundedBold", answerIndex[index] + "." + answer.answercontent,_textSize, 1).setOrigin(0.5);
             _text.setTint(0xFF6E09);
             _answer.add([_bg, _text]);
             _answer.setInteractive(new Phaser.Geom.Circle(0, 0, 74.5 * 0.7), Phaser.Geom.Circle.Contains);

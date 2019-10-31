@@ -161,7 +161,7 @@ export default class Game13PlayScene extends Phaser.Scene {
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
 
     //创建题板
-    this.orderUI = new OrderUI(this, this.ccData[index]);
+    this.orderUI = new OrderUI(this, this.ccData[index],`${index+1}/${this.ccData.length}`);
     this.layer3.add(this.orderUI);
   }
 
