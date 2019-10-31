@@ -4,7 +4,6 @@ import { get } from '../../lib/http';
 import { Assets, QueryTopic } from '../../interface/Game13';
 import { resize } from '../../Public/jonny/core';
 import { SellingGold, TryAginListenBtn } from '../../Public/jonny/components';
-import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
 const W = 1024;
@@ -50,7 +49,6 @@ export default class Game13LoadScene extends Phaser.Scene {
     this.load.bitmapFont('ArialRoundedBold', 'assets/font/ArialRoundedBold/font.png', 'assets/font/ArialRoundedBold/font.xml');
     TipsParticlesEmitter.loadImg(this);
     TryAginListenBtn.loadAssets(this);
-    PlanAnims.loadImg(this);
     SellingGold.loadImg(this);
     this.load.atlas('flares', 'assets/Game13/flares.png', 'assets/Game13/flares.json');
     this.assets.forEach((v) => {

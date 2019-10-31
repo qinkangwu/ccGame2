@@ -3,7 +3,6 @@ import { Observable } from 'rxjs';
 import { QueryTopic } from '../../interface/Game13';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
-import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 import { ClearCar, DirtyCar, WaterGun, CarMask, OrderUI } from '../../Public/jonny/game13/';
 
@@ -23,7 +22,6 @@ export default class Game13PlayScene extends Phaser.Scene {
   private bg: Phaser.GameObjects.Image; //背景图片 
   private btnExit: Button;  //退出按钮
   private btnSound: ButtonMusic; //音乐按钮
-  private planAnims: PlanAnims;
   private gold: Gold;
   //静态结束
 
@@ -76,10 +74,10 @@ export default class Game13PlayScene extends Phaser.Scene {
       rotateTips.init();
       this.firstCreate();
       cover(this, "Game13", () => {
-        this.planAnims.show(index + 1, this.gameStart)
+        this.gameStart();
       });
     } else {
-      this.planAnims.show(index + 1, this.gameStart);
+        this.gameStart();
     }
 
   }
@@ -125,7 +123,6 @@ export default class Game13PlayScene extends Phaser.Scene {
     this.btnSound = new ButtonMusic(this);
     this.layer4.add([this.btnExit, this.btnSound]);
 
-    this.planAnims = new PlanAnims(this, this.ccData.length);
     this.gold = new Gold(this, goldValue);   //设置金币
     this.layer4.add(this.gold);
   }
