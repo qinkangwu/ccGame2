@@ -81,6 +81,7 @@ export default class Game13PlayScene extends Phaser.Scene {
     } else {
       this.planAnims.show(index + 1, this.gameStart);
     }
+
   }
 
   update(time: number, delta: number): void {
