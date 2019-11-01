@@ -4,6 +4,7 @@ import { Assets } from '../../interface/Game15';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold} from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
+import {Bg} from '../../Public/jonny/game15/'
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -18,7 +19,7 @@ export default class Game15PlayScene extends Phaser.Scene {
 
     //静态开始
     private bgm: Phaser.Sound.BaseSound; //背景音乐
-    private bg: Phaser.GameObjects.Image; //背景图片 
+    private bg: Bg; //背景图片 
     private btnExit: Button;  //退出按钮
     private btnSound: ButtonMusic; //音乐按钮
     private gold: Gold;
@@ -133,7 +134,9 @@ export default class Game15PlayScene extends Phaser.Scene {
         this.add.existing(this.layer3);
         this.add.existing(this.layer4);
 
-     
+        this.bg = new Bg(this);
+        this.bg.setPosition(512,276);
+        this.layer0.add([this.bg]);
 
         this.btnExit = new ButtonExit(this);
         this.btnSound = new ButtonMusic(this);
