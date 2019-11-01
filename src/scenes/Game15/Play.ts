@@ -2,9 +2,9 @@ import 'phaser';
 import { } from 'rxjs';
 import { Assets } from '../../interface/Game15';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
-import { Button, ButtonMusic, ButtonExit, SellingGold, Gold} from '../../Public/jonny/components';
+import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import {Bg} from '../../Public/jonny/game15/'
+import { Bg, Carriage } from '../../Public/jonny/game15/'
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -26,6 +26,7 @@ export default class Game15PlayScene extends Phaser.Scene {
     //静态结束
 
     //动态开始
+    private carriages: Carriage[] = [];   //货物
     private tipsParticlesEmitter: TipsParticlesEmitter;
     private sellingGold: SellingGold;
 
@@ -39,14 +40,14 @@ export default class Game15PlayScene extends Phaser.Scene {
      */
     private layer1: Phaser.GameObjects.Container;
 
-     /**
-     * 货物
-     */
+    /**
+    * 货物
+    */
     private layer2: Phaser.GameObjects.Container;
 
-     /**
-     * 码头
-     */
+    /**
+    * 码头
+    */
     private layer3: Phaser.GameObjects.Container;
 
     /**
@@ -72,18 +73,18 @@ export default class Game15PlayScene extends Phaser.Scene {
 
     create(): void {
         this.createStage();
-        //this.createActors();
+        this.createActors();
         if (index === 0) {
-          this.scene.pause();
-          rotateTips.init();
-          this.firstCreate();
-          cover(this, "Game15", () => {
-            this.gameStart();
-          });
+            this.scene.pause();
+            rotateTips.init();
+            this.firstCreate();
+            cover(this, "Game15", () => {
+                this.gameStart();
+            });
         } else {
             this.gameStart();
         }
-    
+
     }
 
     update(time: number, delta: number): void {
@@ -97,7 +98,7 @@ export default class Game15PlayScene extends Phaser.Scene {
      * 重置尺寸
      */
     resize() {
-      
+
     }
 
     /**
@@ -135,7 +136,7 @@ export default class Game15PlayScene extends Phaser.Scene {
         this.add.existing(this.layer4);
 
         this.bg = new Bg(this);
-        this.bg.setPosition(512,276);
+        this.bg.setPosition(512, 276);
         this.layer0.add([this.bg]);
 
         this.btnExit = new ButtonExit(this);
@@ -149,6 +150,33 @@ export default class Game15PlayScene extends Phaser.Scene {
      * 创建演员们
      */
     createActors(): void {
+
+        // create small carriage
+        let carriageOffsetX = 130;
+        let carriageOffsetY = 83;
+        let smallCarriages = this.ccData.filter(v => v[0].length < 8);
+        smallCarriages.forEach((data, index) => {
+            let _xIndex = index;
+            _xIndex = _xIndex % 2;
+            let _carriage = new Carriage(this, data[0], 130 + _xIndex * carriageOffsetX, 140 + Math.floor(index / 2) * carriageOffsetY);
+            // _carriage.x = 130 + _xIndex * carriageOffsetX;
+            // _carriage.y = 140 + Math.floor(index / 2) * carriageOffsetY;
+            this.layer1.add(_carriage);
+            this.carriages.push(_carriage);
+        })
+
+        //create large carriage
+        let largeCarriages = this.ccData.filter(v => v[0].length > 8)
+        console.log(largeCarriages);
+        let lastCarriage = this.carriages[this.carriages.length - 1];
+        largeCarriages.forEach((data, index) => {
+            let _carriage = new Carriage(this, data[0], (130 + 130 + carriageOffsetX) * 0.5, lastCarriage.y + (index + 1) * carriageOffsetY);
+            // _carriage.x = (130 + 130 + carriageOffsetX) * 0.5;
+            // _carriage.y = lastCarriage.y + (index + 1) * carriageOffsetY;
+            this.layer1.add(_carriage);
+            this.carriages.push(_carriage);
+        })
+
         //创建用户反馈
         this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
     }
@@ -157,6 +185,62 @@ export default class Game15PlayScene extends Phaser.Scene {
      * 游戏开始
      */
     private gameStart(): void {
+        this.carriageScene();
+
+
+    }
+
+    /**
+     * 拖拽货物
+     */
+    private carriageScene(): void {
+        let hideCarriage = (myCarriage: Carriage) => {
+            this.carriages
+                .filter(carriage => carriage !== myCarriage)
+                .forEach(carriage => {
+                    carriage.setVisible(false);
+                })
+        }
+
+        let showCarriage = (myCarriage: Carriage) => {
+            this.carriages
+                .filter(carriage => carriage !== myCarriage)
+                .forEach(carriage => {
+                    carriage.setVisible(true);
+                    carriage.bg.setAlpha(1);
+                    carriage.swicthAnimateTween.pause();
+                })
+        }
+
+        let toogleShowCarriage = (myCarriage: Carriage) => {
+            this.carriages
+                .filter(carriage => carriage !== myCarriage)
+                .forEach(carriage => {
+                    carriage.setVisible(true);
+                    carriage.swicthAnimateTween.resume();
+                })
+        }
+
+        let carriageDragStart = function (this: Carriage) {
+            this.bounceAnimate();
+            hideCarriage(this);
+        }
+
+        let carriageDrag = function (this: Carriage, pointer, dragX, dragY) {
+            this.setPosition(dragX, dragY);
+            toogleShowCarriage(this);
+        }
+
+        let carriageDragEnd = function (this: Carriage) {
+            showCarriage(this);
+        }
+
+        this.carriages.forEach(carriage => {
+            carriage.on("dragstart", carriageDragStart);
+            carriage.on("drag", carriageDrag);
+            carriage.on("dragend", carriageDragEnd);
+        });
+
 
     }
 

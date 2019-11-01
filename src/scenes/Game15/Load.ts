@@ -21,7 +21,16 @@ export default class Game15LoadScene extends Phaser.Scene {
         /**
          * game15 UI
          */
-        { "url": "assets/Game15/bg.png", "key": "bg" }, { "url": "assets/Game15/largeCarriage.png", "key": "largeCarriage" }, { "url": "assets/Game15/smallCarriage.png", "key": "smallCarriage" }, { "url": "assets/Game15/path1.png", "key": "path1" }, { "url": "assets/Game15/path2.png", "key": "path2" }, { "url": "assets/Game15/path1Btn.png", "key": "path1Btn" }, { "url": "assets/Game15/path2Btn.png", "key": "path2Btn" }, { "url": "assets/Game15/ship.png", "key": "ship" }, { "url": "assets/Game15/terminal.png", "key": "terminal" }];
+        { "url": "assets/Game15/bg.png", "key": "bg" },
+        { "url": "assets/Game15/largeCarriageNull.png", "key": "largeCarriageNull" },
+        { "url": "assets/Game15/largeCarriage.png", "key": "largeCarriage" },
+        { "url": "assets/Game15/smallCarriageNull.png", "key": "smallCarriageNull" },
+        { "url": "assets/Game15/smallCarriage1.png", "key": "smallCarriage1" },
+        { "url": "assets/Game15/smallCarriage2.png", "key": "smallCarriage2" },
+        { "url": "assets/Game15/smallCarriage3.png", "key": "smallCarriage3" },
+        { "url": "assets/Game15/smallCarriage4.png", "key": "smallCarriage4" },
+        { "url": "assets/Game15/smallCarriage5.png", "key": "smallCarriage5" },
+        { "url": "assets/Game15/path1.png", "key": "path1" }, { "url": "assets/Game15/path2.png", "key": "path2" }, { "url": "assets/Game15/path1Btn.png", "key": "path1Btn" }, { "url": "assets/Game15/path2Btn.png", "key": "path2Btn" }, { "url": "assets/Game15/ship.png", "key": "ship" }, { "url": "assets/Game15/terminal.png", "key": "terminal" }];
 
     constructor() {
         super({
@@ -80,7 +89,7 @@ export default class Game15LoadScene extends Phaser.Scene {
      * 加载音频
      */
     private loadAudio(): void {
-           
+
     }
 
 };
