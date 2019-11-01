@@ -4,7 +4,7 @@ import { Assets } from '../../interface/Game15';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Bg, Carriage } from '../../Public/jonny/game15/'
+import { Bg, Carriage ,Ship} from '../../Public/jonny/game15/'
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -27,6 +27,7 @@ export default class Game15PlayScene extends Phaser.Scene {
 
     //动态开始
     private carriages: Carriage[] = [];   //货物
+    private ships: Ship[] = [];   //船
     private tipsParticlesEmitter: TipsParticlesEmitter;
     private sellingGold: SellingGold;
 
@@ -159,8 +160,6 @@ export default class Game15PlayScene extends Phaser.Scene {
             let _xIndex = index;
             _xIndex = _xIndex % 2;
             let _carriage = new Carriage(this, data[0], 130 + _xIndex * carriageOffsetX, 140 + Math.floor(index / 2) * carriageOffsetY);
-            // _carriage.x = 130 + _xIndex * carriageOffsetX;
-            // _carriage.y = 140 + Math.floor(index / 2) * carriageOffsetY;
             this.layer1.add(_carriage);
             this.carriages.push(_carriage);
         })
@@ -171,11 +170,16 @@ export default class Game15PlayScene extends Phaser.Scene {
         let lastCarriage = this.carriages[this.carriages.length - 1];
         largeCarriages.forEach((data, index) => {
             let _carriage = new Carriage(this, data[0], (130 + 130 + carriageOffsetX) * 0.5, lastCarriage.y + (index + 1) * carriageOffsetY);
-            // _carriage.x = (130 + 130 + carriageOffsetX) * 0.5;
-            // _carriage.y = lastCarriage.y + (index + 1) * carriageOffsetY;
             this.layer1.add(_carriage);
             this.carriages.push(_carriage);
         })
+
+
+        //create ship
+        let shipDatas = new Set(this.ccData.map(v=>v[1]));
+        shipDatas.forEach(data=>{
+            //let _ship = new Ship(this,);
+        });
 
         //创建用户反馈
         this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
