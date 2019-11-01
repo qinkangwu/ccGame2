@@ -1,0 +1,15 @@
+{
+    "code": "0000",
+    "description": "oh yeah,通过了",
+    "result": [
+        ["She","第三人称单数","does"],
+        ["Lliy","第一人称","do"],
+        ["Lucy","第一人称","do"],
+        ["He","第三人称单数","does"],
+        ["She","第三人称单数","does"],
+        ["Children of Mary","第三人称复数","does"],
+        ["Father","第一人称","do"],
+        ["Mr.Li","第一人称","do"],
+        ["Miss.wu","第一人称","do"]
+    ]
+}
