@@ -12,6 +12,8 @@ export class Ship extends Phaser.GameObjects.Container {
         this.bgNull = new Phaser.GameObjects.Image(scene, 0, 0, "shipNull");
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, "ship");
         this.text = new Phaser.GameObjects.BitmapText(scene, 0, 50, "yuantiChinese", textContent, 17, 1).setOrigin(0.5);
+        this.name = textContent;
+
         this.add([this.bgNull, this.bg, this.text]);
         this.swicthAnimateTween = this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
             targets: this.bg,

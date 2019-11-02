@@ -1,6 +1,6 @@
 import 'phaser';
 import { Subject } from 'rxjs';
-import { Assets, Determine } from '../../interface/Game15';
+import { Assets } from '../../interface/Game15';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
@@ -23,10 +23,19 @@ interface ShipStatus {
     msg: string;
 }
 
+
+export interface Determine {
+    isRight: boolean;
+    wheel: number;
+    times: number;
+    myCarriage: Carriage;
+}
+
 export default class Game15PlayScene extends Phaser.Scene {
     //数据
     private ccData: Array<string> = [];
-    //private times: number = 0;  //次数
+    private wheel: number = 1;    //第几轮
+    private times: number = 0;  //次数
     private ship$: Subject<ShipStatus> = new Subject();
     private carriage$: Subject<CarriageStatus> = new Subject();
     private result$: Subject<Determine> = new Subject();
@@ -250,12 +259,21 @@ export default class Game15PlayScene extends Phaser.Scene {
             } else if (value.msg === "自身被吸附进去") {
                 value.myCarriage.setPosition(value.hitShip.x, value.hitShip.y);
                 value.myCarriage.scaleMin()
-                    .then(() => {
-                        this.carriages = this.carriages.filter(carriage => carriage !== value.myCarriage);
-                    })
                 value.hitShip.bounceAnimate();
+            } else if (value.msg === "所有货物暂时禁止搬运") {
+                this.carriages.forEach(carriage => {
+                    carriage.disableInteractive();
+                })
+            } else if (value.msg === "所有货物都可搬运") {
+                console.log("收到消息");
+                this.carriages.forEach(carriage => {
+                    carriage.setInteractive();
+                })
             } else if (value.msg === "回到自己初始化位置") {
-                this.moveTo(value.myCarriage, value.myCarriage.initPosition.x, value.myCarriage.initPosition.y);
+                value.myCarriage.isHit = false;
+                this.moveTo(value.myCarriage, value.myCarriage.initPosition.x, value.myCarriage.initPosition.y, 500, () => {
+                    value.myCarriage.scale = 1;
+                });
             }
         });
 
@@ -288,6 +306,11 @@ export default class Game15PlayScene extends Phaser.Scene {
         this.result$.subscribe(
             value => {
                 console.log(value);
+                if (value.isRight === true && value.wheel === 1) {     //第一轮正确
+                    this.isRight(value.wheel);
+                } else if (value.isRight === false && value.wheel === 1) {
+                    this.isWrong(value.wheel, value.myCarriage);
+                }
             }
         )
     }
@@ -352,7 +375,6 @@ export default class Game15PlayScene extends Phaser.Scene {
             })
             that.ships.forEach(ship => {
                 if (carriageHitShip(this, ship)) {
-                    //carriageHitMsgCount = 0;
                     that.ship$.next({ hitShip: ship, msg: "被碰撞货船停止闪烁" });
                 }
             })
@@ -384,21 +406,29 @@ export default class Game15PlayScene extends Phaser.Scene {
                         msg: "自身被吸附进去",
                         hitShip: ship
                     });
+                    that.carriage$.next({
+                        myCarriage: this,
+                        msg: "所有货物暂时禁止搬运",
+                        hitShip: ship
+                    });
+                    that.result$.next({
+                        isRight: that.checkoutResultNo1(this, ship),
+                        times: that.times,
+                        wheel: that.wheel,
+                        myCarriage: this
+                    })
                 }
             })
 
-            if (that.carriages.every(carriage => carriage.isHit === false)) {
+            if(!this.isHit){
                 that.carriage$.next({
-                    myCarriage: this,
-                    msg: "回到自己初始化位置",
-                    hitShip: null
-                });
+                            myCarriage: this,
+                            msg: "回到自己初始化位置",
+                            hitShip: null
+                        });
             }
-
-
-
+         
         }
-
 
 
         this.carriages.forEach(carriage => {
@@ -460,27 +490,31 @@ export default class Game15PlayScene extends Phaser.Scene {
      *  successBtnPointerdown 
      */
     private successBtnPointerdown() {
-        this.checkoutResult()
-            .then(msg => {    //正确
-                console.log(msg)
-                this.isRight();
-            })
-            .catch(err => {   //错误
-                console.log(err)
-                this.isWrong();
-            });
+        // this.checkoutResult()
+        //     .then(msg => {    //正确
+        //         console.log(msg)
+        //         this.isRight();
+        //     })
+        //     .catch(err => {   //错误
+        //         console.log(err)
+        //         this.isWrong();
+        //     });
     }
 
     /**
      * 正确的结果处理
      */
-    private isRight(): void {
+    private isRight(wheel: number): void {
         let nextFuc = () => {
             this.sellingGold = new SellingGold(this, {
                 callback: () => {
                     this.sellingGold.golds.destroy();
                     this.setGoldValue(3);
-                    this.nextRound();
+                    if (wheel === 1) {
+                        console.log("next2");
+                    } else {
+                        console.log("next1");
+                    }
                 }
             });
             this.sellingGold.golds.setDepth(6);
@@ -488,42 +522,54 @@ export default class Game15PlayScene extends Phaser.Scene {
                 this.sellingGold.goodJob(3);
             })
         }
+        nextFuc();
     }
 
     /**
      * 错误的结果处理
      */
-    private isWrong(): void {
-        // this.times += 1;
-        // if (this.times === 1) {
-        //     this.tryAgin();
-        // } else if (this.times >= 2) {
-        //     this.ohNo();
-        // }
+    private isWrong(wheel: number, myCarriage: Carriage = null): void {
+        this.times += 1;
+        if (this.times === 1) {
+            this.tryAgin(myCarriage);
+        } else if (this.times >= 2) {
+            this.ohNo(myCarriage);
+        }
     }
 
     /**
      * 再玩一次
      */
-    private tryAgin() {
-        this.tipsParticlesEmitter.tryAgain(this.resetStart);
+    private tryAgin(myCarriage: Carriage = null) {
+        this.tipsParticlesEmitter.tryAgain(this.resetStart.bind(this, myCarriage));
     }
 
     /**
      * 重置开始状态
      */
-    private resetStart() {
-
+    private resetStart(myCarriage: Carriage = null) {
+        if (myCarriage !== null) {
+            this.carriage$.next({
+                myCarriage: myCarriage,
+                hitShip: null,
+                msg: "回到自己初始化位置"
+            });
+            this.carriage$.next({
+                myCarriage: null,
+                hitShip: null,
+                msg: "所有货物都可搬运"
+            });
+        } 
     }
 
     /**
      * 再次错误
      */
-    private ohNo() {
+    private ohNo(myCarriage:Carriage){
         this.setGoldValue(-1);
         this.tipsParticlesEmitter.error(
             this.nextRound,
-            this.resetStart
+            this.resetStart.bind(this,myCarriage)
         )
         if (goldValue === 0) {
             setTimeout(() => {
@@ -534,28 +580,26 @@ export default class Game15PlayScene extends Phaser.Scene {
     }
 
     /**
-     * 下一道题
+     * 下一轮
      */
     private nextRound(): void {
-        index += 1;
-        if (index > this.ccData.length - 1) {
-            window.location.href = CONSTANT.INDEX_URL;
-        }
-        //this.times = 0;
-        this.scene.start('Game15PlayScene', {
-            data: this.ccData,
-            index: index
-        });
+        // index += 1;
+        // if (index > this.ccData.length - 1) {
+        //     window.location.href = CONSTANT.INDEX_URL;
+        // }
+        // //this.times = 0;
+        // this.scene.start('Game15PlayScene', {
+        //     data: this.ccData,
+        //     index: index
+        // });
     }
 
     /**
-     * 判断做题结果是否正确
+     * 判断第一轮题目是否做对
      */
-    private checkoutResult(): Promise<string> {
-        let answer: string = "";
-        return new Promise((resolve, reject) => {
-
-        });
+    private checkoutResultNo1(carriage: Carriage, ship: Ship): boolean {
+        let _data = this.ccData.filter(data => data[0] === carriage.name)[0];
+        return _data[1] === ship.name;
     }
 
     /**
@@ -563,7 +607,6 @@ export default class Game15PlayScene extends Phaser.Scene {
      */
     private setGoldValue(value: number) {
         goldValue += value;
-
         this.gold.setText(goldValue);
     }
 

@@ -19,6 +19,7 @@ export class Carriage extends Phaser.GameObjects.Container{
         let textureNull = textContent.length > 8 ? "largeCarriageNull" : "smallCarriageNull";
         this.bgNull = new Phaser.GameObjects.Image(scene,0,0,textureNull);
         this.bg = new Phaser.GameObjects.Image(scene,0,0,texture);
+        this.name = textContent;
         this.text = new Phaser.GameObjects.BitmapText(scene,0,0,"ArialRoundedBold30",textContent,20,1).setOrigin(0.5);
         this.add([this.bgNull,this.bg,this.text]);
         this.shape = new Phaser.Geom.Rectangle(-this.bg.width*0.5,-this.bg.height*0.5,this.bg.width,this.bg.height);
