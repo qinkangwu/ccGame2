@@ -1,12 +1,41 @@
 import 'phaser';
 
-export class Ship extends Phaser.GameObjects.Container{
-    public bg:Phaser.GameObjects.Image;
-    public text:Phaser.GameObjects.BitmapText;
-    constructor(scene: Phaser.Scene, x: number, y: number,textContent){
-        super(scene,x,y);
-        this.bg = new Phaser.GameObjects.Image(scene,0,0,"ship");
-        this.text = new Phaser.GameObjects.BitmapText(scene,0,0,"yuantiChinese",textContent,20,1).setOrigin(0.5);
-        this.add([this.bg,this.text]);
+import { Bounds } from "../core";
+
+export class Ship extends Phaser.GameObjects.Container {
+    public bgNull: Phaser.GameObjects.Image;
+    public bg: Phaser.GameObjects.Image;
+    public text: Phaser.GameObjects.BitmapText;
+    public swicthAnimateTween: Phaser.Tweens.Tween;
+    constructor(scene: Phaser.Scene, x: number, y: number, textContent: string) {
+        super(scene, x, y);
+        this.bgNull = new Phaser.GameObjects.Image(scene, 0, 0, "shipNull");
+        this.bg = new Phaser.GameObjects.Image(scene, 0, 0, "ship");
+        this.text = new Phaser.GameObjects.BitmapText(scene, 0, 50, "yuantiChinese", textContent, 17, 1).setOrigin(0.5);
+        this.add([this.bgNull, this.bg, this.text]);
+        this.swicthAnimateTween = this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+            targets: this.bg,
+            alpha: 0,
+            duration: 500,
+            yoyo: true,
+            repeat: -1,
+            paused: true
+        });
     }
+
+    public syncBounds(): Bounds {
+        return new Bounds(this.getBounds());
+    }
+
+    public bounceAnimate(): void {
+        this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+            targets: this,
+            scale: 1.2,
+            duration: 200,
+            yoyo: true,
+            ease: "Sine.easeInOut"
+        });
+    }
+
+
 }

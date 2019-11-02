@@ -1,11 +1,7 @@
 import 'phaser';
+import { Bounds, Vec2 } from "../core";
 
 let colorIndex = 0;
-
-interface Vec2 {
-    x:number;
-    y:number;
-}
 
 export class Carriage extends Phaser.GameObjects.Container{
     public bgNull:Phaser.GameObjects.Image;
@@ -13,6 +9,7 @@ export class Carriage extends Phaser.GameObjects.Container{
     public text:Phaser.GameObjects.BitmapText;
     public shape: Phaser.Geom.Rectangle;
     public initPosition:Vec2;
+    public isHit:boolean = false;
     public swicthAnimateTween:Phaser.Tweens.Tween;
     constructor(scene: Phaser.Scene,textContent:string,x:number,y:number){
         super(scene,x,y);
@@ -25,18 +22,15 @@ export class Carriage extends Phaser.GameObjects.Container{
         this.text = new Phaser.GameObjects.BitmapText(scene,0,0,"ArialRoundedBold30",textContent,20,1).setOrigin(0.5);
         this.add([this.bgNull,this.bg,this.text]);
         this.shape = new Phaser.Geom.Rectangle(-this.bg.width*0.5,-this.bg.height*0.5,this.bg.width,this.bg.height);
-        this.swicthAnimateTween = this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
-            targets:this.bg,
-            alpha:0,
-            duration:500,
-            yoyo:true,
-            repeat:-1,
-            paused:true
-        });    
-        this.initPosition = {
-            x:this.x,
-            y:this.y
-        }
+        // this.swicthAnimateTween = this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+        //     targets:this.bg,
+        //     alpha:0,
+        //     duration:500,
+        //     yoyo:true,
+        //     repeat:-1,
+        //     paused:true
+        // });    
+        this.initPosition = new Vec2(this.x,this.y);
         this.init();
     }
 
@@ -53,7 +47,7 @@ export class Carriage extends Phaser.GameObjects.Container{
         this.add(graphics);
     }
 
-    bounceAnimate():void{
+    public bounceAnimate():void{
         this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
             targets:this,
             scale:1.2,
@@ -63,7 +57,17 @@ export class Carriage extends Phaser.GameObjects.Container{
         });    
     }
 
-    swicthAnimate():void{
-        
+    public scaleMin(): void {
+        this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+            targets: this,
+            scale: 0,
+            duration: 200,
+            ease: "Sine.easeInOut"
+        });
+    }
+
+
+    public syncBounds(): Bounds {
+        return new Bounds(this.getBounds());
     }
 }
