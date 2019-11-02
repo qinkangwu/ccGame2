@@ -27,14 +27,19 @@ export class Ship extends Phaser.GameObjects.Container {
         return new Bounds(this.getBounds());
     }
 
-    public bounceAnimate(): void {
-        this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
-            targets: this,
-            scale: 1.2,
-            duration: 200,
-            yoyo: true,
-            ease: "Sine.easeInOut"
-        });
+    public bounceAnimate():Promise<boolean> {
+        return new Promise(resolve=>{
+            return this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+                targets: this,
+                scale: 1.2,
+                duration: 200,
+                yoyo: true,
+                ease: "Sine.easeInOut",
+                onComplete:()=>{
+                    resolve(true);
+                }
+            });
+        })
     }
 
 

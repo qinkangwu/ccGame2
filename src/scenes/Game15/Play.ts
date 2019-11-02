@@ -154,9 +154,9 @@ export default class Game15PlayScene extends Phaser.Scene {
 
         this.btnExit = new ButtonExit(this);
         this.btnSound = new ButtonMusic(this);
-        this.layer4.add([this.btnExit, this.btnSound]);
 
         this.gold = new Gold(this, goldValue);   //设置金币
+        this.layer4.add([this.btnExit, this.btnSound, this.gold]);
     }
 
     /**
@@ -250,9 +250,10 @@ export default class Game15PlayScene extends Phaser.Scene {
             } else if (value.msg === "自身被吸附进去") {
                 value.myCarriage.setPosition(value.hitShip.x, value.hitShip.y);
                 value.myCarriage.scaleMin()
-                    .then(()=>{
-                        this.carriages = this.carriages.filter(carriage=>carriage!==value.myCarriage);
+                    .then(() => {
+                        this.carriages = this.carriages.filter(carriage => carriage !== value.myCarriage);
                     })
+                value.hitShip.bounceAnimate();
             } else if (value.msg === "回到自己初始化位置") {
                 this.moveTo(value.myCarriage, value.myCarriage.initPosition.x, value.myCarriage.initPosition.y);
             }
