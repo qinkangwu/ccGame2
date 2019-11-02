@@ -57,13 +57,19 @@ export class Carriage extends Phaser.GameObjects.Container{
         });    
     }
 
-    public scaleMin(): void {
-        this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
-            targets: this,
-            scale: 0,
-            duration: 200,
-            ease: "Sine.easeInOut"
+    public scaleMin():Promise<boolean>{
+        return new Promise(resolve=>{
+            this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+                targets: this,
+                scale: 0,
+                duration: 200,
+                ease: "Sine.easeInOut",
+                onComplete:()=>{
+                    resolve(true);
+                }
+            });
         });
+      
     }
 
 

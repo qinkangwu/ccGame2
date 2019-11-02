@@ -14,6 +14,7 @@ var goldValue: number = 3; //金币的值
 
 interface CarriageStatus {
     myCarriage: Carriage;
+    hitShip: Ship;
     msg: string;
 }
 
@@ -246,6 +247,14 @@ export default class Game15PlayScene extends Phaser.Scene {
                         carriage.bg.alpha = 1;
                         carriage.alpha = 1;
                     })
+            } else if (value.msg === "自身被吸附进去") {
+                value.myCarriage.setPosition(value.hitShip.x, value.hitShip.y);
+                value.myCarriage.scaleMin()
+                    .then(()=>{
+                        this.carriages = this.carriages.filter(carriage=>carriage!==value.myCarriage);
+                    })
+            } else if (value.msg === "回到自己初始化位置") {
+                this.moveTo(value.myCarriage, value.myCarriage.initPosition.x, value.myCarriage.initPosition.y);
             }
         });
 
@@ -254,17 +263,20 @@ export default class Game15PlayScene extends Phaser.Scene {
          * 检查船的状态 
          */
         this.ship$.subscribe(value => {
-            console.log(value);
-            if(value.msg==="所有货船闪烁"){
-                this.ships.forEach(ship=>{
-                    console.log(ship.swicthAnimateTween.isPlaying());
-                    if(!ship.swicthAnimateTween.isPlaying()){
+            if (value.msg === "所有货船闪烁") {
+                this.ships.forEach(ship => {
+                    if (!ship.swicthAnimateTween.isPlaying()) {
                         ship.swicthAnimateTween.resume();
                     }
                 })
-            }else if(value.msg==="被碰撞货船停止闪烁且自身缩放一次"){
+            } else if (value.msg === "被碰撞货船停止闪烁") {
                 value.hitShip.swicthAnimateTween.pause();
                 value.hitShip.bg.alpha = 1;
+            } else if (value.msg === "停止所有货船闪烁") {
+                this.ships.forEach(ship => {
+                    ship.swicthAnimateTween.pause();
+                    ship.bg.alpha = 1;
+                })
             }
         })
 
@@ -303,63 +315,10 @@ export default class Game15PlayScene extends Phaser.Scene {
             }
         }
 
-        let showCarriage = (myCarriage: Carriage) => {
-            this.carriages
-                .filter(carriage => carriage !== myCarriage)
-                .forEach(carriage => {
-                    carriage.setVisible(true);
-                    carriage.bg.setAlpha(1);
-                })
-        }
-
-        // let toogleShowCarriage = (myCarriage: Carriage) => {
-        //     this.carriages
-        //         .filter(carriage => carriage !== myCarriage)
-        //         .forEach(carriage => {
-        //             //carriage.setVisible(true);
-        //             carriage.bg.alpha = 0;
-        //         })
-        // }
-
-
-        let hideShowShipAnimate = () => {
-            this.ships.forEach(ship => {
-                ship.swicthAnimateTween.pause();
-                ship.bg.setAlpha(1);
-            })
-        }
-
         let carriageHitShip = (myCarriage: Carriage, ship: Ship): boolean => {
             return isHit(myCarriage.syncBounds(), ship.syncBounds());
         }
 
-        // let carriageHitShip = {
-        //     hitDragFuc: (myCarriage: Carriage, ship: Ship) => {
-        //         if(myCarriage.isHit){
-        //             return false;
-        //         }
-        //         myCarriage.isHit = isHit(myCarriage.syncBounds(), ship.syncBounds());
-        //         // if (carriageHitShip.isHit) {
-        //         //     ship.swicthAnimateTween.stop();
-        //         //     ship.bg.alpha = 1;
-        //         //     ship.scale = 1.1;
-        //         // } else {
-        //         //     ship.scale = 1;
-        //         //     ship.swicthAnimateTween.play();
-        //         // }
-        //     },
-        //     hitDragEndFuc: (myCarriage: Carriage, ship: Ship) => {
-        //         if (myCarriage.isHit) {
-        //             return false;
-        //         }
-        //         myCarriage.isHit = isHit(myCarriage.syncBounds(), ship.syncBounds());
-        //         if (myCarriage.isHit) {
-        //             ship.add(myCarriage);
-        //             myCarriage.setPosition(0, 0);
-        //             myCarriage.scaleMin();
-        //         }
-        //     },
-        // }
 
         /**
          * 拖拽货物的开始
@@ -367,7 +326,8 @@ export default class Game15PlayScene extends Phaser.Scene {
         let carriageDragStart = function (this: Carriage) {
             that.carriage$.next({
                 myCarriage: this,
-                msg: "其他货物变淡且自身缩放一次"
+                msg: "其他货物变淡且自身缩放一次",
+                hitShip: null
             });
         }
 
@@ -380,18 +340,19 @@ export default class Game15PlayScene extends Phaser.Scene {
             if (carriageDragMsgCount === 1) {
                 that.carriage$.next({
                     myCarriage: this,
-                    msg: "其他货物隐藏"
+                    msg: "其他货物隐藏",
+                    hitShip: null
                 });
                 carriageDragMsgCount = 0;
             }
             that.ship$.next({
-                hitShip:null,
-                msg:"所有货船闪烁"
+                hitShip: null,
+                msg: "所有货船闪烁"
             })
-            that.ships.forEach(ship=>{
-                if(carriageHitShip(this,ship)){
+            that.ships.forEach(ship => {
+                if (carriageHitShip(this, ship)) {
                     //carriageHitMsgCount = 0;
-                    that.ship$.next({hitShip:ship,msg:"被碰撞货船停止闪烁且自身缩放一次"});
+                    that.ship$.next({ hitShip: ship, msg: "被碰撞货船停止闪烁" });
                 }
             })
             this.setPosition(dragX, dragY);   //同步坐标
@@ -405,22 +366,36 @@ export default class Game15PlayScene extends Phaser.Scene {
             carriageDragMsgCount = 1;
             that.carriage$.next({
                 myCarriage: this,
-                msg: "全部货物显示"
+                msg: "全部货物显示",
+                hitShip: null
             })
-            // showCarriage(this);
-            // hideShowShipAnimate();
-            // that.ships.forEach(ship => {
-            //     ship.swicthAnimateTween.stop();
-            //     carriageHitShip.hitDragEndFuc(this, ship);
-            // })
-            // if (!this.isHit) {
-            //     that.moveTo(this, this.initPosition.x, this.initPosition.y);
-            // }
-            // that.subject.next(<Determine>{
-            //     times: 1,
-            //     isRight: true,
-            //     wheel: 2
-            // })
+
+            that.ship$.next({
+                hitShip: null,
+                msg: "停止所有货船闪烁"
+            })
+
+            that.ships.forEach(ship => {
+                if (carriageHitShip(this, ship)) {
+                    this.isHit = true;
+                    that.carriage$.next({
+                        myCarriage: this,
+                        msg: "自身被吸附进去",
+                        hitShip: ship
+                    });
+                }
+            })
+
+            if (that.carriages.every(carriage => carriage.isHit === false)) {
+                that.carriage$.next({
+                    myCarriage: this,
+                    msg: "回到自己初始化位置",
+                    hitShip: null
+                });
+            }
+
+
+
         }
 
 
