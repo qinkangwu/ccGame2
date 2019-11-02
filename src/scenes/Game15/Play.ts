@@ -29,6 +29,7 @@ export interface Determine {
     wheel: number;
     times: number;
     myCarriage: Carriage;
+    ship: Ship;
 }
 
 export default class Game15PlayScene extends Phaser.Scene {
@@ -38,7 +39,7 @@ export default class Game15PlayScene extends Phaser.Scene {
     private times: number = 0;  //次数
     private ship$: Subject<ShipStatus> = new Subject();
     private carriage$: Subject<CarriageStatus> = new Subject();
-    private result$: Subject<Determine> = new Subject();
+    private result1$: Subject<Determine> = new Subject();
 
     //静态开始
     private bgm: Phaser.Sound.BaseSound; //背景音乐
@@ -214,6 +215,10 @@ export default class Game15PlayScene extends Phaser.Scene {
             this.ships.push(_ship);
         });
 
+
+        //create terminal
+        
+
         //创建用户反馈
         this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
     }
@@ -303,11 +308,11 @@ export default class Game15PlayScene extends Phaser.Scene {
         /**
          * 检测结果是否正确
          */
-        this.result$.subscribe(
+        this.result1$.subscribe(
             value => {
                 console.log(value);
                 if (value.isRight === true && value.wheel === 1) {     //第一轮正确
-                    this.isRight(value.wheel);
+                    this.isRight(value.wheel,value.ship);
                 } else if (value.isRight === false && value.wheel === 1) {
                     this.isWrong(value.wheel, value.myCarriage);
                 }
@@ -411,23 +416,24 @@ export default class Game15PlayScene extends Phaser.Scene {
                         msg: "所有货物暂时禁止搬运",
                         hitShip: ship
                     });
-                    that.result$.next({
+                    that.result1$.next({
                         isRight: that.checkoutResultNo1(this, ship),
                         times: that.times,
                         wheel: that.wheel,
-                        myCarriage: this
+                        myCarriage: this,
+                        ship:ship
                     })
                 }
             })
 
-            if(!this.isHit){
+            if (!this.isHit) {
                 that.carriage$.next({
-                            myCarriage: this,
-                            msg: "回到自己初始化位置",
-                            hitShip: null
-                        });
+                    myCarriage: this,
+                    msg: "回到自己初始化位置",
+                    hitShip: null
+                });
             }
-         
+
         }
 
 
@@ -504,17 +510,18 @@ export default class Game15PlayScene extends Phaser.Scene {
     /**
      * 正确的结果处理
      */
-    private isRight(wheel: number): void {
+    private isRight(wheel: number,ship:Ship): void {
         let nextFuc = () => {
             this.sellingGold = new SellingGold(this, {
                 callback: () => {
                     this.sellingGold.golds.destroy();
                     this.setGoldValue(3);
-                    if (wheel === 1) {
-                        console.log("next2");
-                    } else {
-                        console.log("next1");
-                    }
+                    this.nextScene(ship);
+                    // if (wheel === 1) {
+                    //     console.log("next2");
+                    // } else {
+                    //     console.log("next1");
+                    // }
                 }
             });
             this.sellingGold.golds.setDepth(6);
@@ -559,17 +566,17 @@ export default class Game15PlayScene extends Phaser.Scene {
                 hitShip: null,
                 msg: "所有货物都可搬运"
             });
-        } 
+        }
     }
 
     /**
      * 再次错误
      */
-    private ohNo(myCarriage:Carriage){
+    private ohNo(myCarriage: Carriage) {
         this.setGoldValue(-1);
         this.tipsParticlesEmitter.error(
-            this.nextRound,
-            this.resetStart.bind(this,myCarriage)
+            this.nextScene,
+            this.resetStart.bind(this, myCarriage)
         )
         if (goldValue === 0) {
             setTimeout(() => {
@@ -577,6 +584,15 @@ export default class Game15PlayScene extends Phaser.Scene {
                 alert("啊哦，你又错啦！金币不足，一起去赚金币吧");
             }, 1300)
         }
+    }
+
+    /**
+     * 下一个场景
+     */
+    private nextScene(ship:Ship): void {
+        this.moveTo(this.layer1, -1024, 0, 2000);
+        this.moveTo(this.layer2, -1024, 0, 2000);
+        this.moveTo(ship, 1196, 276, 2000);
     }
 
     /**
