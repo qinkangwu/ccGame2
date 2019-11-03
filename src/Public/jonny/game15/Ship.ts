@@ -8,11 +8,14 @@ export class Ship extends Phaser.GameObjects.Container {
     public text: Phaser.GameObjects.BitmapText;
     public shape: Phaser.Geom.Rectangle;
     public swicthAnimateTween: Phaser.Tweens.Tween;
+    public initPosition:Vec2;
+    public complete:boolean = false;
     constructor(scene: Phaser.Scene, x: number, y: number, textContent: string) {
         super(scene, x, y);
         this.bgNull = new Phaser.GameObjects.Image(scene, 0, 0, "shipNull");
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, "ship");
         this.text = new Phaser.GameObjects.BitmapText(scene, 0, 50, "yuantiChinese", textContent, 17, 1).setOrigin(0.5);
+        this.initPosition = new Vec2(x,y);
         this.name = textContent;
         this.shape = new Phaser.Geom.Rectangle(-this.bg.width*0.5,-this.bg.height*0.5,this.bg.width,this.bg.height);
         this.add([this.bgNull, this.bg, this.text]);
@@ -66,6 +69,21 @@ export class Ship extends Phaser.GameObjects.Container {
                 duration: 100,
                 targets:this,
                 tweens: positions,
+                onComplete:()=>{
+                    resolve(true);
+                }
+            });
+        })
+    }
+
+    public scaleMin():Promise<boolean>{
+        return new Promise(resolve=>{
+            this.scene.tweens.add({
+                duration: 500,
+                targets:this,
+                scale:0,
+                alpha:0,
+                x:"+=100",
                 onComplete:()=>{
                     resolve(true);
                 }

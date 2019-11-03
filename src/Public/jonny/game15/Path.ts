@@ -21,7 +21,7 @@ export class Path extends Phaser.Display.Masks.GeometryMask {
             .fillRect(0, 0,547.95,117.95)
             .setAlpha(0.5)
             .setDepth(1)
-            .setPosition(this.pathImg.x+this.pathImg.width*0.5, this.pathImg.y-this.pathImg.height*0.5);
+            .setPosition(this.pathImg.x-this.pathImg.width*1.8, this.pathImg.y-this.pathImg.height*0.5);
         if(this.debug){
             this.scene.add.existing(this.geometryMask);
         }
@@ -32,7 +32,6 @@ export class Path extends Phaser.Display.Masks.GeometryMask {
      * 显示路线
      */
     public showDirection(): Promise<number> {
-        let count:number = 0;
         return new Promise<number>(resolve => {
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.geometryMask,
@@ -51,13 +50,31 @@ export class Path extends Phaser.Display.Masks.GeometryMask {
     public hideDirection(): Promise<number> {
         return new Promise<number>(resolve => {
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
-                targets: this.pathImg,
-                alpha:0,
-                duration: 200,
+                targets: this.geometryMask,
+                x: this.pathImg.x+this.pathImg.width*0.5,
+                duration: 1000,
                 onComplete: () => {
                     resolve(1);
                 }
             });
         })
+    }
+
+    /**
+     * 显示路线
+     */
+    public reStart(){
+        this.pathImg.alpha = 1;
+        this.geometryMask.x = this.pathImg.x-this.pathImg.width*1.8;
+        // return new Promise<number>(resolve => {
+        //     this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+        //         targets: this.geometryMask,
+        //         x: this.pathImg.x-this.pathImg.width*1.8,
+        //         duration: 1000,
+        //         onComplete: () => {
+        //             resolve(1);
+        //         }
+        //     });
+        // })
     }
 }
