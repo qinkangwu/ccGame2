@@ -1,6 +1,6 @@
 import 'phaser';
 
-import { Bounds } from "../core";
+import { Bounds,Vec2 } from "../core";
 
 export class Ship extends Phaser.GameObjects.Container {
     public bgNull: Phaser.GameObjects.Image;
@@ -59,5 +59,18 @@ export class Ship extends Phaser.GameObjects.Container {
         })
     }
 
+    public gotoTerminal(positions:Vec2[]):Promise<boolean>{
+        return new Promise(resolve=>{
+            this.scene.tweens.timeline({
+                ease: 'Linear',
+                duration: 100,
+                targets:this,
+                tweens: positions,
+                onComplete:()=>{
+                    resolve(true);
+                }
+            });
+        })
+    }
 
 }

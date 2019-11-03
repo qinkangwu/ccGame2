@@ -44,4 +44,20 @@ export class Path extends Phaser.Display.Masks.GeometryMask {
             });
         })
     }
+
+     /**
+     * 隐藏路线
+     */
+    public hideDirection(): Promise<number> {
+        return new Promise<number>(resolve => {
+            this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+                targets: this.pathImg,
+                alpha:0,
+                duration: 200,
+                onComplete: () => {
+                    resolve(1);
+                }
+            });
+        })
+    }
 }
