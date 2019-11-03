@@ -33,7 +33,7 @@ export interface Determine {
 }
 
 class PathBtn extends Phaser.GameObjects.Image{
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string){
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string,name:string){
         super(scene,x,y,texture);
         this.alpha = 0;
     }
