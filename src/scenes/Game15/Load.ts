@@ -74,7 +74,7 @@ export default class Game15LoadScene extends Phaser.Scene {
      * 正式状态
      */
     private getData() {
-        get("assets/game15/getList.json").then((res) => {
+        get("assets/Game15/getList.json").then((res) => {
             if (res.code === '0000') {
                 this.ccData = res.result;
             }
