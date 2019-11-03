@@ -30,12 +30,14 @@ export interface Determine {
     times: number;
     myCarriage: Carriage;
     ship: Ship;
+    pathBtn:string;
 }
 
 class PathBtn extends Phaser.GameObjects.Image{
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string,name:string){
         super(scene,x,y,texture);
         this.alpha = 0;
+        this.setInteractive();
     }
 
     public fadeIn():Promise<boolean>{
@@ -268,14 +270,12 @@ export default class Game15PlayScene extends Phaser.Scene {
             let _btnX = pathBtnPosition[index].x;
             let _btnY = pathBtnPosition[index].y;
             let _path = new Path(this,_x,_y,`path${index+1}`,data);
-            let _pathBtn = new PathBtn(this,_btnX,_btnY,`path${index+1}Btn`);
+            let _pathBtn = new PathBtn(this,_btnX,_btnY,`path${index+1}Btn`,data);
             this.add.existing(_path.pathImg);
             this.layer3.add(_pathBtn);
             this.paths.push(_path);
             this.pathBtns.push(_pathBtn);
         });
-
-
 
         //创建用户反馈
         this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
@@ -479,7 +479,8 @@ export default class Game15PlayScene extends Phaser.Scene {
                         times: that.times,
                         wheel: that.wheel,
                         myCarriage: this,
-                        ship: ship
+                        ship: ship,
+                        pathBtn:null
                     })
                 }
             })
