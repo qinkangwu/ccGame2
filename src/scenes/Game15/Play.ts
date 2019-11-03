@@ -4,7 +4,7 @@ import { Assets } from '../../interface/Game15';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Bg, Carriage, Ship } from '../../Public/jonny/game15/'
+import { Bg, Carriage, Ship,Terminal } from '../../Public/jonny/game15/'
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -52,6 +52,7 @@ export default class Game15PlayScene extends Phaser.Scene {
     //动态开始
     private carriages: Carriage[] = [];   //货物
     private ships: Ship[] = [];   //船
+    private terminals: Terminal[] = [];   //码头
     private tipsParticlesEmitter: TipsParticlesEmitter;
     private sellingGold: SellingGold;
     /**
@@ -215,9 +216,27 @@ export default class Game15PlayScene extends Phaser.Scene {
             this.ships.push(_ship);
         });
 
-
         //create terminal
-        
+        let terminalDatas:string[] = [];
+        new Set(this.ccData.map(v => v[2])).forEach(data => {
+            terminalDatas.push(data);
+        })
+        let terminalPosition = {
+            initX: 1970,
+            offsetX: 0,
+            initY: 190,
+            offsetY: 203
+        }
+        terminalDatas.forEach((data, index) => {
+            console.log(data);
+            let _x = terminalPosition.initX;
+            let _y = terminalPosition.initY + terminalPosition.offsetY * index;
+            let _terminal = new Terminal(this, _x, _y, data);
+            this.layer3.add(_terminal);
+            this.terminals.push(_terminal);
+        });
+
+
 
         //创建用户反馈
         this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
@@ -312,7 +331,7 @@ export default class Game15PlayScene extends Phaser.Scene {
             value => {
                 console.log(value);
                 if (value.isRight === true && value.wheel === 1) {     //第一轮正确
-                    this.isRight(value.wheel,value.ship);
+                    this.isRight(value.wheel, value.ship);
                 } else if (value.isRight === false && value.wheel === 1) {
                     this.isWrong(value.wheel, value.myCarriage);
                 }
@@ -421,7 +440,7 @@ export default class Game15PlayScene extends Phaser.Scene {
                         times: that.times,
                         wheel: that.wheel,
                         myCarriage: this,
-                        ship:ship
+                        ship: ship
                     })
                 }
             })
@@ -510,7 +529,7 @@ export default class Game15PlayScene extends Phaser.Scene {
     /**
      * 正确的结果处理
      */
-    private isRight(wheel: number,ship:Ship): void {
+    private isRight(wheel: number, ship: Ship): void {
         let nextFuc = () => {
             this.sellingGold = new SellingGold(this, {
                 callback: () => {
@@ -589,9 +608,10 @@ export default class Game15PlayScene extends Phaser.Scene {
     /**
      * 下一个场景
      */
-    private nextScene(ship:Ship): void {
+    private nextScene(ship: Ship): void {
         this.moveTo(this.layer1, -1024, 0, 2000);
         this.moveTo(this.layer2, -1024, 0, 2000);
+        this.moveTo(this.layer3, -1024, 0, 2000);
         this.moveTo(ship, 1196, 276, 2000);
     }
 

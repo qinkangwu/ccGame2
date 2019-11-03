@@ -6,6 +6,7 @@ export class Ship extends Phaser.GameObjects.Container {
     public bgNull: Phaser.GameObjects.Image;
     public bg: Phaser.GameObjects.Image;
     public text: Phaser.GameObjects.BitmapText;
+    public shape: Phaser.Geom.Rectangle;
     public swicthAnimateTween: Phaser.Tweens.Tween;
     constructor(scene: Phaser.Scene, x: number, y: number, textContent: string) {
         super(scene, x, y);
@@ -13,7 +14,7 @@ export class Ship extends Phaser.GameObjects.Container {
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, "ship");
         this.text = new Phaser.GameObjects.BitmapText(scene, 0, 50, "yuantiChinese", textContent, 17, 1).setOrigin(0.5);
         this.name = textContent;
-
+        this.shape = new Phaser.Geom.Rectangle(-this.bg.width*0.5,-this.bg.height*0.5,this.bg.width,this.bg.height);
         this.add([this.bgNull, this.bg, this.text]);
         this.swicthAnimateTween = this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
             targets: this.bg,
@@ -23,6 +24,20 @@ export class Ship extends Phaser.GameObjects.Container {
             repeat: -1,
             paused: true
         });
+        this.init();
+    }
+
+    private init():void{
+        this.setInteractive(this.shape, <Phaser.Types.Input.HitAreaCallback>Phaser.Geom.Rectangle.Contains);
+        this.scene.input.setDraggable(this, true);
+        //this.drawHitArea();
+    }
+
+    private drawHitArea():void{
+        let graphics = new Phaser.GameObjects.Graphics(this.scene);
+        graphics.lineStyle(1, 0x0000ff);
+        graphics.strokeRect(this.shape.x, this.shape.y, this.shape.width,this.shape.height);
+        this.add(graphics);
     }
 
     public syncBounds(): Bounds {
