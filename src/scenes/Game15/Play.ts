@@ -4,7 +4,7 @@ import { Assets } from '../../interface/Game15';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Bg, Carriage, Ship,Terminal } from '../../Public/jonny/game15/'
+import { Bg, Carriage, Ship,Terminal ,Path} from '../../Public/jonny/game15/'
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -32,6 +32,26 @@ export interface Determine {
     ship: Ship;
 }
 
+class PathBtn extends Phaser.GameObjects.Image{
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string){
+        super(scene,x,y,texture);
+        this.alpha = 0;
+    }
+
+    public fadeIn():Promise<boolean>{
+        return new Promise(resolve=>{
+            this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+                targets:this,
+                duration:500,
+                alpha:1,
+                onComplete:()=>{
+                    resolve(true);
+                }
+            });
+        });
+    }
+}
+
 export default class Game15PlayScene extends Phaser.Scene {
     //数据
     private ccData: Array<string> = [];
@@ -53,6 +73,8 @@ export default class Game15PlayScene extends Phaser.Scene {
     private carriages: Carriage[] = [];   //货物
     private ships: Ship[] = [];   //船
     private terminals: Terminal[] = [];   //码头
+    private paths:Path[] = [] //路径
+    private pathBtns:PathBtn[] = [] //路径启动按钮
     private tipsParticlesEmitter: TipsParticlesEmitter;
     private sellingGold: SellingGold;
     /**
@@ -71,7 +93,7 @@ export default class Game15PlayScene extends Phaser.Scene {
     private layer2: Phaser.GameObjects.Container;
 
     /**
-    * 码头
+    * 码头,路径按钮
     */
     private layer3: Phaser.GameObjects.Container;
 
@@ -234,6 +256,23 @@ export default class Game15PlayScene extends Phaser.Scene {
             let _terminal = new Terminal(this, _x, _y, data);
             this.layer3.add(_terminal);
             this.terminals.push(_terminal);
+        });
+
+        //create path,pathbtn
+        let pathDatas = terminalDatas;
+        let pathDatasPosition:Vec2[] = [new Vec2(568,142+50),new Vec2(568,368.10)]; 
+        let pathBtnPosition:Vec2[] = [new Vec2(1546,88),new Vec2(1546,460)]; 
+        pathDatas.forEach((data, index) => {
+            let _x = pathDatasPosition[index].x;
+            let _y = pathDatasPosition[index].y;
+            let _btnX = pathBtnPosition[index].x;
+            let _btnY = pathBtnPosition[index].y;
+            let _path = new Path(this,_x,_y,`path${index+1}`,data);
+            let _pathBtn = new PathBtn(this,_btnX,_btnY,`path${index+1}Btn`);
+            this.add.existing(_path.pathImg);
+            this.layer3.add(_pathBtn);
+            this.paths.push(_path);
+            this.pathBtns.push(_pathBtn);
         });
 
 
@@ -483,16 +522,20 @@ export default class Game15PlayScene extends Phaser.Scene {
     /**
      * 移动程序
      */
-    public moveTo(obj, x: number, y: number, duration: number = 500, callback: any = () => { }): Phaser.Tweens.Tween {
-        let _tween = this.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
-            targets: obj,
-            x: x,
-            y: y,
-            duration: duration,
-            ease: "Sine.easeOut",
-            onComplete: callback
+    public moveTo(obj, x: number, y: number, duration: number = 500, callback: any = () => { }): Promise<boolean>{
+        return new Promise(resolve=>{
+            let _tween = this.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+                targets: obj,
+                x: x,
+                y: y,
+                duration: duration,
+                ease: "Sine.easeOut",
+                onComplete: ()=>{
+                    callback();
+                    resolve(true);
+                }
+            })
         })
-        return _tween;
     }
 
 
@@ -608,11 +651,16 @@ export default class Game15PlayScene extends Phaser.Scene {
     /**
      * 下一个场景
      */
-    private nextScene(ship: Ship): void {
+    private async nextScene(ship: Ship){
         this.moveTo(this.layer1, -1024, 0, 2000);
         this.moveTo(this.layer2, -1024, 0, 2000);
         this.moveTo(this.layer3, -1024, 0, 2000);
-        this.moveTo(ship, 1196, 276, 2000);
+        await this.moveTo(ship, 1196, 276, 2000);
+        await this.paths[0].showDirection();
+        await this.pathBtns[0].fadeIn();
+        await this.paths[1].showDirection();
+        await this.pathBtns[1].fadeIn();
+       
     }
 
     /**

@@ -24,21 +24,21 @@ export class Ship extends Phaser.GameObjects.Container {
             repeat: -1,
             paused: true
         });
-        this.init();
+        //this.init();
     }
 
-    private init():void{
-        this.setInteractive(this.shape, <Phaser.Types.Input.HitAreaCallback>Phaser.Geom.Rectangle.Contains);
-        this.scene.input.setDraggable(this, true);
-        //this.drawHitArea();
-    }
+    // private init():void{
+    //     this.setInteractive(this.shape, <Phaser.Types.Input.HitAreaCallback>Phaser.Geom.Rectangle.Contains);
+    //     this.scene.input.setDraggable(this, true);
+    //     //this.drawHitArea();
+    // }
 
-    private drawHitArea():void{
-        let graphics = new Phaser.GameObjects.Graphics(this.scene);
-        graphics.lineStyle(1, 0x0000ff);
-        graphics.strokeRect(this.shape.x, this.shape.y, this.shape.width,this.shape.height);
-        this.add(graphics);
-    }
+    // private drawHitArea():void{
+    //     let graphics = new Phaser.GameObjects.Graphics(this.scene);
+    //     graphics.lineStyle(1, 0x0000ff);
+    //     graphics.strokeRect(this.shape.x, this.shape.y, this.shape.width,this.shape.height);
+    //     this.add(graphics);
+    // }
 
     public syncBounds(): Bounds {
         return new Bounds(this.getBounds());
