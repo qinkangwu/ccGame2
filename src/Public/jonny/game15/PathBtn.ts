@@ -1,0 +1,49 @@
+import 'phaser';
+import {Vec2 } from '../core/'
+
+export class PathBtn extends Phaser.GameObjects.Image {
+    public goalPosition: Vec2[];
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string, name: string, goalPosition: Vec2[]) {
+        super(scene, x, y, texture);
+        this.alpha = 0;
+        this.name = name;
+        this.goalPosition = goalPosition;
+        this.setInteractive();
+    }
+
+    public fadeIn(): Promise<boolean> {
+        return new Promise(resolve => {
+            this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+                targets: this,
+                duration: 500,
+                alpha: 1,
+                onComplete: () => {
+                    resolve(true);
+                }
+            });
+        });
+    }
+
+    public fadeOut(): Promise<boolean> {
+        return new Promise(resolve => {
+            this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+                targets: this,
+                duration: 500,
+                alpha: 0,
+                onComplete: () => {
+                    resolve(true);
+                }
+            });
+        });
+    }
+
+    public bounceAnimate(): void {
+        this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+            targets: this,
+            scale: 1.2,
+            duration: 200,
+            yoyo: true,
+            ease: "Sine.easeInOut"
+        });
+    }
+}
