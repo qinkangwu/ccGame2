@@ -4,7 +4,7 @@ import { Assets } from '../../interface/Game15';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Bg, Carriage, Ship,Terminal ,Path} from '../../Public/jonny/game15/'
+import { Bg, Carriage, Ship, Terminal, Path } from '../../Public/jonny/game15/'
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -30,53 +30,53 @@ export interface Determine {
     times: number;
     myCarriage: Carriage;
     ship: Ship;
-    pathBtn:PathBtn;
+    pathBtn: PathBtn;
 }
 
-class PathBtn extends Phaser.GameObjects.Image{
-    public goalPosition:Vec2[];
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string,name:string,goalPosition:Vec2[]){
-        super(scene,x,y,texture);
+class PathBtn extends Phaser.GameObjects.Image {
+    public goalPosition: Vec2[];
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string, name: string, goalPosition: Vec2[]) {
+        super(scene, x, y, texture);
         this.alpha = 0;
         this.name = name;
         this.goalPosition = goalPosition;
         this.setInteractive();
     }
 
-    public fadeIn():Promise<boolean>{
-        return new Promise(resolve=>{
+    public fadeIn(): Promise<boolean> {
+        return new Promise(resolve => {
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
-                targets:this,
-                duration:500,
-                alpha:1,
-                onComplete:()=>{
+                targets: this,
+                duration: 500,
+                alpha: 1,
+                onComplete: () => {
                     resolve(true);
                 }
             });
         });
     }
 
-    public fadeOut():Promise<boolean>{
-        return new Promise(resolve=>{
+    public fadeOut(): Promise<boolean> {
+        return new Promise(resolve => {
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
-                targets:this,
-                duration:500,
-                alpha:0,
-                onComplete:()=>{
+                targets: this,
+                duration: 500,
+                alpha: 0,
+                onComplete: () => {
                     resolve(true);
                 }
             });
         });
     }
 
-    public bounceAnimate():void{
+    public bounceAnimate(): void {
         this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
-            targets:this,
-            scale:1.2,
-            duration:200,
-            yoyo:true,
-            ease:"Sine.easeInOut"
-        });    
+            targets: this,
+            scale: 1.2,
+            duration: 200,
+            yoyo: true,
+            ease: "Sine.easeInOut"
+        });
     }
 }
 
@@ -101,8 +101,8 @@ export default class Game15PlayScene extends Phaser.Scene {
     private carriages: Carriage[] = [];   //货物
     private ships: Ship[] = [];   //船
     private terminals: Terminal[] = [];   //码头
-    private paths:Path[] = [] //路径
-    private pathBtns:PathBtn[] = [] //路径启动按钮
+    private paths: Path[] = [] //路径
+    private pathBtns: PathBtn[] = [] //路径启动按钮
     private tipsParticlesEmitter: TipsParticlesEmitter;
     private sellingGold: SellingGold;
     /**
@@ -266,7 +266,7 @@ export default class Game15PlayScene extends Phaser.Scene {
         });
 
         //create terminal
-        let terminalDatas:string[] = [];
+        let terminalDatas: string[] = [];
         new Set(this.ccData.map(v => v[2])).forEach(data => {
             terminalDatas.push(data);
         })
@@ -287,34 +287,34 @@ export default class Game15PlayScene extends Phaser.Scene {
 
         //create path,pathbtn
         let pathDatas = terminalDatas;
-        let pathDatasPosition:Vec2[] = [new Vec2(568,142+50),new Vec2(568,368.10)]; 
-        let pathBtnPosition:Vec2[] = [new Vec2(1546,88),new Vec2(1546,460)]; 
+        let pathDatasPosition: Vec2[] = [new Vec2(568, 142 + 50), new Vec2(568, 368.10)];
+        let pathBtnPosition: Vec2[] = [new Vec2(1546, 88), new Vec2(1546, 460)];
         let pathGoalPosition = {
-            "1":[],
-            "2":[]
+            "1": [],
+            "2": []
         }
-        
+
         pathGoalPosition["1"] = [
-            new Vec2(1329.45,210.55),
-            new Vec2(1389.5,189),
-            new Vec2(1389.5,189),
-            new Vec2(1517,159),
-            new Vec2(1581,151),
-            new Vec2(1647,147),
-            new Vec2(1712,147),
-            new Vec2(1778,149),
-            new Vec2(1840,157)
+            new Vec2(1329.45, 210.55),
+            new Vec2(1389.5, 189),
+            new Vec2(1389.5, 189),
+            new Vec2(1517, 159),
+            new Vec2(1581, 151),
+            new Vec2(1647, 147),
+            new Vec2(1712, 147),
+            new Vec2(1778, 149),
+            new Vec2(1840, 157)
         ];
         pathGoalPosition["2"] = [
-            new Vec2(1329.45,340.55),
-            new Vec2(1389.5,362.95),
-            new Vec2(1453.6,380.95),
-            new Vec2(1517,394.95),
-            new Vec2(1581,411.85),
-            new Vec2(1647.9,411.85),
-            new Vec2(1702,411),
-            new Vec2(1764.1,411.85),
-            new Vec2(1840.55,393.85)
+            new Vec2(1329.45, 340.55),
+            new Vec2(1389.5, 362.95),
+            new Vec2(1453.6, 380.95),
+            new Vec2(1517, 394.95),
+            new Vec2(1581, 411.85),
+            new Vec2(1647.9, 411.85),
+            new Vec2(1702, 411),
+            new Vec2(1764.1, 411.85),
+            new Vec2(1840.55, 393.85)
         ];
 
         pathDatas.forEach((data, index) => {
@@ -322,8 +322,8 @@ export default class Game15PlayScene extends Phaser.Scene {
             let _y = pathDatasPosition[index].y;
             let _btnX = pathBtnPosition[index].x;
             let _btnY = pathBtnPosition[index].y;
-            let _path = new Path(this,_x,_y,`path${index+1}`,data);
-            let _pathBtn = new PathBtn(this,_btnX,_btnY,`path${index+1}Btn`,data,pathGoalPosition[index+1]);
+            let _path = new Path(this, _x, _y, `path${index + 1}`, data);
+            let _pathBtn = new PathBtn(this, _btnX, _btnY, `path${index + 1}Btn`, data, pathGoalPosition[index + 1]);
             this.add.existing(_path.pathImg);
             this.layer3.add(_pathBtn);
             this.paths.push(_path);
@@ -426,9 +426,9 @@ export default class Game15PlayScene extends Phaser.Scene {
                     this.isRight(value.ship);
                 } else if (value.isRight === false && value.wheel === 1) {
                     this.isWrong(value.myCarriage);
-                } else if(value.isRight === true && value.wheel === 2){   //第二轮正确
-                    this.isRightNo2(value.pathBtn,value.ship);
-                } else if(value.isRight === false && value.wheel === 2){   //第二轮错误
+                } else if (value.isRight === true && value.wheel === 2) {   //第二轮正确
+                    this.isRightNo2(value.pathBtn, value.ship);
+                } else if (value.isRight === false && value.wheel === 2) {   //第二轮错误
                     this.isWrongNo2(value.ship);
                 }
             }
@@ -537,7 +537,7 @@ export default class Game15PlayScene extends Phaser.Scene {
                         wheel: that.wheel,
                         myCarriage: this,
                         ship: ship,
-                        pathBtn:null
+                        pathBtn: null
                     })
                 }
             })
@@ -580,15 +580,15 @@ export default class Game15PlayScene extends Phaser.Scene {
     /**
      * 移动程序
      */
-    public moveTo(obj, x: number, y: number, duration: number = 500, callback: any = () => { }): Promise<boolean>{
-        return new Promise(resolve=>{
+    public moveTo(obj, x: number, y: number, duration: number = 500, callback: any = () => { }): Promise<boolean> {
+        return new Promise(resolve => {
             let _tween = this.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: obj,
                 x: x,
                 y: y,
                 duration: duration,
                 ease: "Sine.easeOut",
-                onComplete: ()=>{
+                onComplete: () => {
                     callback();
                     resolve(true);
                 }
@@ -637,11 +637,6 @@ export default class Game15PlayScene extends Phaser.Scene {
                     this.sellingGold.golds.destroy();
                     this.setGoldValue(3);
                     this.nextScene(ship);
-                    // if (wheel === 1) {
-                    //     console.log("next2");
-                    // } else {
-                    //     console.log("next1");
-                    // }
                 }
             });
             this.sellingGold.golds.setDepth(6);
@@ -652,10 +647,10 @@ export default class Game15PlayScene extends Phaser.Scene {
         nextFuc();
     }
 
-     /**
-     * 正确的结果处理
-     */
-    private async isRightNo2(pathBtn:PathBtn,ship: Ship){
+    /**
+    * 正确的结果处理
+    */
+    private async isRightNo2(pathBtn: PathBtn, ship: Ship) {
         let nextFuc = () => {
             this.sellingGold = new SellingGold(this, {
                 callback: () => {
@@ -672,10 +667,10 @@ export default class Game15PlayScene extends Phaser.Scene {
 
         this.pathBtns[0].fadeOut();
         this.pathBtns[1].fadeOut();
-        this.paths.forEach(path=>{
-            if(path.name === pathBtn.name){
+        this.paths.forEach(path => {
+            if (path.name === pathBtn.name) {
                 path.hideDirection();
-            }else{
+            } else {
                 path.pathImg.alpha = 0;
             }
         });
@@ -747,7 +742,7 @@ export default class Game15PlayScene extends Phaser.Scene {
      */
     private resetStartNo2(ship: Ship = null) {
         if (ship !== null) {
-           this.pathBtns.forEach(btn=>{btn.setInteractive()}); 
+            this.pathBtns.forEach(btn => { btn.setInteractive() });
         }
     }
 
@@ -771,7 +766,7 @@ export default class Game15PlayScene extends Phaser.Scene {
     /**
      * 再次错误
      */
-    private ohNo2(ship:Ship) {
+    private ohNo2(ship: Ship) {
         this.setGoldValue(-1);
         this.tipsParticlesEmitter.error(
             this.nextRound.bind(this, ship),
@@ -797,15 +792,16 @@ export default class Game15PlayScene extends Phaser.Scene {
                 msg: "所有货物都可搬运"
             });
         }
-    } 
+    }
 
     /**
      * 下一个场景
      */
-    private async nextScene(ship: Ship){
+    private async nextScene(ship: Ship) {
         let that = this;
 
         that.times = 0;
+        console.log("已经执行", that.times);
 
         this.moveTo(this.layer1, -1024, 0, 2000);
         this.moveTo(this.layer2, -1024, 0, 2000);
@@ -816,44 +812,47 @@ export default class Game15PlayScene extends Phaser.Scene {
         await this.paths[1].showDirection();
         await this.pathBtns[1].fadeIn();
 
-        let pathBtnsPointerdownEvent = function (this:PathBtn){
+        let pathBtnsPointerdownEvent = function (this: PathBtn) {
             this.bounceAnimate();
-            that.pathBtns.forEach(btn=>{btn.disableInteractive()});
+            that.pathBtns.forEach(btn => { btn.disableInteractive() });
             that.result1$.next({
-                isRight:that.checkoutResultNo2(ship,this),
-                myCarriage:null,
-                ship:ship,
-                times:that.times,
-                wheel:2,
-                pathBtn:this
+                isRight: that.checkoutResultNo2(ship, this),
+                myCarriage: null,
+                ship: ship,
+                times: that.times,
+                wheel: 2,
+                pathBtn: this
             });
         }
 
         console.log(ship);
 
-        this.pathBtns.forEach(btn=>{
-            btn.once("pointerdown",pathBtnsPointerdownEvent);
-        })
+        if (index === 0) {
+            this.pathBtns.forEach(btn => {
+                btn.on("pointerdown", pathBtnsPointerdownEvent);
+            })
+        }
     }
 
     /**
      * 下一轮
      */
-    private nextRound(ship:Ship): void {
+    private nextRound(ship: Ship): void {
         this.times = 0;
+        index += 1;
         this.moveTo(this.layer1, 0, 0, 2000);
         this.moveTo(this.layer2, 0, 0, 2000);
         this.moveTo(this.layer3, 0, 0, 2000);
-        this.ships.forEach(ship=>{
+        this.ships.forEach(ship => {
             ship.scale = 1;
             ship.alpha = 1;
             ship.x = ship.initPosition.x;
             ship.y = ship.initPosition.y;
         });
-        this.paths.forEach(path=>{
+        this.paths.forEach(path => {
             path.reStart();
         })
-        this.pathBtns.forEach(btn=>{
+        this.pathBtns.forEach(btn => {
             btn.setInteractive();
         })
         this.carriage$.next({
@@ -883,9 +882,9 @@ export default class Game15PlayScene extends Phaser.Scene {
     /**
      * 判断第二轮题目是否做对
      */
-    private checkoutResultNo2(ship:Ship,pathBtn:PathBtn): boolean {
+    private checkoutResultNo2(ship: Ship, pathBtn: PathBtn): boolean {
         let _data = this.ccData.filter(data => data[1] === ship.name)[0];
-        console.log(_data[2],pathBtn.name);
+        console.log(_data[2], pathBtn.name);
         return _data[2] === pathBtn.name;
     }
 
