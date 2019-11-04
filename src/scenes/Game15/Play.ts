@@ -10,6 +10,7 @@ const vol = 0.3; //背景音乐的音量
 const W = 1024;
 const H = 552;
 var index: number; //题目的指针，默认为0
+var round:number = 0;
 var goldValue: number = 3; //金币的值
 
 interface CarriageStatus {
@@ -138,7 +139,7 @@ export default class Game15PlayScene extends Phaser.Scene {
 
     init(res: { data: any[], index: number }) {
         index = res.index;
-        this.ccData = res.data;
+        this.ccData = res.data.filter((_data,_i)=>_i!==index);
     }
 
     preload(): void {
@@ -148,7 +149,7 @@ export default class Game15PlayScene extends Phaser.Scene {
     create(): void {
         this.createStage();
         this.createActors();
-        if (index === 0) {
+        if (round === 0) {
             this.scene.pause();
             rotateTips.init();
             this.firstCreate();
@@ -376,6 +377,7 @@ export default class Game15PlayScene extends Phaser.Scene {
                 value.myCarriage.setPosition(value.hitShip.x, value.hitShip.y);
                 value.myCarriage.scaleMin()
                 value.hitShip.bounceAnimate();
+                value.hitShip.carriageName = value.myCarriage.name;
             } else if (value.msg === "所有货物暂时禁止搬运") {
                 this.carriages.forEach(carriage => {
                     carriage.disableInteractive();
@@ -839,36 +841,42 @@ export default class Game15PlayScene extends Phaser.Scene {
      */
     private nextRound(ship: Ship): void {
         this.times = 0;
-        index += 1;
-        this.moveTo(this.layer1, 0, 0, 2000);
-        this.moveTo(this.layer2, 0, 0, 2000);
-        this.moveTo(this.layer3, 0, 0, 2000);
-        this.ships.forEach(ship => {
-            ship.scale = 1;
-            ship.alpha = 1;
-            ship.x = ship.initPosition.x;
-            ship.y = ship.initPosition.y;
-        });
-        this.paths.forEach(path => {
-            path.reStart();
-        })
-        this.pathBtns.forEach(btn => {
-            btn.setInteractive();
-        })
-        this.carriage$.next({
-            myCarriage: null,
-            hitShip: null,
-            msg: "所有货物都可搬运"
-        });
+        // index += 1;
+        round+=1;
+        // this.moveTo(this.layer1, 0, 0, 2000);
+        // this.moveTo(this.layer2, 0, 0, 2000);
+        // this.moveTo(this.layer3, 0, 0, 2000);
+        // this.ships.forEach(ship => {
+        //     ship.scale = 1;
+        //     ship.alpha = 1;
+        //     ship.x = ship.initPosition.x;
+        //     ship.y = ship.initPosition.y;
+        // });
+        // this.paths.forEach(path => {
+        //     path.reStart();
+        // })
+        // this.pathBtns.forEach(btn => {
+        //     btn.setInteractive();
+        // })
+        // this.carriage$.next({
+        //     myCarriage: null,
+        //     hitShip: null,
+        //     msg: "所有货物都可搬运"
+        // });
         // index += 1;
         // if (index > this.ccData.length - 1) {
         //     window.location.href = CONSTANT.INDEX_URL;
         // }
         // //this.times = 0;
-        // this.scene.start('Game15PlayScene', {
-        //     data: this.ccData,
-        //     index: index
-        // });
+        this.ccData.forEach((_data,_i)=>{
+            if(_data[0]===ship.carriageName){
+                index = _i;
+            }
+        })
+        this.scene.start('Game15PlayScene', {
+            data: this.ccData,
+            index:index 
+        });
     }
 
     /**

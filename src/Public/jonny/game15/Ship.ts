@@ -10,6 +10,7 @@ export class Ship extends Phaser.GameObjects.Container {
     public swicthAnimateTween: Phaser.Tweens.Tween;
     public initPosition:Vec2;
     public complete:boolean = false;
+    public carriageName:string;
     constructor(scene: Phaser.Scene, x: number, y: number, textContent: string) {
         super(scene, x, y);
         this.bgNull = new Phaser.GameObjects.Image(scene, 0, 0, "shipNull");

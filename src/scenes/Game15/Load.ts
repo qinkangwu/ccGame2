@@ -81,7 +81,7 @@ export default class Game15LoadScene extends Phaser.Scene {
         }).then(() => {
             this.scene.start('Game15PlayScene', {
                 data: this.ccData,
-                index: 0
+                index: null
             });
         })
     }
