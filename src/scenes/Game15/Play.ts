@@ -4,7 +4,7 @@ import { Assets } from '../../interface/Game15';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Bg, Carriage, Ship, Terminal, Path } from '../../Public/jonny/game15/'
+import { Bg, Carriage, Ship, Terminal, Path ,PathBtn} from '../../Public/jonny/game15/'
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -32,53 +32,6 @@ export interface Determine {
     myCarriage: Carriage;
     ship: Ship;
     pathBtn: PathBtn;
-}
-
-class PathBtn extends Phaser.GameObjects.Image {
-    public goalPosition: Vec2[];
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string, name: string, goalPosition: Vec2[]) {
-        super(scene, x, y, texture);
-        this.alpha = 0;
-        this.name = name;
-        this.goalPosition = goalPosition;
-        this.setInteractive();
-    }
-
-    public fadeIn(): Promise<boolean> {
-        return new Promise(resolve => {
-            this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
-                targets: this,
-                duration: 500,
-                alpha: 1,
-                onComplete: () => {
-                    resolve(true);
-                }
-            });
-        });
-    }
-
-    public fadeOut(): Promise<boolean> {
-        return new Promise(resolve => {
-            this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
-                targets: this,
-                duration: 500,
-                alpha: 0,
-                onComplete: () => {
-                    resolve(true);
-                }
-            });
-        });
-    }
-
-    public bounceAnimate(): void {
-        this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
-            targets: this,
-            scale: 1.2,
-            duration: 200,
-            yoyo: true,
-            ease: "Sine.easeInOut"
-        });
-    }
 }
 
 export default class Game15PlayScene extends Phaser.Scene {
