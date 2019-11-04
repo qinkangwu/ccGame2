@@ -4,13 +4,13 @@ import { Assets } from '../../interface/Game15';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Bg, Carriage, Ship, Terminal, Path ,PathBtn} from '../../Public/jonny/game15/'
+import { Bg, Carriage, Ship, Terminal, Path, PathBtn } from '../../Public/jonny/game15/'
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
 const H = 552;
 var index: number; //题目的指针，默认为0
-var round:number = 0;
+var round: number = 0;
 var goldValue: number = 3; //金币的值
 
 interface CarriageStatus {
@@ -55,8 +55,8 @@ export default class Game15PlayScene extends Phaser.Scene {
     private carriages: Carriage[] = [];   //货物
     private ships: Ship[] = [];   //船
     private terminals: Terminal[] = [];   //码头
-    private paths: Path[] = [] //路径
-    private pathBtns: PathBtn[] = [] //路径启动按钮
+    private paths: Path[] = []; //路径
+    private pathBtns: PathBtn[] = []; //路径启动按钮
     private tipsParticlesEmitter: TipsParticlesEmitter;
     private sellingGold: SellingGold;
     /**
@@ -88,11 +88,22 @@ export default class Game15PlayScene extends Phaser.Scene {
         super({
             key: "Game15PlayScene"
         });
+
     }
 
     init(res: { data: any[], index: number }) {
+        this.carriages = [];
+        this.ships = [];
+        this.pathBtns = [];
+        this.paths = [];
+        this.terminals = [];
         index = res.index;
-        this.ccData = res.data.filter((_data,_i)=>_i!==index);
+        this.ccData = res.data.map((_data, _i) => {
+            if (_i === index) {
+                _data[0] = null;
+            }
+            return _data;
+        });
     }
 
     preload(): void {
@@ -181,17 +192,18 @@ export default class Game15PlayScene extends Phaser.Scene {
         // create small carriage
         let carriageOffsetX = 130;
         let carriageOffsetY = 83;
-        let smallCarriages = this.ccData.filter(v => v[0].length < 8);
+        let smallCarriages = this.ccData.filter(v => v[0]!==null&&v[0].length < 8);
+        console.log(this.ccData);
         smallCarriages.forEach((data, index) => {
             let _xIndex = index;
             _xIndex = _xIndex % 2;
-            let _carriage = new Carriage(this, data[0], 130 + _xIndex * carriageOffsetX, 140 + Math.floor(index / 2) * carriageOffsetY);
-            this.layer2.add(_carriage);
-            this.carriages.push(_carriage);
+                let _carriage = new Carriage(this, data[0], 130 + _xIndex * carriageOffsetX, 140 + Math.floor(index / 2) * carriageOffsetY);
+                this.layer2.add(_carriage);
+                this.carriages.push(_carriage);
         })
 
         //create large carriage
-        let largeCarriages = this.ccData.filter(v => v[0].length > 8)
+        let largeCarriages = this.ccData.filter(v => v[0]!==null&&v[0].length > 8)
         let lastCarriage = this.carriages[this.carriages.length - 1];
         largeCarriages.forEach((data, index) => {
             let _carriage = new Carriage(this, data[0], (130 + 130 + carriageOffsetX) * 0.5, lastCarriage.y + (index + 1) * carriageOffsetY);
@@ -231,7 +243,6 @@ export default class Game15PlayScene extends Phaser.Scene {
             offsetY: 203
         }
         terminalDatas.forEach((data, index) => {
-            console.log(data);
             let _x = terminalPosition.initX;
             let _y = terminalPosition.initY + terminalPosition.offsetY * index;
             let _terminal = new Terminal(this, _x, _y, data);
@@ -284,6 +295,8 @@ export default class Game15PlayScene extends Phaser.Scene {
             this.pathBtns.push(_pathBtn);
         });
 
+        console.log(286, this.paths, this.pathBtns);
+
         //创建用户反馈
         this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
     }
@@ -293,7 +306,9 @@ export default class Game15PlayScene extends Phaser.Scene {
      */
     private gameStart(): void {
         this.carriageScene();
-        this.observableFuc();
+        if (round === 0) {
+            this.observableFuc();
+        }
     }
 
     /**
@@ -571,35 +586,14 @@ export default class Game15PlayScene extends Phaser.Scene {
      *  successBtnPointerdown 
      */
     private successBtnPointerdown() {
-        // this.checkoutResult()
-        //     .then(msg => {    //正确
-        //         console.log(msg)
-        //         this.isRight();
-        //     })
-        //     .catch(err => {   //错误
-        //         console.log(err)
-        //         this.isWrong();
-        //     });
+
     }
 
     /**
      * 正确的结果处理
      */
     private isRight(ship: Ship): void {
-        let nextFuc = () => {
-            this.sellingGold = new SellingGold(this, {
-                callback: () => {
-                    this.sellingGold.golds.destroy();
-                    this.setGoldValue(3);
-                    this.nextScene(ship);
-                }
-            });
-            this.sellingGold.golds.setDepth(6);
-            this.tipsParticlesEmitter.success(() => {
-                this.sellingGold.goodJob(3);
-            })
-        }
-        nextFuc();
+        this.nextScene(ship);
     }
 
     /**
@@ -761,6 +755,7 @@ export default class Game15PlayScene extends Phaser.Scene {
         this.moveTo(this.layer1, -1024, 0, 2000);
         this.moveTo(this.layer2, -1024, 0, 2000);
         this.moveTo(this.layer3, -1024, 0, 2000);
+        console.log(this.paths, this.pathBtns);
         await this.moveTo(ship, 1196, 276, 2000);
         await this.paths[0].showDirection();
         await this.pathBtns[0].fadeIn();
@@ -782,53 +777,40 @@ export default class Game15PlayScene extends Phaser.Scene {
 
         console.log(ship);
 
-        //if (index === 0) {
-            this.pathBtns.forEach(btn => {
-                btn.on("pointerdown", pathBtnsPointerdownEvent);
-            })
-        //}
+        this.pathBtns.forEach(btn => {
+            btn.on("pointerdown", pathBtnsPointerdownEvent);
+        })
+    }
+
+    /**
+     * 重置数据，准备进入下一轮
+     */
+
+    private resetData(): void {
+        // this.paths = [];
+        // this.pathBtns = [];
+        // this.ships = [];
+        // this.carriages = [];
+        // this.ship$.unsubscribe();
+        // this.carriage$.unsubscribe();
+        // this.result1$.unsubscribe();
+        //console.log(this.ships,this.carriages);
     }
 
     /**
      * 下一轮
      */
     private nextRound(ship: Ship): void {
-        this.times = 0;
-        // index += 1;
-        round+=1;
-        // this.moveTo(this.layer1, 0, 0, 2000);
-        // this.moveTo(this.layer2, 0, 0, 2000);
-        // this.moveTo(this.layer3, 0, 0, 2000);
-        // this.ships.forEach(ship => {
-        //     ship.scale = 1;
-        //     ship.alpha = 1;
-        //     ship.x = ship.initPosition.x;
-        //     ship.y = ship.initPosition.y;
-        // });
-        // this.paths.forEach(path => {
-        //     path.reStart();
-        // })
-        // this.pathBtns.forEach(btn => {
-        //     btn.setInteractive();
-        // })
-        // this.carriage$.next({
-        //     myCarriage: null,
-        //     hitShip: null,
-        //     msg: "所有货物都可搬运"
-        // });
-        // index += 1;
-        // if (index > this.ccData.length - 1) {
-        //     window.location.href = CONSTANT.INDEX_URL;
-        // }
-        // //this.times = 0;
-        this.ccData.forEach((_data,_i)=>{
-            if(_data[0]===ship.carriageName){
+        round += 1;
+        this.resetData();
+        this.ccData.forEach((_data, _i) => {
+            if (_data[0] === ship.carriageName) {
                 index = _i;
             }
         })
         this.scene.start('Game15PlayScene', {
             data: this.ccData,
-            index:index 
+            index: index
         });
     }
 

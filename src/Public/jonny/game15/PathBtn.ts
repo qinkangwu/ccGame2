@@ -8,6 +8,7 @@ export class PathBtn extends Phaser.GameObjects.Image {
         this.alpha = 0;
         this.name = name;
         this.goalPosition = goalPosition;
+        this.scene = scene;
         this.setInteractive();
     }
 
