@@ -827,11 +827,11 @@ export default class Game15PlayScene extends Phaser.Scene {
 
         console.log(ship);
 
-        if (index === 0) {
+        //if (index === 0) {
             this.pathBtns.forEach(btn => {
                 btn.on("pointerdown", pathBtnsPointerdownEvent);
             })
-        }
+        //}
     }
 
     /**
