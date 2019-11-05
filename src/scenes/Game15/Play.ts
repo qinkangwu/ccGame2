@@ -192,18 +192,18 @@ export default class Game15PlayScene extends Phaser.Scene {
         // create small carriage
         let carriageOffsetX = 130;
         let carriageOffsetY = 83;
-        let smallCarriages = this.ccData.filter(v => v[0]!==null&&v[0].length < 8);
+        let smallCarriages = this.ccData.filter(v => v[0] !== null && v[0].length < 8);
         console.log(this.ccData);
         smallCarriages.forEach((data, index) => {
             let _xIndex = index;
             _xIndex = _xIndex % 2;
-                let _carriage = new Carriage(this, data[0], 130 + _xIndex * carriageOffsetX, 140 + Math.floor(index / 2) * carriageOffsetY);
-                this.layer2.add(_carriage);
-                this.carriages.push(_carriage);
+            let _carriage = new Carriage(this, data[0], 130 + _xIndex * carriageOffsetX, 140 + Math.floor(index / 2) * carriageOffsetY);
+            this.layer2.add(_carriage);
+            this.carriages.push(_carriage);
         })
 
         //create large carriage
-        let largeCarriages = this.ccData.filter(v => v[0]!==null&&v[0].length > 8)
+        let largeCarriages = this.ccData.filter(v => v[0] !== null && v[0].length > 8)
         let lastCarriage = this.carriages[this.carriages.length - 1];
         largeCarriages.forEach((data, index) => {
             let _carriage = new Carriage(this, data[0], (130 + 130 + carriageOffsetX) * 0.5, lastCarriage.y + (index + 1) * carriageOffsetY);
@@ -255,8 +255,8 @@ export default class Game15PlayScene extends Phaser.Scene {
         let pathDatasPosition: Vec2[] = [new Vec2(568, 142 + 50), new Vec2(568, 368.10)];
         let pathBtnPosition: Vec2[] = [new Vec2(1546, 88), new Vec2(1546, 460)];
         let pathGoalPosition = {
-            "1": new Phaser.Curves.QuadraticBezier(new Phaser.Math.Vector2(1329.45, 210.55),new Phaser.Math.Vector2(1309,91.6),new Phaser.Math.Vector2(1840,157)),
-            "2": new Phaser.Curves.QuadraticBezier(new Phaser.Math.Vector2(1329.45, 210.55),new Phaser.Math.Vector2(1482,457),new Phaser.Math.Vector2(1840.55,393.85)),
+            "1": new Phaser.Curves.QuadraticBezier(new Phaser.Math.Vector2(1329.45, 210.55), new Phaser.Math.Vector2(1309, 91.6), new Phaser.Math.Vector2(1840, 157)),
+            "2": new Phaser.Curves.QuadraticBezier(new Phaser.Math.Vector2(1329.45, 210.55), new Phaser.Math.Vector2(1482, 457), new Phaser.Math.Vector2(1840.55, 393.85)),
         }
 
         pathDatas.forEach((data, index) => {
@@ -298,26 +298,14 @@ export default class Game15PlayScene extends Phaser.Scene {
         this.carriage$.subscribe(value => {
             console.log(value);
             if (value.msg === "自身缩放一次") {
-                //value.myCarriage.bg.alpha = 1;
                 value.myCarriage.bounceAnimate();
-                // this.carriages
-                //     .filter(carriage => carriage !== value.myCarriage)
-                //     .forEach(carriage => {
-                //         carriage.bg.alpha = 0;
-                //     })
             } else if (value.msg === "其他货物隐藏") {
                 this.carriages
                     .filter(carriage => carriage !== value.myCarriage)
                     .forEach(carriage => {
                         carriage.leave();
                     })
-            } else if (value.msg === "全部货物显示") {
-                this.carriages
-                    .forEach(carriage => {
-                        carriage.bg.alpha = 1;
-                        carriage.alpha = 1;
-                    })
-            } else if (value.msg === "自身被吸附进去") {
+            }  else if (value.msg === "自身被吸附进去") {
                 value.myCarriage.setPosition(value.hitShip.x, value.hitShip.y);
                 value.myCarriage.scaleMin()
                 value.hitShip.bounceAnimate();
@@ -331,11 +319,19 @@ export default class Game15PlayScene extends Phaser.Scene {
                 this.carriages.forEach(carriage => {
                     carriage.setInteractive();
                 })
-            } else if (value.msg === "回到自己初始化位置") {
+            } else if (value.msg === "全部货物回到初始位置") {
                 value.myCarriage.isHit = false;
-                this.moveTo(value.myCarriage, value.myCarriage.initPosition.x, value.myCarriage.initPosition.y, 500, () => {
-                    value.myCarriage.scale = 1;
-                });
+                value.myCarriage.scale = 1;
+                this.carriages
+                    .forEach(carriage => {
+                        carriage.admission();
+                    })
+            }else if(value.msg === "放弃这个货物,显示其他货物"){
+                this.carriages
+                    .filter(carriage => carriage !== value.myCarriage)
+                    .forEach(carriage => {
+                        carriage.admission();
+                    })
             }
         });
 
@@ -419,11 +415,11 @@ export default class Game15PlayScene extends Phaser.Scene {
                 msg: "自身缩放一次",
                 hitShip: null
             });
-                that.carriage$.next({
-                    myCarriage: this,
-                    msg: "其他货物隐藏",
-                    hitShip: null
-                });
+            that.carriage$.next({
+                myCarriage: this,
+                msg: "其他货物隐藏",
+                hitShip: null
+            });
         }
 
         /**
@@ -447,12 +443,6 @@ export default class Game15PlayScene extends Phaser.Scene {
          * 拖拽货物结束
          */
         let carriageDragEnd = function (this: Carriage) {
-            //carriageDragMsgCount = 1;
-            that.carriage$.next({
-                myCarriage: this,
-                msg: "全部货物显示",
-                hitShip: null
-            })
 
             that.ship$.next({
                 hitShip: null,
@@ -486,7 +476,7 @@ export default class Game15PlayScene extends Phaser.Scene {
             if (!this.isHit) {
                 that.carriage$.next({
                     myCarriage: this,
-                    msg: "回到自己初始化位置",
+                    msg: "全部货物回到初始位置",
                     hitShip: null
                 });
             }
@@ -647,7 +637,7 @@ export default class Game15PlayScene extends Phaser.Scene {
             this.carriage$.next({
                 myCarriage: myCarriage,
                 hitShip: null,
-                msg: "回到自己初始化位置"
+                msg: "全部货物回到初始位置"
             });
             this.carriage$.next({
                 myCarriage: null,
@@ -704,14 +694,17 @@ export default class Game15PlayScene extends Phaser.Scene {
      * 第一轮状态下的下一轮啊
      */
 
-    private nextRoundInOneWheel(myCarriage: Carriage = null) {
-        if (myCarriage !== null) {
+    private nextRoundInOneWheel(myCarriage:Carriage) {
+            this.carriage$.next({
+                myCarriage: myCarriage,
+                hitShip: null,
+                msg: "放弃这个货物,显示其他货物"
+            });
             this.carriage$.next({
                 myCarriage: null,
                 hitShip: null,
                 msg: "所有货物都可搬运"
             });
-        }
     }
 
     /**
