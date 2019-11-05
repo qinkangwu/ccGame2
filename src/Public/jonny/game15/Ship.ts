@@ -21,7 +21,7 @@ export class Ship extends Phaser.GameObjects.Container {
         this.shape = new Phaser.Geom.Rectangle(-this.bg.width*0.5,-this.bg.height*0.5,this.bg.width,this.bg.height);
         this.add([this.bgNull, this.bg, this.text]);
         this.swicthAnimateTween = this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
-            targets: this.bg,
+            targets: this,
             alpha: 0,
             duration: 500,
             yoyo: true,

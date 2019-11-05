@@ -348,7 +348,7 @@ export default class Game15PlayScene extends Phaser.Scene {
                 })
             } else if (value.msg === "被碰撞货船停止闪烁") {
                 value.hitShip.swicthAnimateTween.pause();
-                value.hitShip.bg.alpha = 1;
+                value.hitShip.alpha = 1;
             } else if (value.msg === "停止所有货船闪烁") {
                 this.ships.forEach(ship => {
                     ship.swicthAnimateTween.pause();
