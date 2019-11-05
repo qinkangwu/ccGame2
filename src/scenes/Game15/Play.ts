@@ -585,7 +585,7 @@ export default class Game15PlayScene extends Phaser.Scene {
             }
         });
         await ship.gotoTerminal(pathBtn.goalPosition);
-        await ship.scaleMin();
+        //await ship.scaleMin();
         nextFuc();
     }
 
