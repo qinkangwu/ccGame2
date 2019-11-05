@@ -63,13 +63,21 @@ export class Ship extends Phaser.GameObjects.Container {
         })
     }
 
-    public gotoTerminal(positions:Vec2[]):Promise<boolean>{
+    public gotoTerminal(curve:Phaser.Curves.QuadraticBezier):Promise<boolean>{
         return new Promise(resolve=>{
-            this.scene.tweens.timeline({
+            let path = {
+                t:0,
+                vec:new Phaser.Math.Vector2()
+            }
+            this.scene.add.tween({
                 ease: 'Linear',
-                duration: 100,
-                targets:this,
-                tweens: positions,
+                duration: 2000,
+                targets:path,
+                t:1,
+                onUpdate:()=>{
+                    curve.getPoint(path.t,path.vec);
+                    this.setPosition(path.vec.x,path.vec.y);
+                },
                 onComplete:()=>{
                     resolve(true);
                 }

@@ -2,8 +2,8 @@ import 'phaser';
 import {Vec2 } from '../core/'
 
 export class PathBtn extends Phaser.GameObjects.Image {
-    public goalPosition: Vec2[];
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string, name: string, goalPosition: Vec2[]) {
+    public goalPosition: Phaser.Curves.QuadraticBezier;
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string, name: string, goalPosition: Phaser.Curves.QuadraticBezier) {
         super(scene, x, y, texture);
         this.alpha = 0;
         this.name = name;

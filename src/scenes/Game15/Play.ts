@@ -255,32 +255,9 @@ export default class Game15PlayScene extends Phaser.Scene {
         let pathDatasPosition: Vec2[] = [new Vec2(568, 142 + 50), new Vec2(568, 368.10)];
         let pathBtnPosition: Vec2[] = [new Vec2(1546, 88), new Vec2(1546, 460)];
         let pathGoalPosition = {
-            "1": [],
-            "2": []
+            "1": new Phaser.Curves.QuadraticBezier(new Phaser.Math.Vector2(1329.45, 210.55),new Phaser.Math.Vector2(1309,91.6),new Phaser.Math.Vector2(1840,157)),
+            "2": new Phaser.Curves.QuadraticBezier(new Phaser.Math.Vector2(1329.45, 210.55),new Phaser.Math.Vector2(1482,457),new Phaser.Math.Vector2(1840.55,393.85)),
         }
-
-        pathGoalPosition["1"] = [
-            new Vec2(1329.45, 210.55),
-            new Vec2(1389.5, 189),
-            new Vec2(1389.5, 189),
-            new Vec2(1517, 159),
-            new Vec2(1581, 151),
-            new Vec2(1647, 147),
-            new Vec2(1712, 147),
-            new Vec2(1778, 149),
-            new Vec2(1840, 157)
-        ];
-        pathGoalPosition["2"] = [
-            new Vec2(1329.45, 340.55),
-            new Vec2(1389.5, 362.95),
-            new Vec2(1453.6, 380.95),
-            new Vec2(1517, 394.95),
-            new Vec2(1581, 411.85),
-            new Vec2(1647.9, 411.85),
-            new Vec2(1702, 411),
-            new Vec2(1764.1, 411.85),
-            new Vec2(1840.55, 393.85)
-        ];
 
         pathDatas.forEach((data, index) => {
             let _x = pathDatasPosition[index].x;
@@ -470,7 +447,7 @@ export default class Game15PlayScene extends Phaser.Scene {
          * 拖拽货物结束
          */
         let carriageDragEnd = function (this: Carriage) {
-            carriageDragMsgCount = 1;
+            //carriageDragMsgCount = 1;
             that.carriage$.next({
                 myCarriage: this,
                 msg: "全部货物显示",

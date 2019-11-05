@@ -52,7 +52,7 @@ export class Path extends Phaser.Display.Masks.GeometryMask {
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.geometryMask,
                 x: this.pathImg.x+this.pathImg.width*0.5,
-                duration: 1000,
+                duration: 2000,
                 onComplete: () => {
                     resolve(1);
                 }
