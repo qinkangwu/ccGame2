@@ -23,14 +23,6 @@ export class Carriage extends Phaser.GameObjects.Container{
         this.text = new Phaser.GameObjects.BitmapText(scene,0,0,"ArialRoundedBold30",textContent,20,1).setOrigin(0.5);
         this.add([this.bgNull,this.bg,this.text]);
         this.shape = new Phaser.Geom.Rectangle(-this.bg.width*0.5,-this.bg.height*0.5,this.bg.width,this.bg.height);
-        // this.swicthAnimateTween = this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
-        //     targets:this.bg,
-        //     alpha:0,
-        //     duration:500,
-        //     yoyo:true,
-        //     repeat:-1,
-        //     paused:true
-        // });    
         this.initPosition = new Vec2(this.x,this.y);
         this.init();
     }
@@ -70,9 +62,21 @@ export class Carriage extends Phaser.GameObjects.Container{
                 }
             });
         });
-      
     }
 
+    public leave():Promise<boolean>{
+        return new Promise(resolve=>{
+            this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+                targets: this,
+                x: 0 - this.bg.width*0.5,
+                duration: 200,
+                ease: "Sine.easeInOut",
+                onComplete:()=>{
+                    resolve(true);
+                }
+            });
+        });
+    }
 
     public syncBounds(): Bounds {
         return new Bounds(this.getBounds());

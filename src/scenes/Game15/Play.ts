@@ -320,20 +320,19 @@ export default class Game15PlayScene extends Phaser.Scene {
         */
         this.carriage$.subscribe(value => {
             console.log(value);
-            if (value.msg === "其他货物变淡且自身缩放一次") {
-                value.myCarriage.bg.alpha = 1;
+            if (value.msg === "自身缩放一次") {
+                //value.myCarriage.bg.alpha = 1;
                 value.myCarriage.bounceAnimate();
-                this.carriages
-                    .filter(carriage => carriage !== value.myCarriage)
-                    .forEach(carriage => {
-                        carriage.bg.alpha = 0;
-                    })
+                // this.carriages
+                //     .filter(carriage => carriage !== value.myCarriage)
+                //     .forEach(carriage => {
+                //         carriage.bg.alpha = 0;
+                //     })
             } else if (value.msg === "其他货物隐藏") {
                 this.carriages
                     .filter(carriage => carriage !== value.myCarriage)
                     .forEach(carriage => {
-                        carriage.bg.alpha = 1;
-                        carriage.alpha = 0;
+                        carriage.leave();
                     })
             } else if (value.msg === "全部货物显示") {
                 this.carriages
@@ -440,25 +439,20 @@ export default class Game15PlayScene extends Phaser.Scene {
         let carriageDragStart = function (this: Carriage) {
             that.carriage$.next({
                 myCarriage: this,
-                msg: "其他货物变淡且自身缩放一次",
+                msg: "自身缩放一次",
                 hitShip: null
             });
-        }
-
-        /**
-         * 拖拽货物的过程
-         */
-        let carriageDragMsgCount = 1;
-        //let carriageHitMsgCount = 1;
-        let carriageDrag = function (this: Carriage, pointer, dragX, dragY) {
-            if (carriageDragMsgCount === 1) {
                 that.carriage$.next({
                     myCarriage: this,
                     msg: "其他货物隐藏",
                     hitShip: null
                 });
-                carriageDragMsgCount = 0;
-            }
+        }
+
+        /**
+         * 拖拽货物的过程
+         */
+        let carriageDrag = function (this: Carriage, pointer, dragX, dragY) {
             that.ship$.next({
                 hitShip: null,
                 msg: "所有货船闪烁"
