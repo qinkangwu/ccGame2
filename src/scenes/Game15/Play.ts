@@ -327,7 +327,6 @@ export default class Game15PlayScene extends Phaser.Scene {
                     carriage.disableInteractive();
                 })
             } else if (value.msg === "所有货物都可搬运") {
-                console.log("收到消息");
                 this.carriages.forEach(carriage => {
                     carriage.setInteractive();
                 })
@@ -359,14 +358,14 @@ export default class Game15PlayScene extends Phaser.Scene {
             } else if (value.msg === "被碰撞货船停止闪烁") {
                 value.hitShip.swicthAnimate.stop();
                 value.hitShip.swicthAnimate = null;
-                value.hitShip.alpha = 1;
+                value.hitShip.bg.alpha = 1;
             } else if (value.msg === "停止所有货船闪烁") {
                 this.ships.forEach(ship => {
                     //ship.swicthAnimateTween.pause();
                     if (ship.swicthAnimate !== null) {
                         ship.swicthAnimate.stop();
                         ship.swicthAnimate = null;
-                        ship.alpha = 1;
+                        ship.bg.alpha = 1;
                     }
                 })
             }

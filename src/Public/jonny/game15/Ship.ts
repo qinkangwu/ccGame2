@@ -40,7 +40,7 @@ export class Ship extends Phaser.GameObjects.Container {
     public swicthAnimateTween() {
         if (this.swicthAnimate === null) {
             this.swicthAnimate = this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
-                targets: this,
+                targets: this.bg,
                 alpha: 0,
                 duration: 500,
                 yoyo: true,
