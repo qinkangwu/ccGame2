@@ -233,6 +233,7 @@ export default class Game15PlayScene extends Phaser.Scene {
             let _x = shipPosition.initX + shipPosition.offsetX * Math.cos(Math.PI * Number(index));
             let _y = shipPosition.initY + shipPosition.offsetY * index;
             let _ship = new Ship(this, _x, _y, data);
+            _ship.nextPosition = new Phaser.Math.Vector2(1196, 276);
             this.layer1.add(_ship);
             this.ships.push(_ship);
         });
@@ -261,8 +262,8 @@ export default class Game15PlayScene extends Phaser.Scene {
         let pathDatasPosition: Vec2[] = [new Vec2(568, 142 + 50), new Vec2(568, 368.10)];
         let pathBtnPosition: Vec2[] = [new Vec2(1024 + 606.75, 89.75), new Vec2(1024 + 606.75, 336.25)];
         let pathGoalPosition = {
-            "1": new Phaser.Curves.QuadraticBezier(new Phaser.Math.Vector2(1329.45, 210.55), new Phaser.Math.Vector2(1309, 91.6), new Phaser.Math.Vector2(1840, 157)),
-            "2": new Phaser.Curves.QuadraticBezier(new Phaser.Math.Vector2(1329.45, 210.55), new Phaser.Math.Vector2(1482, 457), new Phaser.Math.Vector2(1840.55, 393.85)),
+            "1": new Phaser.Curves.QuadraticBezier(this.ships[0].nextPosition, new Phaser.Math.Vector2(1309, 91.6), new Phaser.Math.Vector2(1840, 157)),
+            "2": new Phaser.Curves.QuadraticBezier(this.ships[0].nextPosition, new Phaser.Math.Vector2(1482, 457), new Phaser.Math.Vector2(1840.55, 393.85)),
         }
 
         pathDatas.forEach((data, index) => {
@@ -733,7 +734,7 @@ export default class Game15PlayScene extends Phaser.Scene {
         this.moveTo(this.layer1, -1024, 0, 1000);
         this.moveTo(this.layer2, -1024, 0, 2000);
         this.moveTo(this.layer3, -1024, 0, 2000);
-        await this.moveTo(ship, 1196, 276, 2000);
+        await this.moveTo(ship, ship.nextPosition.x, ship.nextPosition.y, 2000);
         await this.wordPop.show(new Vec2(ship.x, ship.y), ship.carriageName);
         await this.paths[0].showDirection();
         await this.pathBtns[0].fadeIn();

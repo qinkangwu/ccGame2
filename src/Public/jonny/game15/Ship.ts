@@ -9,6 +9,7 @@ export class Ship extends Phaser.GameObjects.Container {
     public text: Phaser.GameObjects.BitmapText;
     public shape: Phaser.Geom.Rectangle;
     public initPosition: Vec2;
+    public nextPosition:Phaser.Math.Vector2;
     public complete: boolean = false;
     public carriageName: string;
     public swicthAnimate: Phaser.Tweens.Tween = null;
