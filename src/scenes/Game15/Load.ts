@@ -51,7 +51,7 @@ export default class Game15LoadScene extends Phaser.Scene {
 
     preload(): void {
         this.load.audio('bgm', 'assets/sounds/bgm-05.mp3');
-        this.load.bitmapFont('ArialRoundedBold30', 'assets/font/ArialRoundedBold30/font.png', 'assets/font/ArialRoundedBold30/font.xml');
+        this.load.bitmapFont('ArialRoundedBold', 'assets/font/ArialRoundedBold/font.png', 'assets/font/ArialRoundedBold/font.xml');
         this.load.bitmapFont('yuantiChinese', 'assets/font/yuantiChinese/font.png', 'assets/font/yuantiChinese/font.xml');
         TipsParticlesEmitter.loadImg(this);
         SellingGold.loadImg(this);
