@@ -1,0 +1,46 @@
+{
+    "code": "0000",
+    "description": "oh yeah,通过了",
+    "result": [
+        {
+            "displayWord": "ball",
+            "trueWord": "ball",
+            "imgUrl": "https://s2.ax1x.com/2019/11/06/MinvUH.png"
+        },
+        {
+            "displayWord": "bananna",
+            "trueWord": "banana",
+            "imgUrl": "https://s2.ax1x.com/2019/11/06/MinLDO.png"
+        },
+        {
+            "displayWord": "baboosh",
+            "trueWord": "baboosh",
+            "imgUrl": "https://s2.ax1x.com/2019/11/06/MinjVe.png"
+        },
+        {
+            "displayWord": "guiter",
+            "trueWord": "guitar",
+            "imgUrl": "https://s2.ax1x.com/2019/11/06/MinObD.pn"
+        },
+        {
+            "displayWord": "pinaepple",
+            "trueWord": "pineapple",
+            "imgUrl": "https://s2.ax1x.com/2019/11/06/MinqKK.png"
+        },
+        {
+            "displayWord": "popsicle",
+            "trueWord": "popsicle",
+            "imgUrl": "https://s2.ax1x.com/2019/11/06/Minx5d.png"
+        },
+        {
+            "displayWord": "sun",
+            "trueWord": "sun",
+            "imgUrl": "https://s2.ax1x.com/2019/11/06/MiuSPA.png"
+        },
+        {
+            "displayWord": "turtle",
+            "trueWord": "turtle",
+            "imgUrl": "https://s2.ax1x.com/2019/11/06/Miup8.png"
+        }
+    ]
+}
