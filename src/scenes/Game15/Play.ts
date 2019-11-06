@@ -4,7 +4,7 @@ import { Assets } from '../../interface/Game15';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Bg, Carriage, Ship, Terminal, Path, PathBtn } from '../../Public/jonny/game15/'
+import { Bg, Carriage, Ship, Terminal, Path, PathBtn,WordPop } from '../../Public/jonny/game15/'
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -59,6 +59,7 @@ export default class Game15PlayScene extends Phaser.Scene {
     private pathBtns: PathBtn[] = []; //路径启动按钮
     private tipsParticlesEmitter: TipsParticlesEmitter;
     private sellingGold: SellingGold;
+    private wordPop:WordPop;
     /**
      * 背景
      */
@@ -273,7 +274,12 @@ export default class Game15PlayScene extends Phaser.Scene {
             this.pathBtns.push(_pathBtn);
         });
 
-        console.log(286, this.paths, this.pathBtns);
+
+        //create wordPop
+        this.wordPop = new WordPop(this,1024*0.5,552*0.5);
+        this.layer1.add(this.wordPop);
+        console.log(this.wordPop);
+
 
         //创建用户反馈
         this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
@@ -585,7 +591,7 @@ export default class Game15PlayScene extends Phaser.Scene {
                 path.pathImg.alpha = 0;
             }
         });
-        await ship.gotoTerminal(pathBtn.goalPosition);
+        await ship.gotoTerminal(pathBtn.goalPosition,this.wordPop);
         //await ship.scaleMin();
         nextFuc();
     }
@@ -720,8 +726,8 @@ export default class Game15PlayScene extends Phaser.Scene {
         this.moveTo(this.layer1, -1024, 0, 2000);
         this.moveTo(this.layer2, -1024, 0, 2000);
         this.moveTo(this.layer3, -1024, 0, 2000);
-        console.log(this.paths, this.pathBtns);
         await this.moveTo(ship, 1196, 276, 2000);
+        await this.wordPop.show(new Vec2(ship.x,ship.y),ship.carriageName);
         await this.paths[0].showDirection();
         await this.pathBtns[0].fadeIn();
         await this.paths[1].showDirection();
@@ -739,7 +745,6 @@ export default class Game15PlayScene extends Phaser.Scene {
                 pathBtn: this
             });
         }
-
         console.log(ship);
 
         this.pathBtns.forEach(btn => {

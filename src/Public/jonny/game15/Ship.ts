@@ -1,6 +1,7 @@
 import 'phaser';
 
 import { Bounds, Vec2 } from "../core";
+import {WordPop } from './WordPop';
 
 export class Ship extends Phaser.GameObjects.Container {
     public bgNull: Phaser.GameObjects.Image;
@@ -31,12 +32,6 @@ export class Ship extends Phaser.GameObjects.Container {
         //this.init();
     }
 
-    // private init():void{
-    //     this.setInteractive(this.shape, <Phaser.Types.Input.HitAreaCallback>Phaser.Geom.Rectangle.Contains);
-    //     this.scene.input.setDraggable(this, true);
-    //     //this.drawHitArea();
-    // }
-
     // private drawHitArea():void{
     //     let graphics = new Phaser.GameObjects.Graphics(this.scene);
     //     graphics.lineStyle(1, 0x0000ff);
@@ -63,7 +58,7 @@ export class Ship extends Phaser.GameObjects.Container {
         })
     }
 
-    public gotoTerminal(curve: Phaser.Curves.QuadraticBezier): Promise<boolean> {
+    public gotoTerminal(curve: Phaser.Curves.QuadraticBezier,wordPop:WordPop): Promise<boolean> {
         return new Promise(resolve => {
             let path = {
                 t: 0,
@@ -77,6 +72,7 @@ export class Ship extends Phaser.GameObjects.Container {
                 onUpdate: () => {
                     curve.getPoint(path.t, path.vec);
                     this.setPosition(path.vec.x, path.vec.y);
+                    wordPop.syncPosition(this.x,this.y);
                 },
                 onComplete: () => {
                     setTimeout(() => {

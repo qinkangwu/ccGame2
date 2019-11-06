@@ -4,6 +4,7 @@ import {Ship} from './Ship';
 import {Terminal} from './Terminal';
 import {Path} from './Path';
 import {PathBtn} from './PathBtn';
+import {WordPop} from './WordPop';
 
 export {
     Bg,
@@ -11,5 +12,6 @@ export {
     Ship,
     Terminal,
     Path,
-    PathBtn
+    PathBtn,
+    WordPop
 }

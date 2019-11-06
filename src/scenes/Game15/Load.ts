@@ -22,6 +22,7 @@ export default class Game15LoadScene extends Phaser.Scene {
          * game15 UI
          */
         { "url": "assets/Game15/bg.png", "key": "bg" },
+        { "url": "assets/Game15/word_pop.png", "key": "wordPop" },
         { "url": "assets/Game15/largeCarriageNull.png", "key": "largeCarriageNull" },
         { "url": "assets/Game15/largeCarriage.png", "key": "largeCarriage" },
         { "url": "assets/Game15/smallCarriageNull.png", "key": "smallCarriageNull" },
