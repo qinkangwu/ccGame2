@@ -4,7 +4,7 @@ import { Assets } from '../../interface/Game15';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Bg, Carriage, Ship, Terminal, Path, PathBtn,WordPop } from '../../Public/jonny/game15/'
+import { Bg, Carriage, Ship, Terminal, Path, PathBtn, WordPop } from '../../Public/jonny/game15/'
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -59,7 +59,7 @@ export default class Game15PlayScene extends Phaser.Scene {
     private pathBtns: PathBtn[] = []; //路径启动按钮
     private tipsParticlesEmitter: TipsParticlesEmitter;
     private sellingGold: SellingGold;
-    private wordPop:WordPop;
+    private wordPop: WordPop;
     /**
      * 背景
      */
@@ -105,8 +105,8 @@ export default class Game15PlayScene extends Phaser.Scene {
             }
             return _data;
         });
-        let gameEnd:boolean = this.ccData.every(_data=>_data[0]===null);
-        if(gameEnd){
+        let gameEnd: boolean = this.ccData.every(_data => _data[0] === null);
+        if (gameEnd) {
             window.location.href = CONSTANT.INDEX_URL;
         }
     }
@@ -187,7 +187,7 @@ export default class Game15PlayScene extends Phaser.Scene {
         this.btnSound = new ButtonMusic(this);
 
         this.gold = new Gold(this, goldValue);   //设置金币
-        this.gold.setPosition(969,489.75);
+        this.gold.setPosition(969, 489.75);
         this.layer4.add([this.btnExit, this.btnSound, this.gold]);
     }
 
@@ -259,7 +259,7 @@ export default class Game15PlayScene extends Phaser.Scene {
         //create path,pathbtn
         let pathDatas = terminalDatas;
         let pathDatasPosition: Vec2[] = [new Vec2(568, 142 + 50), new Vec2(568, 368.10)];
-        let pathBtnPosition: Vec2[] = [new Vec2(1024+606.75,89.75 ), new Vec2(1024+606.75,336.25)];
+        let pathBtnPosition: Vec2[] = [new Vec2(1024 + 606.75, 89.75), new Vec2(1024 + 606.75, 336.25)];
         let pathGoalPosition = {
             "1": new Phaser.Curves.QuadraticBezier(new Phaser.Math.Vector2(1329.45, 210.55), new Phaser.Math.Vector2(1309, 91.6), new Phaser.Math.Vector2(1840, 157)),
             "2": new Phaser.Curves.QuadraticBezier(new Phaser.Math.Vector2(1329.45, 210.55), new Phaser.Math.Vector2(1482, 457), new Phaser.Math.Vector2(1840.55, 393.85)),
@@ -271,7 +271,7 @@ export default class Game15PlayScene extends Phaser.Scene {
             let _btnX = pathBtnPosition[index].x;
             let _btnY = pathBtnPosition[index].y;
             let _path = new Path(this, _x, _y, `path${index + 1}`, data);
-            let _pathBtn = new PathBtn(this, _btnX, _btnY,data, pathGoalPosition[index + 1]);
+            let _pathBtn = new PathBtn(this, _btnX, _btnY, data, pathGoalPosition[index + 1]);
             this.add.existing(_path.pathImg);
             this.layer3.add(_pathBtn);
             this.paths.push(_path);
@@ -280,7 +280,7 @@ export default class Game15PlayScene extends Phaser.Scene {
 
 
         //create wordPop
-        this.wordPop = new WordPop(this,1024*0.5,552*0.5);
+        this.wordPop = new WordPop(this, 1024 * 0.5, 552 * 0.5);
         this.layer1.add(this.wordPop);
         console.log(this.wordPop);
 
@@ -316,7 +316,7 @@ export default class Game15PlayScene extends Phaser.Scene {
                     .forEach(carriage => {
                         carriage.leave();
                     })
-            }  else if (value.msg === "自身被吸附进去") {
+            } else if (value.msg === "自身被吸附进去") {
                 value.myCarriage.setPosition(value.hitShip.x, value.hitShip.y);
                 value.myCarriage.scaleMin()
                 value.hitShip.bounceAnimate();
@@ -337,7 +337,7 @@ export default class Game15PlayScene extends Phaser.Scene {
                     .forEach(carriage => {
                         carriage.admission();
                     })
-            }else if(value.msg === "放弃这个货物,显示其他货物"){
+            } else if (value.msg === "放弃这个货物,显示其他货物") {
                 this.carriages
                     .filter(carriage => carriage !== value.myCarriage)
                     .forEach(carriage => {
@@ -353,17 +353,20 @@ export default class Game15PlayScene extends Phaser.Scene {
         this.ship$.subscribe(value => {
             if (value.msg === "所有货船闪烁") {
                 this.ships.forEach(ship => {
-                    if (!ship.swicthAnimateTween.isPlaying()) {
-                        ship.swicthAnimateTween.resume();
-                    }
+                    ship.swicthAnimateTween();
                 })
             } else if (value.msg === "被碰撞货船停止闪烁") {
-                value.hitShip.swicthAnimateTween.pause();
+                value.hitShip.swicthAnimate.stop();
+                value.hitShip.swicthAnimate = null;
                 value.hitShip.alpha = 1;
             } else if (value.msg === "停止所有货船闪烁") {
                 this.ships.forEach(ship => {
-                    ship.swicthAnimateTween.pause();
-                    ship.alpha = 1;
+                    //ship.swicthAnimateTween.pause();
+                    if (ship.swicthAnimate !== null) {
+                        ship.swicthAnimate.stop();
+                        ship.swicthAnimate = null;
+                        ship.alpha = 1;
+                    }
                 })
             }
         })
@@ -595,7 +598,7 @@ export default class Game15PlayScene extends Phaser.Scene {
                 path.pathImg.alpha = 0;
             }
         });
-        await ship.gotoTerminal(pathBtn.goalPosition,this.wordPop);
+        await ship.gotoTerminal(pathBtn.goalPosition, this.wordPop);
         //await ship.scaleMin();
         nextFuc();
     }
@@ -705,17 +708,17 @@ export default class Game15PlayScene extends Phaser.Scene {
      * 第一轮状态下的下一轮啊
      */
 
-    private nextRoundInOneWheel(myCarriage:Carriage) {
-            this.carriage$.next({
-                myCarriage: myCarriage,
-                hitShip: null,
-                msg: "放弃这个货物,显示其他货物"
-            });
-            this.carriage$.next({
-                myCarriage: null,
-                hitShip: null,
-                msg: "所有货物都可搬运"
-            });
+    private nextRoundInOneWheel(myCarriage: Carriage) {
+        this.carriage$.next({
+            myCarriage: myCarriage,
+            hitShip: null,
+            msg: "放弃这个货物,显示其他货物"
+        });
+        this.carriage$.next({
+            myCarriage: null,
+            hitShip: null,
+            msg: "所有货物都可搬运"
+        });
     }
 
     /**
@@ -731,7 +734,7 @@ export default class Game15PlayScene extends Phaser.Scene {
         this.moveTo(this.layer2, -1024, 0, 2000);
         this.moveTo(this.layer3, -1024, 0, 2000);
         await this.moveTo(ship, 1196, 276, 2000);
-        await this.wordPop.show(new Vec2(ship.x,ship.y),ship.carriageName);
+        await this.wordPop.show(new Vec2(ship.x, ship.y), ship.carriageName);
         await this.paths[0].showDirection();
         await this.pathBtns[0].fadeIn();
         await this.paths[1].showDirection();
