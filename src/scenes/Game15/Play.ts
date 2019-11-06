@@ -168,9 +168,9 @@ export default class Game15PlayScene extends Phaser.Scene {
         let that = this;
 
         this.layer0 = new Phaser.GameObjects.Container(this).setDepth(0);
-        this.layer1 = new Phaser.GameObjects.Container(this).setDepth(1);
-        this.layer2 = new Phaser.GameObjects.Container(this).setDepth(2);
-        this.layer3 = new Phaser.GameObjects.Container(this).setDepth(3);
+        this.layer1 = new Phaser.GameObjects.Container(this).setDepth(2);
+        this.layer2 = new Phaser.GameObjects.Container(this).setDepth(3);
+        this.layer3 = new Phaser.GameObjects.Container(this).setDepth(1);
         this.layer4 = new Phaser.GameObjects.Container(this).setDepth(4);
 
         this.add.existing(this.layer0);
@@ -730,7 +730,7 @@ export default class Game15PlayScene extends Phaser.Scene {
         that.times = 0;
         console.log("已经执行", that.times);
 
-        this.moveTo(this.layer1, -1024, 0, 2000);
+        this.moveTo(this.layer1, -1024, 0, 1000);
         this.moveTo(this.layer2, -1024, 0, 2000);
         this.moveTo(this.layer3, -1024, 0, 2000);
         await this.moveTo(ship, 1196, 276, 2000);

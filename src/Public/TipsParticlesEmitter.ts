@@ -227,7 +227,7 @@ export default class TipsParticlesEmitter {
     
 
     public static loadImg (scene:Phaser.Scene) : void {
-        scene.load.image('glodGoodJob','assets/commonUI/glodGoodJob.png');
+        scene.load.image('glodGoodJob','assets/commonUI/tipsGoodjob.png');
         scene.load.image('tipsTryagain','assets/commonUI/tipsTryagain.png');
         scene.load.image('tipsNo','assets/commonUI/tipsNo.png');
         scene.load.image('particles','assets/Game5/particles.png');
@@ -238,5 +238,6 @@ export default class TipsParticlesEmitter {
         scene.load.audio('TryAgain','assets/sounds/newJoin/TryAgain.mp3');
         scene.load.audio('ohNo','assets/sounds/newJoin/ohNo.mp3');
         scene.load.audio('clickMp3','assets/sounds/clickMp3.mp3');
+       
     }
 }
