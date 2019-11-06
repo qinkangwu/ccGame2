@@ -105,6 +105,10 @@ export default class Game15PlayScene extends Phaser.Scene {
             }
             return _data;
         });
+        let gameEnd:boolean = this.ccData.every(_data=>_data[0]===null);
+        if(gameEnd){
+            window.location.href = CONSTANT.INDEX_URL;
+        }
     }
 
     preload(): void {
