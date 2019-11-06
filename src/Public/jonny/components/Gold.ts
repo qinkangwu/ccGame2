@@ -1,21 +1,17 @@
 import 'phaser';
 
 export class Gold extends Phaser.GameObjects.Container{
-    public static imgPosition = {
-        x:968.95,
-        y:149.75 
-    }
-
     private goldImg:Phaser.GameObjects.Image;    
     private goldText:Phaser.GameObjects.Text;
 
     constructor(scene:Phaser.Scene,value:number|string){
         super(scene);
         value=value.toString();
-        this.goldImg = new Phaser.GameObjects.Image(scene,Gold.imgPosition.x,Gold.imgPosition.y, "goldValue");
-        this.goldText = new Phaser.GameObjects.Text(scene,981.45, 167.45,value, <Phaser.Types.GameObjects.Text.TextSyle>{ align: "center", fontSize: `16px`, fontFamily: "Arial", stroke: "#000", strokeThickness: 0 }).setOrigin(0.5).setResolution(2);
-       
+        this.goldImg = new Phaser.GameObjects.Image(scene,0,0, "goldValue");
+        this.goldText = new Phaser.GameObjects.Text(scene,12.5,17.7,value, <Phaser.Types.GameObjects.Text.TextSyle>{ align: "center", fontSize: `16px`, fontFamily: "Arial", stroke: "#000", strokeThickness: 0 }).setOrigin(0.5).setResolution(2);
         this.add([this.goldImg,this.goldText]);
+        this.x = 968.95;
+        this.y = 149.75;
     }
 
     public setText(value:number|string):void{

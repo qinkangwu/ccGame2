@@ -182,6 +182,7 @@ export default class Game15PlayScene extends Phaser.Scene {
         this.btnSound = new ButtonMusic(this);
 
         this.gold = new Gold(this, goldValue);   //设置金币
+        this.gold.setPosition(969,489.75);
         this.layer4.add([this.btnExit, this.btnSound, this.gold]);
     }
 
@@ -253,7 +254,7 @@ export default class Game15PlayScene extends Phaser.Scene {
         //create path,pathbtn
         let pathDatas = terminalDatas;
         let pathDatasPosition: Vec2[] = [new Vec2(568, 142 + 50), new Vec2(568, 368.10)];
-        let pathBtnPosition: Vec2[] = [new Vec2(1546, 88), new Vec2(1546, 460)];
+        let pathBtnPosition: Vec2[] = [new Vec2(1024+606.75,89.75 ), new Vec2(1024+606.75,336.25)];
         let pathGoalPosition = {
             "1": new Phaser.Curves.QuadraticBezier(new Phaser.Math.Vector2(1329.45, 210.55), new Phaser.Math.Vector2(1309, 91.6), new Phaser.Math.Vector2(1840, 157)),
             "2": new Phaser.Curves.QuadraticBezier(new Phaser.Math.Vector2(1329.45, 210.55), new Phaser.Math.Vector2(1482, 457), new Phaser.Math.Vector2(1840.55, 393.85)),
@@ -265,7 +266,7 @@ export default class Game15PlayScene extends Phaser.Scene {
             let _btnX = pathBtnPosition[index].x;
             let _btnY = pathBtnPosition[index].y;
             let _path = new Path(this, _x, _y, `path${index + 1}`, data);
-            let _pathBtn = new PathBtn(this, _btnX, _btnY, `path${index + 1}Btn`, data, pathGoalPosition[index + 1]);
+            let _pathBtn = new PathBtn(this, _btnX, _btnY,data, pathGoalPosition[index + 1]);
             this.add.existing(_path.pathImg);
             this.layer3.add(_pathBtn);
             this.paths.push(_path);
@@ -352,7 +353,7 @@ export default class Game15PlayScene extends Phaser.Scene {
             } else if (value.msg === "停止所有货船闪烁") {
                 this.ships.forEach(ship => {
                     ship.swicthAnimateTween.pause();
-                    ship.bg.alpha = 1;
+                    ship.alpha = 1;
                 })
             }
         })

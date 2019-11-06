@@ -30,7 +30,7 @@ export default class Game15LoadScene extends Phaser.Scene {
         { "url": "assets/Game15/smallCarriage3.png", "key": "smallCarriage3" },
         { "url": "assets/Game15/smallCarriage4.png", "key": "smallCarriage4" },
         { "url": "assets/Game15/smallCarriage5.png", "key": "smallCarriage5" },
-        { "url": "assets/Game15/path1.png", "key": "path1" }, { "url": "assets/Game15/path2.png", "key": "path2" }, { "url": "assets/Game15/path1Btn.png", "key": "path1Btn" }, { "url": "assets/Game15/path2Btn.png", "key": "path2Btn" }, { "url": "assets/Game15/ship.png", "key": "ship" }, { "url": "assets/Game15/shipNull.png", "key": "shipNull" }, { "url": "assets/Game15/terminal.png", "key": "terminal" }];
+        { "url": "assets/Game15/path1.png", "key": "path1" }, { "url": "assets/Game15/path2.png", "key": "path2" }, { "url": "assets/Game15/pathBtn.png", "key": "pathBtn" },{ "url": "assets/Game15/ship.png", "key": "ship" }, { "url": "assets/Game15/shipNull.png", "key": "shipNull" }, { "url": "assets/Game15/terminal.png", "key": "terminal" }];
 
     constructor() {
         super({

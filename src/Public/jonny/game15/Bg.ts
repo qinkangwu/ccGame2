@@ -16,7 +16,7 @@ export class Bg extends Phaser.GameObjects.Container{
     private animate():void{
         this.scene.add.tween(< Phaser.Types.Tweens.TweenBuilderConfig>{
             targets:this.list,
-            duration:6000,
+            duration:9000,
             ease:"Linear",
             x:"+=1024",
             repeat:-1,
