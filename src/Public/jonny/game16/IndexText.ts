@@ -20,6 +20,7 @@ export class IndexText extends Phaser.GameObjects.Container {
             moveToX: this.x,
             moveToY: this.y,
             emitZone: { source: this.emitZone },
+            on:false
         });
         this.add(this.text);
 

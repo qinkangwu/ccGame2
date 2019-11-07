@@ -137,7 +137,6 @@ export default class Game16PlayScene extends Phaser.Scene {
      * 创建演员们
      */
     createActors() {
-
         // create door
         this.door = new Door(this);
         this.layer2.add(this.door);
@@ -145,7 +144,6 @@ export default class Game16PlayScene extends Phaser.Scene {
         // create IndexText
         this.indexText = new IndexText(this);
         this.layer2.add(this.indexText);
-        
 
         //创建用户反馈
         this.tipsParticlesEmitter = new TipsParticlesEmitter(this);

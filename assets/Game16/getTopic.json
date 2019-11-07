@@ -5,42 +5,42 @@
         {
             "displayWord": "ball",
             "trueWord": "ball",
-            "imgUrl": "https://s2.ax1x.com/2019/11/06/MinvUH.png"
+            "imgUrl": "assets/Game16/requestAssets/ball.png"
         },
         {
             "displayWord": "bananna",
             "trueWord": "banana",
-            "imgUrl": "https://s2.ax1x.com/2019/11/06/MinLDO.png"
+            "imgUrl": "assets/Game16/requestAssets/banana.png"
         },
         {
             "displayWord": "baboosh",
             "trueWord": "baboosh",
-            "imgUrl": "https://s2.ax1x.com/2019/11/06/MinjVe.png"
+            "imgUrl": "assets/Game16/requestAssets/baboosh.png"
         },
         {
             "displayWord": "guiter",
             "trueWord": "guitar",
-            "imgUrl": "https://s2.ax1x.com/2019/11/06/MinObD.pn"
+            "imgUrl": "assets/Game16/requestAssets/guitar.png"
         },
         {
             "displayWord": "pinaepple",
             "trueWord": "pineapple",
-            "imgUrl": "https://s2.ax1x.com/2019/11/06/MinqKK.png"
+            "imgUrl": "assets/Game16/requestAssets/pineapple.png"
         },
         {
             "displayWord": "popsicle",
             "trueWord": "popsicle",
-            "imgUrl": "https://s2.ax1x.com/2019/11/06/Minx5d.png"
+            "imgUrl": "assets/Game16/requestAssets/popsicle.png"
         },
         {
             "displayWord": "sun",
             "trueWord": "sun",
-            "imgUrl": "https://s2.ax1x.com/2019/11/06/MiuSPA.png"
+            "imgUrl": "assets/Game16/requestAssets/sun.png"
         },
         {
             "displayWord": "turtle",
             "trueWord": "turtle",
-            "imgUrl": "https://s2.ax1x.com/2019/11/06/Miup8.png"
+            "imgUrl": "assets/Game16/requestAssets/turtle.png"
         }
     ]
 }
