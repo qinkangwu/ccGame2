@@ -30,8 +30,8 @@ export class Door extends Phaser.GameObjects.Container {
         this.leftText.setData("initPosition", { x: 213, y: -107 });
         this.leftText.setData("targetPosition", { x: this.x, y: 111 });
 
-        this.rightText = new Phaser.GameObjects.Image(scene, 811, 655, "F.Devil").setRotation((Math.PI / 180) * -25);
-        this.rightText.setData("initPosition", { x: 811, y: 655 });
+        this.rightText = new Phaser.GameObjects.Image(scene, 811, 670, "F.Devil").setRotation((Math.PI / 180) * -25);
+        this.rightText.setData("initPosition", { x: 811, y: 670 });
         this.rightText.setData("targetPosition", { x: this.x, y: 403 });
 
         this.add([this.purple, this.yellow, this.devil, this.angel, this.leftText, this.rightText]);

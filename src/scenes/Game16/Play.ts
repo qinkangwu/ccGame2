@@ -1,10 +1,10 @@
 import 'phaser';
-import { } from 'rxjs';
+//import { } from 'rxjs';
 import { Assets, Topic } from '../../interface/Game16';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Door,IndexText} from '../../Public/jonny/game16';
+import { Door,IndexText,OrderUI} from '../../Public/jonny/game16';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -14,7 +14,7 @@ var goldValue: number = 3; //金币的值
 
 
 export default class Game16PlayScene extends Phaser.Scene {
-    private ccData: Array<string> = [];
+    private ccData: Array<Topic> = [];
     private times: number = 0;  //次数
 
     //静态开始
@@ -25,6 +25,7 @@ export default class Game16PlayScene extends Phaser.Scene {
     //静态结束
 
     // 动态开始
+    private orderUI:OrderUI;
     private door: Door;
     private indexText:IndexText;
     private tipsParticlesEmitter: TipsParticlesEmitter;
@@ -137,6 +138,10 @@ export default class Game16PlayScene extends Phaser.Scene {
      * 创建演员们
      */
     createActors() {
+        // create orderUI
+        this.orderUI = new OrderUI(this,this.ccData[index].trueWord,this.ccData[index].displayWord);
+        this.layer1.add(this.orderUI);
+
         // create door
         this.door = new Door(this);
         this.layer2.add(this.door);
@@ -152,7 +157,14 @@ export default class Game16PlayScene extends Phaser.Scene {
     /**
      * 游戏开始
      */
-    private gameStart(): void {
+    private async gameStart(){
+        let _index:string = index + 1  < 10 ? "0" + (index+1) : (index + 1).toString();
+        await this.door.close();
+        await this.indexText.show(_index);
+        
+        this.orderUI.visible = true;
+        this.indexText.hide();
+        this.door.open();
 
     }
 
