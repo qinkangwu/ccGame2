@@ -3,7 +3,7 @@ import apiPath from '../../lib/apiPath';
 import { get } from '../../lib/http';
 import { Assets, Topic } from '../../interface/Game16';
 import { resize } from '../../Public/jonny/core';
-import { SellingGold } from '../../Public/jonny/components';
+import { SellingGold,Particles } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
 const W = 1024;
@@ -43,8 +43,10 @@ export default class Game16LoadScene extends Phaser.Scene {
   preload(): void {
     this.load.audio('bgm', 'assets/sounds/bgm-04.mp3');
     this.load.bitmapFont('ArialRoundedBold30', 'assets/font/ArialRoundedBold30/font.png', 'assets/font/ArialRoundedBold30/font.xml');
+    this.load.bitmapFont('AlibabaNumber200', 'assets/font/AlibabaNumber200/font.png', 'assets/font/AlibabaNumber200/font.xml');
     TipsParticlesEmitter.loadImg(this);
     SellingGold.loadImg(this);
+    Particles.loadImg(this);
     this.assets.forEach((v) => {
       this.load.image(v.key, v.url);
     })

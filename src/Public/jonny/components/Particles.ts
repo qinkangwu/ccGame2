@@ -36,5 +36,7 @@ export class Particles extends Phaser.GameObjects.Particles.ParticleEmitterManag
         scene.load.image("square", "assets/commonUI/square30.png");
         scene.load.image("triangle", "assets/commonUI/triangle30.png");
         scene.load.image("rectangle", "assets/commonUI/rectangle30.png");
+        scene.load.image("circle", "assets/commonUI/circle30.png");
+        scene.load.atlas('flares', 'assets/commonUI/flares.png', 'assets/commonUI/flares.json');
     }
 }

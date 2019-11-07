@@ -4,7 +4,7 @@ import { Assets, Topic } from '../../interface/Game16';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Door } from '../../Public/jonny/game16';
+import { Door,IndexText} from '../../Public/jonny/game16';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -26,6 +26,7 @@ export default class Game16PlayScene extends Phaser.Scene {
 
     // 动态开始
     private door: Door;
+    private indexText:IndexText;
     private tipsParticlesEmitter: TipsParticlesEmitter;
     private sellingGold: SellingGold;
 
@@ -37,7 +38,7 @@ export default class Game16PlayScene extends Phaser.Scene {
     private layer1: Phaser.GameObjects.Container;
 
     /**
-     * 大门
+     * 大门,文字
      */
     private layer2: Phaser.GameObjects.Container;
 
@@ -140,6 +141,10 @@ export default class Game16PlayScene extends Phaser.Scene {
         // create door
         this.door = new Door(this);
         this.layer2.add(this.door);
+
+        // create IndexText
+        this.indexText = new IndexText(this);
+        this.layer2.add(this.indexText);
         
 
         //创建用户反馈
