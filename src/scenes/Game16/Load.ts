@@ -1,9 +1,9 @@
 import 'phaser';
 import apiPath from '../../lib/apiPath';
 import { get } from '../../lib/http';
-import { Assets,Topic } from '../../interface/Game16';
+import { Assets, Topic } from '../../interface/Game16';
 import { resize } from '../../Public/jonny/core';
-import { SellingGold} from '../../Public/jonny/components';
+import { SellingGold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
 const W = 1024;
@@ -21,7 +21,7 @@ export default class Game16LoadScene extends Phaser.Scene {
     /**
      * game16 UI
      */
-    {"url":"assets/Game16/bg_purple.png","key":"bg_purple"},{"url":"assets/Game16/bg_subject.png","key":"bg_subject"},{"url":"assets/Game16/bg_yellow.png","key":"bg_yellow"},{"url":"assets/Game16/btn_false.png","key":"btn_false"},{"url":"assets/Game16/btn_true.png","key":"btn_true"},{"url":"assets/Game16/civa_angle_01.png","key":"civa_angle_01"},{"url":"assets/Game16/civa_angle_02.png","key":"civa_angle_02"},{"url":"assets/Game16/civa_devil_01.png","key":"civa_devil_01"},{"url":"assets/Game16/civa_devil_02.png","key":"civa_devil_02"}];
+    { "url": "assets/Game16/bg_purple.png", "key": "bg_purple" }, { "url": "assets/Game16/bg_subject.png", "key": "bg_subject" }, { "url": "assets/Game16/bg_yellow.png", "key": "bg_yellow" }, { "url": "assets/Game16/btn_false.png", "key": "btn_false" }, { "url": "assets/Game16/btn_true.png", "key": "btn_true" }, { "url": "assets/Game16/civa_angle_01.png", "key": "civa_angle_01" }, { "url": "assets/Game16/civa_angle_02.png", "key": "civa_angle_02" }, { "url": "assets/Game16/civa_devil_01.png", "key": "civa_devil_01" }, { "url": "assets/Game16/civa_devil_02.png", "key": "civa_devil_02" },{"url":"assets/mask/Game16.png","key":"Game16"}];
 
   constructor() {
     super({
@@ -44,8 +44,6 @@ export default class Game16LoadScene extends Phaser.Scene {
     this.load.audio('bgm', 'assets/sounds/bgm-04.mp3');
     this.load.bitmapFont('ArialRoundedBold30', 'assets/font/ArialRoundedBold30/font.png', 'assets/font/ArialRoundedBold30/font.xml');
     TipsParticlesEmitter.loadImg(this);
-    TryAginListenBtn.loadAssets(this);
-    PlanAnims.loadImg(this);
     SellingGold.loadImg(this);
     this.assets.forEach((v) => {
       this.load.image(v.key, v.url);
@@ -68,23 +66,7 @@ export default class Game16LoadScene extends Phaser.Scene {
   private getData() {
     get("assets/Game16/getTopic.json").then((res) => {
       if (res.code === '0000') {
-        this.ccData = (<any>res.result.questions)
-          .filter(v => {
-            return v.questionkeyword === "选择正确答案";
-          })
-          .map(v => {
-            delete v.answerisright;
-            delete v.audiokey;
-            delete v.endtime;
-            delete v.id;
-            delete v.questionkeyword;
-            delete v.exammoduletype;
-            delete v.starttime;
-            delete v.studentanswer;
-            delete v.questiontype;
-            v.questioncontent = v.questioncontent.replace(/[\?\？]\s*/, "?\n").replace(/^\s/,"").replace(/^[-—]+/,"").replace(/\s*_+\s*/,"___").replace(/\s*/," ").replace(/\s_*\s/,"___").replace(/\?_+/,"?\n").replace(/\n$/,"").replace(/^\s/,"").replace(/\?\s*[—-]+/,"?\n").replace(/↵\s+/,"\n");
-            return v;
-          })
+        this.ccData = res.result.questions;
       }
     }).then(() => {
       this.loadAudio();
@@ -111,7 +93,7 @@ export default class Game16LoadScene extends Phaser.Scene {
         index: 0
       });
     });
-    //this._loader.start();
+    this._loader.start();
   }
 
 };

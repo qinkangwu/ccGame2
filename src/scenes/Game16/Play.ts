@@ -2,7 +2,7 @@ import 'phaser';
 import { } from 'rxjs';
 import { Assets } from '../../interface/Game16';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
-import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
+import { Button, ButtonMusic, ButtonExit, SellingGold, Gold} from '../../Public/jonny/components';
 import PlanAnims from '../../Public/PlanAnims';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 //import { Locomotive, TrainBox, NullTrainBox } from '../../Public/jonny/game11';
@@ -24,7 +24,6 @@ export default class Game16PlayScene extends Phaser.Scene {
     private btnExit: Button;  //退出按钮
     private btnSound: ButtonMusic; //音乐按钮
     private gold: Gold;
-    private successBtn: SuccessBtn;  //成功提交的按钮
     //静态结束
 
     //动态开始
@@ -73,13 +72,14 @@ export default class Game16PlayScene extends Phaser.Scene {
 
     create(): void {
         this.createStage();
-        //this.createActors();
-        this.firstCreate();  //test
+        this.createActors();
         if (index === 0) {
             this.scene.pause();
             rotateTips.init();
             this.firstCreate();
-            this.gameStart();
+            cover(this, "Game16", () => {
+                this.gameStart();
+            });
         } else {
             this.gameStart();
         }
@@ -142,9 +142,7 @@ export default class Game16PlayScene extends Phaser.Scene {
         this.layer4.add([this.btnExit, this.btnSound]);
 
         this.gold = new Gold(this, goldValue);   //设置金币
-        this.successBtn = new SuccessBtn(this, 939 + 60 * 0.5, 552 * 0.5);
-        this.successBtn.on("pointerdown", this.successBtnPointerdown.bind(this));
-        this.layer4.add([this.successBtn, this.gold]);
+        this.layer4.add([this.gold]);
     }
 
     /**
@@ -205,19 +203,13 @@ export default class Game16PlayScene extends Phaser.Scene {
      * 做题结束
      */
     private testEnd() {
-        this.successBtn.setAlpha(1);
-        this.successBtn.animate.play();
+       
     }
 
     /**
      *  successBtnPointerdown 
      */
     private successBtnPointerdown() {
-        if (!this.successBtn.interactive) {
-            return false;
-        }
-        this.successBtn.interactive = false;
-        this.successBtn.animate.stop();
         this.checkoutResult()
             .then(msg => {    //正确
                 console.log(msg)
@@ -272,8 +264,6 @@ export default class Game16PlayScene extends Phaser.Scene {
      */
     private resetStart() {
 
-        this.successBtn.setAlpha(0);
-        this.successBtn.interactive = true;
     }
 
     /**
