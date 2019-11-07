@@ -1,11 +1,10 @@
 import 'phaser';
 import { } from 'rxjs';
-import { Assets } from '../../interface/Game16';
+import { Assets, Topic } from '../../interface/Game16';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
-import { Button, ButtonMusic, ButtonExit, SellingGold, Gold} from '../../Public/jonny/components';
-import PlanAnims from '../../Public/PlanAnims';
+import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-//import { Locomotive, TrainBox, NullTrainBox } from '../../Public/jonny/game11';
+import { Door } from '../../Public/jonny/game16';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -20,35 +19,27 @@ export default class Game16PlayScene extends Phaser.Scene {
 
     //静态开始
     private bgm: Phaser.Sound.BaseSound; //背景音乐
-    private bg: Phaser.GameObjects.Image; //背景图片 
     private btnExit: Button;  //退出按钮
     private btnSound: ButtonMusic; //音乐按钮
     private gold: Gold;
     //静态结束
 
-    //动态开始
+    // 动态开始
+    private door: Door;
     private tipsParticlesEmitter: TipsParticlesEmitter;
     private sellingGold: SellingGold;
 
-    /**
-     * 背景
-     */
     private layer0: Phaser.GameObjects.Container;
 
     /**
-     * 船
+     * 答题面板
      */
     private layer1: Phaser.GameObjects.Container;
 
-     /**
-     * 货物
+    /**
+     * 大门
      */
     private layer2: Phaser.GameObjects.Container;
-
-     /**
-     * 码头
-     */
-    private layer3: Phaser.GameObjects.Container;
 
     /**
      * UI
@@ -126,16 +117,12 @@ export default class Game16PlayScene extends Phaser.Scene {
         this.layer0 = new Phaser.GameObjects.Container(this).setDepth(0);
         this.layer1 = new Phaser.GameObjects.Container(this).setDepth(1);
         this.layer2 = new Phaser.GameObjects.Container(this).setDepth(2);
-        this.layer3 = new Phaser.GameObjects.Container(this).setDepth(3);
         this.layer4 = new Phaser.GameObjects.Container(this).setDepth(4);
 
         this.add.existing(this.layer0);
         this.add.existing(this.layer1);
         this.add.existing(this.layer2);
-        this.add.existing(this.layer3);
         this.add.existing(this.layer4);
-
-     
 
         this.btnExit = new ButtonExit(this);
         this.btnSound = new ButtonMusic(this);
@@ -148,7 +135,13 @@ export default class Game16PlayScene extends Phaser.Scene {
     /**
      * 创建演员们
      */
-    createActors(): void {
+    createActors() {
+
+        // create door
+        this.door = new Door(this);
+        this.layer2.add(this.door);
+        
+
         //创建用户反馈
         this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
     }
@@ -203,7 +196,7 @@ export default class Game16PlayScene extends Phaser.Scene {
      * 做题结束
      */
     private testEnd() {
-       
+
     }
 
     /**
