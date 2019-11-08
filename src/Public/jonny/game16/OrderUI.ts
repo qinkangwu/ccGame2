@@ -25,6 +25,8 @@ export class OrderUI extends Phaser.GameObjects.Container{
         this.falseBtn = new Phaser.GameObjects.Image(scene,909,383,"btn_false");
         this.falseBtn.name = "false";
         this.wordImg = new Phaser.GameObjects.Image(scene,512,200,wordImgTexture);
+        this.wordImg.displayWidth = 200;
+        this.wordImg.displayHeight = 200;
         this.word = new Phaser.GameObjects.BitmapText(scene,512,406,"ArialRoundedBold",wordText,45,1).setOrigin(0.5);
         this.word.tint = 0x006EFF;
         this.whiteBar = new Phaser.GameObjects.Graphics(scene).fillStyle(0xffffff).fillRect(0,0,1024,552);

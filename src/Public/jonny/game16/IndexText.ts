@@ -6,7 +6,7 @@ export class IndexText extends Phaser.GameObjects.Container {
     emitZone: Phaser.Geom.Rectangle;
     text: Phaser.GameObjects.BitmapText;
     constructor(scene: Phaser.Scene) {
-        super(scene, 1024 * 0.5, 552 * 0.5);
+        super(scene, 485, 339.5-45);
         this.text = new Phaser.GameObjects.BitmapText(scene, 50, 50, "AlibabaNumber200", null, 200, 1).setOrigin(0.5).setRotation((Math.PI / 180) * -25);
         this.particles = this.scene.add.particles("circle").setDepth(5);
         this.emitZone = new Phaser.Geom.Rectangle(this.x - 500 * 0.5, this.y - 500 * 0.5, 500, 500);
@@ -30,12 +30,12 @@ export class IndexText extends Phaser.GameObjects.Container {
     public show(textContent: string): Promise<boolean> {
         return new Promise(resolve => {
             this.text.setText(textContent).setScale(0).setAlpha(0);
-            this.emitter.start();
+            //this.emitter.start();
             this.scene.add.tween({
                 targets: this.text,
                 scale: 1,
                 alpha: 1,
-                duration: 2000,
+                duration: 500,
                 onComplete: () => {
                     this.emitter.stop();
                     setTimeout(() => {

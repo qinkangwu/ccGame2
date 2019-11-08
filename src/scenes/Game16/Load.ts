@@ -66,7 +66,7 @@ export default class Game16LoadScene extends Phaser.Scene {
    * 正式状态
    */
   private getData() {
-    get("assets/Game16/getTopic.json").then((res) => {
+    get(apiPath.getWordConfusionList).then((res) => {
       if (res.code === '0000') {
         this.ccData = res.result;
       }
@@ -79,7 +79,6 @@ export default class Game16LoadScene extends Phaser.Scene {
    * 加载网络资源
    */
   private loadRequestAssets(): void {
-    console.log(this.ccData);
     this.ccData.forEach(v => {
       this._loader.image(v.trueWord, v.imgUrl);
     })

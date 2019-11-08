@@ -43,7 +43,7 @@ export class Door extends Phaser.GameObjects.Container {
                 targets: this.purple,
                 duration: 1000,
                 x: this.purple.getData("targetPosition").x,
-                ease: "Sine.easeOut",
+                ease: "Sine.easeInOut",
                 onComplete: () => {
                     resolve(true);
                 }
@@ -52,7 +52,7 @@ export class Door extends Phaser.GameObjects.Container {
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.yellow,
                 duration: 1000,
-                ease: "Sine.easeOut",
+                ease: "Sine.easeInOut",
                 x: this.yellow.getData("targetPosition").x
             });
 
