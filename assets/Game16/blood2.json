@@ -1,0 +1,35 @@
+﻿{"frames": {
+
+"blood20000":
+{
+	"frame": {"x":0,"y":0,"w":38,"h":417},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
+	"sourceSize": {"w":417,"h":38}
+},
+"blood20001":
+{
+	"frame": {"x":38,"y":0,"w":38,"h":417},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
+	"sourceSize": {"w":417,"h":38}
+},
+"blood20002":
+{
+	"frame": {"x":76,"y":0,"w":38,"h":417},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
+	"sourceSize": {"w":417,"h":38}
+}},
+"meta": {
+	"app": "Adobe Animate",
+	"version": "19.2.1.408",
+	"image": "blood2.png",
+	"format": "RGBA8888",
+	"size": {"w":128,"h":512},
+	"scale": "1"
+}
+}
