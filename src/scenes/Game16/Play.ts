@@ -161,16 +161,14 @@ export default class Game16PlayScene extends Phaser.Scene {
         let _index:string = index + 1  < 10 ? "0" + (index+1) : (index + 1).toString();
         await this.door.close();
         await this.indexText.show(_index);
-        
-        this.orderUI.visible = true;
+        this.orderUI.show();
         this.indexText.hide();
         this.door.open();
-
     }
 
     /**
-  * 单次播放的音频播放器
-  */
+    * 单次播放的音频播放器
+    */
     private audioPlay(key: string): Promise<number> {
         return new Promise<number>(resolve => {
             let _tempSound: Phaser.Sound.BaseSound = this.sound.add(key);

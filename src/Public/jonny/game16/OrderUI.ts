@@ -11,6 +11,7 @@ export class OrderUI extends Phaser.GameObjects.Container{
     private trueBtn:Phaser.GameObjects.Image;
     private wordImg:Phaser.GameObjects.Image;
     private word:Phaser.GameObjects.BitmapText;
+    private whiteBar:Phaser.GameObjects.Graphics;
     constructor(scene: Phaser.Scene,wordImgTexture:string,wordText:string){
         super(scene);
         this.leftBg = new Phaser.GameObjects.Image(scene,256,276,"leftBg");
@@ -26,11 +27,16 @@ export class OrderUI extends Phaser.GameObjects.Container{
         this.wordImg = new Phaser.GameObjects.Image(scene,512,200,wordImgTexture);
         this.word = new Phaser.GameObjects.BitmapText(scene,512,406,"ArialRoundedBold",wordText,45,1).setOrigin(0.5);
         this.word.tint = 0x006EFF;
-        this.add([this.leftBg,this.rightBg,this.bottomBar,this.subject,this.angel,this.devil,this.trueBtn,this.falseBtn,this.wordImg,this.word]);
-        this.init();
+        this.whiteBar = new Phaser.GameObjects.Graphics(scene).fillStyle(0xffffff).fillRect(0,0,1024,552);
+        this.add([this.leftBg,this.rightBg,this.bottomBar,this.subject,this.angel,this.devil,this.trueBtn,this.falseBtn,this.wordImg,this.word,this.whiteBar]);
+        this.hide();
     }
 
-    init(){
-        this.visible = false;
+    hide(){
+        this.whiteBar.visible = true;
+    }
+
+    show(){
+        this.whiteBar.visible = false;
     }
 }

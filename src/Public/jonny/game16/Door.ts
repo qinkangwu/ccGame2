@@ -10,12 +10,12 @@ export class Door extends Phaser.GameObjects.Container {
     constructor(scene: Phaser.Scene) {
         super(scene);
 
-        this.purple = new Phaser.GameObjects.Image(scene, 1350, 277, "bg_purple");
-        this.purple.setData("initPosition", { x: 1350, y: 277 });
-        this.purple.setData("targetPosition", { x: 702, y: this.y });
+        this.purple = new Phaser.GameObjects.Image(scene, 1350, 276, "bg_purple");
+        this.purple.setData("initPosition", { x: 1350, y: 276 });
+        this.purple.setData("targetPosition", { x: 704, y: this.y });
 
-        this.yellow = new Phaser.GameObjects.Image(scene, -317, 277, "bg_yellow");
-        this.yellow.setData("initPosition", { x: -317, y: 277 });
+        this.yellow = new Phaser.GameObjects.Image(scene, -317, 276, "bg_yellow");
+        this.yellow.setData("initPosition", { x: -317, y: 276 });
         this.yellow.setData("targetPosition", { x: 322, y: this.y });
 
         this.devil = new Phaser.GameObjects.Image(scene, 704, -236, "civa_devil_01");
@@ -59,10 +59,7 @@ export class Door extends Phaser.GameObjects.Container {
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.angel,
                 duration: 500,
-                y: this.angel.getData("targetPosition").y,
-                onComplete: () => {
-                    resolve(true);
-                }
+                y: this.angel.getData("targetPosition").y
             });
 
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
@@ -90,7 +87,10 @@ export class Door extends Phaser.GameObjects.Container {
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.purple, 
                 duration: 1000,
-                x: this.purple.getData("initPosition").x
+                x: this.purple.getData("initPosition").x,
+                onComplete: () => {
+                    resolve(true);
+                }
             });
 
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
@@ -102,10 +102,7 @@ export class Door extends Phaser.GameObjects.Container {
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.angel,
                 duration: 500,
-                y: this.angel.getData("initPosition").y,
-                onComplete: () => {
-                    resolve(true);
-                }
+                y: this.angel.getData("initPosition").y
             });
 
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
