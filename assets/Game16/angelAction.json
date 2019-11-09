@@ -1,6 +1,6 @@
 ﻿{"frames": {
 
-"特效6.fla_1_72_2014-02-24 17:12:0481773 instance 10000":
+"angelAction10000":
 {
 	"frame": {"x":0,"y":0,"w":87,"h":87},
 	"rotated": false,
@@ -8,7 +8,7 @@
 	"spriteSourceSize": {"x":158,"y":160,"w":399,"h":409},
 	"sourceSize": {"w":399,"h":409}
 },
-"特效6.fla_1_72_2014-02-24 17:12:0481773 instance 10001":
+"angelAction10001":
 {
 	"frame": {"x":87,"y":0,"w":123,"h":131},
 	"rotated": false,
@@ -16,7 +16,7 @@
 	"spriteSourceSize": {"x":141,"y":141,"w":399,"h":409},
 	"sourceSize": {"w":399,"h":409}
 },
-"特效6.fla_1_72_2014-02-24 17:12:0481773 instance 10002":
+"angelAction10002":
 {
 	"frame": {"x":210,"y":0,"w":152,"h":162},
 	"rotated": false,
@@ -24,7 +24,7 @@
 	"spriteSourceSize": {"x":126,"y":125,"w":399,"h":409},
 	"sourceSize": {"w":399,"h":409}
 },
-"特效6.fla_1_72_2014-02-24 17:12:0481773 instance 10003":
+"angelAction10003":
 {
 	"frame": {"x":362,"y":0,"w":158,"h":162},
 	"rotated": false,
@@ -32,7 +32,7 @@
 	"spriteSourceSize": {"x":126,"y":125,"w":399,"h":409},
 	"sourceSize": {"w":399,"h":409}
 },
-"特效6.fla_1_72_2014-02-24 17:12:0481773 instance 10004":
+"angelAction10004":
 {
 	"frame": {"x":520,"y":0,"w":185,"h":192},
 	"rotated": false,
@@ -40,7 +40,7 @@
 	"spriteSourceSize": {"x":110,"y":110,"w":399,"h":409},
 	"sourceSize": {"w":399,"h":409}
 },
-"特效6.fla_1_72_2014-02-24 17:12:0481773 instance 10005":
+"angelAction10005":
 {
 	"frame": {"x":705,"y":0,"w":203,"h":193},
 	"rotated": false,
@@ -48,7 +48,7 @@
 	"spriteSourceSize": {"x":104,"y":109,"w":399,"h":409},
 	"sourceSize": {"w":399,"h":409}
 },
-"特效6.fla_1_72_2014-02-24 17:12:0481773 instance 10006":
+"angelAction10006":
 {
 	"frame": {"x":0,"y":193,"w":228,"h":224},
 	"rotated": false,
@@ -56,7 +56,7 @@
 	"spriteSourceSize": {"x":91,"y":94,"w":399,"h":409},
 	"sourceSize": {"w":399,"h":409}
 },
-"特效6.fla_1_72_2014-02-24 17:12:0481773 instance 10007":
+"angelAction10007":
 {
 	"frame": {"x":228,"y":193,"w":252,"h":254},
 	"rotated": false,
@@ -64,7 +64,7 @@
 	"spriteSourceSize": {"x":78,"y":79,"w":399,"h":409},
 	"sourceSize": {"w":399,"h":409}
 },
-"特效6.fla_1_72_2014-02-24 17:12:0481773 instance 10008":
+"angelAction10008":
 {
 	"frame": {"x":480,"y":193,"w":279,"h":285},
 	"rotated": false,
@@ -72,7 +72,7 @@
 	"spriteSourceSize": {"x":63,"y":63,"w":399,"h":409},
 	"sourceSize": {"w":399,"h":409}
 },
-"特效6.fla_1_72_2014-02-24 17:12:0481773 instance 10009":
+"angelAction10009":
 {
 	"frame": {"x":0,"y":478,"w":307,"h":316},
 	"rotated": false,
@@ -80,7 +80,7 @@
 	"spriteSourceSize": {"x":47,"y":47,"w":399,"h":409},
 	"sourceSize": {"w":399,"h":409}
 },
-"特效6.fla_1_72_2014-02-24 17:12:0481773 instance 10010":
+"angelAction10010":
 {
 	"frame": {"x":307,"y":478,"w":337,"h":347},
 	"rotated": false,
@@ -88,7 +88,7 @@
 	"spriteSourceSize": {"x":32,"y":32,"w":399,"h":409},
 	"sourceSize": {"w":399,"h":409}
 },
-"特效6.fla_1_72_2014-02-24 17:12:0481773 instance 10011":
+"angelAction10011":
 {
 	"frame": {"x":644,"y":478,"w":368,"h":378},
 	"rotated": false,
@@ -96,7 +96,7 @@
 	"spriteSourceSize": {"x":16,"y":16,"w":399,"h":409},
 	"sourceSize": {"w":399,"h":409}
 },
-"特效6.fla_1_72_2014-02-24 17:12:0481773 instance 10012":
+"angelAction10012":
 {
 	"frame": {"x":0,"y":856,"w":399,"h":409},
 	"rotated": false,

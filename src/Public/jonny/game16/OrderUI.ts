@@ -5,13 +5,14 @@ export class OrderUI extends Phaser.GameObjects.Container{
     private rightBg:Phaser.GameObjects.Image;
     private bottomBar:Phaser.GameObjects.Image;
     private subject:Phaser.GameObjects.Image;
-    private angel:Phaser.GameObjects.Image;
-    private devil:Phaser.GameObjects.Image;
+    public angel:Phaser.GameObjects.Image;
+    public devil:Phaser.GameObjects.Image;
     private falseBtn:Phaser.GameObjects.Image;
     private trueBtn:Phaser.GameObjects.Image;
     private wordImg:Phaser.GameObjects.Image;
     private word:Phaser.GameObjects.BitmapText;
     private whiteBar:Phaser.GameObjects.Graphics;
+
     constructor(scene: Phaser.Scene,wordImgTexture:string,wordText:string){
         super(scene);
         this.leftBg = new Phaser.GameObjects.Image(scene,256,276,"leftBg");
@@ -41,4 +42,5 @@ export class OrderUI extends Phaser.GameObjects.Container{
     show(){
         this.whiteBar.visible = false;
     }
+
 }

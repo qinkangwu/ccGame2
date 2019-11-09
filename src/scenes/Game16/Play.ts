@@ -31,6 +31,9 @@ export default class Game16PlayScene extends Phaser.Scene {
     private indexText:IndexText;
     private tipsParticlesEmitter: TipsParticlesEmitter;
     private sellingGold: SellingGold;
+    private angelAction:Phaser.GameObjects.Sprite;
+    private devilAction:Phaser.GameObjects.Sprite;
+
 
     private layer0: Phaser.GameObjects.Container;
 
@@ -140,11 +143,28 @@ export default class Game16PlayScene extends Phaser.Scene {
      * 创建演员们
      */
     createActors() {
-        // create orderUI
+        // create orderUI,blood
         this.orderUI = new OrderUI(this,this.ccData[index].trueWord,this.ccData[index].displayWord);
         this.blood = new Blood(this);
         this.blood.visible = false;
         this.layer1.add([this.orderUI,this.blood]);
+
+
+        // create angel's action
+        this.angelAction = this.add.sprite(0,0,"angelAction").setDepth(5).setVisible(false);
+        this.anims.create({
+            key:"angelKill",
+            frames:this.anims.generateFrameNames('angelAction',{ prefix:'angelAction1000',start:0,end:12}),
+            frameRate:12
+        });
+
+        // create devil's action
+        this.devilAction = this.add.sprite(0,0,"devilAction").setDepth(5).setVisible(false);
+        this.anims.create({
+            key:"devilKill",
+            frames:this.anims.generateFrameNames('devilAction',{ prefix:'devilAction1000',start:0,end:9}),
+            frameRate:12
+        });
 
         // create door
         this.door = new Door(this);
@@ -168,7 +188,7 @@ export default class Game16PlayScene extends Phaser.Scene {
         this.orderUI.show();
         this.indexText.hide();
         this.blood.visible = true;
-        this.door.open();
+        await this.door.open();
     }
 
     /**
@@ -185,6 +205,33 @@ export default class Game16PlayScene extends Phaser.Scene {
         })
     }
 
+    /**
+     * 天使攻击
+     */
+    public angelActing(){
+        this.audioPlay("heavyBoxing");
+        this.acting(this.angelAction,this.orderUI.devil.getWorldTransformMatrix().tx,this.orderUI.devil.getWorldTransformMatrix().ty,"angelKill");
+    }
+
+    /**
+     * 恶魔攻击
+     */
+    public devilActing(){
+        this.audioPlay("defense");
+        this.acting(this.devilAction,this.orderUI.angel.getWorldTransformMatrix().tx,this.orderUI.angel.getWorldTransformMatrix().ty,"devilKill");
+    }
+
+    /**
+     * 攻击
+     */
+    private acting(obj:Phaser.GameObjects.Sprite,x:number,y:number,key:string){
+        obj.visible = true;
+        obj.setPosition(x,y);
+        obj.play(key);
+        obj.on("animationcomplete",()=>{
+            obj.visible = false;
+        });
+    }
 
     /**
      * 移动程序

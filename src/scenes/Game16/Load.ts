@@ -41,7 +41,9 @@ export default class Game16LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.audio('bgm', 'assets/sounds/bgm-04.mp3');
+    this.load.audio('bgm', 'assets/sounds/bgm-06.mp3');
+    this.load.audio('defense', 'assets/sounds/defense.mp3');
+    this.load.audio('heavyBoxing', 'assets/sounds/heavy_boxing.mp3');
     this.load.bitmapFont('ArialRoundedBold', 'assets/font/ArialRoundedBold/font.png', 'assets/font/ArialRoundedBold/font.xml');
     this.load.bitmapFont('AlibabaNumber200', 'assets/font/AlibabaNumber200/font.png', 'assets/font/AlibabaNumber200/font.xml');
     this.load.atlas('blood2','assets/Game16/blood2.png','assets/Game16/blood2.json');
