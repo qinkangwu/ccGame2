@@ -1,17 +1,17 @@
 import "phaser";
 
 export class OrderUI extends Phaser.GameObjects.Container{
-    private leftBg:Phaser.GameObjects.Image;
-    private rightBg:Phaser.GameObjects.Image;
-    private bottomBar:Phaser.GameObjects.Image;
-    private subject:Phaser.GameObjects.Image;
+    public leftBg:Phaser.GameObjects.Image;
+    public rightBg:Phaser.GameObjects.Image;
+    public bottomBar:Phaser.GameObjects.Image;
+    public subject:Phaser.GameObjects.Image;
     public angel:Phaser.GameObjects.Image;
     public devil:Phaser.GameObjects.Image;
-    private falseBtn:Phaser.GameObjects.Image;
-    private trueBtn:Phaser.GameObjects.Image;
-    private wordImg:Phaser.GameObjects.Image;
-    private word:Phaser.GameObjects.BitmapText;
-    private whiteBar:Phaser.GameObjects.Graphics;
+    public falseBtn:Phaser.GameObjects.Image;
+    public trueBtn:Phaser.GameObjects.Image;
+    public wordImg:Phaser.GameObjects.Image;
+    public word:Phaser.GameObjects.BitmapText;
+    public whiteBar:Phaser.GameObjects.Graphics;
 
     constructor(scene: Phaser.Scene,wordImgTexture:string,wordText:string){
         super(scene);
@@ -21,9 +21,9 @@ export class OrderUI extends Phaser.GameObjects.Container{
         this.subject = new Phaser.GameObjects.Image(scene,512,300,"bg_subject").setDisplaySize(718,432);
         this.angel = new Phaser.GameObjects.Image(scene,125,123,"civa_angle_02");
         this.devil = new Phaser.GameObjects.Image(scene,901,123,"civa_devil_02");
-        this.trueBtn = new Phaser.GameObjects.Image(scene,321,476,"btn_true");
+        this.trueBtn = new Phaser.GameObjects.Image(scene,321,476,"btn_true").setInteractive();
         this.trueBtn.name = "true";
-        this.falseBtn = new Phaser.GameObjects.Image(scene,703,476,"btn_false");
+        this.falseBtn = new Phaser.GameObjects.Image(scene,703,476,"btn_false").setInteractive();
         this.falseBtn.name = "false";
         this.wordImg = new Phaser.GameObjects.Image(scene,512,253,wordImgTexture);
         this.wordImg.displayWidth = 200;

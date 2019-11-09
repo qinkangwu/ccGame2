@@ -1,5 +1,5 @@
 import 'phaser';
-//import { } from 'rxjs';
+import { Subject} from 'rxjs';
 import { Assets, Topic } from '../../interface/Game16';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
@@ -11,6 +11,13 @@ const W = 1024;
 const H = 552;
 var index: number; //题目的指针，默认为0
 var goldValue: number = 3; //金币的值
+
+export interface Determine {
+    isRight: boolean;
+    times: number;
+}
+
+
 
 
 export default class Game16PlayScene extends Phaser.Scene {
@@ -33,6 +40,9 @@ export default class Game16PlayScene extends Phaser.Scene {
     private sellingGold: SellingGold;
     private angelAction:Phaser.GameObjects.Sprite;
     private devilAction:Phaser.GameObjects.Sprite;
+
+    //数据
+    private result$:Subject<Determine> = new Subject (); //结果订阅
 
 
     private layer0: Phaser.GameObjects.Container;
@@ -179,6 +189,21 @@ export default class Game16PlayScene extends Phaser.Scene {
     }
 
     /**
+     * 观察者
+     */
+    private observableFuc() {
+        this.result$.subscribe(value=>{
+            if(value.isRight===true){
+                //this.angelActing();
+                this.isRight();
+            }else if(value.isRight===false){
+                this.isWrong();
+                //this.devilActing();
+            }
+        });
+    }
+
+    /**
      * 游戏开始
      */
     private async gameStart(){
@@ -189,6 +214,39 @@ export default class Game16PlayScene extends Phaser.Scene {
         this.indexText.hide();
         this.blood.visible = true;
         await this.door.open();
+        this.observableFuc();
+
+        // this.T$ = fromEvent(this.orderUI.trueBtn,"pointerdown");
+        // this.F$ = fromEvent(this.orderUI.falseBtn,"pointerdown");
+
+
+
+        //this.orderUI.falseBtn.on("pointerdown",);
+        this.controls();
+    }
+
+    /**
+     * 交互事件
+     */
+    private controls():void{
+        let TorF = (decided:number)=>{
+            this.orderUI.trueBtn.disableInteractive(); 
+            this.orderUI.falseBtn.disableInteractive(); 
+            let _isRight:boolean;
+            if(decided===1){
+               _isRight = this.ccData[index].displayWord===this.ccData[index].trueWord;
+            }else{
+               _isRight = this.ccData[index].displayWord!==this.ccData[index].trueWord;
+            }
+            this.result$.next({
+                isRight:_isRight,
+                times:this.times
+            });
+        }
+
+
+        this.orderUI.trueBtn.on("pointerdown",TorF.bind(this,1));
+        this.orderUI.falseBtn.on("pointerdown",TorF.bind(this,0));
     }
 
     /**
@@ -208,28 +266,30 @@ export default class Game16PlayScene extends Phaser.Scene {
     /**
      * 天使攻击
      */
-    public angelActing(){
+    public angelActing():Promise<boolean>{
         this.audioPlay("heavyBoxing");
-        this.acting(this.angelAction,this.orderUI.devil.getWorldTransformMatrix().tx,this.orderUI.devil.getWorldTransformMatrix().ty,"angelKill");
+        return this.acting(this.angelAction,this.orderUI.devil.getWorldTransformMatrix().tx,this.orderUI.devil.getWorldTransformMatrix().ty,"angelKill");
     }
 
     /**
      * 恶魔攻击
      */
-    public devilActing(){
+    public devilActing():Promise<boolean>{
         this.audioPlay("defense");
-        this.acting(this.devilAction,this.orderUI.angel.getWorldTransformMatrix().tx,this.orderUI.angel.getWorldTransformMatrix().ty,"devilKill");
+        return this.acting(this.devilAction,this.orderUI.angel.getWorldTransformMatrix().tx,this.orderUI.angel.getWorldTransformMatrix().ty,"devilKill");
     }
 
     /**
      * 攻击
      */
-    private acting(obj:Phaser.GameObjects.Sprite,x:number,y:number,key:string){
-        obj.visible = true;
-        obj.setPosition(x,y);
-        obj.play(key);
-        obj.on("animationcomplete",()=>{
-            obj.visible = false;
+    private acting(obj:Phaser.GameObjects.Sprite,x:number,y:number,key:string):Promise<boolean>{
+        return new Promise<boolean>(resolve=>{
+            obj.visible = true;
+            obj.setPosition(x,y);
+            obj.play(key);
+            setTimeout(()=>{
+                resolve(true);
+            },1300);
         });
     }
 
@@ -249,35 +309,6 @@ export default class Game16PlayScene extends Phaser.Scene {
     }
 
 
-    /**
-     * 检查做题是否已经结束
-     */
-    private checkoutTestEnd() {
-
-
-    }
-
-    /**
-     * 做题结束
-     */
-    private testEnd() {
-
-    }
-
-    /**
-     *  successBtnPointerdown 
-     */
-    private successBtnPointerdown() {
-        this.checkoutResult()
-            .then(msg => {    //正确
-                console.log(msg)
-                this.isRight();
-            })
-            .catch(err => {   //错误
-                console.log(err)
-                this.isWrong();
-            });
-    }
 
     /**
      * 正确的结果处理
@@ -296,18 +327,25 @@ export default class Game16PlayScene extends Phaser.Scene {
                 this.sellingGold.goodJob(3);
             })
         }
+
+        this.angelActing().then(nextFuc);
     }
 
     /**
      * 错误的结果处理
      */
     private isWrong(): void {
-        this.times += 1;
-        if (this.times === 1) {
-            this.tryAgin();
-        } else if (this.times >= 2) {
-            this.ohNo();
+        let nextFuc = ()=>{
+            this.times += 1;
+            if (this.times === 1) {
+                this.tryAgin();
+            } else if (this.times >= 2) {
+                this.ohNo();
+            }
         }
+       
+        this.devilActing().then(nextFuc);
+       
     }
 
     /**
@@ -315,6 +353,8 @@ export default class Game16PlayScene extends Phaser.Scene {
      */
     private tryAgin() {
         this.tipsParticlesEmitter.tryAgain(this.resetStart);
+        this.orderUI.trueBtn.setInteractive(); 
+        this.orderUI.falseBtn.setInteractive(); 
     }
 
     /**
