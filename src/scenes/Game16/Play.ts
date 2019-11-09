@@ -4,7 +4,7 @@ import { Assets, Topic } from '../../interface/Game16';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Door,IndexText,OrderUI} from '../../Public/jonny/game16';
+import { Door,IndexText,OrderUI,Blood} from '../../Public/jonny/game16';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -22,6 +22,7 @@ export default class Game16PlayScene extends Phaser.Scene {
     private btnExit: Button;  //退出按钮
     private btnSound: ButtonMusic; //音乐按钮
     private gold: Gold;
+    private blood:Blood;
     //静态结束
 
     // 动态开始
@@ -34,7 +35,7 @@ export default class Game16PlayScene extends Phaser.Scene {
     private layer0: Phaser.GameObjects.Container;
 
     /**
-     * 答题面板
+     * 答题面板,血槽
      */
     private layer1: Phaser.GameObjects.Container;
 
@@ -132,6 +133,7 @@ export default class Game16PlayScene extends Phaser.Scene {
 
         this.gold = new Gold(this, goldValue);   //设置金币
         this.layer4.add([this.gold]);
+
     }
 
     /**
@@ -140,7 +142,9 @@ export default class Game16PlayScene extends Phaser.Scene {
     createActors() {
         // create orderUI
         this.orderUI = new OrderUI(this,this.ccData[index].trueWord,this.ccData[index].displayWord);
-        this.layer1.add(this.orderUI);
+        this.blood = new Blood(this);
+        this.blood.visible = false;
+        this.layer1.add([this.orderUI,this.blood]);
 
         // create door
         this.door = new Door(this);
@@ -163,6 +167,7 @@ export default class Game16PlayScene extends Phaser.Scene {
         await this.indexText.show(_index);
         this.orderUI.show();
         this.indexText.hide();
+        this.blood.visible = true;
         this.door.open();
     }
 

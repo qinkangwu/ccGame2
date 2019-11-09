@@ -21,7 +21,7 @@ export default class Game16LoadScene extends Phaser.Scene {
     /**
      * game16 UI
      */
-    { "url": "assets/Game16/F.Devil.png", "key": "F.Devil" }, { "url": "assets/Game16/T.Angel.png", "key": "T.Angel" }, { "url": "assets/Game16/bg_purple.png", "key": "bg_purple" }, { "url": "assets/Game16/bg_subject.png", "key": "bg_subject" }, { "url": "assets/Game16/bg_yellow.png", "key": "bg_yellow" }, { "url": "assets/Game16/btn_false.png", "key": "btn_false" }, { "url": "assets/Game16/btn_true.png", "key": "btn_true" }, { "url": "assets/Game16/civa_angle_01.png", "key": "civa_angle_01" }, { "url": "assets/Game16/civa_angle_02.png", "key": "civa_angle_02" }, { "url": "assets/Game16/civa_devil_01.png", "key": "civa_devil_01" }, { "url": "assets/Game16/civa_devil_02.png", "key": "civa_devil_02" }, { "url": "assets/mask/Game16.png", "key": "Game16" },{"url":"assets/Game16/bottomBar.png","key":"bottomBar"},{"url":"assets/Game16/leftBg.png","key":"leftBg"},{"url":"assets/Game16/rightBg.png","key":"rightBg"},{"url":"assets/Game16/bloodFalse.png","key":"bloodFalse"},{"url":"assets/Game16/bloodTrue.png","key":"bloodTrue"}];
+    { "url": "assets/Game16/F.Devil.png", "key": "F.Devil" }, { "url": "assets/Game16/T.Angel.png", "key": "T.Angel" }, { "url": "assets/Game16/bg_purple.png", "key": "bg_purple" }, { "url": "assets/Game16/bg_subject.png", "key": "bg_subject" }, { "url": "assets/Game16/bg_yellow.png", "key": "bg_yellow" }, { "url": "assets/Game16/btn_false.png", "key": "btn_false" }, { "url": "assets/Game16/btn_true.png", "key": "btn_true" }, { "url": "assets/Game16/civa_angle_01.png", "key": "civa_angle_01" }, { "url": "assets/Game16/civa_angle_02.png", "key": "civa_angle_02" }, { "url": "assets/Game16/civa_devil_01.png", "key": "civa_devil_01" }, { "url": "assets/Game16/civa_devil_02.png", "key": "civa_devil_02" }, { "url": "assets/mask/Game16.png", "key": "Game16" },{"url":"assets/Game16/bottomBar.png","key":"bottomBar"},{"url":"assets/Game16/leftBg.png","key":"leftBg"},{"url":"assets/Game16/rightBg.png","key":"rightBg"},{"url":"assets/Game16/vs.png","key":"vs"}];
 
   constructor() {
     super({
@@ -44,6 +44,10 @@ export default class Game16LoadScene extends Phaser.Scene {
     this.load.audio('bgm', 'assets/sounds/bgm-04.mp3');
     this.load.bitmapFont('ArialRoundedBold', 'assets/font/ArialRoundedBold/font.png', 'assets/font/ArialRoundedBold/font.xml');
     this.load.bitmapFont('AlibabaNumber200', 'assets/font/AlibabaNumber200/font.png', 'assets/font/AlibabaNumber200/font.xml');
+    this.load.atlas('blood2','assets/Game16/blood2.png','assets/Game16/blood2.json');
+    this.load.atlas('blood8','assets/Game16/blood8.png','assets/Game16/blood8.json');
+    this.load.atlas('angelAction','assets/Game16/angelAction.png','assets/Game16/angelAction.json');
+    this.load.atlas('devilAction','assets/Game16/devilAction.png','assets/Game16/devilAction.json');
     TipsParticlesEmitter.loadImg(this);
     SellingGold.loadImg(this);
     Particles.loadImg(this);

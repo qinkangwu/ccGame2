@@ -2,24 +2,24 @@
 
 "blood20000":
 {
-	"frame": {"x":0,"y":0,"w":38,"h":417},
-	"rotated": true,
+	"frame": {"x":0,"y":0,"w":417,"h":38},
+	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
 	"sourceSize": {"w":417,"h":38}
 },
 "blood20001":
 {
-	"frame": {"x":38,"y":0,"w":38,"h":417},
-	"rotated": true,
+	"frame": {"x":0,"y":38,"w":417,"h":38},
+	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
 	"sourceSize": {"w":417,"h":38}
 },
 "blood20002":
 {
-	"frame": {"x":76,"y":0,"w":38,"h":417},
-	"rotated": true,
+	"frame": {"x":0,"y":76,"w":417,"h":38},
+	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
 	"sourceSize": {"w":417,"h":38}
@@ -29,7 +29,7 @@
 	"version": "19.2.1.408",
 	"image": "blood2.png",
 	"format": "RGBA8888",
-	"size": {"w":128,"h":512},
+	"size": {"w":512,"h":128},
 	"scale": "1"
 }
 }

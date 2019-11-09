@@ -17,7 +17,7 @@ export class OrderUI extends Phaser.GameObjects.Container{
         this.leftBg = new Phaser.GameObjects.Image(scene,256,276,"leftBg");
         this.rightBg = new Phaser.GameObjects.Image(scene,768,276,"rightBg");
         this.bottomBar = new Phaser.GameObjects.Image(scene,512,489,"bottomBar");
-        this.subject = new Phaser.GameObjects.Image(scene,512,276,"bg_subject");
+        this.subject = new Phaser.GameObjects.Image(scene,512,300,"bg_subject").setDisplaySize(718,432);
         this.angel = new Phaser.GameObjects.Image(scene,125,123,"civa_angle_02");
         this.devil = new Phaser.GameObjects.Image(scene,901,123,"civa_devil_02");
         this.trueBtn = new Phaser.GameObjects.Image(scene,321,476,"btn_true");
