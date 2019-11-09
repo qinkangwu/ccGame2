@@ -4,7 +4,7 @@ import { Assets, Topic } from '../../interface/Game16';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Door, IndexText, OrderUI, Blood } from '../../Public/jonny/game16';
+import { Door, IndexText, OrderUI, Blood, TipsReliveParticlesEmitter } from '../../Public/jonny/game16';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -18,9 +18,6 @@ export interface Determine {
     angelBlood: number;
     devilBlood: number;
 }
-
-
-
 
 export default class Game16PlayScene extends Phaser.Scene {
     private ccData: Array<Topic> = [];
@@ -39,7 +36,7 @@ export default class Game16PlayScene extends Phaser.Scene {
     private orderUI: OrderUI;
     private door: Door;
     private indexText: IndexText;
-    private tipsParticlesEmitter: TipsParticlesEmitter;
+    private tipsParticlesEmitter: TipsReliveParticlesEmitter;
     private sellingGold: SellingGold;
     private angelAction: Phaser.GameObjects.Sprite;
     private devilAction: Phaser.GameObjects.Sprite;
@@ -188,7 +185,7 @@ export default class Game16PlayScene extends Phaser.Scene {
         this.layer2.add(this.indexText);
 
         //创建用户反馈
-        this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
+        this.tipsParticlesEmitter = new TipsReliveParticlesEmitter(this);
     }
 
     /**
@@ -197,11 +194,17 @@ export default class Game16PlayScene extends Phaser.Scene {
     private observableFuc() {
         this.result$.subscribe(value => {
             console.log(value);
-            if (value.isRight === true) {
+            if (value.isRight === true && value.devilBlood <= 7) {
                 this.blood8Index += 1;
                 this.blood.setBlood8(this.blood8Index);
                 this.angelActing().then(this.nextRound.bind(this))
-                
+            } else if (value.isRight === true && value.devilBlood > 7) {
+                this.tipsParticlesEmitter.success(() => {
+                    this.sellingGold.goodJob(3);
+                    /**
+                     * work init
+                     */
+                })
             } else if (value.isRight === false && value.angelBlood === 0) {
                 this.blood2Index += 1;
                 this.blood.setBlood2(this.blood2Index);
@@ -385,26 +388,26 @@ export default class Game16PlayScene extends Phaser.Scene {
      * 再次错误
      */
     private ohNo() {
-        let relive = ()=>{   //复活
+        let relive = () => {   //复活
             this.setGoldValue(-2);
             this.blood2Index = 0;
             this.blood.setBlood2(this.blood2Index);
         }
-        
 
-        let changeSingle = ()=>{   //换一个
-            relive(); 
-            this.nextRound(); 
+
+        let changeSingle = () => {   //换一个
+            relive();
+            this.nextRound();
         }
 
-        let replay = ()=>{    //再玩一次
+        let replay = () => {    //再玩一次
             relive();
             this.resetStart();
         }
 
         this.tipsParticlesEmitter.error(
             changeSingle,
-            replay    
+            replay
         )
         // if (goldValue === 0) {
         //     setTimeout(() => {

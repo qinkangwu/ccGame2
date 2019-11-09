@@ -4,7 +4,7 @@ import { get } from '../../lib/http';
 import { Assets, Topic } from '../../interface/Game16';
 import { resize } from '../../Public/jonny/core';
 import { SellingGold, Particles } from '../../Public/jonny/components';
-import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
+import { Door, IndexText, OrderUI, Blood ,TipsReliveParticlesEmitter} from '../../Public/jonny/game16';
 
 const W = 1024;
 const H = 552;
@@ -50,7 +50,7 @@ export default class Game16LoadScene extends Phaser.Scene {
     this.load.atlas('blood8','assets/Game16/blood8.png','assets/Game16/blood8.json');
     this.load.atlas('angelAction','assets/Game16/angelAction.png','assets/Game16/angelAction.json');
     this.load.atlas('devilAction','assets/Game16/devilAction.png','assets/Game16/devilAction.json');
-    TipsParticlesEmitter.loadImg(this);
+    TipsReliveParticlesEmitter.loadImg(this);
     SellingGold.loadImg(this);
     Particles.loadImg(this);
     this.assets.forEach((v) => {
@@ -74,7 +74,8 @@ export default class Game16LoadScene extends Phaser.Scene {
   private getData() {
     get(apiPath.getWordConfusionList).then((res) => {
       if (res.code === '0000') {
-        this.ccData = res.result;
+        this.ccData = res.result.filter((v,i)=>i<=7);
+        console.log(this.ccData);
       }
     }).then(() => {
       this.loadRequestAssets();
