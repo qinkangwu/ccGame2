@@ -40,6 +40,7 @@ export default class Game16PlayScene extends Phaser.Scene {
     private sellingGold: SellingGold;
     private angelAction: Phaser.GameObjects.Sprite;
     private devilAction: Phaser.GameObjects.Sprite;
+    private reliveAction: Phaser.GameObjects.Sprite;
 
     //数据
     private result$: Subject<Determine> = new Subject(); //结果订阅
@@ -176,6 +177,14 @@ export default class Game16PlayScene extends Phaser.Scene {
             frameRate: 12
         });
 
+        // create angel's reliveAction
+        this.reliveAction = this.add.sprite(0,0,'relive').setDepth(5).setVisible(false);
+        this.anims.create({
+            key:"angelRelive",
+            frames:this.anims.generateFrameNames('relive',{ prefix:'relive',start:0,end:25}),
+            frameRate:25
+        });
+
         // create door
         this.door = new Door(this);
         this.layer2.add(this.door);
@@ -194,16 +203,26 @@ export default class Game16PlayScene extends Phaser.Scene {
     private observableFuc() {
         this.result$.subscribe(value => {
             console.log(value);
-            if (value.isRight === true && value.devilBlood <= 7) {
+            if (value.isRight === true && value.devilBlood < this.ccData.length - 1) {
                 this.blood8Index += 1;
                 this.blood.setBlood8(this.blood8Index);
                 this.angelActing().then(this.nextRound.bind(this))
-            } else if (value.isRight === true && value.devilBlood > 7) {
+            } else if (value.isRight === true && value.devilBlood === this.ccData.length - 1) {
+                this.blood8Index += 1;
+                this.blood.setBlood8(this.blood8Index);
+                this.sellingGold = new SellingGold(this, {
+                    callback: () => {
+                        this.sellingGold.golds.destroy();
+                        this.setGoldValue(3);
+                        //window.location.href = CONSTANT.INDEX_URL; 
+                        /**
+                         * work init
+                         */
+                    }
+                });
+                this.sellingGold.golds.setDepth(6);
                 this.tipsParticlesEmitter.success(() => {
                     this.sellingGold.goodJob(3);
-                    /**
-                     * work init
-                     */
                 })
             } else if (value.isRight === false && value.angelBlood === 0) {
                 this.blood2Index += 1;
@@ -289,7 +308,15 @@ export default class Game16PlayScene extends Phaser.Scene {
     }
 
     /**
-     * 攻击
+     * 天使复活
+     */
+    public angelRelive():Promise<boolean>{
+        this.audioPlay("angelRelive");
+         return this.acting(this.reliveAction, this.orderUI.angel.getWorldTransformMatrix().tx, this.orderUI.angel.getWorldTransformMatrix().ty, "angelRelive");
+    }
+
+    /**
+     * Action
      */
     private acting(obj: Phaser.GameObjects.Sprite, x: number, y: number, key: string): Promise<boolean> {
         return new Promise<boolean>(resolve => {
@@ -324,20 +351,7 @@ export default class Game16PlayScene extends Phaser.Scene {
      * 正确的结果处理
      */
     private isRight(): void {
-        // let nextFuc = () => {
-        //     this.sellingGold = new SellingGold(this, {
-        //         callback: () => {
-        //             this.sellingGold.golds.destroy();
-        //             this.setGoldValue(3);
-        //             this.nextRound();
-        //         }
-        //     });
-        //     this.sellingGold.golds.setDepth(6);
-        //     this.tipsParticlesEmitter.success(() => {
-        //         this.sellingGold.goodJob(3);
-        //     })
-        // }
-        // nextFuc();
+       
 
     }
 
@@ -345,16 +359,7 @@ export default class Game16PlayScene extends Phaser.Scene {
      * 错误的结果处理
      */
     private isWrong(): void {
-        // let nextFuc = ()=>{
-        //     this.blood2Index += 1;
-        //     if (this.times === 1) {
-        //         this.tryAgin();
-        //     } else if (this.times >= 2) {
-        //         this.ohNo();
-        //     }
-        // }
-
-        // this.devilActing().then(nextFuc);
+       
 
     }
 
@@ -388,20 +393,23 @@ export default class Game16PlayScene extends Phaser.Scene {
      * 再次错误
      */
     private ohNo() {
-        let relive = () => {   //复活
+        let reliveFuc = () => {   //复活
             this.setGoldValue(-2);
             this.blood2Index = 0;
-            this.blood.setBlood2(this.blood2Index);
+            this.angelRelive().then(()=>{
+                this.blood.setBlood2(this.blood2Index);
+            });
+                
         }
 
 
         let changeSingle = () => {   //换一个
-            relive();
-            this.nextRound();
+            //reliveFuc();
+            //this.nextRound();
         }
 
         let replay = () => {    //再玩一次
-            relive();
+            reliveFuc();
             this.resetStart();
         }
 
