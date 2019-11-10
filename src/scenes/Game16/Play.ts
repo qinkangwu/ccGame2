@@ -214,7 +214,7 @@ export default class Game16PlayScene extends Phaser.Scene {
                     callback: () => {
                         this.sellingGold.golds.destroy();
                         this.setGoldValue(3);
-                        //window.location.href = CONSTANT.INDEX_URL; 
+                        window.location.href = CONSTANT.INDEX_URL; 
                         /**
                          * work init
                          */
