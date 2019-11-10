@@ -257,7 +257,7 @@ export default class Game16PlayScene extends Phaser.Scene {
      * 交互事件
      */
     private controls(): void {
-        let TorF = (decided: number) => {
+        let TorF = (eTarget:Phaser.GameObjects.Image,decided: number) => {
             console.log("执行点击事件");
             this.disableBtnInteractive();
             let _isRight: boolean;
@@ -273,8 +273,8 @@ export default class Game16PlayScene extends Phaser.Scene {
             });
         }
 
-        this.orderUI.trueBtn.on("pointerdown", TorF.bind(this, 1));
-        this.orderUI.falseBtn.on("pointerdown", TorF.bind(this, 0));
+        this.orderUI.trueBtn.on("pointerdown", TorF.bind(this,this.orderUI.trueBtn ,1));
+        this.orderUI.falseBtn.on("pointerdown", TorF.bind(this,this.orderUI.falseBtn ,0));
     }
 
     /**
