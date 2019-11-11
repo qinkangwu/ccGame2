@@ -18,11 +18,11 @@ export class Door extends Phaser.GameObjects.Container {
         this.yellow.setData("initPosition", { x: -317, y: 276 });
         this.yellow.setData("targetPosition", { x: 322, y: this.y });
 
-        this.devil = new Phaser.GameObjects.Image(scene, 704, -236, "civa_devil_01");
-        this.devil.setData("initPosition", { x: 704, y: -236 });
+        this.devil = new Phaser.GameObjects.Image(scene, 915, -236, "civa_devil_01");
+        this.devil.setData("initPosition", { x: 915, y: -236 });
         this.devil.setData("targetPosition", { x: this.x, y: 128 });
 
-        this.angel = new Phaser.GameObjects.Image(scene, 203, 791, "civa_angle_01").setRotation((Math.PI / 180) * -5);
+        this.angel = new Phaser.GameObjects.Image(scene, 203, 791, "civa_angle_01");
         this.angel.setData("initPosition", { x: 203, y: 791 });
         this.angel.setData("targetPosition", { x: this.x, y: 405 });
 

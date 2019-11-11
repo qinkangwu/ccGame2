@@ -7,7 +7,7 @@ export class IndexText extends Phaser.GameObjects.Container {
     text: Phaser.GameObjects.BitmapText;
     constructor(scene: Phaser.Scene) {
         super(scene, 485, 339.5-45);
-        this.text = new Phaser.GameObjects.BitmapText(scene, 50, 50, "AlibabaNumber200", null, 200, 1).setOrigin(0.5).setRotation((Math.PI / 180) * -25);
+        this.text = new Phaser.GameObjects.BitmapText(scene, 60, 50, "AlibabaNumber200", null, 220, 1).setOrigin(0.5).setRotation((Math.PI / 180) * -25);
         this.particles = this.scene.add.particles("circle").setDepth(5);
         this.emitZone = new Phaser.Geom.Rectangle(this.x - 500 * 0.5, this.y - 500 * 0.5, 500, 500);
         this.emitter = this.particles.createEmitter({
