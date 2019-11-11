@@ -77,7 +77,7 @@ export default class Game16LoadScene extends Phaser.Scene {
     get(apiPath.getWordConfusionList).then((res) => {
       if (res.code === '0000') {
         this.ccData = res.result.filter((v, i) => i <= 7);
-        console.log(this.ccData);
+        this.ccData = this.ccData.concat(this.ccData,this.ccData,this.ccData,this.ccData);
       }
     }).then(() => {
       this.loadRequestAssets();

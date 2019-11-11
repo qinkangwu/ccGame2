@@ -9,7 +9,9 @@ import { Door, IndexText, OrderUI, Blood, TipsReliveParticlesEmitter } from '../
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
 const H = 552;
+const offsetIndex = 7;
 var index: number; //题目的指针，默认为0
+
 
 var goldValue: number = 6; //金币的值
 
@@ -178,11 +180,11 @@ export default class Game16PlayScene extends Phaser.Scene {
         });
 
         // create angel's reliveAction
-        this.reliveAction = this.add.sprite(0,0,'relive').setDepth(5).setVisible(false);
+        this.reliveAction = this.add.sprite(0, 0, 'relive').setDepth(5).setVisible(false);
         this.anims.create({
-            key:"angelRelive",
-            frames:this.anims.generateFrameNames('relive',{ prefix:'relive',start:0,end:25}),
-            frameRate:25
+            key: "angelRelive",
+            frames: this.anims.generateFrameNames('relive', { prefix: 'relive', start: 0, end: 25 }),
+            frameRate: 25
         });
 
         // create door
@@ -202,22 +204,24 @@ export default class Game16PlayScene extends Phaser.Scene {
      */
     private observableFuc() {
         this.result$.subscribe(value => {
-            console.log(value);
-            if (value.isRight === true && value.devilBlood < this.ccData.length - 1) {
+            if (value.isRight === true && value.devilBlood < offsetIndex) {
                 this.blood8Index += 1;
                 this.blood.setBlood8(this.blood8Index);
                 this.angelActing().then(this.nextRound.bind(this))
-            } else if (value.isRight === true && value.devilBlood === this.ccData.length - 1) {
+            } else if (value.isRight === true && this.blood8Index === offsetIndex) {
                 this.blood8Index += 1;
                 this.blood.setBlood8(this.blood8Index);
                 this.sellingGold = new SellingGold(this, {
                     callback: () => {
                         this.sellingGold.golds.destroy();
                         this.setGoldValue(3);
-                        window.location.href = CONSTANT.INDEX_URL; 
-                        /**
-                         * work init
-                         */
+                        this.blood8Index = 0;
+                        this.blood.setBlood8(this.blood8Index);
+                        if (index === this.ccData.length - 1) {
+                            window.location.href = CONSTANT.INDEX_URL;
+                        } else {
+                            this.nextRound();
+                        }
                     }
                 });
                 this.sellingGold.golds.setDepth(6);
@@ -257,7 +261,7 @@ export default class Game16PlayScene extends Phaser.Scene {
      * 交互事件
      */
     private controls(): void {
-        let TorF = (eTarget:Phaser.GameObjects.Image,decided: number) => {
+        let TorF = (eTarget: Phaser.GameObjects.Image, decided: number) => {
             console.log("执行点击事件");
             this.disableBtnInteractive();
             let _isRight: boolean;
@@ -273,8 +277,8 @@ export default class Game16PlayScene extends Phaser.Scene {
             });
         }
 
-        this.orderUI.trueBtn.on("pointerdown", TorF.bind(this,this.orderUI.trueBtn ,1));
-        this.orderUI.falseBtn.on("pointerdown", TorF.bind(this,this.orderUI.falseBtn ,0));
+        this.orderUI.trueBtn.on("pointerdown", TorF.bind(this, this.orderUI.trueBtn, 1));
+        this.orderUI.falseBtn.on("pointerdown", TorF.bind(this, this.orderUI.falseBtn, 0));
     }
 
     /**
@@ -310,9 +314,9 @@ export default class Game16PlayScene extends Phaser.Scene {
     /**
      * 天使复活
      */
-    public angelRelive():Promise<boolean>{
+    public angelRelive(): Promise<boolean> {
         this.audioPlay("angelRelive");
-         return this.acting(this.reliveAction, this.orderUI.angel.getWorldTransformMatrix().tx, this.orderUI.angel.getWorldTransformMatrix().ty, "angelRelive");
+        return this.acting(this.reliveAction, this.orderUI.angel.getWorldTransformMatrix().tx, this.orderUI.angel.getWorldTransformMatrix().ty, "angelRelive");
     }
 
     /**
@@ -351,7 +355,7 @@ export default class Game16PlayScene extends Phaser.Scene {
      * 正确的结果处理
      */
     private isRight(): void {
-       
+
 
     }
 
@@ -359,7 +363,7 @@ export default class Game16PlayScene extends Phaser.Scene {
      * 错误的结果处理
      */
     private isWrong(): void {
-       
+
 
     }
 
@@ -396,10 +400,10 @@ export default class Game16PlayScene extends Phaser.Scene {
         let reliveFuc = () => {   //复活
             this.setGoldValue(-2);
             this.blood2Index = 0;
-            this.angelRelive().then(()=>{
+            this.angelRelive().then(() => {
                 this.blood.setBlood2(this.blood2Index);
             });
-                
+
         }
 
 

@@ -29,8 +29,8 @@ export class IndexText extends Phaser.GameObjects.Container {
 
     public show(textContent: string): Promise<boolean> {
         return new Promise(resolve => {
-            this.text.setText(textContent).setScale(0).setAlpha(0);
-            //this.text.setText('T.F').setScale(0).setAlpha(0);
+            //this.text.setText(textContent).setScale(0).setAlpha(0);
+            this.text.setText('T.F').setScale(0).setAlpha(0);
             //this.emitter.start();
             this.scene.add.tween({
                 targets: this.text,
