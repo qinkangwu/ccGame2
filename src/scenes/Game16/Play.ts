@@ -44,6 +44,8 @@ export default class Game16PlayScene extends Phaser.Scene {
     private devilAction: Phaser.GameObjects.Sprite;
     private reliveAction: Phaser.GameObjects.Sprite;
 
+    private angelDevilFloating:Phaser.Tweens.Tween;
+
     //数据
     private result$: Subject<Determine> = new Subject(); //结果订阅
     private startAnimate$: Subject<string> = new Subject();  //开场动画的订阅
@@ -214,11 +216,12 @@ export default class Game16PlayScene extends Phaser.Scene {
                 this.blood8Index += 1;
                 this.blood.setBlood8(this.blood8Index);
                 this.angelActing().then(() => {
-                    index += 1;
-                    this.scene.start('Game16PlayScene', {
-                        data: this.ccData,
-                        index: index
-                    });
+                    this.nextRound();
+                    // index += 1;
+                    // this.scene.start('Game16PlayScene', {
+                    //     data: this.ccData,
+                    //     index: index
+                    // });
                 })
             } else if (value.isRight === true && this.blood8Index === offsetIndex) {
                 this.blood8Index += 1;
@@ -232,11 +235,12 @@ export default class Game16PlayScene extends Phaser.Scene {
                         if (index === this.ccData.length - 1) {
                             window.location.href = CONSTANT.INDEX_URL;
                         } else {
-                            index += 1;
-                            this.scene.start('Game16PlayScene', {
-                                data: this.ccData,
-                                index: index
-                            });
+                            this.nextRound();
+                            // index += 1;
+                            // this.scene.start('Game16PlayScene', {
+                            //     data: this.ccData,
+                            //     index: index
+                            // });
                         }
                     }
                 });
@@ -288,6 +292,7 @@ export default class Game16PlayScene extends Phaser.Scene {
         }else {
             this.startAnimate$.next("初始化开门"); 
         }
+        this.angelDevilFloating = this.orderUI.angelDevilFloating();
         this.controls();
     }
 
@@ -466,18 +471,19 @@ export default class Game16PlayScene extends Phaser.Scene {
      * 销毁组件
      */
     private destroyComponent(): void {
-
+        this.angelDevilFloating.remove();
     }
 
     /**
      * 下一道题
      */
-    private nextRound(close: boolean) {
-        // index += 1;
-        // this.scene.start('Game16PlayScene', {
-        //     data: this.ccData,
-        //     index: index
-        // });
+    private nextRound() {
+        this.destroyComponent();
+        index += 1;
+        this.scene.start('Game16PlayScene', {
+            data: this.ccData,
+            index: index
+        });
     }
 
     /**

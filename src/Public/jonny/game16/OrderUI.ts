@@ -19,8 +19,8 @@ export class OrderUI extends Phaser.GameObjects.Container{
         this.rightBg = new Phaser.GameObjects.Image(scene,768,276,"rightBg");
         this.bottomBar = new Phaser.GameObjects.Image(scene,512,489,"bottomBar");
         this.subject = new Phaser.GameObjects.Image(scene,512,300,"bg_subject").setDisplaySize(718,432);
-        this.angel = new Phaser.GameObjects.Image(scene,125,123,"civa_angle_02");
-        this.devil = new Phaser.GameObjects.Image(scene,901,123,"civa_devil_02");
+        this.angel = new Phaser.GameObjects.Image(scene,125,123,"civa_angle_02").setData("initPosition",{x:125,y:123});
+        this.devil = new Phaser.GameObjects.Image(scene,901,123,"civa_devil_02").setData("initPosition",{x:901,y:123});
         this.trueBtn = new Phaser.GameObjects.Image(scene,321,476,"btn_true").setInteractive();
         this.trueBtn.name = "true";
         this.falseBtn = new Phaser.GameObjects.Image(scene,703,476,"btn_false").setInteractive();
@@ -41,6 +41,17 @@ export class OrderUI extends Phaser.GameObjects.Container{
 
     show(){
         this.whiteBar.visible = false;
+    }
+
+    angelDevilFloating():Phaser.Tweens.Tween{
+        return this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+            targets:[this.angel,this.devil],
+            y:"-=10",
+            duration:500,
+            ease:"Sine.easeInOut",
+            repeat:-1,
+            yoyo:true
+        })
     }
 
 }
