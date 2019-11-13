@@ -193,12 +193,7 @@ export default class Game16PlayScene extends Phaser.Scene {
         });
 
         // create door
-        this.door = new Door(this);
-        // if (index === 0) {
-        //     this.door.initClose();
-        // }else{
-        //     this.door.initOpen();
-        // }
+        this.door = new Door(this).initClose();
         this.layer2.add(this.door);
 
         // create IndexText
