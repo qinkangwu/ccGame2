@@ -7,7 +7,7 @@ export class Blood{
     private scene:Phaser.Scene;
     constructor(scene: Phaser.Scene,blood2Index:number,blood8Index:number){
         this.scene = scene;
-        this.vs = this.scene.add.image(484.46+54.36*0.5,30.57+27.69*0.5,'vs').setDepth(3);
+        this.vs = this.scene.add.image(484.46+54.36*0.5,30.57+27.69*0.5,'vs').setDisplaySize(54.5,28).setDepth(3);
         this.blood2 = this.scene.add.sprite(232+245*0.5,33+22*0.5,'blood2').setDepth(3);
         this.blood8 = this.scene.add.sprite(547+245*0.5,33+22*0.5,'blood8').setDepth(3);
         this.scene.add.existing(this.blood2);
