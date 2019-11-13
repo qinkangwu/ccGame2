@@ -1,5 +1,8 @@
 import "phaser";
 
+const FACTOR = 0.7;
+
+
 export class Door extends Phaser.GameObjects.Container {
     public purple: Phaser.GameObjects.Image;
     public yellow: Phaser.GameObjects.Image;
@@ -47,11 +50,21 @@ export class Door extends Phaser.GameObjects.Container {
         return this;
     }
 
+    public initOpen():Door{
+        this.purple.x = this.purple.getData("initPosition").x;
+        this.yellow.x = this.yellow.getData("initPosition").x;
+        this.angel.y = this.angel.getData("initPosition").y;
+        this.devil.y = this.devil.getData("initPosition").y;
+        this.leftText.y = this.leftText.getData("initPosition").y;
+        this.rightText.y = this.rightText.getData("initPosition").y;
+        return this; 
+    }
+
     public close(): Promise<boolean> {
         return new Promise(resolve => {
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.purple,
-                duration: 1000,
+                duration: 1000*FACTOR,
                 x: this.purple.getData("targetPosition").x,
                 ease: "Sine.easeInOut",
                 onComplete: () => {
@@ -61,32 +74,32 @@ export class Door extends Phaser.GameObjects.Container {
 
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.yellow,
-                duration: 1000,
+                duration: 1000*FACTOR,
                 ease: "Sine.easeInOut",
                 x: this.yellow.getData("targetPosition").x
             });
 
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.angel,
-                duration: 500,
+                duration: 500*FACTOR,
                 y: this.angel.getData("targetPosition").y
             });
 
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.devil,
-                duration: 500,
+                duration: 500*FACTOR,
                 y: this.devil.getData("targetPosition").y
             });
 
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.leftText,
-                duration: 250,
+                duration: 250*FACTOR,
                 y: this.leftText.getData("targetPosition").y
             })
 
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.rightText,
-                duration: 250,
+                duration: 250*FACTOR,
                 y: this.rightText.getData("targetPosition").y
             })
         });
@@ -96,7 +109,7 @@ export class Door extends Phaser.GameObjects.Container {
         return new Promise(resolve => {
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.purple,
-                duration: 1000,
+                duration: 1000*FACTOR,
                 x: this.purple.getData("initPosition").x,
                 onComplete: () => {
                     resolve(true);
@@ -105,31 +118,31 @@ export class Door extends Phaser.GameObjects.Container {
 
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.yellow,
-                duration: 1000,
+                duration: 1000*FACTOR,
                 x: this.yellow.getData("initPosition").x
             });
 
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.angel,
-                duration: 500,
+                duration: 500*FACTOR,
                 y: this.angel.getData("initPosition").y
             });
 
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.devil,
-                duration: 500,
+                duration: 500*FACTOR,
                 y: this.devil.getData("initPosition").y
             });
 
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.leftText,
-                duration: 250,
+                duration: 250*FACTOR,
                 y: this.leftText.getData("initPosition").y
             })
 
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
                 targets: this.rightText,
-                duration: 250,
+                duration: 250*FACTOR,
                 y: this.rightText.getData("initPosition").y
             })
         });

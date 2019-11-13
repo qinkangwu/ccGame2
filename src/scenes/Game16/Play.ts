@@ -46,6 +46,7 @@ export default class Game16PlayScene extends Phaser.Scene {
 
     //数据
     private result$: Subject<Determine> = new Subject(); //结果订阅
+    private startAnimate$: Subject<string> = new Subject();  //开场动画的订阅
 
 
     private layer0: Phaser.GameObjects.Container;
@@ -188,7 +189,12 @@ export default class Game16PlayScene extends Phaser.Scene {
         });
 
         // create door
-        this.door = new Door(this).initClose();
+        this.door = new Door(this);
+        // if (index === 0) {
+        //     this.door.initClose();
+        // }else{
+        //     this.door.initOpen();
+        // }
         this.layer2.add(this.door);
 
         // create IndexText
@@ -207,7 +213,13 @@ export default class Game16PlayScene extends Phaser.Scene {
             if (value.isRight === true && value.devilBlood < offsetIndex) {
                 this.blood8Index += 1;
                 this.blood.setBlood8(this.blood8Index);
-                this.angelActing().then(this.nextRound.bind(this))
+                this.angelActing().then(() => {
+                    index += 1;
+                    this.scene.start('Game16PlayScene', {
+                        data: this.ccData,
+                        index: index
+                    });
+                })
             } else if (value.isRight === true && this.blood8Index === offsetIndex) {
                 this.blood8Index += 1;
                 this.blood.setBlood8(this.blood8Index);
@@ -220,7 +232,11 @@ export default class Game16PlayScene extends Phaser.Scene {
                         if (index === this.ccData.length - 1) {
                             window.location.href = CONSTANT.INDEX_URL;
                         } else {
-                            this.nextRound();
+                            index += 1;
+                            this.scene.start('Game16PlayScene', {
+                                data: this.ccData,
+                                index: index
+                            });
                         }
                     }
                 });
@@ -238,21 +254,39 @@ export default class Game16PlayScene extends Phaser.Scene {
                 this.devilActing().then(this.ohNo.bind(this));
             }
         });
+
+        this.startAnimate$.subscribe(async value => {
+            console.log(value);
+            if (value === "初始化关门后开门") {
+                this.door.initClose();
+                this.orderUI.show();
+                this.blood.visible = true;
+                await this.door.open();
+            } else if (value === "先关门后开门") {
+                await this.door.close();
+                this.orderUI.show();
+                this.blood.visible = true;
+                await this.door.open();
+            } else if(value === "初始化开门"){
+                this.orderUI.show();
+                this.blood.visible = true;
+                this.door.initOpen();
+            }
+        })
     }
 
     /**
      * 游戏开始
      */
     private async gameStart() {
-        let _index: string = index + 1 < 10 ? "0" + (index + 1) : (index + 1).toString();
-        //await this.door.close();
-        //await this.indexText.show(_index);
-        this.orderUI.show();
-        this.indexText.hide();
-        this.blood.visible = true;
-        await this.door.open();
+        //let _index: string = index + 1 < 10 ? "0" + (index + 1) : (index + 1).toString();
         if (index === 0) {
             this.observableFuc();
+            this.startAnimate$.next("初始化关门后开门");
+        }else if(index!==0&&index%(offsetIndex+1)===0){
+            this.startAnimate$.next("先关门后开门");
+        }else {
+            this.startAnimate$.next("初始化开门"); 
         }
         this.controls();
     }
@@ -388,7 +422,7 @@ export default class Game16PlayScene extends Phaser.Scene {
     /**
      * 重置开始状态
      */
-    private resetStart() {
+    private async resetStart() {
         this.enableBtnInteractive();
     }
 
@@ -397,13 +431,12 @@ export default class Game16PlayScene extends Phaser.Scene {
      * 再次错误
      */
     private ohNo() {
-        let reliveFuc = () => {   //复活
+        let reliveFuc = async () => {   //复活
+            await this.angelRelive();
             this.setGoldValue(-2);
             this.blood2Index = 0;
-            this.angelRelive().then(() => {
-                this.blood.setBlood2(this.blood2Index);
-            });
-
+            this.blood.setBlood2(this.blood2Index);
+            this.startAnimate$.next("先关门后开门"); 
         }
 
 
@@ -439,16 +472,12 @@ export default class Game16PlayScene extends Phaser.Scene {
     /**
      * 下一道题
      */
-    private nextRound(): void {
-        index += 1;
-        // if (index > this.ccData.length - 1) {
-        //     window.location.href = CONSTANT.INDEX_URL;
-        // }
-        //this.resetStart();
-        this.scene.start('Game16PlayScene', {
-            data: this.ccData,
-            index: index
-        });
+    private nextRound(close: boolean) {
+        // index += 1;
+        // this.scene.start('Game16PlayScene', {
+        //     data: this.ccData,
+        //     index: index
+        // });
     }
 
     /**
