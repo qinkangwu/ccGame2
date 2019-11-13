@@ -27,6 +27,7 @@ export default class Game16PlayScene extends Phaser.Scene {
     private blood2Index: number = 0;
     private blood8Index: number = 0;
     private blood8frame: string = null;
+    private blood2frame: string = null;
     //静态开始
     private bgm: Phaser.Sound.BaseSound; //背景音乐
     private btnExit: Button;  //退出按钮
@@ -164,7 +165,7 @@ export default class Game16PlayScene extends Phaser.Scene {
         this.blood = new Blood(this, this.blood2Index, this.blood8Index);
         this.blood.blood2.visible = false;
         this.blood.blood8.visible = false;
-        this.layer1.add([this.orderUI, this.blood]);
+        this.layer1.add([this.orderUI]);
 
 
         // create angel's action
@@ -218,6 +219,7 @@ export default class Game16PlayScene extends Phaser.Scene {
                 this.blood.setBlood8(this.blood8Index);
                 this.angelActing().then(() => {
                     this.blood8frame = this.blood.blood8.frame.name;
+                    this.blood2frame = this.blood.blood2.frame.name;
                     this.nextRound();
                 })
             } else if (value.isRight === true && this.blood8Index === offsetIndex) {
@@ -232,13 +234,9 @@ export default class Game16PlayScene extends Phaser.Scene {
                         if (index === this.ccData.length - 1) {
                             window.location.href = CONSTANT.INDEX_URL;
                         } else {
-                            this.blood8frame = this.blood.blood8.frame.name;
+                            this.blood8frame = "blood80000";
+                            this.blood2frame = this.blood.blood2.frame.name;
                             this.nextRound();
-                            // index += 1;
-                            // this.scene.start('Game16PlayScene', {
-                            //     data: this.ccData,
-                            //     index: index
-                            // });
                         }
                     }
                 });
@@ -262,19 +260,16 @@ export default class Game16PlayScene extends Phaser.Scene {
             if (value === "初始化关门后开门") {
                 this.door.initClose();
                 this.orderUI.show();
-                this.blood.blood2.visible = true;
-                this.blood.blood8.visible = true;
+                this.blood.show();
                 await this.door.open();
             } else if (value === "先关门后开门") {
                 await this.door.close();
-                this.blood.blood2.visible = true;
-                this.blood.blood8.visible = true;
+                this.blood.show();
                 this.orderUI.show();
                 await this.door.open();
             } else if (value === "初始化开门") {
                 this.orderUI.show();
-                this.blood.blood2.visible = true;
-                this.blood.blood8.visible = true;
+                this.blood.show();
                 this.door.initOpen();
             }
         })
@@ -295,8 +290,10 @@ export default class Game16PlayScene extends Phaser.Scene {
         }
         this.angelDevilFloating = this.orderUI.angelDevilFloating();
         if (this.blood8frame !== null) {
-            console.log(this.blood8frame);
             this.blood.blood8.setTexture('blood8', this.blood8frame);
+        }
+        if (this.blood2frame !== null) {
+            this.blood.blood2.setTexture('blood2', this.blood2frame);
         }
         this.controls();
     }
