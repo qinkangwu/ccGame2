@@ -104,7 +104,6 @@ export default class Game16PlayScene extends Phaser.Scene {
     }
 
 
-
     /**
      * 重置尺寸
      */
@@ -217,11 +216,6 @@ export default class Game16PlayScene extends Phaser.Scene {
                 this.blood.setBlood8(this.blood8Index);
                 this.angelActing().then(() => {
                     this.nextRound();
-                    // index += 1;
-                    // this.scene.start('Game16PlayScene', {
-                    //     data: this.ccData,
-                    //     index: index
-                    // });
                 })
             } else if (value.isRight === true && this.blood8Index === offsetIndex) {
                 this.blood8Index += 1;
@@ -339,7 +333,8 @@ export default class Game16PlayScene extends Phaser.Scene {
      */
     public angelActing(): Promise<boolean> {
         this.audioPlay("heavyBoxing");
-        return this.acting(this.angelAction, this.orderUI.devil.getWorldTransformMatrix().tx, this.orderUI.devil.getWorldTransformMatrix().ty, "angelKill");
+        this.acting(this.angelAction, this.orderUI.devil.getWorldTransformMatrix().tx, this.orderUI.devil.getWorldTransformMatrix().ty, "angelKill");
+        return this.orderUI.beingAttacked(this.orderUI.devil,"civa_devil_03","civa_devil_02",10);
     }
 
     /**
@@ -347,7 +342,8 @@ export default class Game16PlayScene extends Phaser.Scene {
      */
     public devilActing(): Promise<boolean> {
         this.audioPlay("defense");
-        return this.acting(this.devilAction, this.orderUI.angel.getWorldTransformMatrix().tx, this.orderUI.angel.getWorldTransformMatrix().ty, "devilKill");
+        this.acting(this.devilAction, this.orderUI.angel.getWorldTransformMatrix().tx, this.orderUI.angel.getWorldTransformMatrix().ty, "devilKill");
+        return this.orderUI.beingAttacked(this.orderUI.angel,"civa_angle_03","civa_angle_02",-10);
     }
 
     /**
