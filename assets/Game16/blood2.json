@@ -23,13 +23,109 @@
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
 	"sourceSize": {"w":417,"h":38}
+},
+"blood20003":
+{
+	"frame": {"x":0,"y":114,"w":417,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
+	"sourceSize": {"w":417,"h":38}
+},
+"blood20004":
+{
+	"frame": {"x":0,"y":152,"w":417,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
+	"sourceSize": {"w":417,"h":38}
+},
+"blood20005":
+{
+	"frame": {"x":0,"y":190,"w":417,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
+	"sourceSize": {"w":417,"h":38}
+},
+"blood20006":
+{
+	"frame": {"x":0,"y":228,"w":417,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
+	"sourceSize": {"w":417,"h":38}
+},
+"blood20007":
+{
+	"frame": {"x":0,"y":266,"w":417,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
+	"sourceSize": {"w":417,"h":38}
+},
+"blood20008":
+{
+	"frame": {"x":0,"y":304,"w":417,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
+	"sourceSize": {"w":417,"h":38}
+},
+"blood20009":
+{
+	"frame": {"x":0,"y":342,"w":417,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
+	"sourceSize": {"w":417,"h":38}
+},
+"blood20010":
+{
+	"frame": {"x":0,"y":380,"w":417,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
+	"sourceSize": {"w":417,"h":38}
+},
+"blood20011":
+{
+	"frame": {"x":0,"y":418,"w":417,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
+	"sourceSize": {"w":417,"h":38}
+},
+"blood20012":
+{
+	"frame": {"x":0,"y":456,"w":417,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
+	"sourceSize": {"w":417,"h":38}
+},
+"blood20013":
+{
+	"frame": {"x":0,"y":494,"w":417,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
+	"sourceSize": {"w":417,"h":38}
+},
+"blood20014":
+{
+	"frame": {"x":0,"y":532,"w":417,"h":38},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":417,"h":38},
+	"sourceSize": {"w":417,"h":38}
 }},
 "meta": {
 	"app": "Adobe Animate",
 	"version": "19.2.1.408",
 	"image": "blood2.png",
 	"format": "RGBA8888",
-	"size": {"w":512,"h":128},
+	"size": {"w":512,"h":1024},
 	"scale": "1"
 }
 }

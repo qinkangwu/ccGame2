@@ -26,6 +26,7 @@ export default class Game16PlayScene extends Phaser.Scene {
     //private times: number = 0;  //次数
     private blood2Index: number = 0;
     private blood8Index: number = 0;
+    private blood8frame: string = null;
     //静态开始
     private bgm: Phaser.Sound.BaseSound; //背景音乐
     private btnExit: Button;  //退出按钮
@@ -44,7 +45,7 @@ export default class Game16PlayScene extends Phaser.Scene {
     private devilAction: Phaser.GameObjects.Sprite;
     private reliveAction: Phaser.GameObjects.Sprite;
 
-    private angelDevilFloating:Phaser.Tweens.Tween;
+    private angelDevilFloating: Phaser.Tweens.Tween;
 
     //数据
     private result$: Subject<Determine> = new Subject(); //结果订阅
@@ -161,7 +162,8 @@ export default class Game16PlayScene extends Phaser.Scene {
         // create orderUI,blood
         this.orderUI = new OrderUI(this, this.ccData[index].trueWord, this.ccData[index].displayWord);
         this.blood = new Blood(this, this.blood2Index, this.blood8Index);
-        this.blood.visible = false;
+        this.blood.blood2.visible = false;
+        this.blood.blood8.visible = false;
         this.layer1.add([this.orderUI, this.blood]);
 
 
@@ -215,6 +217,7 @@ export default class Game16PlayScene extends Phaser.Scene {
                 this.blood8Index += 1;
                 this.blood.setBlood8(this.blood8Index);
                 this.angelActing().then(() => {
+                    this.blood8frame = this.blood.blood8.frame.name;
                     this.nextRound();
                 })
             } else if (value.isRight === true && this.blood8Index === offsetIndex) {
@@ -229,6 +232,7 @@ export default class Game16PlayScene extends Phaser.Scene {
                         if (index === this.ccData.length - 1) {
                             window.location.href = CONSTANT.INDEX_URL;
                         } else {
+                            this.blood8frame = this.blood.blood8.frame.name;
                             this.nextRound();
                             // index += 1;
                             // this.scene.start('Game16PlayScene', {
@@ -258,16 +262,19 @@ export default class Game16PlayScene extends Phaser.Scene {
             if (value === "初始化关门后开门") {
                 this.door.initClose();
                 this.orderUI.show();
-                this.blood.visible = true;
+                this.blood.blood2.visible = true;
+                this.blood.blood8.visible = true;
                 await this.door.open();
             } else if (value === "先关门后开门") {
                 await this.door.close();
+                this.blood.blood2.visible = true;
+                this.blood.blood8.visible = true;
                 this.orderUI.show();
-                this.blood.visible = true;
                 await this.door.open();
-            } else if(value === "初始化开门"){
+            } else if (value === "初始化开门") {
                 this.orderUI.show();
-                this.blood.visible = true;
+                this.blood.blood2.visible = true;
+                this.blood.blood8.visible = true;
                 this.door.initOpen();
             }
         })
@@ -281,12 +288,16 @@ export default class Game16PlayScene extends Phaser.Scene {
         if (index === 0) {
             this.observableFuc();
             this.startAnimate$.next("初始化关门后开门");
-        }else if(index!==0&&index%(offsetIndex+1)===0){
+        } else if (index !== 0 && index % (offsetIndex + 1) === 0) {
             this.startAnimate$.next("先关门后开门");
-        }else {
-            this.startAnimate$.next("初始化开门"); 
+        } else {
+            this.startAnimate$.next("初始化开门");
         }
         this.angelDevilFloating = this.orderUI.angelDevilFloating();
+        if (this.blood8frame !== null) {
+            console.log(this.blood8frame);
+            this.blood.blood8.setTexture('blood8', this.blood8frame);
+        }
         this.controls();
     }
 
@@ -334,7 +345,7 @@ export default class Game16PlayScene extends Phaser.Scene {
     public angelActing(): Promise<boolean> {
         this.audioPlay("heavyBoxing");
         this.acting(this.angelAction, this.orderUI.devil.getWorldTransformMatrix().tx, this.orderUI.devil.getWorldTransformMatrix().ty, "angelKill");
-        return this.orderUI.beingAttacked(this.orderUI.devil,"civa_devil_03","civa_devil_02",10);
+        return this.orderUI.beingAttacked(this.orderUI.devil, "civa_devil_03", "civa_devil_02", 10);
     }
 
     /**
@@ -343,7 +354,7 @@ export default class Game16PlayScene extends Phaser.Scene {
     public devilActing(): Promise<boolean> {
         this.audioPlay("defense");
         this.acting(this.devilAction, this.orderUI.angel.getWorldTransformMatrix().tx, this.orderUI.angel.getWorldTransformMatrix().ty, "devilKill");
-        return this.orderUI.beingAttacked(this.orderUI.angel,"civa_angle_03","civa_angle_02",-10);
+        return this.orderUI.beingAttacked(this.orderUI.angel, "civa_angle_03", "civa_angle_02", -10);
     }
 
     /**
@@ -436,8 +447,8 @@ export default class Game16PlayScene extends Phaser.Scene {
             await this.angelRelive();
             this.setGoldValue(-2);
             this.blood2Index = 0;
-            this.blood.setBlood2(this.blood2Index);
-            this.startAnimate$.next("先关门后开门"); 
+            this.blood.blood2.setTexture("blood2","blood20000");
+            this.startAnimate$.next("先关门后开门");
         }
 
 
