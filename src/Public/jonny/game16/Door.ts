@@ -37,13 +37,14 @@ export class Door extends Phaser.GameObjects.Container {
         this.add([this.purple, this.yellow, this.devil, this.angel, this.leftText, this.rightText]);
     }
 
-    public initClose(): void {
+    public initClose():Door {
         this.purple.x = this.purple.getData("targetPosition").x;
         this.yellow.x = this.yellow.getData("targetPosition").x;
         this.angel.y = this.angel.getData("targetPosition").y;
         this.devil.y = this.devil.getData("targetPosition").y;
         this.leftText.y = this.leftText.getData("targetPosition").y;
         this.rightText.y = this.rightText.getData("targetPosition").y;
+        return this;
     }
 
     public close(): Promise<boolean> {

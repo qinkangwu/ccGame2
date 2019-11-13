@@ -188,7 +188,7 @@ export default class Game16PlayScene extends Phaser.Scene {
         });
 
         // create door
-        this.door = new Door(this);
+        this.door = new Door(this).initClose();
         this.layer2.add(this.door);
 
         // create IndexText
@@ -245,9 +245,8 @@ export default class Game16PlayScene extends Phaser.Scene {
      */
     private async gameStart() {
         let _index: string = index + 1 < 10 ? "0" + (index + 1) : (index + 1).toString();
-        await this.door.close();
-        //this.door.initClose();
-        await this.indexText.show(_index);
+        //await this.door.close();
+        //await this.indexText.show(_index);
         this.orderUI.show();
         this.indexText.hide();
         this.blood.visible = true;
