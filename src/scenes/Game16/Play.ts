@@ -246,6 +246,7 @@ export default class Game16PlayScene extends Phaser.Scene {
     private async gameStart() {
         let _index: string = index + 1 < 10 ? "0" + (index + 1) : (index + 1).toString();
         await this.door.close();
+        //this.door.initClose();
         await this.indexText.show(_index);
         this.orderUI.show();
         this.indexText.hide();

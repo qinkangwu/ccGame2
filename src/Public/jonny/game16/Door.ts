@@ -37,6 +37,15 @@ export class Door extends Phaser.GameObjects.Container {
         this.add([this.purple, this.yellow, this.devil, this.angel, this.leftText, this.rightText]);
     }
 
+    public initClose(): void {
+        this.purple.x = this.purple.getData("targetPosition").x;
+        this.yellow.x = this.yellow.getData("targetPosition").x;
+        this.angel.y = this.angel.getData("targetPosition").y;
+        this.devil.y = this.devil.getData("targetPosition").y;
+        this.leftText.y = this.leftText.getData("targetPosition").y;
+        this.rightText.y = this.rightText.getData("targetPosition").y;
+    }
+
     public close(): Promise<boolean> {
         return new Promise(resolve => {
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
@@ -85,7 +94,7 @@ export class Door extends Phaser.GameObjects.Container {
     public open(): Promise<boolean> {
         return new Promise(resolve => {
             this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
-                targets: this.purple, 
+                targets: this.purple,
                 duration: 1000,
                 x: this.purple.getData("initPosition").x,
                 onComplete: () => {
