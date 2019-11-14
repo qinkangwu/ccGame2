@@ -2,7 +2,7 @@ import 'phaser';
 import apiPath from '../../lib/apiPath';
 import { get } from '../../lib/http';
 import { Assets, Topic } from '../../interface/Game16';
-import { resize,arrDisorder } from '../../Public/jonny/core';
+import { resize, arrDisorder } from '../../Public/jonny/core';
 import { SellingGold, Particles } from '../../Public/jonny/components';
 import { TipsReliveParticlesEmitter } from '../../Public/jonny/game16';
 
@@ -21,7 +21,7 @@ export default class Game16LoadScene extends Phaser.Scene {
     /**
      * game16 UI
      */
-    { "url": "assets/Game16/F.Devil.png", "key": "F.Devil" }, { "url": "assets/Game16/T.Angel.png", "key": "T.Angel" }, { "url": "assets/Game16/bg_purple.png", "key": "bg_purple" }, { "url": "assets/Game16/bg_subject.png", "key": "bg_subject" }, { "url": "assets/Game16/bg_yellow.png", "key": "bg_yellow" }, { "url": "assets/Game16/btn_false.png", "key": "btn_false" }, { "url": "assets/Game16/btn_true.png", "key": "btn_true" }, { "url": "assets/Game16/civa_angle_01.png", "key": "civa_angle_01" }, { "url": "assets/Game16/civa_angle_02.png", "key": "civa_angle_02" }, { "url": "assets/Game16/civa_angle_03.png", "key": "civa_angle_03" }, { "url": "assets/Game16/civa_devil_01.png", "key": "civa_devil_01" }, { "url": "assets/Game16/civa_devil_02.png", "key": "civa_devil_02" },{ "url": "assets/Game16/civa_devil_03.png", "key": "civa_devil_03" }, { "url": "assets/mask/Game16.png", "key": "Game16" }, { "url": "assets/Game16/bottomBar.png", "key": "bottomBar" }, { "url": "assets/Game16/leftBg.png", "key": "leftBg" }, { "url": "assets/Game16/rightBg.png", "key": "rightBg" }, { "url": "assets/Game16/vs.png", "key": "vs" }];
+    { "url": "assets/Game16/F.Devil.png", "key": "F.Devil" }, { "url": "assets/Game16/T.Angel.png", "key": "T.Angel" }, { "url": "assets/Game16/bg_purple.png", "key": "bg_purple" }, { "url": "assets/Game16/bg_subject.png", "key": "bg_subject" }, { "url": "assets/Game16/bg_yellow.png", "key": "bg_yellow" }, { "url": "assets/Game16/btn_false.png", "key": "btn_false" }, { "url": "assets/Game16/btn_true.png", "key": "btn_true" }, { "url": "assets/Game16/civa_angle_01.png", "key": "civa_angle_01" }, { "url": "assets/Game16/civa_angle_02.png", "key": "civa_angle_02" }, { "url": "assets/Game16/civa_angle_03.png", "key": "civa_angle_03" }, { "url": "assets/Game16/civa_devil_01.png", "key": "civa_devil_01" }, { "url": "assets/Game16/civa_devil_02.png", "key": "civa_devil_02" }, { "url": "assets/Game16/civa_devil_03.png", "key": "civa_devil_03" }, { "url": "assets/mask/Game16.png", "key": "Game16" }, { "url": "assets/Game16/bottomBar.png", "key": "bottomBar" }, { "url": "assets/Game16/leftBg.png", "key": "leftBg" }, { "url": "assets/Game16/rightBg.png", "key": "rightBg" }, { "url": "assets/Game16/vs.png", "key": "vs" }];
 
   constructor() {
     super({
@@ -78,9 +78,7 @@ export default class Game16LoadScene extends Phaser.Scene {
       if (res.code === '0000') {
         this.ccData = res.result.filter((v, i) => i <= 7);
         this.ccData = arrDisorder(this.ccData);
-        this.ccData = this.ccData.concat(
-          arrDisorder(this.ccData),
-          arrDisorder(this.ccData)
+        this.ccData = this.ccData.concat(arrDisorder(this.ccData), arrDisorder(this.ccData));
       }
     }).then(() => {
       this.loadRequestAssets();
