@@ -46,7 +46,8 @@ export default class Game16PlayScene extends Phaser.Scene {
     private devilAction: Phaser.GameObjects.Sprite;
     private reliveAction: Phaser.GameObjects.Sprite;
 
-    private angelDevilFloating: Phaser.Tweens.Tween;
+    private angelFloating: Phaser.Tweens.Tween;
+    private devilFloating: Phaser.Tweens.Tween;
 
     //数据
     private result$: Subject<Determine> = new Subject(); //结果订阅
@@ -220,6 +221,8 @@ export default class Game16PlayScene extends Phaser.Scene {
             } else if (value.isRight === true && this.blood8Index === offsetIndex) {
                 this.blood8Index += 1;
                 this.blood.setBlood8(this.blood8Index);
+                this.devilFloating.stop();
+                this.orderUI.devil.setTexture("civa_devil_03");
                 this.sellingGold = new SellingGold(this, {
                     callback: () => {
                         this.sellingGold.golds.destroy();
@@ -246,7 +249,12 @@ export default class Game16PlayScene extends Phaser.Scene {
             } else if (value.isRight === false && value.angelBlood === 1) {
                 this.blood2Index += 1;
                 this.blood.setBlood2(this.blood2Index);
-                this.devilActing().then(this.ohNo.bind(this));
+                this.devilActing()
+                    .then(() => {
+                        this.angelFloating.stop();
+                        this.orderUI.angel.setTexture("civa_angle_03");
+                    })
+                    .then(this.ohNo.bind(this));
             }
         });
 
@@ -283,7 +291,8 @@ export default class Game16PlayScene extends Phaser.Scene {
         } else {
             this.startAnimate$.next("初始化开门");
         }
-        this.angelDevilFloating = this.orderUI.angelDevilFloating();
+        this.angelFloating = this.orderUI.angelFloating();
+        this.devilFloating = this.orderUI.devilFloating();
         if (this.blood8frame !== null) {
             this.blood.blood8.setTexture('blood8', this.blood8frame);
         }
@@ -437,9 +446,11 @@ export default class Game16PlayScene extends Phaser.Scene {
     private ohNo() {
         let reliveFuc = async () => {   //复活
             await this.angelRelive();
+            this.angelFloating.play();
+            this.orderUI.angel.setTexture("civa_angle_02");
             this.setGoldValue(-2);
             this.blood2Index = 0;
-            this.blood.blood2.setTexture("blood2","blood20000");
+            this.blood.blood2.setTexture("blood2", "blood20000");
             //this.startAnimate$.next("先关门后开门");
         }
 
@@ -470,7 +481,8 @@ export default class Game16PlayScene extends Phaser.Scene {
      * 销毁组件
      */
     private destroyComponent(): void {
-        this.angelDevilFloating.remove();
+        this.angelFloating.remove();
+        this.devilFloating.remove();
     }
 
     /**

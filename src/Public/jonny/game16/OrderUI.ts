@@ -43,9 +43,20 @@ export class OrderUI extends Phaser.GameObjects.Container {
         this.whiteBar.visible = false;
     }
 
-    angelDevilFloating(): Phaser.Tweens.Tween {
+    angelFloating(): Phaser.Tweens.Tween {
         return this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
-            targets: [this.angel, this.devil],
+            targets: this.angel,
+            y: "-=10",
+            duration: 500,
+            ease: "Sine.easeInOut",
+            repeat: -1,
+            yoyo: true
+        })
+    }
+
+    devilFloating(): Phaser.Tweens.Tween {
+        return this.scene.add.tween(<Phaser.Types.Tweens.TweenBuilderConfig>{
+            targets: this.devil,
             y: "-=10",
             duration: 500,
             ease: "Sine.easeInOut",
