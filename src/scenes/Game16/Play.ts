@@ -177,7 +177,7 @@ export default class Game16PlayScene extends Phaser.Scene {
         });
 
         // create devil's action
-        this.devilAction = this.add.sprite(0, 0, "devilAction").setDepth(5).setVisible(false);
+        this.devilAction = this.add.sprite(0, 0, "devilAction").setDepth(5).setVisible(false).setFlipX(true);
         this.anims.create({
             key: "devilKill",
             frames: this.anims.generateFrameNames('devilAction', { prefix: 'devilAction1000', start: 0, end: 9 }),
@@ -440,7 +440,7 @@ export default class Game16PlayScene extends Phaser.Scene {
             this.setGoldValue(-2);
             this.blood2Index = 0;
             this.blood.blood2.setTexture("blood2","blood20000");
-            this.startAnimate$.next("先关门后开门");
+            //this.startAnimate$.next("先关门后开门");
         }
 
 

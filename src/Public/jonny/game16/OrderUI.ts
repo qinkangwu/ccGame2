@@ -68,13 +68,12 @@ export class OrderUI extends Phaser.GameObjects.Container {
                 tweens: [
                     {
                         x: `+=${x}`,
-                        duration: 1000,
+                        duration: 240,
                         ease: "Sine.easeOut"
                     },
                     {
                         alpha: 0,
-                        flipX:true,
-                        duration: 1000,
+                        duration: 200,
                         repeat: 1,
                         yoyo: true,
                         ease: "Sine.easeOut"
