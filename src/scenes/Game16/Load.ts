@@ -2,9 +2,9 @@ import 'phaser';
 import apiPath from '../../lib/apiPath';
 import { get } from '../../lib/http';
 import { Assets, Topic } from '../../interface/Game16';
-import { resize } from '../../Public/jonny/core';
+import { resize,arrDisorder } from '../../Public/jonny/core';
 import { SellingGold, Particles } from '../../Public/jonny/components';
-import { Door, IndexText, OrderUI, Blood, TipsReliveParticlesEmitter } from '../../Public/jonny/game16';
+import { TipsReliveParticlesEmitter } from '../../Public/jonny/game16';
 
 const W = 1024;
 const H = 552;
@@ -77,7 +77,10 @@ export default class Game16LoadScene extends Phaser.Scene {
     get(apiPath.getWordConfusionList).then((res) => {
       if (res.code === '0000') {
         this.ccData = res.result.filter((v, i) => i <= 7);
-        this.ccData = this.ccData.concat(this.ccData,this.ccData,this.ccData,this.ccData);
+        this.ccData = arrDisorder(this.ccData);
+        this.ccData = this.ccData.concat(
+          arrDisorder(this.ccData),
+          arrDisorder(this.ccData)
       }
     }).then(() => {
       this.loadRequestAssets();
