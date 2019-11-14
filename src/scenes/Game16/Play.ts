@@ -46,8 +46,8 @@ export default class Game16PlayScene extends Phaser.Scene {
     private devilAction: Phaser.GameObjects.Sprite;
     private reliveAction: Phaser.GameObjects.Sprite;
 
-    private angelFloating: Phaser.Tweens.Tween;
-    private devilFloating: Phaser.Tweens.Tween;
+    private angelFloating: Phaser.Tweens.Tween = null;
+    private devilFloating: Phaser.Tweens.Tween = null;
 
     //数据
     private result$: Subject<Determine> = new Subject(); //结果订阅
@@ -209,18 +209,18 @@ export default class Game16PlayScene extends Phaser.Scene {
      * 观察者
      */
     private observableFuc() {
-        this.result$.subscribe(value => {
+        this.result$.subscribe(async value => {
             if (value.isRight === true && value.devilBlood < offsetIndex) {
                 this.blood8Index += 1;
                 this.blood.setBlood8(this.blood8Index);
-                this.angelActing().then(() => {
-                    this.blood8frame = this.blood.blood8.frame.name;
-                    this.blood2frame = this.blood.blood2.frame.name;
-                    this.nextRound();
-                })
+                await this.angelActing();
+                this.blood8frame = this.blood.blood8.frame.name;
+                this.blood2frame = this.blood.blood2.frame.name;
+                this.nextRound();
             } else if (value.isRight === true && this.blood8Index === offsetIndex) {
                 this.blood8Index += 1;
                 this.blood.setBlood8(this.blood8Index);
+                await this.angelActing();
                 this.devilFloating.stop();
                 this.orderUI.devil.setTexture("civa_devil_03");
                 this.sellingGold = new SellingGold(this, {
