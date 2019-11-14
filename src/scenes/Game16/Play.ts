@@ -448,25 +448,20 @@ export default class Game16PlayScene extends Phaser.Scene {
             await this.angelRelive();
             this.angelFloating.play();
             this.orderUI.angel.setTexture("civa_angle_02");
-            this.setGoldValue(-2);
+            this.setGoldValue(-1);
             this.blood2Index = 0;
             this.blood.blood2.setTexture("blood2", "blood20000");
             //this.startAnimate$.next("先关门后开门");
         }
 
 
-        let changeSingle = () => {   //换一个
-            //reliveFuc();
-            //this.nextRound();
-        }
-
-        let replay = () => {    //再玩一次
+        let replay = () => {    //复活
             reliveFuc();
             this.resetStart();
         }
 
         this.tipsParticlesEmitter.error(
-            changeSingle,
+            this.restart,
             replay
         )
         // if (goldValue === 0) {
@@ -475,6 +470,14 @@ export default class Game16PlayScene extends Phaser.Scene {
         //         alert("啊哦，你又错啦！金币不足，一起去赚金币吧");
         //     }, 1300)
         // }
+    }
+
+    /**
+     * 重新开始游戏
+     */
+    private restart() {
+        this.destroyComponent();
+        window.location.reload();
     }
 
     /**
