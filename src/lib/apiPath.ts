@@ -16,5 +16,12 @@ export default {
      * @param bookId 62e346de8d8118e9b8a3d481d7d1b1rrt
      * @param unitId eec17898988511e9b6d5d485d7d1b147
      */
-    getWordConfusionList:'https://ccgame.civaonline.cn/game/wordConfusion/getWordConfusionList?bookId=62e346de8d8118e9b8a3d481d7d1b1rrt&unitId=eec17898988511e9b6d5d485d7d1b147'
+    getWordConfusionList:'https://ccgame.civaonline.cn/game/wordConfusion/getWordConfusionList?bookId=62e346de8d8118e9b8a3d481d7d1b1rrt&unitId=eec17898988511e9b6d5d485d7d1b147',
+
+    /**
+     * 填空类的选择题
+     * @param bookId c737587a-34ce-47d5-b5c0-6db031712c07
+     * @param unitId aaeacf2b-bc61-4135-a976-aa1b6815eeaf
+     */
+    getQuestionData:'https://ccgame.civaonline.cn/game/question/getQuestionData?bookId=c737587a-34ce-47d5-b5c0-6db031712c07&unitId=aaeacf2b-bc61-4135-a976-aa1b6815eeaf'
 }
