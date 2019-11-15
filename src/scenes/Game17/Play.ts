@@ -169,6 +169,7 @@ export default class Game17PlayScene extends Phaser.Scene {
     });
     console.log(this.anims);
     this.mouth = this.add.sprite(0, 0, "mouth", "mouthKey00").setDepth(3).setVisible(false).setAlpha(0.7);
+    this.mouth.on("animationcomplete",()=>{this.mouth.visible = false;});
    
   }
 
