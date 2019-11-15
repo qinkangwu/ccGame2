@@ -72,36 +72,30 @@ export default class Game17LoadScene extends Phaser.Scene {
    */
   private getData() {
     let serial: string[] = ["A", "B", "C", "D"]
-    let position: Array<Vec2> = [
+    let position4: Array<Vec2> = [
       new Vec2(27 + 256 * 0.5, 322 + 204 * 0.5),
       new Vec2(284 + 256 * 0.5, 322 + 204 * 0.5),
       new Vec2(511.5 + 256 * 0.5, 322 + 204 * 0.5),
       new Vec2(767.5 + 256 * 0.5, 322 + 204 * 0.5)
     ];
-    get("assets/game13/getExamList.json").then((res) => {
+    let position3: Array<Vec2> = [
+      new Vec2(256-15, 322 + 204 * 0.5),
+      new Vec2(512, 322 + 204 * 0.5),
+      new Vec2(768+15, 322 + 204 * 0.5)
+    ];
+    get(apiPath.getQuestionData).then((res) => {
       if (res.code === '0000') {
-        this.ccData = (<any>res.result.questions)
-          .filter(v => {
-            return v.questionkeyword === "选择正确答案";
-          })
+        this.ccData = (<any>res.result)
+          .filter((v,i)=>i<20)
           .map(v => {
-            delete v.answerisright;
             delete v.audiokey;
-            delete v.endtime;
-            delete v.id;
-            delete v.questionkeyword;
-            delete v.exammoduletype;
-            delete v.starttime;
-            delete v.studentanswer;
-            delete v.questiontype;
-            v.questioncontent = v.questioncontent.replace(/[\?\？]\s*/, "?\n").replace(/^[-—]+/, "").replace(/\s{2,}/, " ").replace(/\?_+/, "?\n").replace(/\n$/, "").replace(/^\s/, "").replace(/\?\s*[—-]+/, "?\n").replace(/\n\s+/, "\n");
-            v.answers.push({
-              id: "126d8151-17e9-4e5e-8860-60c83ea15d32",
-              answercontent: "nerver",
-              isright: "0"
-            });
+            delete v.imgKey;
+            v.questionContent = v.questionContent.replace(/\d+\./,"").replace(/[\?\？]\s*/, "?\n").replace(/^[-—]+/, "").replace(/\s{2,}/, " ").replace(/\?_+/, "?\n").replace(/\n$/, "").replace(/^\s/, "").replace(/\?\s*[—-]+/, "?\n").replace(/\n\s+/, "\n").replace(/&nbsp;/,"").replace(/_+/,"___").replace(/’/,"'");
             v.answers.forEach((_v, _i) => {
-              _v.position = position[_i];
+              delete _v.audioKey;
+              delete _v.imgKey;
+              _v.answerContent = _v.answerContent.replace(/[;；]/,";\n");
+              _v.position = v.answers.length === 4 ? position4[_i] : position3[_i];
               _v.bgTexture = "daan02";
               _v.serial = {
                 value: serial[_i],
@@ -113,7 +107,6 @@ export default class Game17LoadScene extends Phaser.Scene {
             });
             return v;
           })
-        console.log(this.ccData);
       }
     }).then(() => {
       this.loadAudio();

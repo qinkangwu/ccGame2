@@ -147,14 +147,15 @@ export default class Game17PlayScene extends Phaser.Scene {
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
 
     //创建题板
-    this.topic = new Topic(this, this.ccData[index].questioncontent, "civa_02");
+    console.log(this.ccData);
+    this.topic = new Topic(this, this.ccData[index].questionContent, "civa_02");
     this.ccData[index].answers.forEach(answer => {
       let _answer: Answer = new Answer(this, {
         position: { x: answer.position.x, y: answer.position.y },
         bgTexture: "daan02",
         serial: answer.serial,
-        answercontent: answer.answercontent,
-        isright: answer.isright
+        answerContent: answer.answerContent,
+        isRight: answer.isRight
       });
       this.answers.push(_answer);
     });
@@ -334,9 +335,10 @@ export default class Game17PlayScene extends Phaser.Scene {
    * 判断做题结果是否正确
    */
   private checkoutResult(): Observable<boolean> {
-    let isRightValue: string = this.prevAnswer.isright;
+    console.log(this.prevAnswer);
+    let isRightValue: number= this.prevAnswer.isRight;
     return Observable.create(subscriber => {
-      if (isRightValue === "1") {
+      if (isRightValue === 1) {
         subscriber.next(true);
       } else {
         subscriber.next(false);

@@ -4,7 +4,7 @@ export interface Assets {
 }
 
 export interface QueryTopic {
-    questioncontent:string;
+    questionContent:string;
     answers:AnswerConfig[];
 }
 
@@ -14,7 +14,7 @@ export interface AnswerConfig{
         y:number;
     },
     bgTexture:string;
-    answercontent:string;
+    answerContent:string;
     serial:{
         value:string;
         position:{
@@ -22,5 +22,5 @@ export interface AnswerConfig{
             y:number;
         }
     };
-    isright:string;
+    isRight:number;
 }
