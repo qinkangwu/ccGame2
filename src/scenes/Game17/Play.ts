@@ -1,7 +1,7 @@
 import 'phaser';
 import { Observable } from 'rxjs';
 import { QueryTopic, AnswerConfig } from '../../interface/Game17';
-import { cover, rotateTips, isHit, Vec2, CONSTANT} from '../../Public/jonny/core';
+import { cover, rotateTips, isHit, Vec2, CONSTANT,EASE} from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 import { Topic, Answer } from '../../Public/jonny/game17';
@@ -195,17 +195,19 @@ export default class Game17PlayScene extends Phaser.Scene {
     this.answers.forEach(_answer => {
       _answer.interactive = false;
     });
+    this.add.tween(< Phaser.Types.Tweens.TweenBuilderConfig>{
+      targets:answer.bg,
+      scale:1.2,
+      duration:200,
+      yoyo:true,
+      ease:"Sine.easeInOut"
+    });
     this.mouth.visible = true;
     this.mouth.x = answer.x;
     this.mouth.y = answer.y + 13;
     this.mouth.play("small");
     this.audioPlay("clickMp3");
-    console.log(1);
     this.prevAnswer = answer;
-    // //@ts-ignore
-    // answer.list[0].visible = true;
-    // //@ts-ignore
-    // answer.list[1].setTint(0xffffff);
     this.testEnd();
   }
 
