@@ -250,7 +250,8 @@ export default class Game18PlayScene extends Phaser.Scene {
     }
 
     let animate = async () => {
-      await this.audioPlay("right");
+      await this.prevAnswer.bounceAni();
+      this.audioPlay("right");
       await this.civa.asBeeWorking(this.prevAnswer.x,this.prevAnswer.y);
       this.audioPlay("successMp3");
       nextFuc();
@@ -263,6 +264,7 @@ export default class Game18PlayScene extends Phaser.Scene {
    * 错误的结果处理
    */
   private async isWrong() {
+    this.prevAnswer.shakingAni();
     await this.audioPlay("wrong");
     this.times += 1;
     if (this.times === 1) {
