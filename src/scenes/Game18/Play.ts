@@ -157,7 +157,7 @@ export default class Game18PlayScene extends Phaser.Scene {
         answerContent: answer.answerContent,
         isRight: answer.isRight
       });
-      _answer.answerContent.setFontSize(40).setPosition(0,0);
+      _answer.answerContent.setPosition(0,0);
       this.answers.push(_answer);
     });
 
