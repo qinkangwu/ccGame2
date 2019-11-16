@@ -10,7 +10,7 @@ export class Topic extends Phaser.GameObjects.Container{
         //this.question =  new Phaser.GameObjects.BitmapText(scene, 0, 10, "ArialRoundedBold",questionContent,95-questionContent.length, 1).setOrigin(0.5);
         this.question =  new Phaser.GameObjects.Text(scene, 0, 10, questionContent,<Phaser.Types.GameObjects.Text.TextSyle>{
             align:"center",
-            fontFamily:"Arial",
+            fontFamily:"Arial Rounded MT Bold",
             color:"#ffffff",
             fontSize:"30px",
             wordWrap:<Phaser.Types.GameObjects.Text.TextWordWrap>{width:656}

@@ -1,7 +1,7 @@
 import 'phaser';
 import { Observable } from 'rxjs';
 import { QueryTopic, AnswerConfig } from '../../interface/Game17';
-import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
+import { cover, rotateTips, isHit, Vec2, CONSTANT} from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 import { Topic, Answer } from '../../Public/jonny/game17';

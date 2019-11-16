@@ -1,8 +1,14 @@
+/*载入字体*/
+@font-face{
+  font-family: 'Arial Rounded Bold'; 
+  src:url('assets/font/ArialRoundedBold.ttf') format('truetype')
+}
+
 .obj-cover-center{
-    width: 100% !important;
-      height: 100% !important;
-      object-fit: contain;
-      object-position: center;
+  width: 100% !important;
+    height: 100% !important;
+    object-fit: contain;
+    object-position: center;
 }
 
 /*提示组件 开始－－－－*/
