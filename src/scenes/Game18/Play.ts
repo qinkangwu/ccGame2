@@ -13,7 +13,7 @@ var index: number; //题目的指针，默认为0
 var goldValue: number = 3; //金币的值
 
 
-export default class Game17PlayScene extends Phaser.Scene {
+export default class Game18PlayScene extends Phaser.Scene {
   private ccData: QueryTopic[] = [];
   private times: number = 0;  //次数
 
@@ -30,7 +30,6 @@ export default class Game17PlayScene extends Phaser.Scene {
   private topic: Topic;
   private answers: Array<Answer> = [];
   private prevAnswer: Answer = null;
-  private mouth: Phaser.GameObjects.Sprite;
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
 
@@ -51,7 +50,7 @@ export default class Game17PlayScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: "Game17PlayScene"
+      key: "Game18PlayScene"
     });
   }
 
@@ -72,7 +71,7 @@ export default class Game17PlayScene extends Phaser.Scene {
       this.scene.pause();
       rotateTips.init();
       this.firstCreate();
-      cover(this, "Game17", () => {
+      cover(this, "Game18", () => {
         this.gameStart();
       });
     } else {
@@ -158,22 +157,18 @@ export default class Game17PlayScene extends Phaser.Scene {
         answerContent: answer.answerContent,
         isRight: answer.isRight
       });
+      _answer.answerContent.setFontSize(40).setPosition(0,0);
       this.answers.push(_answer);
     });
 
     this.layer3.add([this.topic]);
     this.layer3.add(this.answers);
-    this.anims.create({
-      key: "small",
-      frames: this.anims.generateFrameNames('mouth', { prefix: 'mouthKey', start: 0, end: 19 }),
-      frameRate: 24,
-      repeat:2
-    });
-    this.mouth = this.add.sprite(0, 0, "mouth", "mouthKey00").setDepth(3).setVisible(false).setAlpha(0.7);
-    this.mouth.on("animationcomplete",()=>{this.mouth.visible = false;});
 
-    this.civa = new CivaWorker(this,820.5+116*0.5,34.5+116*0.5,"civa_02").setDepth(4);
+    // create bee
+    this.civa = new CivaWorker(this,820.5+116*0.5,34.5+116*0.5,"civaBee","civaBee0000").setDepth(4).asBee();
     this.add.existing(this.civa);
+
+    this.civa.asBeeDance();
    
   }
 
@@ -206,10 +201,6 @@ export default class Game17PlayScene extends Phaser.Scene {
       yoyo:true,
       ease:"Sine.easeInOut"
     });
-    this.mouth.visible = true;
-    this.mouth.x = answer.x;
-    this.mouth.y = answer.y + 13;
-    this.mouth.play("small");
     this.audioPlay("clickMp3");
     this.prevAnswer = answer;
     this.testEnd();
@@ -266,7 +257,7 @@ export default class Game17PlayScene extends Phaser.Scene {
 
     let animate = async () => {
       await this.audioPlay("right");
-      //await this.orderUI.leave();
+      await this.civa.asBeeWorking(this.prevAnswer.x,this.prevAnswer.y);
       this.audioPlay("successMp3");
       nextFuc();
     }
@@ -331,7 +322,7 @@ export default class Game17PlayScene extends Phaser.Scene {
       window.location.href = CONSTANT.INDEX_URL;
     }
     this.times = 0;
-    this.scene.start('Game17PlayScene', {
+    this.scene.start('Game18PlayScene', {
       data: this.ccData,
       index: index
     });

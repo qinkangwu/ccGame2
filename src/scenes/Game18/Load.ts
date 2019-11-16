@@ -9,7 +9,7 @@ import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 const W = 1024;
 const H = 552;
 
-export default class Game17LoadScene extends Phaser.Scene {
+export default class Game18LoadScene extends Phaser.Scene {
   private _loader: Phaser.Loader.LoaderPlugin;
   private ccData: Array<QueryTopic> = [];
   private centerText: Phaser.GameObjects.Text; //文本内容
@@ -17,16 +17,16 @@ export default class Game17LoadScene extends Phaser.Scene {
     /**
      * common UI
      */
-    { "url": "assets/mask/Game17.png", "key": "Game17" }, { "url": "assets/commonUI/successBtn.png", "key": "successBtn" }, { "url": "assets/commonUI/btnSoundOff.png", "key": "btnSoundOff" }, { "url": "assets/commonUI/btnSoundOn.png", "key": "btnSoundOn" }, { "url": "assets/commonUI/btnExit.png", "key": "btnExit" }, { "url": "assets/commonUI/goldValue.png", "key": "goldValue" }, { "url": "assets/commonUI/tipsArrowUp.png", "key": "tipsArrowUp" }
+    { "url": "assets/mask/Game18.png", "key": "Game18" }, { "url": "assets/commonUI/successBtn.png", "key": "successBtn" }, { "url": "assets/commonUI/btnSoundOff.png", "key": "btnSoundOff" }, { "url": "assets/commonUI/btnSoundOn.png", "key": "btnSoundOn" }, { "url": "assets/commonUI/btnExit.png", "key": "btnExit" }, { "url": "assets/commonUI/goldValue.png", "key": "goldValue" }, { "url": "assets/commonUI/tipsArrowUp.png", "key": "tipsArrowUp" }
     /**
      * game15 UI
      */
-    , { "url": "assets/Game17/bg.png", "key": "bg" }, { "url": "assets/Game17/civa_02.png", "key": "civa_02" }, { "url": "assets/Game17/daan02.png", "key": "daan" }, { "url": "assets/Game17/tigan01.png", "key": "tigan01" }
+    , { "url": "assets/Game18/bg.png", "key": "bg" }, { "url": "assets/Game18/daan01.png", "key": "daan" }, { "url": "assets/Game18/tigan01.png", "key": "tigan01" }
   ];
 
   constructor() {
     super({
-      key: "Game17LoadScene"
+      key: "Game18LoadScene"
     });
     this.ccData = [];
   }
@@ -47,8 +47,8 @@ export default class Game17LoadScene extends Phaser.Scene {
     this.load.audio('clickMp3', 'assets/sounds/clickMp3.mp3');
     this.load.audio('right', 'assets/sounds/newJoin/right.mp3');
     this.load.audio('wrong', 'assets/sounds/newJoin/wrong.mp3');
+    this.load.atlas("civaBee","assets/Game18/civaBee.png","assets/Game18/civaBee.json");
     this.load.bitmapFont('ArialRoundedBold', 'assets/font/ArialRoundedBold/font.png', 'assets/font/ArialRoundedBold/font.xml');
-    this.load.atlas("mouth","assets/Game17/mouth.png","assets/Game17/mouth.json");
     TipsParticlesEmitter.loadImg(this);
     TryAginListenBtn.loadAssets(this);
     SellingGold.loadImg(this);
@@ -86,7 +86,7 @@ export default class Game17LoadScene extends Phaser.Scene {
     get(apiPath.getQuestionData).then((res) => {
       if (res.code === '0000') {
         this.ccData = (<any>res.result)
-          .filter((v,i)=>i<20)
+          .filter((v,i)=>i>=20&&i<40)
           .map(v => {
             delete v.audiokey;
             delete v.imgKey;
@@ -100,8 +100,8 @@ export default class Game17LoadScene extends Phaser.Scene {
               _v.serial = {
                 value: serial[_i],
                 position: {
-                  x: 36,
-                  y: -64.95
+                  x: 4,
+                  y: 74
                 }
               }
             });
@@ -128,7 +128,7 @@ export default class Game17LoadScene extends Phaser.Scene {
     //   this.centerText.setText(`${e}%`);
     // })
     //this._loader.on("complete", () => {
-    this.scene.start('Game17PlayScene', {
+    this.scene.start('Game18PlayScene', {
       data: this.ccData,
       index: 0
     });
