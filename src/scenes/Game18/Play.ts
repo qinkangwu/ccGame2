@@ -194,13 +194,7 @@ export default class Game18PlayScene extends Phaser.Scene {
     this.answers.forEach(_answer => {
       _answer.interactive = false;
     });
-    this.add.tween(< Phaser.Types.Tweens.TweenBuilderConfig>{
-      targets:answer.bg,
-      scale:1.2,
-      duration:200,
-      yoyo:true,
-      ease:"Sine.easeInOut"
-    });
+    
     this.audioPlay("clickMp3");
     this.prevAnswer = answer;
     this.testEnd();

@@ -9,6 +9,7 @@ export class Answer extends Phaser.GameObjects.Container{
     name:string;
     isRight:number;
     interactive:boolean = true;
+    initPosition:{x:number;y:number};
     constructor(scene:Phaser.Scene,config:AnswerConfig){
         super(scene,config.position.x,config.position.y);
         this.bg = new Phaser.GameObjects.Image(scene,0,0,config.bgTexture);
@@ -23,6 +24,7 @@ export class Answer extends Phaser.GameObjects.Container{
         this.shape = new Phaser.Geom.Circle(0,0,this.bg.width*0.4);
         this.name = config.answerContent;
         this.isRight = config.isRight;
+        this.initPosition = {x:this.x,y:this.y};
         this.add([this.bg,this.serial,this.answerContent]);
         this.setInteractive(this.shape,Phaser.Geom.Circle.Contains);
         //this.drawHitArea();
@@ -32,4 +34,37 @@ export class Answer extends Phaser.GameObjects.Container{
         let graphics = new Phaser.GameObjects.Graphics(this.scene).lineStyle(2,0xff0000,1).strokeCircleShape(this.shape);
         this.add(graphics);
     }
+
+    public bounceAni():Promise<boolean>{
+        return new Promise(resolve=>{
+            this.scene.add.tween(< Phaser.Types.Tweens.TweenBuilderConfig>{
+                targets:this,
+                scale:1.2,
+                duration:200,
+                yoyo:true,
+                ease:"Sine.easeInOut",
+                onComplete:()=>{
+                    resolve(true);
+                }
+              });
+        })
+    }
+
+    
+    public shakingAni():Promise<boolean>{
+        return new Promise(resolve=>{
+            this.x-=50;
+            this.scene.add.tween(< Phaser.Types.Tweens.TweenBuilderConfig>{
+                targets:this,
+                x:"+=50",
+                duration:100,
+                yoyo:true,
+                ease:"Sine.easeInOut",
+                onComplete:()=>{
+                    this.setPosition(this.initPosition.x,this.initPosition.y);
+                    resolve(true);
+                }
+              });
+        })
+    } 
 }

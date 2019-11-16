@@ -199,17 +199,7 @@ export default class Game17PlayScene extends Phaser.Scene {
     this.answers.forEach(_answer => {
       _answer.interactive = false;
     });
-    this.add.tween(< Phaser.Types.Tweens.TweenBuilderConfig>{
-      targets:answer.bg,
-      scale:1.2,
-      duration:200,
-      yoyo:true,
-      ease:"Sine.easeInOut"
-    });
-    this.mouth.visible = true;
-    this.mouth.x = answer.x;
-    this.mouth.y = answer.y + 13;
-    this.mouth.play("small");
+   
     this.audioPlay("clickMp3");
     this.prevAnswer = answer;
     this.testEnd();
@@ -265,10 +255,14 @@ export default class Game17PlayScene extends Phaser.Scene {
     }
 
     let animate = async () => {
-      await this.audioPlay("right");
-      //await this.orderUI.leave();
+      this.audioPlay("right");
+      this.mouth.visible = true;
+      this.mouth.x = this.prevAnswer.x;
+      this.mouth.y = this.prevAnswer.y + 13;
+      this.mouth.anims.play("small");
+      await this.prevAnswer.bounceAni();
       this.audioPlay("successMp3");
-      nextFuc();
+      setTimeout(nextFuc,1000);
     }
 
     animate();
@@ -278,6 +272,7 @@ export default class Game17PlayScene extends Phaser.Scene {
    * 错误的结果处理
    */
   private async isWrong() {
+    await this.prevAnswer.shakingAni();
     await this.audioPlay("wrong");
     this.times += 1;
     if (this.times === 1) {
