@@ -4,7 +4,7 @@ import { QueryTopic, AnswerConfig } from '../../interface/Game17';
 import { cover, rotateTips, isHit, Vec2, CONSTANT,EASE} from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Topic, Answer } from '../../Public/jonny/game17';
+import { Topic, Answer,CivaWorker } from '../../Public/jonny/selectTopic';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -23,6 +23,7 @@ export default class Game17PlayScene extends Phaser.Scene {
   private btnExit: Button;  //退出按钮
   private btnSound: ButtonMusic; //音乐按钮
   private gold: Gold;
+  private civa:CivaWorker;
   //静态结束
 
   //动态开始
@@ -170,6 +171,9 @@ export default class Game17PlayScene extends Phaser.Scene {
     });
     this.mouth = this.add.sprite(0, 0, "mouth", "mouthKey00").setDepth(3).setVisible(false).setAlpha(0.7);
     this.mouth.on("animationcomplete",()=>{this.mouth.visible = false;});
+
+    this.civa = new CivaWorker(this,820.5+116*0.5,34.5+116*0.5,"civa_02").setDepth(4);
+    this.add.existing(this.civa);
    
   }
 
