@@ -5,10 +5,10 @@ import { AnswerConfig } from "./../../../interface/SelectTopic";
 export let serial: string[] = ["A", "B", "C", "D"]
 
 export let position4: Array<Vec2> = [
-    new Vec2(27 + 256 * 0.5, 322 + 204 * 0.5),
-    new Vec2(284 + 256 * 0.5, 322 + 204 * 0.5),
-    new Vec2(511.5 + 256 * 0.5, 322 + 204 * 0.5),
-    new Vec2(767.5 + 256 * 0.5, 322 + 204 * 0.5)
+    new Vec2(130, 322 + 204 * 0.5),
+    new Vec2(388, 322 + 204 * 0.5),
+    new Vec2(642, 322 + 204 * 0.5),
+    new Vec2(896, 322 + 204 * 0.5)
 ];
 
 export let position3: Array<Vec2> = [
