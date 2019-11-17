@@ -5,6 +5,7 @@ import { Assets, QueryTopic } from '../../interface/SelectTopic';
 import { resize, Vec2 } from '../../Public/jonny/core';
 import { SellingGold, TryAginListenBtn } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
+import { position3, position4, serial } from '../../Public/jonny/selectTopic';
 
 const W = 1024;
 const H = 552;
@@ -47,7 +48,7 @@ export default class Game19LoadScene extends Phaser.Scene {
     this.load.audio('clickMp3', 'assets/sounds/clickMp3.mp3');
     this.load.audio('right', 'assets/sounds/newJoin/right.mp3');
     this.load.audio('wrong', 'assets/sounds/newJoin/wrong.mp3');
-    this.load.atlas("wizard","assets/Game19/wizard.png","assets/Game19/wizard.json");
+    this.load.atlas("wizard", "assets/Game19/wizard.png", "assets/Game19/wizard.json");
     this.load.bitmapFont('ArialRoundedBold', 'assets/font/ArialRoundedBold/font.png', 'assets/font/ArialRoundedBold/font.xml');
     TipsParticlesEmitter.loadImg(this);
     TryAginListenBtn.loadAssets(this);
@@ -71,37 +72,25 @@ export default class Game19LoadScene extends Phaser.Scene {
    * 正式状态
    */
   private getData() {
-    let serial: string[] = ["A", "B", "C", "D"]
-    let position4: Array<Vec2> = [
-      new Vec2(27 + 256 * 0.5, 322 + 204 * 0.5),
-      new Vec2(284 + 256 * 0.5, 322 + 204 * 0.5),
-      new Vec2(511.5 + 256 * 0.5, 322 + 204 * 0.5),
-      new Vec2(767.5 + 256 * 0.5, 322 + 204 * 0.5)
-    ];
-    let position3: Array<Vec2> = [
-      new Vec2(256-15, 322 + 204 * 0.5),
-      new Vec2(512, 322 + 204 * 0.5),
-      new Vec2(768+15, 322 + 204 * 0.5)
-    ];
     get(apiPath.getQuestionData).then((res) => {
       if (res.code === '0000') {
         this.ccData = (<any>res.result)
-          .filter((v,i)=>i>=40&&i<60)
+          .filter((v, i) => i >= 40 && i < 60)
           .map(v => {
             delete v.audiokey;
             delete v.imgKey;
-            v.questionContent = v.questionContent.replace(/\d+\./,"").replace(/[\?\？]\s*/, "?\n").replace(/^[-—]+/, "").replace(/\s{2,}/, " ").replace(/\?_+/, "?\n").replace(/\n$/, "").replace(/^\s/, "").replace(/\?\s*[—-]+/, "?\n").replace(/\n\s+/, "\n").replace(/&nbsp;/,"").replace(/_+/,"___").replace(/’/,"'");
+            v.questionContent = v.questionContent.replace(/\d+\./, "").replace(/[\?\？]\s*/, "?\n").replace(/^[-—]+/, "").replace(/\s{2,}/, " ").replace(/\?_+/, "?\n").replace(/\n$/, "").replace(/^\s/, "").replace(/\?\s*[—-]+/, "?\n").replace(/\n\s+/, "\n").replace(/&nbsp;/, "").replace(/_+/, "___").replace(/’/, "'");
             v.answers.forEach((_v, _i) => {
               delete _v.audioKey;
               delete _v.imgKey;
-              _v.answerContent = _v.answerContent.replace(/[;；]/,";\n");
+              _v.answerContent = _v.answerContent.replace(/[;；]/, ";\n");
               _v.position = v.answers.length === 4 ? position4[_i] : position3[_i];
               _v.bgTexture = "daan02";
               _v.serial = {
                 value: serial[_i],
                 position: {
-                  x: 4,
-                  y: 74
+                  x: 0,
+                  y: 54
                 }
               }
             });

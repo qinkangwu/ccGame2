@@ -21,7 +21,7 @@ export class Carriage extends Phaser.GameObjects.Container {
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, texture);
         this.name = textContent;
         //this.text = new Phaser.GameObjects.BitmapText(scene, 0, 0, "ArialRoundedBold30", textContent, 20, 1).setOrigin(0.5);
-        this.text = new Phaser.GameObjects.Text(scene,0,0,textContent, <Phaser.Types.GameObjects.Text.TextSyle>{ align: "center", fontSize: `20px`, fontFamily: "Arial",strokeThickness:1}).setOrigin(0.5).setResolution(2);
+        this.text = new Phaser.GameObjects.Text(scene,0,0,textContent, <Phaser.Types.GameObjects.Text.TextStyle>{ align: "center", fontSize: `20px`, fontFamily: "Arial",strokeThickness:1}).setOrigin(0.5).setResolution(2);
         this.add([this.bgNull, this.bg, this.text]);
         this.shape = new Phaser.Geom.Rectangle(-this.bg.width * 0.5, -this.bg.height * 0.5, this.bg.width, this.bg.height);
         this.initPosition = new Vec2(this.x, this.y);

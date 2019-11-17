@@ -1,5 +1,5 @@
 import { Topic} from "./Topic";
-import { Answer} from "./Answer";
+import { Answer,position3,position4,serial} from "./Answer";
 import { CivaWorker } from "./CivaWorker";
 
 /**
@@ -8,5 +8,8 @@ import { CivaWorker } from "./CivaWorker";
 export {
     Topic,
     Answer,
-    CivaWorker
+    CivaWorker,
+    position3,
+    position4,
+    serial 
 }

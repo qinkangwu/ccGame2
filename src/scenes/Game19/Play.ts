@@ -158,6 +158,7 @@ export default class Game19PlayScene extends Phaser.Scene {
         isRight: answer.isRight
       });
       _answer.answerContent.setPosition(0,0);
+      _answer.serial.alpha = 0.7;
       this.answers.push(_answer);
     });
 
@@ -165,7 +166,7 @@ export default class Game19PlayScene extends Phaser.Scene {
     this.layer3.add(this.answers);
 
     // create bee
-    this.civa = new CivaWorker(this,820.5+116*0.5,34.5+116*0.5,"wizard","civaWizard0000").setDepth(4).asWizard();
+    this.civa = new CivaWorker(this,820.5+116*0.5,34.5+116*0.5,"wizard","Wizard0000").setDepth(4).asWizard();
     this.add.existing(this.civa);
 
    

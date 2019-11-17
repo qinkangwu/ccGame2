@@ -4,6 +4,7 @@ import { get } from '../../lib/http';
 import { Assets, QueryTopic } from '../../interface/SelectTopic';
 import { resize, Vec2 } from '../../Public/jonny/core';
 import { SellingGold, TryAginListenBtn } from '../../Public/jonny/components';
+import { position3, position4, serial } from '../../Public/jonny/selectTopic';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
 const W = 1024;
@@ -71,18 +72,6 @@ export default class Game18LoadScene extends Phaser.Scene {
    * 正式状态
    */
   private getData() {
-    let serial: string[] = ["A", "B", "C", "D"]
-    let position4: Array<Vec2> = [
-      new Vec2(27 + 256 * 0.5, 322 + 204 * 0.5),
-      new Vec2(284 + 256 * 0.5, 322 + 204 * 0.5),
-      new Vec2(511.5 + 256 * 0.5, 322 + 204 * 0.5),
-      new Vec2(767.5 + 256 * 0.5, 322 + 204 * 0.5)
-    ];
-    let position3: Array<Vec2> = [
-      new Vec2(256-15, 322 + 204 * 0.5),
-      new Vec2(512, 322 + 204 * 0.5),
-      new Vec2(768+15, 322 + 204 * 0.5)
-    ];
     get(apiPath.getQuestionData).then((res) => {
       if (res.code === '0000') {
         this.ccData = (<any>res.result)
