@@ -149,6 +149,7 @@ export default class Game19PlayScene extends Phaser.Scene {
     //创建题板
     console.log(this.ccData);
     this.topic = new Topic(this, this.ccData[index].questionContent, "civa_02");
+    this.topic.question.y = 0;
     this.ccData[index].answers.forEach(answer => {
       let _answer: Answer = new Answer(this, {
         position: { x: answer.position.x, y: answer.position.y },
@@ -168,8 +169,6 @@ export default class Game19PlayScene extends Phaser.Scene {
     // create bee
     this.civa = new CivaWorker(this,820.5+116*0.5,34.5+116*0.5,"wizard","Wizard0000").setDepth(4).asWizard();
     this.add.existing(this.civa);
-
-   
   }
 
   /**
@@ -252,7 +251,6 @@ export default class Game19PlayScene extends Phaser.Scene {
     let animate = async () => {
       await this.prevAnswer.bounceAni();
       this.audioPlay("right");
-      await this.civa.asBeeWorking(this.prevAnswer.x,this.prevAnswer.y);
       this.audioPlay("successMp3");
       nextFuc();
     }
