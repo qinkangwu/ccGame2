@@ -39,9 +39,14 @@ export default class Game18PlayScene extends Phaser.Scene {
   private layer0: Phaser.GameObjects.Container;
 
   /**
-   * 答题板
+   * 题目与答案
    */
-  private layer3: Phaser.GameObjects.Container;
+  private layer1: Phaser.GameObjects.Container;
+
+  /**
+   * Civa
+   */
+  private layer2: Phaser.GameObjects.Container;
 
   /**
    * UI
@@ -107,11 +112,13 @@ export default class Game18PlayScene extends Phaser.Scene {
     let that = this;
 
     this.layer0 = new Phaser.GameObjects.Container(this).setDepth(0);
-    this.layer3 = new Phaser.GameObjects.Container(this).setDepth(3);
+    this.layer1 = new Phaser.GameObjects.Container(this).setDepth(1);
+    this.layer2 = new Phaser.GameObjects.Container(this).setDepth(2);
     this.layer4 = new Phaser.GameObjects.Container(this).setDepth(4);
 
     this.add.existing(this.layer0);
-    this.add.existing(this.layer3);
+    this.add.existing(this.layer1);
+    this.add.existing(this.layer2);
     this.add.existing(this.layer4);
 
     this.bg = new Phaser.GameObjects.Image(this, 0, 0, "bg").setOrigin(0);
@@ -161,12 +168,13 @@ export default class Game18PlayScene extends Phaser.Scene {
       this.answers.push(_answer);
     });
 
-    this.layer3.add([this.topic]);
-    this.layer3.add(this.answers);
+    this.layer1.add([this.topic]);
+    this.layer1.add(this.answers);
 
     // create bee
     this.civa = new CivaWorker(this,820.5+116*0.5,34.5+116*0.5,"civaBee","civaBee0000").setDepth(4).asBee();
     this.add.existing(this.civa);
+    this.layer2.add(this.civa);
 
     this.civa.asBeeDance();
    
