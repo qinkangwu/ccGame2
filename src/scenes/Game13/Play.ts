@@ -1,3 +1,8 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
 import 'phaser';
 import { Observable } from 'rxjs';
 import { QueryTopic } from '../../interface/Game13';

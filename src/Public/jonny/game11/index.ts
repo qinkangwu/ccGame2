@@ -1,3 +1,8 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
 import { Locomotive } from "./Locomotive";
 import { TrainBox } from "./TrainBox";
 import { Stage } from "./Stage";

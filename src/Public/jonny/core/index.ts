@@ -1,3 +1,8 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
 import {cover} from "./cover";
 import {resize} from "./resize";
 import {rotateTips} from "./rotateTips";

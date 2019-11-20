@@ -1,3 +1,8 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
 import 'phaser';
 import { Subject } from 'rxjs';
 import { Assets } from '../../interface/Game15';

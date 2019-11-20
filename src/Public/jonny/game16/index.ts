@@ -1,3 +1,8 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
 import { Door } from './Door';
 import { IndexText } from './IndexText';
 import { OrderUI } from './OrderUI';
