@@ -8,11 +8,16 @@ export class CivaMen extends Phaser.GameObjects.Image{
         this.targetPosition = new Vec2(x,y);
     }
 
+    /**
+     * 作为一名射手的载入状态
+     */
     public asArcherInit(){
         this.x = -233;
     }
 
-
+    /**
+     * 作为一名射手的入场状态
+     */
     public asArcherAdmission():Promise<number>{
         return new Promise(resolve => {
             this.scene.add.tween({
