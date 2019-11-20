@@ -12,7 +12,7 @@ let sceneArr: Array<object> = [];
 
 const initHandle = (arr : object[],physics:string) : void=>{
   const config: Phaser.Types.Core.GameConfig = {
-    type: Phaser.AUTO,
+    type: Phaser.CANVAS,
     width: 1024,
     height: 552,
     parent: 'content',

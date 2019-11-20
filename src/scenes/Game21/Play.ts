@@ -188,7 +188,7 @@ export default class Game21PlayScene extends Phaser.Scene {
       this.answers.forEach(answer => {
         answer.on("pointerdown", this.touchAnswer.bind(this, answer));
       });
-      this.getGui();
+      //this.getGui();
     };
     ready();
   }
