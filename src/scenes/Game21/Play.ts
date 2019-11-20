@@ -6,10 +6,11 @@
 import 'phaser';
 import { Observable } from 'rxjs';
 import { QueryTopic, AnswerConfig } from '../../interface/SelectTopic';
-import { cover, rotateTips, isHit, Vec2, CONSTANT,EASE} from '../../Public/jonny/core';
+import { cover, rotateTips, isHit, Vec2, CONSTANT, EASE } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Topic, Answer,CivaWorker } from '../../Public/jonny/selectTopic';
+import { Topic, Answer, CivaWorker } from '../../Public/jonny/selectTopic';
+import * as dat from 'dat.gui';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -19,6 +20,8 @@ var goldValue: number = 3; //金币的值
 
 
 export default class Game21PlayScene extends Phaser.Scene {
+  private datGui: dat.GUI;
+
   private ccData: QueryTopic[] = [];
   private times: number = 0;  //次数
 
@@ -28,7 +31,7 @@ export default class Game21PlayScene extends Phaser.Scene {
   private btnExit: Button;  //退出按钮
   private btnSound: ButtonMusic; //音乐按钮
   private gold: Gold;
-  private civa:CivaWorker;
+  private civa: CivaWorker;
   //静态结束
 
   //动态开始
@@ -37,6 +40,8 @@ export default class Game21PlayScene extends Phaser.Scene {
   private prevAnswer: Answer = null;
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
+
+
 
   /**
    * 背景
@@ -69,7 +74,7 @@ export default class Game21PlayScene extends Phaser.Scene {
   }
 
   create(): void {
-   
+
     this.createStage();
     this.createActors();
     if (index === 0) {
@@ -162,7 +167,7 @@ export default class Game21PlayScene extends Phaser.Scene {
         answerContent: answer.answerContent,
         isRight: answer.isRight
       });
-      _answer.answerContent.setPosition(0,0);
+      _answer.answerContent.setPosition(0, 0);
       _answer.answerContent.setColor("#FF6E09");
       _answer.serial.setColor("#FF6E09");
       this.answers.push(_answer);
@@ -171,7 +176,7 @@ export default class Game21PlayScene extends Phaser.Scene {
     this.layer3.add([this.topic]);
     this.layer3.add(this.answers);
 
-    this.civa = new CivaWorker(this,820.5+116*0.5,34.5+116*0.5,"civa").setDepth(4);
+    this.civa = new CivaWorker(this, 820.5 + 116 * 0.5, 34.5 + 116 * 0.5, "civa").setDepth(4);
     this.add.existing(this.civa);
   }
 
@@ -183,6 +188,7 @@ export default class Game21PlayScene extends Phaser.Scene {
       this.answers.forEach(answer => {
         answer.on("pointerdown", this.touchAnswer.bind(this, answer));
       });
+      this.getGui();
     };
     ready();
   }
@@ -197,7 +203,7 @@ export default class Game21PlayScene extends Phaser.Scene {
     this.answers.forEach(_answer => {
       _answer.interactive = false;
     });
-    
+
     this.audioPlay("clickMp3");
     this.prevAnswer = answer;
     this.testEnd();
@@ -331,7 +337,7 @@ export default class Game21PlayScene extends Phaser.Scene {
    */
   private checkoutResult(): Observable<boolean> {
     console.log(this.prevAnswer);
-    let isRightValue: number= this.prevAnswer.isRight;
+    let isRightValue: number = this.prevAnswer.isRight;
     return Observable.create(subscriber => {
       if (isRightValue === 1) {
         subscriber.next(true);
@@ -355,6 +361,32 @@ export default class Game21PlayScene extends Phaser.Scene {
    */
   private checkoutGoldValue(): boolean {
     return goldValue < 0 ? true : false;
+  }
+
+  private getGui() {
+    let guiData = {
+      resolution: 1,
+      fontFamily:"sans-serif"
+    }
+
+    this.datGui = new dat.GUI();
+
+    this.datGui.add(guiData, "resolution", 1, 5, 1).onChange(value => {
+      this.topic.question.setResolution(value);
+      this.answers.forEach(answer => {
+        answer.answerContent.setResolution(value);
+        answer.serial.setResolution(value);
+      })
+    })
+
+    this.datGui.add(guiData,"fontFamily",["sans-serif","monospace","Helvetica"]).onChange(value=>{
+      this.topic.question.setFontFamily(value);
+      this.answers.forEach(answer => {
+        answer.answerContent.setFontFamily(value);
+        answer.serial.setFontFamily(value);
+      }) 
+    })
+
   }
 
 }
