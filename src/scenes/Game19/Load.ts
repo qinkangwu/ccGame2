@@ -80,7 +80,7 @@ export default class Game19LoadScene extends Phaser.Scene {
     get(apiPath.getQuestionData).then((res) => {
       if (res.code === '0000') {
         this.ccData = (<any>res.result)
-          .filter((v, i) => i >= 40 && i < 60)
+          .filter((v, i) => i >= 20 && i < 30)
           .map(v => {
             delete v.audiokey;
             delete v.imgKey;

@@ -80,7 +80,7 @@ export default class Game17LoadScene extends Phaser.Scene {
     get(apiPath.getQuestionData).then((res) => {
       if (res.code === '0000') {
         this.ccData = (<any>res.result)
-          .filter((v,i)=>i<20)
+          .filter((v,i)=>i<10)
           .map(v => {
             delete v.audiokey;
             delete v.imgKey;
