@@ -15,7 +15,7 @@ import { position3, position4, serial } from '../../Public/jonny/selectTopic';
 const W = 1024;
 const H = 552;
 
-export default class Game20LoadScene extends Phaser.Scene {
+export default class Game21LoadScene extends Phaser.Scene {
   private _loader: Phaser.Loader.LoaderPlugin;
   private ccData: Array<QueryTopic> = [];
   private centerText: Phaser.GameObjects.Text; //文本内容
@@ -23,16 +23,16 @@ export default class Game20LoadScene extends Phaser.Scene {
     /**
      * common UI
      */
-    { "url": "assets/mask/Game20.png", "key": "Game20" }, { "url": "assets/commonUI/successBtn.png", "key": "successBtn" }, { "url": "assets/commonUI/btnSoundOff.png", "key": "btnSoundOff" }, { "url": "assets/commonUI/btnSoundOn.png", "key": "btnSoundOn" }, { "url": "assets/commonUI/btnExit.png", "key": "btnExit" }, { "url": "assets/commonUI/goldValue.png", "key": "goldValue" }, { "url": "assets/commonUI/tipsArrowUp.png", "key": "tipsArrowUp" }
+    { "url": "assets/mask/Game21.png", "key": "Game21" }, { "url": "assets/commonUI/successBtn.png", "key": "successBtn" }, { "url": "assets/commonUI/btnSoundOff.png", "key": "btnSoundOff" }, { "url": "assets/commonUI/btnSoundOn.png", "key": "btnSoundOn" }, { "url": "assets/commonUI/btnExit.png", "key": "btnExit" }, { "url": "assets/commonUI/goldValue.png", "key": "goldValue" }, { "url": "assets/commonUI/tipsArrowUp.png", "key": "tipsArrowUp" }
     /**
      * game19 UI
      */
-    , { "url": "assets/Game20/bg_04.png", "key": "bg" }, { "url": "assets/Game20/daan04.png", "key": "daan" }, { "url": "assets/Game20/tigan04.png", "key": "tigan" },{"url":"assets/Game20/civa_04.png","key":"civa"}
+    , { "url": "assets/Game21/bg_05.png", "key": "bg" }, { "url": "assets/Game21/daan05.png", "key": "daan" }, { "url": "assets/Game21/tigan03.png", "key": "tigan" },{"url":"assets/Game21/civa_05.png","key":"civa"}
   ];
 
   constructor() {
     super({
-      key: "Game20LoadScene"
+      key: "Game21LoadScene"
     });
     this.ccData = [];
   }
@@ -79,7 +79,7 @@ export default class Game20LoadScene extends Phaser.Scene {
     get(apiPath.getQuestionData).then((res) => {
       if (res.code === '0000') {
         this.ccData = (<any>res.result)
-          .filter((v, i) => i >= 20 && i < 30)
+          .filter((v, i) => i >= 30 && i < 40)
           .map(v => {
             delete v.audiokey;
             delete v.imgKey;
@@ -121,7 +121,7 @@ export default class Game20LoadScene extends Phaser.Scene {
     //   this.centerText.setText(`${e}%`);
     // })
     //this._loader.on("complete", () => {
-    this.scene.start('Game20PlayScene', {
+    this.scene.start('Game21PlayScene', {
       data: this.ccData,
       index: 0
     });
