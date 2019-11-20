@@ -9,13 +9,13 @@ import { get } from '../../lib/http';
 import { Assets, QueryTopic } from '../../interface/SelectTopic';
 import { resize, Vec2 } from '../../Public/jonny/core';
 import { SellingGold, TryAginListenBtn } from '../../Public/jonny/components';
-import { position3, position4, serial } from '../../Public/jonny/selectTopic';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
+import { position3, position4, serial } from '../../Public/jonny/selectTopic';
 
 const W = 1024;
 const H = 552;
 
-export default class Game18LoadScene extends Phaser.Scene {
+export default class Game19LoadScene extends Phaser.Scene {
   private _loader: Phaser.Loader.LoaderPlugin;
   private ccData: Array<QueryTopic> = [];
   private centerText: Phaser.GameObjects.Text; //文本内容
@@ -23,16 +23,16 @@ export default class Game18LoadScene extends Phaser.Scene {
     /**
      * common UI
      */
-    { "url": "assets/mask/Game18.png", "key": "Game18" }, { "url": "assets/commonUI/successBtn.png", "key": "successBtn" }, { "url": "assets/commonUI/btnSoundOff.png", "key": "btnSoundOff" }, { "url": "assets/commonUI/btnSoundOn.png", "key": "btnSoundOn" }, { "url": "assets/commonUI/btnExit.png", "key": "btnExit" }, { "url": "assets/commonUI/goldValue.png", "key": "goldValue" }, { "url": "assets/commonUI/tipsArrowUp.png", "key": "tipsArrowUp" }
+    { "url": "assets/mask/Game20.png", "key": "Game20" }, { "url": "assets/commonUI/successBtn.png", "key": "successBtn" }, { "url": "assets/commonUI/btnSoundOff.png", "key": "btnSoundOff" }, { "url": "assets/commonUI/btnSoundOn.png", "key": "btnSoundOn" }, { "url": "assets/commonUI/btnExit.png", "key": "btnExit" }, { "url": "assets/commonUI/goldValue.png", "key": "goldValue" }, { "url": "assets/commonUI/tipsArrowUp.png", "key": "tipsArrowUp" }
     /**
-     * game15 UI
+     * game19 UI
      */
-    , { "url": "assets/Game18/bg.png", "key": "bg" }, { "url": "assets/Game18/daan01.png", "key": "daan" }, { "url": "assets/Game18/tigan01.png", "key": "tigan" }
+    , { "url": "assets/Game20/beijing04.png", "key": "bg" }, { "url": "assets/Game20/daan04.png", "key": "daan" }, { "url": "assets/Game20/tigan04.png", "key": "tigan" },{"url":"assets/Game20/civa_04.png","key":"civa"}
   ];
 
   constructor() {
     super({
-      key: "Game18LoadScene"
+      key: "Game20LoadScene"
     });
     this.ccData = [];
   }
@@ -53,7 +53,6 @@ export default class Game18LoadScene extends Phaser.Scene {
     this.load.audio('clickMp3', 'assets/sounds/clickMp3.mp3');
     this.load.audio('right', 'assets/sounds/newJoin/right.mp3');
     this.load.audio('wrong', 'assets/sounds/newJoin/wrong.mp3');
-    this.load.atlas("civaBee","assets/Game18/civaBee.png","assets/Game18/civaBee.json");
     this.load.bitmapFont('ArialRoundedBold', 'assets/font/ArialRoundedBold/font.png', 'assets/font/ArialRoundedBold/font.xml');
     TipsParticlesEmitter.loadImg(this);
     TryAginListenBtn.loadAssets(this);
@@ -80,22 +79,22 @@ export default class Game18LoadScene extends Phaser.Scene {
     get(apiPath.getQuestionData).then((res) => {
       if (res.code === '0000') {
         this.ccData = (<any>res.result)
-          .filter((v,i)=>i>=10&&i<20)
+          .filter((v, i) => i >= 20 && i < 30)
           .map(v => {
             delete v.audiokey;
             delete v.imgKey;
-            v.questionContent = v.questionContent.replace(/\d+\./,"").replace(/[\?\？]\s*/, "?\n").replace(/^[-—]+/, "").replace(/\s{2,}/, " ").replace(/\?_+/, "?\n").replace(/\n$/, "").replace(/^\s/, "").replace(/\?\s*[—-]+/, "?\n").replace(/\n\s+/, "\n").replace(/&nbsp;/,"").replace(/_+/,"___").replace(/’/,"'");
+            v.questionContent = v.questionContent.replace(/\d+\./, "").replace(/[\?\？]\s*/, "?\n").replace(/^[-—]+/, "").replace(/\s{2,}/, " ").replace(/\?_+/, "?\n").replace(/\n$/, "").replace(/^\s/, "").replace(/\?\s*[—-]+/, "?\n").replace(/\n\s+/, "\n").replace(/&nbsp;/, "").replace(/_+/, "___").replace(/’/, "'");
             v.answers.forEach((_v, _i) => {
               delete _v.audioKey;
               delete _v.imgKey;
-              _v.answerContent = _v.answerContent.replace(/[;；]/,";\n");
+              _v.answerContent = _v.answerContent.replace(/[;；]/, ";\n");
               _v.position = v.answers.length === 4 ? position4[_i] : position3[_i];
               _v.bgTexture = "daan02";
               _v.serial = {
                 value: serial[_i],
                 position: {
-                  x: 4,
-                  y: 74
+                  x: 0,
+                  y: 54
                 }
               }
             });
@@ -122,7 +121,7 @@ export default class Game18LoadScene extends Phaser.Scene {
     //   this.centerText.setText(`${e}%`);
     // })
     //this._loader.on("complete", () => {
-    this.scene.start('Game18PlayScene', {
+    this.scene.start('Game20PlayScene', {
       data: this.ccData,
       index: 0
     });

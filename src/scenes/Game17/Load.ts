@@ -27,7 +27,7 @@ export default class Game17LoadScene extends Phaser.Scene {
     /**
      * game15 UI
      */
-    , { "url": "assets/Game17/bg.png", "key": "bg" }, { "url": "assets/Game17/civa_02.png", "key": "civa_02" }, { "url": "assets/Game17/daan02.png", "key": "daan" }, { "url": "assets/Game17/tigan01.png", "key": "tigan01" }
+    , { "url": "assets/Game17/bg.png", "key": "bg" }, { "url": "assets/Game17/civa_02.png", "key": "civa_02" }, { "url": "assets/Game17/daan02.png", "key": "daan" }, { "url": "assets/Game17/tigan01.png", "key": "tigan" }
   ];
 
   constructor() {

@@ -27,7 +27,7 @@ export default class Game19LoadScene extends Phaser.Scene {
     /**
      * game19 UI
      */
-    , { "url": "assets/Game19/bg.png", "key": "bg" }, { "url": "assets/Game19/daan03.png", "key": "daan" }, { "url": "assets/Game19/tigan02.png", "key": "tigan01" }
+    , { "url": "assets/Game19/bg.png", "key": "bg" }, { "url": "assets/Game19/daan03.png", "key": "daan" }, { "url": "assets/Game19/tigan02.png", "key": "tigan" }
   ];
 
   constructor() {

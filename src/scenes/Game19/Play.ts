@@ -153,7 +153,7 @@ export default class Game19PlayScene extends Phaser.Scene {
 
     //创建题板
     console.log(this.ccData);
-    this.topic = new Topic(this, this.ccData[index].questionContent, "civa_02");
+    this.topic = new Topic(this, this.ccData[index].questionContent);
     this.topic.question.y = 0;
     this.ccData[index].answers.forEach(answer => {
       let _answer: Answer = new Answer(this, {
