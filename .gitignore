@@ -21,5 +21,6 @@ higherVolume/
 yarn.lock
 package-lock.json
 ._*
+.DS_Store
 .DS_Store/
 .metadata/

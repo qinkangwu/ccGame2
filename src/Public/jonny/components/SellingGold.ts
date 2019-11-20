@@ -1,5 +1,5 @@
 import "phaser";
-import { EASE } from '../Animate'
+import { EASE } from '../core/Animate'
 import { Gold } from "./Gold";
 
 interface Config {
@@ -84,7 +84,7 @@ export class SellingGold {
                         targets: [goldCoinsLight, goldCoins],
                         scale: 1,
                         ease: "Sine.easeOut",
-                        duration: 1000
+                        duration: 700
                     }
                 ]
             })

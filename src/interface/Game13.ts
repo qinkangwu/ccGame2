@@ -1,4 +1,3 @@
-/* 资源 */
 export interface Assets {
     key: string;
     url: string;
@@ -13,5 +12,3 @@ export interface QueryTopic {
     questioncontent:string;
     answers:Answer[];
 }
-
-

@@ -7,7 +7,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
     public body: Phaser.Physics.Arcade.Body;
     public bg: Phaser.GameObjects.Image;
     public text: Phaser.GameObjects.BitmapText;
-    public shape: Phaser.Geom.Circle;
+    public shape: Phaser.Geom.Rectangle;
     public interactive: Boolean;
     public initPosition: Vec2;
     public worldTransformMatrix:Phaser.GameObjects.Components.TransformMatrix;  //世界矩阵
@@ -25,7 +25,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, texture);
         this.text = new Phaser.GameObjects.BitmapText(scene, 0, 0 - 28, "ArialRoundedBold30", text, 30).setOrigin(0.5);
         this.text.tint = 0xFF7F3A;
-        this.shape = new Phaser.Geom.Circle(0, 0-20, 193 * 0.35);
+        this.shape = new Phaser.Geom.Rectangle(-83,-90,163,99);
         this.tipsArrowUp = new Phaser.GameObjects.Image(scene,0,-117,"tipsArrowUp");
         this.tipsArrowAnimate = this.scene.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
             targets:this.tipsArrowUp,
@@ -43,7 +43,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
 
     private init() {
         this.x += 1000;
-        this.setInteractive(this.shape, <Phaser.Types.Input.HitAreaCallback>Phaser.Geom.Circle.Contains);
+        this.setInteractive(this.shape, <Phaser.Types.Input.HitAreaCallback>Phaser.Geom.Rectangle.Contains);
         this.scene.input.setDraggable(this, true);
         this.interactive = true;
     }
@@ -51,7 +51,7 @@ export class TrainBox extends Phaser.GameObjects.Container {
     private drawHitArea() {
         let graphics = new Phaser.GameObjects.Graphics(this.scene);
         graphics.lineStyle(1, 0x0000ff);
-        graphics.strokeCircle(this.shape.x, this.shape.y, this.shape.radius);
+        graphics.strokeRect(this.shape.x, this.shape.y, this.shape.width,this.shape.height);
         this.add(graphics);
     }
 

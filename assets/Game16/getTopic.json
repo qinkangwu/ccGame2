@@ -1,0 +1,46 @@
+{
+    "code": "0000",
+    "description": "oh yeah,通过了",
+    "result": [
+        {
+            "displayWord": "ball",
+            "trueWord": "ball",
+            "imgUrl": "https://resaudio.civaonline.cn/98b3af595fe7493a891f837b94fa2585"
+        },
+        {
+            "displayWord": "bananna",
+            "trueWord": "banana",
+            "imgUrl": "assets/Game16/requestAssets/banana.png"
+        },
+        {
+            "displayWord": "baboosh",
+            "trueWord": "baboosh",
+            "imgUrl": "assets/Game16/requestAssets/baboosh.png"
+        },
+        {
+            "displayWord": "guiter",
+            "trueWord": "guitar",
+            "imgUrl": "assets/Game16/requestAssets/guitar.png"
+        },
+        {
+            "displayWord": "pinaepple",
+            "trueWord": "pineapple",
+            "imgUrl": "assets/Game16/requestAssets/pineapple.png"
+        },
+        {
+            "displayWord": "popsicle",
+            "trueWord": "popsicle",
+            "imgUrl": "assets/Game16/requestAssets/popsicle.png"
+        },
+        {
+            "displayWord": "sun",
+            "trueWord": "sun",
+            "imgUrl": "assets/Game16/requestAssets/sun.png"
+        },
+        {
+            "displayWord": "turtle",
+            "trueWord": "turtle",
+            "imgUrl": "assets/Game16/requestAssets/turtle.png"
+        }
+    ]
+}

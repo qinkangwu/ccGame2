@@ -1,5 +1,5 @@
 import "phaser";
-import { EASE } from "../Animate";
+import { EASE } from "../core/Animate";
 import { Button } from "./Button";
 
 export class TryAginListenBtn extends Button {
@@ -18,8 +18,8 @@ export class TryAginListenBtn extends Button {
 
   init(): void {
     this.setScale(0);
-    this.setRotation((Math.PI / 180) * -30);
-    this.setAlpha(1);
+    // this.setRotation((Math.PI / 180) * -30);
+     this.setAlpha(1);
   }
 
   public animate():void{
@@ -33,11 +33,11 @@ export class TryAginListenBtn extends Button {
           ease: EASE.spring
         },
         {
-          rotation: Phaser.Math.DegToRad(-30),
-          yoyo: true,
-          repeat: 3,
+          scale: 1.3,
+          rotation: 0,
           duration: 500,
-          repeatDelay: 300,
+          yoyo:true,
+          delay:3000,
           ease: EASE.spring
         }
       ],

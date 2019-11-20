@@ -16,7 +16,6 @@ export var resize = function (w,h){
       object-fit: contain;
       object-position: center;
     `);
-
     deleteOther();
 }
 

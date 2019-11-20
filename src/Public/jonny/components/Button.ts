@@ -1,5 +1,5 @@
 import "phaser";
-import { StaticAni, TweenAni } from '../Animate';
+import { StaticAni, TweenAni } from '../core/Animate';
 
 /**
  * 初始化为0.7的透明度

@@ -1,10 +1,14 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
 import 'phaser';
 import { Game11DataItem, } from '../../interface/Game11';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
-import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
-import PlanAnims from '../../Public/PlanAnims';
+import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn, Particles } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Locomotive, TrainBox, NullTrainBox } from '../../Public/jonny/game11';
+import { Locomotive, TrainBox, NullTrainBox, SentenceUI } from '../../Public/jonny/game11/';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -43,7 +47,6 @@ export default class Game11PlayScene extends Phaser.Scene {
   private btnSound: ButtonMusic; //音乐按钮
   private originalSoundBtn: Button; //原音按钮
   private tryAginListenBtn: TryAginListenBtn; //在听一次按钮
-  private planAnims: PlanAnims;
   private gold: Gold;
   private successBtn: SuccessBtn;  //成功提交的按钮
   //静态结束
@@ -55,7 +58,8 @@ export default class Game11PlayScene extends Phaser.Scene {
   private locomotivel: Locomotive; //火车头
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
-
+  private sentence: SentenceUI;  //句子UI
+  private particles: Particles;    //粒子
   /**
    * 云背景
    */
@@ -100,6 +104,7 @@ export default class Game11PlayScene extends Phaser.Scene {
   init(res: { data: any[], index: number }) {
     index = res.index;
     this.ccData = res.data;
+    console.log(this.ccData);
     console.log("正确答案", this.ccData[index].name);
   }
 
@@ -117,10 +122,10 @@ export default class Game11PlayScene extends Phaser.Scene {
       rotateTips.init();
       this.firstCreate();
       cover(this, "Game11", () => {
-        this.planAnims.show(index + 1, this.gameStart)
+        this.gameStart();
       });
     } else {
-      this.planAnims.show(index + 1, this.gameStart);
+      this.gameStart();
     }
   }
 
@@ -202,7 +207,6 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.originalSoundBtn.on("pointerdown", this.playSentence.bind(that));
 
     this.clickSound = this.sound.add('click');
-    this.planAnims = new PlanAnims(this, this.ccData.length);
     this.gold = new Gold(this, goldValue);   //设置金币
     this.successBtn = new SuccessBtn(this, 939 + 60 * 0.5, 552 * 0.5);
     this.successBtn.on("pointerdown", this.successBtnPointerdown.bind(this));
@@ -221,9 +225,9 @@ export default class Game11PlayScene extends Phaser.Scene {
     let _shape = this.cache.json.get("trainboxShape");
 
     //火车头
-    this.locomotivel = new Locomotive(this, _shape.locomotive);
-    this.locomotivel.x = 0 + 1000;
-    this.locomotivel.y = 127.05;
+    this.locomotivel = new Locomotive(this, `${index + 1}/${this.ccData.length}`);
+    // this.locomotivel.x = 0 + 1000;
+    // this.locomotivel.y = 142;
     this.layer3and.add(this.locomotivel);
     this.layer3andInitX = this.layer3and.x;
 
@@ -279,6 +283,25 @@ export default class Game11PlayScene extends Phaser.Scene {
       return new Vec2(v.x, v.y)
     });
 
+    // create sentence ui
+    this.sentence = new SentenceUI(this, this.ccData[index].name);
+    this.layer4.add(this.sentence);
+
+    // create particles
+    this.particles = new Particles(this, "rectangle").setDepth(5);
+    this.particles.emitter = this.particles.createEmitter(<Phaser.Types.GameObjects.Particles.ParticleEmitterConfig>{
+      lifespan: 1000,   //寿命
+      speed: { min: 300, max: 400 },
+      alpha: { start: 1, end: 0 },
+      scale: { start: 0, end:0.7},
+      rotate: { start: 0, end: 360, ease: 'Power2' },
+      blendMode: 'ADD',
+      tint: [0xff0000, 0x00ff00, 0x0000ff],
+      on: false
+    });
+    this.add.existing(this.particles);
+
+
     //创建用户反馈
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
 
@@ -301,7 +324,7 @@ export default class Game11PlayScene extends Phaser.Scene {
     this.locomotivel.admission()
       .then(() => {
         let trainboxAnimates: Promise<any>[] = this.trainboxs.map(trainbox => trainbox.admission());
-        this.playSentence(); 
+        this.playSentence();
         Promise.all(trainboxAnimates).then(() => {
           nextFuc();
         })
@@ -329,8 +352,13 @@ export default class Game11PlayScene extends Phaser.Scene {
   /**
    * 播放目前的单词
    */
-  private playSentence(): void {
-    this.sentenceSpeaker.play();
+  private playSentence(): Promise<number> {
+    return new Promise(resolve => {
+      this.sentenceSpeaker.play();
+      this.sentenceSpeaker.once("complete", () => {
+        resolve(1);
+      })
+    })
   }
 
   /**
@@ -817,30 +845,32 @@ export default class Game11PlayScene extends Phaser.Scene {
   /**
    * 正确的结果处理
    */
-  private isRight(): void {
-    this.trainboxGetOut().then(() => {
-      this.sellingGold = new SellingGold(this, {
-        callback: () => {
-          this.sellingGold.golds.destroy();
-          this.setGoldValue(3);
-          this.nextRound();
-        }
-      });
-      this.sellingGold.golds.setDepth(6);
-      this.tipsParticlesEmitter.success(() => {
-        this.sellingGold.goodJob(3);
-      })
+  private async isRight() {
+    await this.trainboxGetHead();
+    await this.sentence.admission();
+    await this.particles.boom(1024 * 0.5, 552 * 0.5, 500);
+    await this.playSentence();
+    await this.sentence.leave();
+    await this.trainboxGetOut();
+    this.sellingGold = new SellingGold(this, {
+      callback: () => {
+        this.sellingGold.golds.destroy();
+        this.setGoldValue(3);
+        this.nextRound();
+      }
+    });
+    this.sellingGold.golds.setDepth(6);
+    this.tipsParticlesEmitter.success(() => {
+      this.sellingGold.goodJob(3);
     })
-
   }
 
   /**
-   * 火车开走
+   * 火车回到车头
    */
-  private trainboxGetOut(): Promise<any> {
+  private trainboxGetHead(): Promise<any> {
     var animate = {
       then: resolve => {
-        this.oneWheel = true;
         this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
           duration: 500,
           targets: this.layer3and,
@@ -849,14 +879,25 @@ export default class Game11PlayScene extends Phaser.Scene {
         this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
           duration: 500,
           targets: this.layer2,
-          x: this.layer2InitX
+          x: this.layer2InitX,
+          onComplete: () => {
+            resolve("ok");
+          }
         })
-        setTimeout(() => {
-          this.playSentence();
-        }, 1000);
+      }
+    }
+    return Promise.resolve(animate);
+  }
+
+  /**
+   * 火车开走
+   */
+  private trainboxGetOut(): Promise<any> {
+    var animate = {
+      then: resolve => {
         this.tweens.add(<Phaser.Types.Tweens.TweenBuilderConfig>{
           duration: 3000,
-          delay: 3000,
+          delay: 600,
           targets: [this.layer3and, this.layer2],
           x: `-=${this.layer2.getBounds().width}`,
           onComplete: () => {
@@ -865,9 +906,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         })
       }
     }
-
     return Promise.resolve(animate);
-
   }
 
   /**
@@ -951,7 +990,7 @@ export default class Game11PlayScene extends Phaser.Scene {
         answer += box.name;
       })
       console.log(answer);
-      if (answer === this.ccData[index].name) {
+      if (answer === this.ccData[index].name.replace(/\s/g, "")) {
         resolve("this is ok!");
       } else {
         reject("this is wrong");

@@ -1,3 +1,8 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
 import {Button,ButtonContainer} from './Button';
 import ButtonMusic from './ButtonMusic';
 import ButtonExit from './ButtonExit';

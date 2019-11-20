@@ -1,11 +1,18 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
 import { Locomotive } from "./Locomotive";
 import { TrainBox } from "./TrainBox";
 import { Stage } from "./Stage";
 import { NullTrainBox } from "./NullTrainBox";
+import { SentenceUI} from "./SentenceUI";
 
 export {
     Locomotive,
     TrainBox,
     Stage,
-    NullTrainBox
+    NullTrainBox,
+    SentenceUI
 }

@@ -13,7 +13,7 @@ export class Bounds{
 
 
 
-export var isHit = function (bounds1:Bounds,bounds2:Bounds):Boolean{
+export var isHit = function (bounds1:Bounds,bounds2:Bounds):boolean{
     if(!(bounds1.maxX < bounds2.minX || bounds1.minX  > bounds2.maxX || bounds1.maxY < bounds2.minY || bounds1.minY > bounds2.maxY)){
         return true;
     }else{

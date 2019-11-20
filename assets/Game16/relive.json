@@ -1,0 +1,535 @@
+﻿{
+	"frames": {
+		"relive00": {
+			"frame": {
+				"x": 698,
+				"y": 869,
+				"w": 58,
+				"h": 59
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 113,
+				"y": 107,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive01": {
+			"frame": {
+				"x": 698,
+				"y": 779,
+				"w": 88,
+				"h": 90
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 98,
+				"y": 91,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive02": {
+			"frame": {
+				"x": 346,
+				"y": 1013,
+				"w": 114,
+				"h": 116
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 85,
+				"y": 78,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive03": {
+			"frame": {
+				"x": 887,
+				"y": 948,
+				"w": 132,
+				"h": 133
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 76,
+				"y": 70,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive04": {
+			"frame": {
+				"x": 820,
+				"y": 1132,
+				"w": 149,
+				"h": 150
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 68,
+				"y": 61,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive05": {
+			"frame": {
+				"x": 660,
+				"y": 1132,
+				"w": 160,
+				"h": 162
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 62,
+				"y": 55,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive06": {
+			"frame": {
+				"x": 178,
+				"y": 1013,
+				"w": 168,
+				"h": 169
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 58,
+				"y": 52,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive07": {
+			"frame": {
+				"x": 488,
+				"y": 990,
+				"w": 172,
+				"h": 173
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 56,
+				"y": 50,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive08": {
+			"frame": {
+				"x": 0,
+				"y": 977,
+				"w": 178,
+				"h": 179
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 53,
+				"y": 47,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive09": {
+			"frame": {
+				"x": 698,
+				"y": 948,
+				"w": 189,
+				"h": 184
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 45,
+				"y": 44,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive10": {
+			"frame": {
+				"x": 0,
+				"y": 782,
+				"w": 199,
+				"h": 195
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 37,
+				"y": 36,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive11": {
+			"frame": {
+				"x": 488,
+				"y": 779,
+				"w": 210,
+				"h": 211
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 29,
+				"y": 27,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive12": {
+			"frame": {
+				"x": 796,
+				"y": 497,
+				"w": 221,
+				"h": 227
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 21,
+				"y": 18,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive13": {
+			"frame": {
+				"x": 804,
+				"y": 0,
+				"w": 212,
+				"h": 244
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 36,
+				"y": 9,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive14": {
+			"frame": {
+				"x": 796,
+				"y": 260,
+				"w": 225,
+				"h": 237
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 29,
+				"y": 23,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive15": {
+			"frame": {
+				"x": 250,
+				"y": 533,
+				"w": 242,
+				"h": 240
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 19,
+				"y": 16,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive16": {
+			"frame": {
+				"x": 530,
+				"y": 526,
+				"w": 258,
+				"h": 253
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 10,
+				"y": 10,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive17": {
+			"frame": {
+				"x": 532,
+				"y": 0,
+				"w": 272,
+				"h": 260
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 6,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive18": {
+			"frame": {
+				"x": 532,
+				"y": 260,
+				"w": 264,
+				"h": 266
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 10,
+				"y": 3,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive19": {
+			"frame": {
+				"x": 0,
+				"y": 0,
+				"w": 266,
+				"h": 270
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 9,
+				"y": 0,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive20": {
+			"frame": {
+				"x": 788,
+				"y": 724,
+				"w": 222,
+				"h": 224
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 31,
+				"y": 24,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive21": {
+			"frame": {
+				"x": 250,
+				"y": 773,
+				"w": 238,
+				"h": 240
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 23,
+				"y": 16,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive22": {
+			"frame": {
+				"x": 0,
+				"y": 530,
+				"w": 250,
+				"h": 252
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 17,
+				"y": 10,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive23": {
+			"frame": {
+				"x": 0,
+				"y": 270,
+				"w": 260,
+				"h": 260
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 12,
+				"y": 6,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive24": {
+			"frame": {
+				"x": 266,
+				"y": 267,
+				"w": 264,
+				"h": 266
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 10,
+				"y": 3,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		},
+		"relive25": {
+			"frame": {
+				"x": 266,
+				"y": 0,
+				"w": 266,
+				"h": 267
+			},
+			"rotated": false,
+			"trimmed": true,
+			"spriteSourceSize": {
+				"x": 9,
+				"y": 3,
+				"w": 275,
+				"h": 270
+			},
+			"sourceSize": {
+				"w": 275,
+				"h": 270
+			}
+		}
+	},
+	"meta": {
+		"app": "Adobe Animate",
+		"version": "19.2.1.408",
+		"image": "relive.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 1024,
+			"h": 2048
+		},
+		"scale": "1"
+	}
+}

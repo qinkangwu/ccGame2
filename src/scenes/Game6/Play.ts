@@ -1,8 +1,13 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
 import 'phaser';
 import { Game6DataItem } from '../../interface/Game6';
 import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
-import { EASE, StaticAni } from '../../Public/jonny/Animate';
+import { EASE, StaticAni } from '../../Public/jonny/core/Animate';
 import { cover, rotateTips,CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import { config } from '../../interface/TipsParticlesEmitter';
