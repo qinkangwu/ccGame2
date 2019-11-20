@@ -51,7 +51,7 @@ export default class Game14PlayScene extends Phaser.Scene {
       }); //公共按钮组件
       this.tips = new TipsParticlesEmitter(this); //tip组件
       this.createMode(); //模式按钮
-      this.goldObj = new Gold(this,this.currentGoldNum);
+      this.goldObj = new Gold(this,this.currentGoldNum).setDepth(100);
       this.add.existing(this.goldObj);
       this.input.on('pointerdown',(...args)=>{
         console.log(args);
