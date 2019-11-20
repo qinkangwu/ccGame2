@@ -14,10 +14,11 @@ export class Topic extends Phaser.GameObjects.Container {
         //this.question =  new Phaser.GameObjects.BitmapText(scene, 0, 10, "ArialRoundedBold",questionContent,95-questionContent.length, 1).setOrigin(0.5);
         this.question = new Phaser.GameObjects.Text(scene, 0, 10, questionContent, <Phaser.Types.GameObjects.Text.TextStyle>{
             align: "center",
-            fontFamily: "Arial Rounded MT Bold",
+            fontFamily: "sans-serif",
             color: "#ffffff",
             fontSize: "30px",
-            wordWrap: <Phaser.Types.GameObjects.Text.TextWordWrap>{ width: 656 }
+            wordWrap: <Phaser.Types.GameObjects.Text.TextWordWrap>{ width: 656 },
+            resolution:2
         }).setOrigin(0.5);
         this.question.tint = 0xFF6E09;
         // this.civa = this.scene.add.sprite(380,-90,civaTexture,civaFrame).setDepth(3);
