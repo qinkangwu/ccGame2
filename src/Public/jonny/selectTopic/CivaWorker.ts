@@ -30,9 +30,9 @@ export class CivaWorker extends Phaser.GameObjects.Sprite {
     public asBee(): CivaWorker {
         this.scene.anims.create({
             key: "flight",
-            frames: this.scene.anims.generateFrameNames("civaBee", { prefix: "civaBee000", start: 0, end: 9 }),
+            frames: this.scene.anims.generateFrameNames("civaBee", { prefix: "civaBee000", start: 0, end: 1 }),
             repeat: -1,
-            frameRate: 60
+            frameRate:8 
         });
         this.play("flight");
         return this;
