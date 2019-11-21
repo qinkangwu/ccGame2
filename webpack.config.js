@@ -14,7 +14,7 @@ var definePlugin = new webpack.DefinePlugin({
 })
 
 module.exports = {
-    mode: process.env.NODE_ENV !== 'production' ? 'development' : 'production',
+    mode: 'development',
     entry: {
         app: [
             path.resolve(__dirname, 'src/main.ts')

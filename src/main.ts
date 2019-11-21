@@ -64,11 +64,9 @@ const loadOnDemand = (menu : string ) : void=>{
   let menuStr = [];
   //@ts-ignore
   require.context(`./scenes/`,true,/\.ts$/).keys().map((r : string)=>{
-    console.log(r,'aaa',menu);
     r.match(/\/(.+)\//)[1] === menu  && menuStr.push(r.substr(r.lastIndexOf('/') + 1));
   });
   Promise.all(menuStr.map((r,i)=>import(`./scenes/${menu}/${r}`))).then((r : [])=>{
-    console.log(r,'asddsadsa');
     r.map((r2)=>{
       //@ts-ignore
       sceneArr.push(r2.default);
