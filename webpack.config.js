@@ -14,6 +14,7 @@ var definePlugin = new webpack.DefinePlugin({
 })
 
 module.exports = {
+    mode: process.env.NODE_ENV !== 'production' ? 'development' : 'production',
     entry: {
         app: [
             path.resolve(__dirname, 'src/main.ts')
@@ -23,14 +24,24 @@ module.exports = {
     devtool: 'cheap-source-map',
     output: {
         pathinfo: true,
-        path: path.resolve(__dirname, 'dist'),
+        path:path.resolve(__dirname,'dist'),
+        filename:'[name].js',
         publicPath: './dist/',
-        filename: 'bundle.js'
     },
     watch: true,
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                commons: {
+                    name: "commons",
+                    chunks: "initial",
+                    minChunks: 2
+                }
+            }
+        }
+    },
     plugins: [
         definePlugin,
-        new webpack.optimize.CommonsChunkPlugin({ name: 'vendor'/* chunkName= */, filename: 'vendor.bundle.js'/* filename= */ }),
         new HtmlWebpackPlugin({
             filename: '../index.html',
             template: './src/index.html',

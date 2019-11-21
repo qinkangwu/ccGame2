@@ -10,7 +10,7 @@ import { cover, rotateTips, isHit, Vec2, CONSTANT, EASE } from '../../Public/jon
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 import { Topic, Answer, CivaWorker } from '../../Public/jonny/selectTopic';
-import * as dat from 'dat.gui';
+// import * as dat from 'dat.gui';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -369,7 +369,7 @@ export default class Game21PlayScene extends Phaser.Scene {
       fontFamily:"sans-serif"
     }
 
-    this.datGui = new dat.GUI();
+    // this.datGui = new dat.GUI();
 
     this.datGui.add(guiData, "resolution", 1, 5, 1).onChange(value => {
       this.topic.question.setResolution(value);

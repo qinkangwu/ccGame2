@@ -20,9 +20,21 @@ module.exports = {
     vendor: ['phaser']
   },
   output: {
-    path: path.resolve(__dirname, 'build'),
-    publicPath: './',
-    filename: 'js/bundle.js'
+    pathinfo: true,
+    path:path.resolve(__dirname,'dist'),
+    filename:'[name].js',
+    publicPath: './dist/',
+  },
+  optimization: {
+    splitChunks: {
+        cacheGroups: {
+            commons: {
+                name: "commons",
+                chunks: "initial",
+                minChunks: 2
+            }
+        }
+    }
   },
   plugins: [
     definePlugin,
@@ -34,7 +46,6 @@ module.exports = {
         comments: false
       }
     }),
-    new webpack.optimize.CommonsChunkPlugin({ name: 'vendor' /* chunkName= */, filename: 'js/vendor.bundle.js' /* filename= */ }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: './src/index.html',

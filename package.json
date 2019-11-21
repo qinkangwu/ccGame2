@@ -23,10 +23,12 @@
     "browser-sync": "^2.18.13",
     "browser-sync-webpack-plugin": "^1.2.0",
     "fuzhi": "^1.0.0",
-    "html-webpack-plugin": "^2.30.1",
+    "html-webpack-plugin": "^4.0.0-beta.11",
     "raw-loader": "^0.5.1",
     "typescript": "^3.5.2",
-    "webpack": "3.11.0"
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
   },
   "dependencies": {
     "dat.gui": "^0.7.6",
