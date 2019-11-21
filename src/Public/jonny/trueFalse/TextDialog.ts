@@ -4,7 +4,8 @@ import { EASE } from "../core/Animate";
 export class TextDialog extends Phaser.GameObjects.Container {
     question: Phaser.GameObjects.Text;
     bg: Phaser.GameObjects.Image;
-    constructor(scene: Phaser.Scene, x: number, y: number, questionContent: string) {
+    isRight:number;
+    constructor(scene: Phaser.Scene, x: number, y: number, questionContent: string,isRight:number) {
         super(scene, x, y);
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, "bg_talk_pop").setOrigin(79 / 367, 256 / 256);
         this.question = new Phaser.GameObjects.Text(scene, 103, -129, questionContent, {
@@ -16,6 +17,7 @@ export class TextDialog extends Phaser.GameObjects.Container {
             resolution: 2
         });
         this.question.setOrigin(0.5);
+        this.isRight = isRight;
         this.add([this.bg, this.question]);
     }
 

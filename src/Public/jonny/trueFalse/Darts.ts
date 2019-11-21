@@ -44,19 +44,12 @@ export class Darts extends Phaser.GameObjects.Sprite {
                 start: 0,
                 end: 14
             }),
-            frameRate: 24
+            frameRate: 60
         });
     }
 
-    public getTrue(): Promise<number> {
-        return this.getTarget(this.isRight);
-    }
-
-    public getFalse(): Promise<number> {
-        return this.getTarget(this.isWrong);
-    }
-
-    private getTarget(isRW: PTOP): Promise<number> {
+    public getTarget(TF:string): Promise<number> {
+        let isRW = TF === "true" ? this.isRight : this.isWrong ;
         return new Promise(resolve => {
             this.setPosition(
                 isRW.initPosition.x,
@@ -67,11 +60,10 @@ export class Darts extends Phaser.GameObjects.Sprite {
                 targets: this,
                 x: isRW.targetPosition.x,
                 y: isRW.targetPosition.y,
-                duration: 500,
-                onStart: () => {
-                    this.anims.play("runing");
-                },
+                duration: 300,
+                ease:"Sine.easeOut",
                 onComplete: () => {
+                    this.anims.play("runing");
                     resolve(1);
                 }
             })

@@ -8,7 +8,7 @@ export class Gold extends Phaser.GameObjects.Container{
         super(scene);
         value=value.toString();
         this.goldImg = new Phaser.GameObjects.Image(scene,0,0, "goldValue");
-        this.goldText = new Phaser.GameObjects.Text(scene,10,13,value, <Phaser.Types.GameObjects.Text.TextStyle>{ align: "center", fontSize: `8px`, fontFamily: "Arial", stroke: "#000", strokeThickness: 0 }).setOrigin(0.5).setResolution(2);
+        this.goldText = new Phaser.GameObjects.Text(scene,9,13,value, <Phaser.Types.GameObjects.Text.TextStyle>{ align: "center", fontSize: `8px`, fontFamily: "Arial", stroke: "#000", strokeThickness: 0 }).setOrigin(0.5).setResolution(2);
         this.add([this.goldImg,this.goldText]);
         this.x = 968.95;
         this.y = 149.75;

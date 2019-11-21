@@ -172,7 +172,7 @@ export default class Game22PlayScene extends Phaser.Scene {
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
 
     //创建题板
-    this.textDialog = new TextDialog(this,146.45,295.85,this.ccData[index].questionContent);
+    this.textDialog = new TextDialog(this,146.45,295.85,this.ccData[index].questionContent,this.ccData[index].isRight);
     this.textDialog.init();
     this.layer1.add(this.textDialog);
 
@@ -197,17 +197,72 @@ export default class Game22PlayScene extends Phaser.Scene {
       await this.textDialog.admission();
       await this.trueTarget.admission();
       await this.falseTarget.admission();
+      this.bindEvent();
       //this.getGui();
     };
     ready();
   }
 
   /**
+   * 绑定事件
+   */
+  private bindEvent():void{
+    this.trueTarget.on("pointerdown",this.touchAnswer.bind(this,"true"));
+    this.falseTarget.on("pointerdown",this.touchAnswer.bind(this,"false"));
+  }
+
+  /**
+   * 将按钮设置为禁用
+   */
+  private disableAllButton(){
+    this.trueTarget.disableInteractive();
+    this.falseTarget.disableInteractive();
+  }
+
+   /**
+   * 将按钮设置为可用
+   */
+  private activeAllButton(){
+    this.trueTarget.setInteractive();
+    this.falseTarget.setInteractive();
+  }
+
+
+  /**
     * 点击答案
     */
-  public touchAnswer() {
+  public async touchAnswer(TF:string) {
+    this.disableAllButton();
     this.audioPlay("clickMp3");
-    this.testEnd();
+    await this.darts.getTarget(TF);
+    this.checkoutResult(TF).subscribe(value => {
+      console.log(value);
+      if (value) {
+        this.isRight();
+      } else {
+        this.isWrong();
+      }
+    })
+  }
+
+   /**
+   * 判断做题结果是否正确
+   */
+  private checkoutResult(TF:string): Observable<boolean> {
+    let isRightValue:boolean;
+    if(TF==="true"){
+     isRightValue = this.textDialog.isRight === 1;
+    }else if(TF==="false"){
+      isRightValue = this.textDialog.isRight === 0;
+    }
+    return Observable.create(subscriber => {
+      if (isRightValue) {
+        subscriber.next(true);
+      } else {
+        subscriber.next(false);
+      };
+
+    });
   }
 
 
@@ -228,20 +283,6 @@ export default class Game22PlayScene extends Phaser.Scene {
 
 
   /**
-   *  已经选择题目，并执行结果
-   */
-  private testEnd() {
-
-    this.checkoutResult().subscribe(value => {
-      if (value) {
-        this.isRight();
-      } else {
-        this.isWrong();
-      }
-    })
-  }
-
-  /**
    * 正确的结果处理
    */
   private isRight(): void {
@@ -260,7 +301,7 @@ export default class Game22PlayScene extends Phaser.Scene {
     }
 
     let animate = async () => {
-      this.audioPlay("right");
+      await this.audioPlay("right");
       this.audioPlay("successMp3");
       nextFuc();
     }
@@ -292,7 +333,7 @@ export default class Game22PlayScene extends Phaser.Scene {
    * 重置开始状态
    */
   private resetStart() {
-  
+      this.activeAllButton();
   }
 
   /**
@@ -328,19 +369,7 @@ export default class Game22PlayScene extends Phaser.Scene {
     });
   }
 
-  /**
-   * 判断做题结果是否正确
-   */
-  private checkoutResult(): Observable<boolean> {
-    // let isRightValue: number = this.prevAnswer.isRight;
-    return Observable.create(subscriber => {
-      // if (isRightValue === 1) {
-      //   subscriber.next(true);
-      // } else {
-      //   subscriber.next(false);
-      // }
-    });
-  }
+ 
 
   /**
    * 设置金币的动作
