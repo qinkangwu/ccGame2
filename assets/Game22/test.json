@@ -1,0 +1,49 @@
+{
+    "code": "0000",
+    "description": "oh yeah,通过了",
+    "result": [
+        {
+            "questionContent": "What channel did you watch in television last night?",
+            "audioKey": "",
+            "imgKey": "",
+            "isRight": 0
+        },
+        {
+            "questionContent": "You get good reception on your radio",
+            "audioKey": "",
+            "imgKey": "",
+            "isRight": 1
+        },
+        {
+            "questionContent": "Please turn the radio up.It's too low",
+            "audioKey": "",
+            "imgKey": "",
+            "isRight": 1
+        },
+        {
+            "questionContent": "We met one of the engineers over at the television's station",
+            "audioKey": "",
+            "imgKey": "",
+            "isRight": 0
+        },
+        {
+            "questionContent": "I wonder if this is a local broadcast",
+            "audioKey": "",
+            "imgKey": "",
+            "isRight": 1
+        },
+        {
+            "questionContent": "A texture stores the information that represents a image",
+            "audioKey": "",
+            "imgKey": "",
+            "isRight": 0
+        },
+        {
+            "questionContent": "Create a new BaseTexture with a BufferResource from a Float32Array",
+            "audioKey": "",
+            "imgKey": "",
+            "isRight": 1
+        }     
+    ],
+    "success": true
+}

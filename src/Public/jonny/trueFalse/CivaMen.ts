@@ -22,6 +22,7 @@ export class CivaMen extends Phaser.GameObjects.Image{
         return new Promise(resolve => {
             this.scene.add.tween({
                 targets:this,
+                duration:500,
                 x:this.targetPosition.x,
                 y:this.targetPosition.y,
                 onComplete:()=>{
