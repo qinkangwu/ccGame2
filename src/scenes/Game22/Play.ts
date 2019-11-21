@@ -9,7 +9,7 @@ import { TrueFalseInterface } from '../../interface/TrueFalseInterface';
 import { cover, rotateTips, isHit, Vec2, CONSTANT, EASE } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { CivaMen, Darts, FalseTarget, TextDialog, TrueTarget } from '../../Public/jonny/trueFalse';
+import { CivaMen, Darts, TextDialog, Target } from '../../Public/jonny/trueFalse';
 import * as dat from 'dat.gui';
 
 const vol = 0.3; //背景音乐的音量
@@ -37,8 +37,8 @@ export default class Game22PlayScene extends Phaser.Scene {
   private textDialog:TextDialog;
   private civa: CivaMen;
   private darts:Darts;
-  private falseTarget:FalseTarget;
-  private trueTarget:TrueTarget;
+  private falseTarget:Target;
+  private trueTarget:Target;
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
 
@@ -177,8 +177,8 @@ export default class Game22PlayScene extends Phaser.Scene {
     this.layer1.add(this.textDialog);
 
     //创建飞镖，靶子
-    this.falseTarget = new FalseTarget(this,855,258);
-    this.trueTarget = new TrueTarget(this,596,258);
+    this.falseTarget = new Target(this,855,258,"bg_f").init();
+    this.trueTarget = new Target(this,596,258,"bg_t").init();
     this.darts = <Darts>(this.add.existing(new Darts(this)));
     this.layer2.add([this.falseTarget,this.trueTarget,this.darts]);
 
@@ -195,6 +195,8 @@ export default class Game22PlayScene extends Phaser.Scene {
     let ready = async () => {
       await this.civa.asArcherAdmission();
       await this.textDialog.admission();
+      await this.trueTarget.admission();
+      await this.falseTarget.admission();
       //this.getGui();
     };
     ready();
