@@ -76,7 +76,7 @@ export default class Game20LoadScene extends Phaser.Scene {
    * 正式状态
    */
   private getData() {
-    get(apiPath.getQuestionData).then((res) => {
+    get(apiPath.getQuestionData("c737587a-34ce-47d5-b5c0-6db031712c07","aaeacf2b-bc61-4135-a976-aa1b6815eeaf")).then((res) => {
       if (res.code === '0000') {
         this.ccData = (<any>res.result)
           .filter((v, i) => i >= 20 && i < 30)

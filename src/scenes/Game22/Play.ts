@@ -206,7 +206,6 @@ export default class Game22PlayScene extends Phaser.Scene {
     * 点击答案
     */
   public touchAnswer() {
-
     this.audioPlay("clickMp3");
     this.testEnd();
   }

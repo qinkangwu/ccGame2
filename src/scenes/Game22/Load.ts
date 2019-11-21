@@ -73,16 +73,23 @@ export default class Game22LoadScene extends Phaser.Scene {
    * 正式状态
    */
   private getData() {
-    get("assets/Game22/test.json")
+    get(apiPath.getQuestionData("c737587a-34ce-47d5-b5c0-6db031712c07", "b1412200-0c03-11ea-a55e-0894ef25c6a1"))
       .then((res) => {
         if (res.code === '0000') {
-          this.ccData = res.result;
+          this.ccData = res.result
+            .map((v) => {
+              delete v.answers;
+              delete v.imgKey;
+              delete v.audioKey;
+              v.questionContent = v.questionContent.replace(/<\/*\w+>/g,"");
+              return v;
+            });
         }
       }).then(() => {
         this.scene.start('Game22PlayScene', {
           data: this.ccData,
           index: 0
-        }); 
+        });
       })
   }
 
