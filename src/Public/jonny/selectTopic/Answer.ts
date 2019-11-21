@@ -32,7 +32,7 @@ export class Answer extends Phaser.GameObjects.Container {
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, config.bgTexture);
         this.answerContent = new Phaser.GameObjects.Text(scene, 0, 30, config.answerContent, <Phaser.Types.GameObjects.Text.TextStyle>{
             align: "center",
-            fontFamily: "sans-serif",
+            fontFamily: "Helvetica",
             color: "#ffffff",
             fontSize: `${30 - config.answerContent.length * 0.4}px`,
             wordWrap: <Phaser.Types.GameObjects.Text.TextWordWrap>{ width: this.bg.width * 0.6 },
@@ -41,7 +41,7 @@ export class Answer extends Phaser.GameObjects.Container {
         //this.serial = new Phaser.GameObjects.BitmapText(scene, config.serial.position.x, config.serial.position.y, "", config.serial.value, 30, 1).setOrigin(0.5);
         this.serial = new Phaser.GameObjects.Text(scene,config.serial.position.x, config.serial.position.y,config.serial.value,{
             align: "center",
-            fontFamily: "sans-serif",
+            fontFamily: "Helvetica",
             color: "#ffffff", 
             fontSize:"25px",
             resolution:2
