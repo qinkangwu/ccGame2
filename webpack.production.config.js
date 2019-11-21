@@ -25,7 +25,7 @@ module.exports = {
     pathinfo: true,
     path:path.resolve(__dirname,'build'),
     filename:'[name].js',
-    publicPath: './build/',
+    publicPath: './',
   },
   optimization: {
     splitChunks: {
