@@ -8,8 +8,8 @@ import "phaser";
 
 export class Particles extends Phaser.GameObjects.Particles.ParticleEmitterManager {
     public emitter: Phaser.GameObjects.Particles.ParticleEmitter;
-    constructor(scene: Phaser.Scene) {
-        super(scene,"particleShape");
+    constructor(scene: Phaser.Scene, texture: string, frame?: string | number) {
+        super(scene, texture, frame);
         this.emitter = this.createEmitter(<Phaser.Types.GameObjects.Particles.ParticleEmitterConfig>{
             lifespan: 1000,   //寿命
             speed: { min: 300, max: 400 },
@@ -20,6 +20,7 @@ export class Particles extends Phaser.GameObjects.Particles.ParticleEmitterManag
             tint: [0xff0000, 0x00ff00, 0x0000ff],
             on: false
         });
+
     }
 
     public boom(x: number = 0, y: number = 0, count: number = 40): Promise<number> {
