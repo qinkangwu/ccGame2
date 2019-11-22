@@ -2,6 +2,7 @@ var path = require('path')
 var webpack = require('webpack')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var TerserPlugin = require('terser-webpack-plugin');
+var HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 // Phaser webpack config
 var phaserModule = path.join(__dirname, '/node_modules/phaser/')
@@ -64,7 +65,8 @@ module.exports = {
         removeEmptyAttributes: true
       },
       hash: true
-    })
+    }),
+    new HardSourceWebpackPlugin()
   ],
   module: {
     rules: [

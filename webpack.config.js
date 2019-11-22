@@ -2,6 +2,7 @@ var path = require('path')
 var webpack = require('webpack')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var BrowserSyncPlugin = require('browser-sync-webpack-plugin')
+var HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 // Phaser webpack config
 var phaserModule = path.join(__dirname, '/node_modules/phaser/')
@@ -69,7 +70,8 @@ module.exports = {
                 key: "./ssl/server.key",
                 cert: "./ssl/server.crt"
             }
-        })
+        }),
+        new HardSourceWebpackPlugin()
     ],
     module: {
         rules: [

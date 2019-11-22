@@ -59,8 +59,8 @@ export default class Game14PlayScene extends Phaser.Scene {
     }
 
     private createMode() : void {
-      this.mode1 = this.add.image(332,86.5,'mode1').setOrigin(0).setScale(.5).setInteractive();
-      this.mode2 = this.add.image(332,294,'mode2').setOrigin(0).setScale(.5).setInteractive();
+      this.mode1 = this.add.image(512,160.25,'mode1').setOrigin(.5).setScale(.5).setInteractive();
+      this.mode2 = this.add.image(512,367.75,'mode2').setOrigin(.5).setScale(.5).setInteractive();
       this.mode1.on('pointerdown',this.chooseModeEndHandle.bind(this,'mode1'));
       this.mode2.on('pointerdown',this.chooseModeEndHandle.bind(this,'mode2'));
     }
@@ -70,17 +70,17 @@ export default class Game14PlayScene extends Phaser.Scene {
     private createMode1() : void {
       //4牌模式
       this.cardArr.push(
-        this.add.quad(142,299 - H,'pics','pic2.png').setDisplaySize(218,326).setInteractive(),
-        this.add.quad(389,253.5 - H,'pics','pic2.png').setDisplaySize(218,326).setInteractive(),
-        this.add.quad(636.5,299 - H,'pics','pic2.png').setDisplaySize(218,326).setInteractive(),
-        this.add.quad(883.5,253.5 - H,'pics','pic2.png').setDisplaySize(218,326).setInteractive()
+        this.add.quad(142,299 - H,'pics','pic2.png').setDisplaySize(218,326).setInteractive().setFrame('pic1.png'),
+        this.add.quad(389,253.5 - H,'pics','pic2.png').setDisplaySize(218,326).setInteractive().setFrame('pic1.png'),
+        this.add.quad(636.5,299 - H,'pics','pic2.png').setDisplaySize(218,326).setInteractive().setFrame('pic1.png'),
+        this.add.quad(883.5,253.5 - H,'pics','pic2.png').setDisplaySize(218,326).setInteractive().setFrame('pic1.png')
       );
       this.cardArr.map((r,i)=>{
         this.wordArr.push(this.add.text(this.cardArr[i].x,this.cardArr[i].y,data[i],{
           fontSize: "38.5px",
           fontFamily:"Arial Rounded MT Bold",
           fill : '#2773F2',
-        }).setOrigin(.5).setResolution(2))
+        }).setOrigin(.5).setResolution(2).setAlpha(0))
         this.zoneArr.push(this.add.zone(this.cardArr[i].x,this.cardArr[i].y,218,326).setOrigin(.5).setDepth(1).setInteractive());
       })
       this.tweens.add({
@@ -90,10 +90,9 @@ export default class Game14PlayScene extends Phaser.Scene {
         ease : 'Sine.easeInOut',
         onComplete : ()=>{
           this.time.addEvent({
-            delay : 2000,
+            delay : 600,
             callback : ()=>{
               this.cardArr.map((r,i)=>{
-                this.wordArr[i].alpha = 0 ;
                 this.tweens.add({
                   targets : r,
                   topLeftX : `+=218`,
@@ -103,7 +102,7 @@ export default class Game14PlayScene extends Phaser.Scene {
                   duration : 300,
                   ease : 'Sine.easeInOut',
                   onComplete : ()=>{
-                    r.setFrame('pic1.png');
+                    r.setFrame('pic2.png');
                     this.tweens.add({
                       targets : r,
                       topLeftX : `-=218`,
@@ -112,8 +111,40 @@ export default class Game14PlayScene extends Phaser.Scene {
                       bottomRightX : `+=218`,
                       duration : 300,
                       ease : 'Sine.easeInOut',
+                      onComplete : ()=>{
+                        this.wordArr[i].alpha = 1;
+                        this.time.addEvent({
+                          delay : 1500,
+                          callback : ()=>{
+                            this.wordArr[i].alpha = 0 ;
+                            this.tweens.add({
+                              targets : r,
+                              topLeftX : `+=218`,
+                              topRightX : `-=218`,
+                              bottomLeftX : '+=218',
+                              bottomRightX : `-=218`,
+                              duration : 300,
+                              ease : 'Sine.easeInOut',
+                              onComplete : ()=>{
+                                r.setFrame('pic1.png');
+                                this.tweens.add({
+                                  targets : r,
+                                  topLeftX : `-=218`,
+                                  topRightX : `+=218`,
+                                  bottomLeftX : '-=218',
+                                  bottomRightX : `+=218`,
+                                  duration : 300,
+                                  ease : 'Sine.easeInOut',
+                                  onComplete : ()=>{
+                                    this.zoneArr[i].on('pointerdown',this.flipCardHandle.bind(this,'mode1',i));
+                                  }
+                                });
+                              }
+                            });
+                          }
+                        })
+                      }
                     });
-                    this.zoneArr[i].on('pointerdown',this.flipCardHandle.bind(this,'mode1',i));
                   }
                 })
               })
@@ -188,6 +219,7 @@ export default class Game14PlayScene extends Phaser.Scene {
 
     private successHandle () : void {
       //匹配正确
+      this.playMusic('successMp3');
       this.chooseCardIndexArr.map((r,i)=>{
         this.cardArr[r].destroy();
         this.wordArr[r].destroy();
@@ -274,18 +306,18 @@ export default class Game14PlayScene extends Phaser.Scene {
       for(let i = 0 ; i < 8 ; i ++){
         if(i < 4){
           this.cardArr.push(
-            this.add.quad(234.5 + (i * 185 ),146.5 - H,'pics','pic2.png').setDisplaySize(150,224)
+            this.add.quad(234.5 + (i * 185 ),146.5 - H,'pics','pic1.png').setDisplaySize(150,224)
           )
         }else{
           this.cardArr.push(
-            this.add.quad(234.5 + ((i - 4) * 185 ),405.5 - H,'pics','pic2.png').setDisplaySize(150,224)
+            this.add.quad(234.5 + ((i - 4) * 185 ),405.5 - H,'pics','pic1.png').setDisplaySize(150,224)
           )
         }
         this.wordArr.push(this.add.text(this.cardArr[i].x,this.cardArr[i].y,data[i],{
           fontSize: "29.5px",
           fontFamily:"Arial Rounded MT Bold",
           fill : '#2773F2',
-        }).setOrigin(.5).setResolution(2));
+        }).setOrigin(.5).setResolution(2).setAlpha(0));
         this.zoneArr.push(this.add.zone(this.cardArr[i].x,this.cardArr[i].y,150,224).setOrigin(.5).setDepth(1).setInteractive());
       }
       this.tweens.add({
@@ -295,10 +327,9 @@ export default class Game14PlayScene extends Phaser.Scene {
         ease : 'Sine.easeInOut',
         onComplete : ()=>{
           this.time.addEvent({
-            delay : 2000,
+            delay : 600,
             callback : ()=>{
               this.cardArr.map((r,i)=>{
-                this.wordArr[i].alpha = 0;
                 this.tweens.add({
                   targets : r,
                   duration : 300,
@@ -308,7 +339,7 @@ export default class Game14PlayScene extends Phaser.Scene {
                   bottomLeftX : '+=218',
                   bottomRightX : `-=218`,
                   onComplete : ()=>{
-                    r.setFrame('pic1.png');
+                    r.setFrame('pic2.png');
                     this.tweens.add({
                       targets : r,
                       duration : 300,
@@ -318,7 +349,37 @@ export default class Game14PlayScene extends Phaser.Scene {
                       bottomLeftX : '-=218',
                       bottomRightX : `+=218`,
                       onComplete : ()=>{
-                        this.zoneArr[i].on('pointerdown',this.flipCardHandle.bind(this,'mode2',i));
+                        this.wordArr[i].alpha = 1 ;
+                        this.time.addEvent({
+                          delay : 1500,
+                          callback : ()=>{
+                            this.wordArr[i].alpha = 0 ;
+                            this.tweens.add({
+                              targets : r,
+                              duration : 300,
+                              ease : 'Sine.easeInOut',
+                              topLeftX : `+=218`,
+                              topRightX : `-=218`,
+                              bottomLeftX : '+=218',
+                              bottomRightX : `-=218`,
+                              onComplete : ()=>{
+                                r.setFrame('pic1.png');
+                                this.tweens.add({
+                                  targets : r,
+                                  duration : 300,
+                                  ease : 'Sine.easeInOut',
+                                  topLeftX : `-=218`,
+                                  topRightX : `+=218`,
+                                  bottomLeftX : '-=218',
+                                  bottomRightX : `+=218`,
+                                  onComplete : ()=>{
+                                    this.zoneArr[i].on('pointerdown',this.flipCardHandle.bind(this,'mode2',i));
+                                  }
+                                })
+                              }
+                            })
+                          }
+                        })
                       }
                     })
                   }
@@ -333,13 +394,23 @@ export default class Game14PlayScene extends Phaser.Scene {
     private chooseModeEndHandle(mode : string) : void {
       this.chooseMode = mode;
       this.tweens.add({
-        targets : [this.mode1,this.mode2],
-        duration : 500,
-        y : `-=${W}`,
+        targets : mode === 'mode1' ? [this.mode1] : this.mode2,
+        duration : 300,
+        scaleX : .6,
+        scaleY : .6,
         ease : 'Sine.easeInOut',
+        yoyo : true,
         onComplete : ()=>{
-          mode === 'mode1' && this.createMode1();
-          mode === 'mode2' && this.createMode2();
+          this.tweens.add({
+            targets : [this.mode1,this.mode2],
+            duration : 500,
+            y : `-=${W}`,
+            ease : 'Sine.easeInOut',
+            onComplete : ()=>{
+              mode === 'mode1' && this.createMode1();
+              mode === 'mode2' && this.createMode2();
+            }
+          })
         }
       })
     }

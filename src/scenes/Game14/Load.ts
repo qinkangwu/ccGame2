@@ -43,6 +43,7 @@ export default class Game14LoadScene extends Phaser.Scene {
     this.load.image('bgi','assets/Game14/bgi.png');
     this.load.audio('clickMp3','assets/Game5/click.mp3');
     this.load.audio('wrongMusic','assets/Game4/wrong.mp3');
+    this.load.audio('successMp3', 'assets/sounds/successMp3.mp3');
     this.load.image('mode1','assets/Game14/mode1.png');
     this.load.image('mode2','assets/Game14/mode2.png');
     this.load.image('goldValue','assets/commonUI/goldValue.png');
