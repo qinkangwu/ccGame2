@@ -14,9 +14,9 @@ export class Gold extends Phaser.GameObjects.Container{
         super(scene);
         this.value = value;
         this.goldImg = new Phaser.GameObjects.Image(scene,0,0, "goldValue");
-        this.goldText = new Phaser.GameObjects.Text(scene,0,0,value.toString(), <Phaser.Types.GameObjects.Text.TextStyle>{ align: "center", fontSize: `8px`, fontFamily: "sans-serif" }).setResolution(2).setOrigin(0.5);
+        this.goldText = new Phaser.GameObjects.Text(scene,0,0,value.toString(), <Phaser.Types.GameObjects.Text.TextStyle>{ align: "center", fontSize: `16px`, fontFamily: "sans-serif" }).setResolution(2).setOrigin(0.5);
         this.goldText.x = 12;
-        this.goldText.y = 17-5;
+        this.goldText.y = 17;
         this.add([this.goldImg,this.goldText]);
         this.x = 968.95;
         this.y = 149.75;
