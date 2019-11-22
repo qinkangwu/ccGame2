@@ -1,16 +1,16 @@
 /**
  * @author       Peng Jiang <jonny.peng@qq.com>
- * @copyright    2019 civaonline.cn
+ * @copyright    2019 civaonline.cn/guiyang
  */
 
 import 'phaser';
 import { Observable } from 'rxjs';
-import { QueryTopic, AnswerConfig } from '../../interface/SelectTopic';
+import { TrueFalseInterface } from '../../interface/TrueFalseInterface';
 import { cover, rotateTips, isHit, Vec2, CONSTANT, EASE } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
-import { Topic, Answer, CivaWorker } from '../../Public/jonny/selectTopic';
-// import * as dat from 'dat.gui';
+import { CivaMen, Darts, TextDialog, Target } from '../../Public/jonny/trueFalse';
+import * as dat from 'dat.gui';
 
 const vol = 0.3; //背景音乐的音量
 const W = 1024;
@@ -19,10 +19,10 @@ var index: number; //题目的指针，默认为0
 var goldValue: number = 3; //金币的值
 
 
-export default class Game21PlayScene extends Phaser.Scene {
+export default class Game22PlayScene extends Phaser.Scene {
   private datGui: dat.GUI;
 
-  private ccData: QueryTopic[] = [];
+  private ccData: TrueFalseInterface[] = [];
   private times: number = 0;  //次数
 
   //静态开始
@@ -31,25 +31,36 @@ export default class Game21PlayScene extends Phaser.Scene {
   private btnExit: Button;  //退出按钮
   private btnSound: ButtonMusic; //音乐按钮
   private gold: Gold;
-  private civa: CivaWorker;
   //静态结束
 
   //动态开始
-  private topic: Topic;
-  private answers: Array<Answer> = [];
-  private prevAnswer: Answer = null;
+  private textDialog:TextDialog;
+  private civa: CivaMen;
+  private darts:Darts;
+  private falseTarget:Target;
+  private trueTarget:Target;
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
 
 
-
   /**
-   * 背景
+   * bg
    */
   private layer0: Phaser.GameObjects.Container;
 
+
   /**
-   * 答题板
+   *  textDialog
+   */
+  private layer1: Phaser.GameObjects.Container;
+
+  /**
+   * darts,falseTarget,trueTarget 
+   */
+  private layer2: Phaser.GameObjects.Container;
+
+  /**
+   * civa
    */
   private layer3: Phaser.GameObjects.Container;
 
@@ -60,7 +71,7 @@ export default class Game21PlayScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: "Game21PlayScene"
+      key: "Game22PlayScene"
     });
   }
 
@@ -81,7 +92,7 @@ export default class Game21PlayScene extends Phaser.Scene {
       this.scene.pause();
       rotateTips.init();
       this.firstCreate();
-      cover(this, "Game21", () => {
+      cover(this, "Game22", () => {
         this.gameStart();
       });
     } else {
@@ -117,14 +128,18 @@ export default class Game21PlayScene extends Phaser.Scene {
     let that = this;
 
     this.layer0 = new Phaser.GameObjects.Container(this).setDepth(0);
+    this.layer1 = new Phaser.GameObjects.Container(this).setDepth(1);
+    this.layer2 = new Phaser.GameObjects.Container(this).setDepth(2);
     this.layer3 = new Phaser.GameObjects.Container(this).setDepth(3);
     this.layer4 = new Phaser.GameObjects.Container(this).setDepth(4);
 
     this.add.existing(this.layer0);
+    this.add.existing(this.layer1);
+    this.add.existing(this.layer2);
     this.add.existing(this.layer3);
     this.add.existing(this.layer4);
 
-    this.bg = new Phaser.GameObjects.Image(this, 0, 0, "bg").setOrigin(0);
+    this.bg = new Phaser.GameObjects.Image(this, 0, 0, "bg_all").setOrigin(0);
     this.layer0.add(this.bg);
 
     this.btnExit = new ButtonExit(this);
@@ -157,27 +172,20 @@ export default class Game21PlayScene extends Phaser.Scene {
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
 
     //创建题板
-    this.topic = new Topic(this, this.ccData[index].questionContent);
-    this.topic.question.y = 0;
-    this.ccData[index].answers.forEach(answer => {
-      let _answer: Answer = new Answer(this, {
-        position: { x: answer.position.x, y: answer.position.y },
-        bgTexture: "daan",
-        serial: answer.serial,
-        answerContent: answer.answerContent,
-        isRight: answer.isRight
-      });
-      _answer.answerContent.setPosition(0, 0);
-      _answer.answerContent.setColor("#FF6E09");
-      _answer.serial.setColor("#FF6E09");
-      this.answers.push(_answer);
-    });
+    this.textDialog = new TextDialog(this,146.45,295.85,this.ccData[index].questionContent,this.ccData[index].isRight);
+    this.textDialog.init();
+    this.layer1.add(this.textDialog);
 
-    this.layer3.add([this.topic]);
-    this.layer3.add(this.answers);
+    //创建飞镖，靶子
+    this.falseTarget = new Target(this,855,258,"bg_f").init();
+    this.trueTarget = new Target(this,596,258,"bg_t").init();
+    this.darts = <Darts>(this.add.existing(new Darts(this)));
+    this.layer2.add([this.falseTarget,this.trueTarget,this.darts]);
 
-    this.civa = new CivaWorker(this, 820.5 + 116 * 0.5, 34.5 + 116 * 0.5, "civa").setDepth(4);
-    this.add.existing(this.civa);
+    //创建civa
+    this.civa = new CivaMen(this, 152,425,"img_civa");
+    this.civa.asArcherInit();
+    this.layer3.add([this.civa]);
   }
 
   /**
@@ -185,28 +193,76 @@ export default class Game21PlayScene extends Phaser.Scene {
    */
   private gameStart(): void {
     let ready = async () => {
-      this.answers.forEach(answer => {
-        answer.on("pointerdown", this.touchAnswer.bind(this, answer));
-      });
+      await this.civa.asArcherAdmission();
+      await this.textDialog.admission();
+      await this.trueTarget.admission();
+      await this.falseTarget.admission();
+      this.bindEvent();
       //this.getGui();
     };
     ready();
   }
 
   /**
+   * 绑定事件
+   */
+  private bindEvent():void{
+    this.trueTarget.on("pointerdown",this.touchAnswer.bind(this,"true"));
+    this.falseTarget.on("pointerdown",this.touchAnswer.bind(this,"false"));
+  }
+
+  /**
+   * 将按钮设置为禁用
+   */
+  private disableAllButton(){
+    this.trueTarget.disableInteractive();
+    this.falseTarget.disableInteractive();
+  }
+
+   /**
+   * 将按钮设置为可用
+   */
+  private activeAllButton(){
+    this.trueTarget.setInteractive();
+    this.falseTarget.setInteractive();
+  }
+
+
+  /**
     * 点击答案
     */
-  public touchAnswer(answer: Answer) {
-    if (!answer.interactive) {
-      return false;
-    }
-    this.answers.forEach(_answer => {
-      _answer.interactive = false;
-    });
-
+  public async touchAnswer(TF:string) {
+    this.disableAllButton();
     this.audioPlay("clickMp3");
-    this.prevAnswer = answer;
-    this.testEnd();
+    await this.darts.getTarget(TF);
+    this.checkoutResult(TF).subscribe(value => {
+      console.log(value);
+      if (value) {
+        this.isRight();
+      } else {
+        this.isWrong();
+      }
+    })
+  }
+
+   /**
+   * 判断做题结果是否正确
+   */
+  private checkoutResult(TF:string): Observable<boolean> {
+    let isRightValue:boolean;
+    if(TF==="true"){
+     isRightValue = this.textDialog.isRight === 1;
+    }else if(TF==="false"){
+      isRightValue = this.textDialog.isRight === 0;
+    }
+    return Observable.create(subscriber => {
+      if (isRightValue) {
+        subscriber.next(true);
+      } else {
+        subscriber.next(false);
+      };
+
+    });
   }
 
 
@@ -227,20 +283,6 @@ export default class Game21PlayScene extends Phaser.Scene {
 
 
   /**
-   *  已经选择题目，并执行结果
-   */
-  private testEnd() {
-
-    this.checkoutResult().subscribe(value => {
-      if (value) {
-        this.isRight();
-      } else {
-        this.isWrong();
-      }
-    })
-  }
-
-  /**
    * 正确的结果处理
    */
   private isRight(): void {
@@ -259,8 +301,7 @@ export default class Game21PlayScene extends Phaser.Scene {
     }
 
     let animate = async () => {
-      await this.prevAnswer.bounceAni();
-      this.audioPlay("right");
+      await this.audioPlay("right");
       this.audioPlay("successMp3");
       nextFuc();
     }
@@ -272,7 +313,6 @@ export default class Game21PlayScene extends Phaser.Scene {
    * 错误的结果处理
    */
   private async isWrong() {
-    this.prevAnswer.shakingAni();
     await this.audioPlay("wrong");
     this.times += 1;
     if (this.times === 1) {
@@ -293,9 +333,7 @@ export default class Game21PlayScene extends Phaser.Scene {
    * 重置开始状态
    */
   private resetStart() {
-    this.answers.forEach(answer => {
-      answer.interactive = true;
-    });
+      this.activeAllButton();
   }
 
   /**
@@ -321,31 +359,17 @@ export default class Game21PlayScene extends Phaser.Scene {
   private nextRound(): void {
     index += 1;
     //index = 7; //test
-    this.prevAnswer = null;
     if (index > this.ccData.length - 1) {
       window.location.href = CONSTANT.INDEX_URL;
     }
     this.times = 0;
-    this.scene.start('Game21PlayScene', {
+    this.scene.start('Game22PlayScene', {
       data: this.ccData,
       index: index
     });
   }
 
-  /**
-   * 判断做题结果是否正确
-   */
-  private checkoutResult(): Observable<boolean> {
-    console.log(this.prevAnswer);
-    let isRightValue: number = this.prevAnswer.isRight;
-    return Observable.create(subscriber => {
-      if (isRightValue === 1) {
-        subscriber.next(true);
-      } else {
-        subscriber.next(false);
-      }
-    });
-  }
+ 
 
   /**
    * 设置金币的动作
@@ -366,25 +390,25 @@ export default class Game21PlayScene extends Phaser.Scene {
   private getGui() {
     let guiData = {
       resolution: 1,
-      fontFamily:"sans-serif"
+      fontFamily: "sans-serif"
     }
 
-    // this.datGui = new dat.GUI();
+    this.datGui = new dat.GUI();
 
     this.datGui.add(guiData, "resolution", 1, 5, 1).onChange(value => {
-      this.topic.question.setResolution(value);
-      this.answers.forEach(answer => {
-        answer.answerContent.setResolution(value);
-        answer.serial.setResolution(value);
-      })
+      // this.topic.question.setResolution(value);
+      // this.answers.forEach(answer => {
+      //   answer.answerContent.setResolution(value);
+      //   answer.serial.setResolution(value);
+      // })
     })
 
-    this.datGui.add(guiData,"fontFamily",["sans-serif","monospace","Helvetica"]).onChange(value=>{
-      this.topic.question.setFontFamily(value);
-      this.answers.forEach(answer => {
-        answer.answerContent.setFontFamily(value);
-        answer.serial.setFontFamily(value);
-      }) 
+    this.datGui.add(guiData, "fontFamily", ["sans-serif", "monospace", "Helvetica"]).onChange(value => {
+      // this.topic.question.setFontFamily(value);
+      // this.answers.forEach(answer => {
+      //   answer.answerContent.setFontFamily(value);
+      //   answer.serial.setFontFamily(value);
+      // })
     })
 
   }
