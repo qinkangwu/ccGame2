@@ -77,11 +77,13 @@ export default class Game22LoadScene extends Phaser.Scene {
       .then((res) => {
         if (res.code === '0000') {
           this.ccData = res.result
-            .map((v:any) => {
+            .map((v: any) => {
               delete v.answers;
               delete v.imgKey;
               delete v.audioKey;
-              v.questionContent = v.questionContent.replace(/<\/*\w+>/g,"").replace(/判断正误/,"");
+              v.questionContent = v.questionContent
+                .replace(/<\/*\w+>/g, "")   //将所有的</>或<>的html标签全部删除
+                .replace(/判断正误/, "");
               return v;
             });
         }
