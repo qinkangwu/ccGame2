@@ -1,0 +1,115 @@
+﻿{"frames": {
+
+"particleShape0000":
+{
+	"frame": {"x":63,"y":235,"w":52,"h":52},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":24,"y":50,"w":100,"h":152},
+	"sourceSize": {"w":100,"h":152}
+},
+"particleShape0001":
+{
+	"frame": {"x":115,"y":235,"w":52,"h":52},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":24,"y":50,"w":100,"h":152},
+	"sourceSize": {"w":100,"h":152}
+},
+"particleShape0002":
+{
+	"frame": {"x":0,"y":243,"w":52,"h":52},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":24,"y":50,"w":100,"h":152},
+	"sourceSize": {"w":100,"h":152}
+},
+"particleShape0003":
+{
+	"frame": {"x":203,"y":0,"w":27,"h":152},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":37,"y":0,"w":100,"h":152},
+	"sourceSize": {"w":100,"h":152}
+},
+"particleShape0004":
+{
+	"frame": {"x":203,"y":152,"w":27,"h":152},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":37,"y":0,"w":100,"h":152},
+	"sourceSize": {"w":100,"h":152}
+},
+"particleShape0005":
+{
+	"frame": {"x":69,"y":100,"w":72,"h":72},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":14,"y":40,"w":100,"h":152},
+	"sourceSize": {"w":100,"h":152}
+},
+"particleShape0006":
+{
+	"frame": {"x":132,"y":180,"w":52,"h":55},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":24,"y":47,"w":100,"h":152},
+	"sourceSize": {"w":100,"h":152}
+},
+"particleShape0007":
+{
+	"frame": {"x":69,"y":172,"w":63,"h":63},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":24,"y":50,"w":100,"h":152},
+	"sourceSize": {"w":100,"h":152}
+},
+"particleShape0008":
+{
+	"frame": {"x":0,"y":180,"w":63,"h":63},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":24,"y":50,"w":100,"h":152},
+	"sourceSize": {"w":100,"h":152}
+},
+"particleShape0009":
+{
+	"frame": {"x":141,"y":100,"w":62,"h":80},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":25,"y":34,"w":100,"h":152},
+	"sourceSize": {"w":100,"h":152}
+},
+"particleShape0010":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":100},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":26,"w":100,"h":152},
+	"sourceSize": {"w":100,"h":152}
+},
+"particleShape0011":
+{
+	"frame": {"x":100,"y":0,"w":100,"h":100},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":26,"w":100,"h":152},
+	"sourceSize": {"w":100,"h":152}
+},
+"particleShape0012":
+{
+	"frame": {"x":0,"y":100,"w":69,"h":80},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":18,"y":34,"w":100,"h":152},
+	"sourceSize": {"w":100,"h":152}
+}},
+"meta": {
+	"app": "Adobe Animate",
+	"version": "19.2.1.408",
+	"image": "particleShape.png",
+	"format": "RGBA8888",
+	"size": {"w":256,"h":512},
+	"scale": "1"
+}
+}

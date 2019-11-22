@@ -7,7 +7,7 @@ import 'phaser';
 import { Observable } from 'rxjs';
 import { TrueFalseInterface } from '../../interface/TrueFalseInterface';
 import { cover, rotateTips, isHit, Vec2, CONSTANT, EASE } from '../../Public/jonny/core';
-import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
+import { Button, ButtonMusic, ButtonExit, SellingGold, Gold,Firework } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 import { CivaMen, Darts, TextDialog, Target } from '../../Public/jonny/trueFalse';
 import * as dat from 'dat.gui';
@@ -41,7 +41,7 @@ export default class Game22PlayScene extends Phaser.Scene {
   private trueTarget:Target;
   private tipsParticlesEmitter: TipsParticlesEmitter;
   private sellingGold: SellingGold;
-
+  private firework:Firework;
 
   /**
    * bg
@@ -170,6 +170,10 @@ export default class Game22PlayScene extends Phaser.Scene {
   private createActors(): void {
     //创建用户反馈
     this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
+
+    //创建烟花
+    this.firework = new Firework(this);
+    this.add.existing(this.firework);
 
     //创建题板
     this.textDialog = new TextDialog(this,146.45,295.85,this.ccData[index].questionContent,this.ccData[index].isRight);
@@ -302,6 +306,7 @@ export default class Game22PlayScene extends Phaser.Scene {
 
     let animate = async () => {
       await this.audioPlay("right");
+      await this.firework.play();
       this.audioPlay("successMp3");
       nextFuc();
     }
@@ -410,7 +415,6 @@ export default class Game22PlayScene extends Phaser.Scene {
       //   answer.serial.setFontFamily(value);
       // })
     })
-
   }
 
 }
