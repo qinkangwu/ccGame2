@@ -11,6 +11,7 @@ import {Gold} from "./Gold";
 import {SuccessBtn} from "./SuccessBtn";
 import {TryAginListenBtn} from "./TryAginListenBtn";
 import {Particles} from "./Particles";
+import { Firework } from "./Firework";
 
 export {
     Button,
@@ -21,5 +22,6 @@ export {
     Gold,
     SuccessBtn,
     TryAginListenBtn,
-    Particles
+    Particles,
+    Firework
 }

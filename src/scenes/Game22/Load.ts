@@ -7,8 +7,8 @@ import 'phaser';
 import apiPath from '../../lib/apiPath';
 import { get } from '../../lib/http';
 import { TrueFalseInterface } from '../../interface/TrueFalseInterface';
-import { resize, Vec2 } from '../../Public/jonny/core';
-import { SellingGold } from '../../Public/jonny/components';
+import { resize} from '../../Public/jonny/core';
+import { SellingGold,Firework} from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 //import { position3, position4, serial } from '../../Public/jonny/selectTopic';
 
@@ -53,6 +53,7 @@ export default class Game22LoadScene extends Phaser.Scene {
     this.load.audio('wrong', 'assets/sounds/newJoin/wrong.mp3');
     this.load.atlas("Darts", "assets/Game22/Darts.png", "assets/Game22/Darts.json");
     TipsParticlesEmitter.loadImg(this);
+    Firework.loadImg(this);
     SellingGold.loadImg(this);
     this.assets.forEach((v) => {
       this.load.image(v.key, v.url);
