@@ -128,10 +128,10 @@ export default class Game10PlayScene extends Phaser.Scene {
     }
 
     private renderImg() : void {
-      this.imgObj = this.add.sprite(281.5,197.5,this.ccData[this.currentIndex].name)
-      .setOrigin(.5)
+      this.imgObj = this.add.sprite(411.5,277.5,this.ccData[this.currentIndex].name)
+      .setOrigin(1)
       .setDisplaySize(233,191)
-      .setAngle(-8);
+      .setAngle(-6.5);
     }
 
     private initAnims() : void {
@@ -360,8 +360,8 @@ export default class Game10PlayScene extends Phaser.Scene {
         fontFamily:"Arial Rounded MT Bold",
         fill : '#77F0FF',
       }).setOrigin(.5);
-      this.contentOuter = this.add.image(280,215,'contentOuter').setOrigin(.5).setScale(.5);
-      this.contentOuter2 = this.add.image(this.contentOuter.x + 150, 0, 'contentOuter2').setOrigin(.5,0).setScale(.5);
+      this.contentOuter = this.add.image(460,365,'contentOuter').setOrigin(1).setScale(.5);
+      this.contentOuter2 = this.add.image(this.contentOuter.x + 50, 107, 'contentOuter2').setOrigin(1).setScale(.5);
     }
 
     private playContentOuterAnims () : void {
@@ -371,19 +371,19 @@ export default class Game10PlayScene extends Phaser.Scene {
         duration :100,
         tweens : [
           {
-            x : '+=20'
+            rotation : '-=0.2'
           },
           {
-            x : '-=40'
+            rotation : '+=0.4'
           },
           {
-            x : '+=30'
+            rotation : '-=0.3'
           },
           {
-            x : '-=20'
+            rotation : '+=0.2'
           },
           {
-            x : '+=10'
+            rotation : '-=0.1'
           }
         ],
         onComplete : ()=>{
