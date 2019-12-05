@@ -5,6 +5,7 @@ export class Toy extends Phaser.GameObjects.Container {
     target: Phaser.GameObjects.Image;
     name: string;
     shape: Phaser.Geom.Rectangle;
+    isHit:boolean;
 
     constructor(scene: Phaser.Scene, x: number, y: number, name: string, toyImgTexture: string) {
         super(scene, x, y);
