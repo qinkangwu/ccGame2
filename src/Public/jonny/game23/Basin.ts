@@ -29,7 +29,7 @@ export class Basin extends Phaser.GameObjects.Container {
                 alpha:1,
                 duration:500,
                 onComplete:()=>{
-                    this.audioPlay(this.name);
+                    this.audioPlay(this.name + "Sound");
                     resolve(1);
                 }
             })

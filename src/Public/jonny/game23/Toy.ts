@@ -46,7 +46,7 @@ export class Toy extends Phaser.GameObjects.Container {
     public isRight(): Promise<any> {
         return new Promise(async resolve => {
             await this.audioPlay("right");
-            await this.audioPlay(this.name);
+            await this.audioPlay(this.name + "Sound");
             this.scene.add.tween({
                 targets: this.target,
                 alpha: 0,
