@@ -47,8 +47,8 @@ export class Toy extends Phaser.GameObjects.Container {
      */
     public isRight(): Promise<any> {
         return new Promise(async resolve => {
-            await this.audioPlay("right");
-            await this.audioPlay(this.name + "Sound");
+            //await this.audioPlay("right");
+            //await this.audioPlay(this.name + "Sound");
             this.scene.add.tween({
                 targets: this.target,
                 alpha: 0,
@@ -82,7 +82,7 @@ export class Toy extends Phaser.GameObjects.Container {
      */
     public isWrong():Promise<number>{
         return new Promise<number>(async resolve => {
-            await this.audioPlay("wrong");
+            //await this.audioPlay("wrong");
             this.scene.tweens.timeline({
                 targets: this.target,
                 duration:200,
@@ -107,16 +107,16 @@ export class Toy extends Phaser.GameObjects.Container {
     /**
      * 单次播放的音频播放器
      */
-    private audioPlay(key: string): Promise<number> {
-        return new Promise<number>(resolve => {
-            let _tempSound: Phaser.Sound.BaseSound = this.scene.sound.add(key);
-            _tempSound.on("complete", function (this: Phaser.Sound.BaseSound) {
-                this.destroy();
-                resolve(1);
-            });
-            _tempSound.play();
-        })
-    }
+    // private audioPlay(key: string): Promise<number> {
+    //     return new Promise<number>(resolve => {
+    //         let _tempSound: Phaser.Sound.BaseSound = this.scene.sound.add(key);
+    //         _tempSound.on("complete", function (this: Phaser.Sound.BaseSound) {
+    //             this.destroy();
+    //             resolve(1);
+    //         });
+    //         _tempSound.play();
+    //     })
+    // }
 
 
 }

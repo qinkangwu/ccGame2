@@ -19,6 +19,7 @@ var goldValue: number = 3; //金币的值
 
 export default class Game23PlayScene extends Phaser.Scene {
     private ccData: Array<Game23Data> = [];
+    private rightTimes:number = 0; //正确的次数
     private times: number = 0;  //次数
 
     //静态开始
@@ -154,9 +155,7 @@ export default class Game23PlayScene extends Phaser.Scene {
         this.layer1.add(this.bg);
 
         this.gold = new Gold(this, goldValue);   //设置金币
-        this.successBtn = new SuccessBtn(this, 939 + 60 * 0.5, 552 * 0.5);
-        this.successBtn.on("pointerdown", this.successBtnPointerdown.bind(this));
-        this.layer4.add([this.successBtn, this.gold]);
+        this.layer4.add([this.gold]);
     }
 
     /**
@@ -198,13 +197,53 @@ export default class Game23PlayScene extends Phaser.Scene {
      * 游戏开始
      */
     private async gameStart() {
+        let that = this;
+        let toyPointerDown = function (toy:Toy){
+            this.checkoutResult(toy)
+            .then(async value => {    //正确
+                console.log(value);
+                that.rightTimes+=value;
+                if(value===1&&that.rightTimes===1){
+                  toy.disableInteractive(); 
+                  await that.audioPlay("successMp3");
+                  await that.audioPlay(toy.name + "Sound");
+                  toy.isRight();
+                }else if(value===1&&that.rightTimes===2){
+                  toy.disableInteractive(); 
+                }
+                //this.isRight();
+            })
+            // .catch(err => {   //错误
+            //     console.log(err)
+            //     this.isWrong();
+            // }); 
+        }
+
         let toyShow:Promise<number>[] = this.toys.map((toy,i)=>{
             let delay = 300*i;
+            toy.on("pointerdown",toyPointerDown.bind(this,toy));
             return toy.show(delay);
         })
 
         await Promise.all(toyShow);
         this.basins[index].show();
+
+        
+    }
+
+    /**
+     * 判断做题结果是否正确
+     */
+    private checkoutResult(toy:Toy): Promise<number> {
+        let answer:boolean = toy.name === this.basins[index].name;
+        console.log(toy.name,this.basins[index].name);
+        return new Promise(resolve => {
+            if(answer){
+                resolve(1);
+            }else{
+                resolve(0);
+            }
+        });
     }
 
     /**
@@ -246,33 +285,9 @@ export default class Game23PlayScene extends Phaser.Scene {
 
     }
 
-    /**
-     * 做题结束
-     */
-    private testEnd() {
-        this.successBtn.setAlpha(1);
-        this.successBtn.animate.play();
-    }
+    
 
-    /**
-     *  successBtnPointerdown 
-     */
-    private successBtnPointerdown() {
-        if (!this.successBtn.interactive) {
-            return false;
-        }
-        this.successBtn.interactive = false;
-        this.successBtn.animate.stop();
-        this.checkoutResult()
-            .then(msg => {    //正确
-                console.log(msg)
-                this.isRight();
-            })
-            .catch(err => {   //错误
-                console.log(err)
-                this.isWrong();
-            });
-    }
+   
 
     /**
      * 正确的结果处理
@@ -353,15 +368,7 @@ export default class Game23PlayScene extends Phaser.Scene {
         });
     }
 
-    /**
-     * 判断做题结果是否正确
-     */
-    private checkoutResult(): Promise<string> {
-        let answer: string = "";
-        return new Promise((resolve, reject) => {
-
-        });
-    }
+    
 
     /**
      * 设置金币的动作

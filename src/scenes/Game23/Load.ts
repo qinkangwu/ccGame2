@@ -50,6 +50,8 @@ export default class Game16LoadScene extends Phaser.Scene {
 
   preload(): void {
     this.load.audio('bgm', 'assets/sounds/bgm-06.mp3');
+    this.load.audio('successMp3', 'assets/sounds/successMp3.mp3');
+    this.load.audio('failMp3', 'assets/sounds/failMp3.mp3');
     SellingGold.loadImg(this);
     Particles.loadImg(this);
     this.assets.forEach((v) => {
