@@ -1,9 +1,11 @@
 import 'phaser';
 import { } from 'rxjs';
-import { Assets } from '../../interface/Game23';
-import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
+import { cover, rotateTips, isHit, Vec2, CONSTANT ,arrDisorder} from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
+import { Game23Data, Assets } from '../../interface/Game23';
 import PlanAnims from '../../Public/PlanAnims';
+import { Basin } from "../../Public/jonny/game23/Basin";
+import { Toy } from "../../Public/jonny/game23/Toy";
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 //import { Locomotive, TrainBox, NullTrainBox } from '../../Public/jonny/game11';
 
@@ -15,7 +17,7 @@ var goldValue: number = 3; //金币的值
 
 
 export default class Game23PlayScene extends Phaser.Scene {
-    private ccData: Array<string> = [];
+    private ccData: Array<Game23Data> = [];
     private times: number = 0;  //次数
 
     //静态开始
@@ -28,6 +30,8 @@ export default class Game23PlayScene extends Phaser.Scene {
     //静态结束
 
     //动态开始
+    private toys:Array<Toy> = [];  //玩具
+    private basins:Array<Basin> = [];    //盆
     private tipsParticlesEmitter: TipsParticlesEmitter;
     private sellingGold: SellingGold;
 
@@ -37,18 +41,18 @@ export default class Game23PlayScene extends Phaser.Scene {
     private layer0: Phaser.GameObjects.Container;
 
     /**
-     * 船
+     * 玩具 
      */
     private layer1: Phaser.GameObjects.Container;
 
-     /**
-     * 货物
-     */
+    /**
+    * 盆
+    */
     private layer2: Phaser.GameObjects.Container;
 
-     /**
-     * 码头
-     */
+    /**
+    * civa
+    */
     private layer3: Phaser.GameObjects.Container;
 
     /**
@@ -73,7 +77,7 @@ export default class Game23PlayScene extends Phaser.Scene {
 
     create(): void {
         this.createStage();
-        //this.createActors();
+        this.createActors();
         this.firstCreate();  //test
         if (index === 0) {
             this.scene.pause();
@@ -81,7 +85,7 @@ export default class Game23PlayScene extends Phaser.Scene {
             this.firstCreate();
             cover(this, "Game23", () => {
                 this.gameStart();
-              });
+            });
             //cover()
             //this.gameStart();
         } else {
@@ -139,11 +143,13 @@ export default class Game23PlayScene extends Phaser.Scene {
         this.add.existing(this.layer3);
         this.add.existing(this.layer4);
 
-     
 
         this.btnExit = new ButtonExit(this);
         this.btnSound = new ButtonMusic(this);
         this.layer4.add([this.btnExit, this.btnSound]);
+
+        this.bg = new Phaser.GameObjects.Image(this, 0, 0, "bg_all").setPosition(W * 0.5, H * 0.5);
+        this.layer1.add(this.bg);
 
         this.gold = new Gold(this, goldValue);   //设置金币
         this.successBtn = new SuccessBtn(this, 939 + 60 * 0.5, 552 * 0.5);
@@ -157,12 +163,37 @@ export default class Game23PlayScene extends Phaser.Scene {
     createActors(): void {
         //创建用户反馈
         this.tipsParticlesEmitter = new TipsParticlesEmitter(this);
+
+        //创建玩具
+        let offsetX = 314 - 136;
+        let offsetY = 337 - 145;
+        let ccDataClone = this.ccData.concat(this.ccData);
+        ccDataClone = arrDisorder(ccDataClone);
+        ccDataClone.forEach((v,i)=>{
+            let initX = 136;
+            let initY = 145;
+            let _ix = i%5;
+            let _iy = Math.floor(i/5);
+            let x = initX + offsetX*_ix;
+            let y = initY + offsetY*_iy;
+            let toy = new Toy(this,x,y,v.questionContent,v.questionContent);
+            this.toys.push(toy);
+            this.layer1.add(toy);
+        });
+
+        //创建盆
+        this.ccData.forEach((v,i)=>{
+            let basin = new Basin(this,v.questionContent);
+            this.basins.push(basin);
+            this.layer2.add(basin);
+        })
     }
 
     /**
      * 游戏开始
      */
     private gameStart(): void {
+
 
     }
 

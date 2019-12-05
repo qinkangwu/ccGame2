@@ -5,17 +5,15 @@ export class Basin extends Phaser.GameObjects.Container {
     text:Phaser.GameObjects.Text;
     name:string;
     constructor(scene: Phaser.Scene,name:string){
-        super(scene);
+        super(scene,496,505);
         this.bg = new Phaser.GameObjects.Image(scene,0,0,"bg_basin");
-        this.text = new Phaser.GameObjects.Text(scene,0,0,name,{align:"center",color:"#ffffff",resolution:2}).setOrigin(0.5);
+        this.text = new Phaser.GameObjects.Text(scene,0,0+7,name,{align:"center",color:"#2c98e6",resolution:2,fontFamily:"sans-serif",fontSize:"24px"}).setOrigin(0.5);
         this.name = name;
         this.add([this.bg,this.text]);
     }
 
     public init():Basin{
         this.alpha = 0;
-        this.x = 496;
-        this.y = 505;
         return this;
     }
 
