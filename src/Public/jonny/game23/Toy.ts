@@ -18,6 +18,7 @@ export class Toy extends Phaser.GameObjects.Container {
     public init(): Toy {
         this.shape = new Phaser.Geom.Rectangle(-90, -90, 180, 180);
         this.setInteractive(this.shape, Phaser.Geom.Rectangle.Contains);
+        this.alpha = 0;
         this.scale = 0;
         return this;
     }
@@ -31,6 +32,7 @@ export class Toy extends Phaser.GameObjects.Container {
                 targets: this,
                 duration: 500,
                 delay: delay,
+                alpha:1,
                 scale: 1,
                 ease: "Sine.easeOut",
                 onComplete: () => {

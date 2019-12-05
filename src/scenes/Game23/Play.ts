@@ -178,14 +178,14 @@ export default class Game23PlayScene extends Phaser.Scene {
             let _iy = Math.floor(i/5);
             let x = initX + offsetX*_ix;
             let y = initY + offsetY*_iy;
-            let toy = new Toy(this,x,y,v.questionContent,v.questionContent);
+            let toy = new Toy(this,x,y,v.questionContent,v.questionContent).init();
             this.toys.push(toy);
             this.layer1.add(toy);
         });
 
         //创建盆
         this.ccData.forEach((v,i)=>{
-            let basin = new Basin(this,v.questionContent);
+            let basin = new Basin(this,v.questionContent).init();
             this.basins.push(basin);
             this.layer2.add(basin);
         })
@@ -197,9 +197,14 @@ export default class Game23PlayScene extends Phaser.Scene {
     /**
      * 游戏开始
      */
-    private gameStart(): void {
+    private async gameStart() {
+        let toyShow:Promise<number>[] = this.toys.map((toy,i)=>{
+            let delay = 300*i;
+            return toy.show(delay);
+        })
 
-
+        await Promise.all(toyShow);
+        this.basins[index].show();
     }
 
     /**
