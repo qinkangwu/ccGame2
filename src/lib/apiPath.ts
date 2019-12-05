@@ -31,6 +31,6 @@ export default {
      */
     getQuestionData:(bookId:string,unitId:string):string=>{
         return `https://ccgame.civaonline.cn/game/question/getQuestionData?bookId=${bookId}&unitId=${unitId}`
-    }
-
+    },
+    getCardData : 'https://219.151.9.161:8188/game/card/getCardData?bookId=476351b78d8111e9b8a3d481d7d1b146&unitId=02decbcb988511e9b6d5d481d7d1b146'
 }

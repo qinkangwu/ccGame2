@@ -1,17 +1,19 @@
 import apiPath from '../../lib/apiPath';
 import {get , makeParams} from '../../lib/http';
+import { Item } from "../../interface/Game14";
 import 'phaser';
 
 const W = 1024;
 const H = 552;
 
 export default class Game14LoadScene extends Phaser.Scene {
+  private ccData : Item[] = []; //数据
   private centerText : Phaser.GameObjects.Text; //文本内容
   private DefaultLoadSeconds : number = 33; //每秒增加百分之多少
   private process : number = 0; //进度
   private timer  : Phaser.Time.TimerEvent  ;  //定时器id
   private imgLoadDone : boolean = false;  //图片是否加载完毕
-  private dataLoadDone : boolean = true;   //数据是否加载完毕
+  private dataLoadDone : boolean = false;   //数据是否加载完毕
 
   constructor() {
     super({
@@ -34,7 +36,7 @@ export default class Game14LoadScene extends Phaser.Scene {
       // }
     }).setOrigin(.5,.5);
 
-    // this.getData();
+    this.getData();
 
   }
 
@@ -69,6 +71,10 @@ export default class Game14LoadScene extends Phaser.Scene {
 
   private getData () : void {
     //获取数据
+    get(apiPath.getCardData).then((res)=>{
+      res && res.code === '0000' && (this.ccData = res.result);
+      this.dataLoadDone = true;
+    })
   }
 
   private loadHandle () : void {
@@ -85,7 +91,9 @@ export default class Game14LoadScene extends Phaser.Scene {
             //   duration : 500,
             //   alpha : 0
             // })
-            this.scene.start('Game14PlayScene');
+            this.scene.start('Game14PlayScene',{
+              data : this.ccData
+            });
           }
           return;
         }

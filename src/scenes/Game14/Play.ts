@@ -1,16 +1,16 @@
 import 'phaser';
-import {get} from '../../lib/http';
-import apiPath from '../../lib/apiPath';
 import CreateBtnClass from '../../Public/CreateBtnClass';
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 import { Gold } from "../../Public/jonny/components/Gold";
 import { SellingGold } from "../../Public/jonny/components/SellingGold";
+import { Item } from "../../interface/Game14";
 
 const W = 1024;
 const H = 552;
-const data = ['banana','apple','banana','apple','scene','text','scene','text']
+let data : Item[] = []
 
 export default class Game14PlayScene extends Phaser.Scene {
+    private ccData : Item[] = []; //数据
     private bgm : Phaser.Sound.BaseSound ; //背景音乐
     private mode1 : Phaser.GameObjects.Image; //4牌模式
     private mode2 : Phaser.GameObjects.Image; //8牌模式
@@ -27,6 +27,7 @@ export default class Game14PlayScene extends Phaser.Scene {
     private currentGoldNum : number = 10 ; //当前的金币数量
     private sholdGetGoldNum : number = 3 ; //应获取的金币数量
     private sholdTry : boolean = true; //能否再试
+    private currentIndex : number = 0; //当前的数据页数
     constructor() {
       super({
         key: "Game14PlayScene"
@@ -34,6 +35,7 @@ export default class Game14PlayScene extends Phaser.Scene {
     }
   
     init(data): void {
+      data && data.data && (this.ccData = data.data);
     }
   
     preload(): void {
@@ -44,6 +46,7 @@ export default class Game14PlayScene extends Phaser.Scene {
     
   
     create(): void {
+      this.loadMusic(this.ccData);
       this.createBgm(); //背景音乐
       this.createBgi();
       new CreateBtnClass(this,{
@@ -56,6 +59,28 @@ export default class Game14PlayScene extends Phaser.Scene {
       this.input.on('pointerdown',(...args)=>{
         console.log(args);
       })
+    }
+
+    private loadMusic (data : Array<Item>) : void {
+      //加载音频
+      data && data.map((r :Item , i : number )=>{
+        this.load.audio(r.id,r.audioKey);
+      })
+      this.load.start(); //preload自动运行，其他地方加载资源必须手动启动，不然加载失效
+    }
+
+    private nextDataHandle (mode : string) : void {
+      data = this.ccData.slice(this.currentIndex , this.currentIndex + (mode === 'mode1' ? 2 : 4));
+      data = this.shuffle(data.concat(data));
+    }
+
+    private shuffle<T> (arr : T[]) : T[]{
+      //Fisher-Yates shuffle 算法 打乱数组顺序
+      for (let i :number = 1; i < arr.length ; i ++) {
+        let random : number = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[random]] = [arr[random], arr[i]];   //es6  交换数组成员位置
+      }
+      return arr;
     }
 
     private createMode() : void {
@@ -76,11 +101,11 @@ export default class Game14PlayScene extends Phaser.Scene {
         this.add.quad(883.5,253.5 - H,'pics','pic2.png').setDisplaySize(218,326).setInteractive().setFrame('pic1.png')
       );
       this.cardArr.map((r,i)=>{
-        this.wordArr.push(this.add.text(this.cardArr[i].x,this.cardArr[i].y,data[i],{
+        this.wordArr.push(this.add.text(this.cardArr[i].x,this.cardArr[i].y,data[i].name,{
           fontSize: "38.5px",
           fontFamily:"Arial Rounded MT Bold",
           fill : '#2773F2',
-        }).setOrigin(.5).setResolution(2).setAlpha(0))
+        }).setOrigin(.5).setResolution(2).setAlpha(0).setData('mp3Id',data[i].id))
         this.zoneArr.push(this.add.zone(this.cardArr[i].x,this.cardArr[i].y,218,326).setOrigin(.5).setDepth(1).setInteractive());
       })
       this.tweens.add({
@@ -187,7 +212,13 @@ export default class Game14PlayScene extends Phaser.Scene {
                   this.time.addEvent({
                     delay : 500,
                     callback : ()=>{
-                      this.successHandle();
+                      this.playMusic(this.wordArr[this.chooseCardIndexArr[0]].getData('mp3Id'));
+                      this.time.addEvent({
+                        delay : 1000,
+                        callback : ()=>{
+                          this.successHandle();
+                        }
+                      })
                     }
                   })
                 }else{
@@ -235,6 +266,9 @@ export default class Game14PlayScene extends Phaser.Scene {
               this.goldObj.setText(this.currentGoldNum+=this.sholdGetGoldNum);
               this.sholdGetGoldNum = 3;
               this.clearHandle();
+              this.currentIndex = this.chooseMode === 'mode1' ? (this.currentIndex + 2 >= this.ccData.length ? 0 : this.currentIndex + 2) : (this.currentIndex + 4 >= this.ccData.length ? 0 : this.currentIndex + 4);
+              console.log(this.currentIndex);
+              this.nextDataHandle(this.chooseMode);
               this.chooseMode === 'mode1' && this.createMode1();
               this.chooseMode === 'mode2' && this.createMode2();
             }
@@ -313,11 +347,11 @@ export default class Game14PlayScene extends Phaser.Scene {
             this.add.quad(234.5 + ((i - 4) * 185 ),405.5 - H,'pics','pic1.png').setDisplaySize(150,224)
           )
         }
-        this.wordArr.push(this.add.text(this.cardArr[i].x,this.cardArr[i].y,data[i],{
+        this.wordArr.push(this.add.text(this.cardArr[i].x,this.cardArr[i].y,data[i].name,{
           fontSize: "29.5px",
           fontFamily:"Arial Rounded MT Bold",
           fill : '#2773F2',
-        }).setOrigin(.5).setResolution(2).setAlpha(0));
+        }).setOrigin(.5).setResolution(2).setAlpha(0).setData('mp3Id',data[i].id));
         this.zoneArr.push(this.add.zone(this.cardArr[i].x,this.cardArr[i].y,150,224).setOrigin(.5).setDepth(1).setInteractive());
       }
       this.tweens.add({
@@ -407,6 +441,7 @@ export default class Game14PlayScene extends Phaser.Scene {
             y : `-=${W}`,
             ease : 'Sine.easeInOut',
             onComplete : ()=>{
+              this.nextDataHandle(mode);
               mode === 'mode1' && this.createMode1();
               mode === 'mode2' && this.createMode2();
             }
