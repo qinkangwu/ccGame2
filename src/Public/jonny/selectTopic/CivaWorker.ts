@@ -2,9 +2,14 @@ import "phaser";
 
 export class CivaWorker extends Phaser.GameObjects.Sprite {
     private time: number = 0;
+    public initVec2:{x:number;y:number};
     public asBeeDanceAnimate: Phaser.Tweens.Tween;
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string) {
         super(scene, x, y, texture, frame);
+        this.initVec2 = {
+            x:this.x,
+            y:this.y
+        }
     }
 
     /**
@@ -23,6 +28,30 @@ export class CivaWorker extends Phaser.GameObjects.Sprite {
         return this;
     }
 
+    /**
+     * 静态离场
+     */
+    public staticLeave(offsetX:number):this{
+        this.x += offsetX;
+        return this;
+    }
+
+    /**
+     * 动态入场
+     */
+    public admission():Promise<number>{
+        return new Promise(resolve=>{
+            this.scene.add.tween({
+                targets:this,
+                x:this.initVec2.x,
+                duration:400,
+                ease:"Sine.easeOut",
+                onComplete:()=>{
+                    resolve(1);
+                }
+            })
+        })
+    }
 
     /**
      * 作为一名蜜蜂
@@ -59,7 +88,6 @@ export class CivaWorker extends Phaser.GameObjects.Sprite {
      * 当蜜蜂进行工作
      */
     public asBeeWorking(x: number, y: number): Promise<boolean> {
-        this.asBeeDanceAnimate.stop();
         return new Promise<boolean>(resolve => {
             this.scene.tweens.timeline({
                 targets: this,
@@ -81,5 +109,54 @@ export class CivaWorker extends Phaser.GameObjects.Sprite {
             })
         });
 
+    }
+
+    /**
+     * 正确
+     */
+    public isRight(){
+        this.scene.add.tween({
+            targets:this,
+            scale:1.5,
+            alpha:0.5,
+            yoyo:true,
+            duration:500
+        })
+    }
+
+     /**
+     * 错误
+     */
+    public isWrong(){
+        this.scene.add.tween({
+            targets:this,
+            scale:0.5,
+            alpha:0,
+            yoyo:true,
+            duration:500
+        })
+    }
+
+    /**
+     * 离场
+     */
+    public leave():Promise<number>{
+        return new Promise(resolve=>{
+            let offsetX:number;
+            if(this.initVec2.x > 1024*0.5){
+                offsetX = this.initVec2.x+=400;
+            }else{
+                offsetX = this.initVec2.x-=400; 
+            }
+            this.scene.add.tween({
+                targets:this,
+                x:offsetX,
+                duration:400,
+                ease:"Sine.easeOut",
+                onComplete:()=>{
+                    resolve(1);
+                }
+            })
+        })
     }
 }
