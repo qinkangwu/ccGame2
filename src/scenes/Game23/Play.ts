@@ -6,6 +6,7 @@ import { Game23Data, Assets } from '../../interface/Game23';
 import PlanAnims from '../../Public/PlanAnims';
 import { Basin } from "../../Public/jonny/game23/Basin";
 import { Toy } from "../../Public/jonny/game23/Toy";
+import { Shooter } from "../../Public/jonny/game23/Shooter";
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 //import { Locomotive, TrainBox, NullTrainBox } from '../../Public/jonny/game11';
 
@@ -32,6 +33,7 @@ export default class Game23PlayScene extends Phaser.Scene {
     //动态开始
     private toys:Array<Toy> = [];  //玩具
     private basins:Array<Basin> = [];    //盆
+    private civa:Shooter;
     private tipsParticlesEmitter: TipsParticlesEmitter;
     private sellingGold: SellingGold;
 
@@ -187,6 +189,9 @@ export default class Game23PlayScene extends Phaser.Scene {
             this.basins.push(basin);
             this.layer2.add(basin);
         })
+
+        this.civa = new Shooter(this);
+        this.layer3.add(this.civa);
     }
 
     /**
