@@ -69,6 +69,23 @@ export class Basin extends Phaser.GameObjects.Container {
     }
 
     /**
+     * 移动到玩具的位置
+     */
+    public move(x:number):Promise<number>{
+        return new Promise(resolve=>{
+            this.scene.add.tween({
+                targets:this,
+                x:x,
+                duration:500,
+                ease:"Sine.easeOut",
+                onComplete:()=>{
+                    resolve(1);
+                }
+            })
+        })
+    }
+
+    /**
      * 单次播放的音频播放器
      */
     private audioPlay(key: string): Promise<number> {

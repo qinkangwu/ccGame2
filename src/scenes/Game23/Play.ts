@@ -3,7 +3,6 @@ import { } from 'rxjs';
 import { cover, rotateTips, isHit, Vec2, CONSTANT ,arrDisorder} from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
 import { Game23Data, Assets } from '../../interface/Game23';
-import PlanAnims from '../../Public/PlanAnims';
 import { Basin } from "../../Public/jonny/game23/Basin";
 import { Toy } from "../../Public/jonny/game23/Toy";
 import { Shooter } from "../../Public/jonny/game23/Shooter";
@@ -205,18 +204,20 @@ export default class Game23PlayScene extends Phaser.Scene {
                 that.rightTimes+=value;
                 if(value===1&&that.rightTimes===1){
                   toy.disableInteractive(); 
-                  await that.audioPlay("successMp3");
-                  await that.audioPlay(toy.name + "Sound");
-                  toy.isRight();
+                  that.audioPlay("successMp3");
+                  await that.basins[index].move(toy.x);
+                  that.audioPlay(toy.name + "Sound");
+                  toy.isRight(that.rightTimes,that.basins[index]);
                 }else if(value===1&&that.rightTimes===2){
                   toy.disableInteractive(); 
+                  that.audioPlay("successMp3");
+                  await that.basins[index].move(toy.x);
+                  that.audioPlay(toy.name + "Sound");
+                  toy.isRight(that.rightTimes,that.basins[index]);
+                }else if(value===0){
+                    toy.isWrong();
                 }
-                //this.isRight();
             })
-            // .catch(err => {   //错误
-            //     console.log(err)
-            //     this.isWrong();
-            // }); 
         }
 
         let toyShow:Promise<number>[] = this.toys.map((toy,i)=>{

@@ -1,11 +1,11 @@
 import "phaser";
+import { Basin } from './Basin';
 
 export class Toy extends Phaser.GameObjects.Container {
     toyImg: Phaser.GameObjects.Image;
     target: Phaser.GameObjects.Image;
     name: string;
     shape: Phaser.Geom.Rectangle;
-    isHit:boolean;
 
     constructor(scene: Phaser.Scene, x: number, y: number, name: string, toyImgTexture: string) {
         super(scene, x, y);
@@ -32,7 +32,7 @@ export class Toy extends Phaser.GameObjects.Container {
                 targets: this,
                 duration: 500,
                 delay: delay,
-                alpha:1,
+                alpha: 1,
                 scale: 1,
                 ease: "Sine.easeOut",
                 onComplete: () => {
@@ -45,10 +45,16 @@ export class Toy extends Phaser.GameObjects.Container {
     /**
      * 正确的反馈
      */
-    public isRight(): Promise<any> {
+    public isRight(rightTimes:number,basin: Basin): Promise<any> {
+        let props = rightTimes === 1 ? {x:-10,rotation:Phaser.Math.DegToRad(-10)} : {x:0,rotation:Phaser.Math.DegToRad(5)};
+        let basinIndex = rightTimes === 1 ? 0 : 1;
         return new Promise(async resolve => {
-            //await this.audioPlay("right");
-            //await this.audioPlay(this.name + "Sound");
+            let _x = this.toyImg.getWorldTransformMatrix().tx - basin.x;
+            let _y = this.toyImg.getWorldTransformMatrix().ty - basin.y;
+            this.remove(this.toyImg);
+            basin.addAt(this.toyImg, basinIndex);
+            this.toyImg.x = _x;
+            this.toyImg.y = _y;
             this.scene.add.tween({
                 targets: this.target,
                 alpha: 0,
@@ -64,59 +70,47 @@ export class Toy extends Phaser.GameObjects.Container {
                         duration:500
                     },
                     {
-                        y:"+=400",
-                        yoyo:true,
+                        x:props.x,
+                        rotation:props.rotation,
+                        y:-50,
                         ease:"Sine.easeOut",
-                        duration:500
+                        duration:500,
                     }
                 ],
                 onComplete:()=>{
                     resolve(1);
                 }
-            })
+             })
         })
     }
 
     /**
      * 错误的反馈
      */
-    public isWrong():Promise<number>{
+    public isWrong(): Promise<number> {
         return new Promise<number>(async resolve => {
             //await this.audioPlay("wrong");
             this.scene.tweens.timeline({
                 targets: this.target,
-                duration:200,
-                tweens:[
+                duration: 50,
+                tweens: [
                     {
-                        x:-10
+                        x: -10
                     },
                     {
-                        x:0
+                        x: 0
                     },
                     {
-                        x:-10
+                        x: 10
+                    },
+                    {
+                        x: 0
                     }
                 ],
-                onComplete:()=>{
+                onComplete: () => {
                     resolve(1);
                 }
             });
         })
     }
-
-    /**
-     * 单次播放的音频播放器
-     */
-    // private audioPlay(key: string): Promise<number> {
-    //     return new Promise<number>(resolve => {
-    //         let _tempSound: Phaser.Sound.BaseSound = this.scene.sound.add(key);
-    //         _tempSound.on("complete", function (this: Phaser.Sound.BaseSound) {
-    //             this.destroy();
-    //             resolve(1);
-    //         });
-    //         _tempSound.play();
-    //     })
-    // }
-
-
 }
