@@ -9,6 +9,7 @@ import { get } from '../../lib/http';
 import { resize } from '../../Public/jonny/core';
 import { Game23Data,Assets } from '../../interface/Game23';
 import { SellingGold, Particles } from '../../Public/jonny/components';
+import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
 const W = 1024;
 const H = 552;
@@ -49,11 +50,15 @@ export default class Game16LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.audio('bgm', 'assets/sounds/bgm-06.mp3');
+    this.load.audio('bgm', 'assets/sounds/bgm-07.mp3');
     this.load.audio('successMp3', 'assets/sounds/successMp3.mp3');
+    this.load.audio('clickMp3', 'assets/sounds/clickMp3.mp3');
     this.load.audio('failMp3', 'assets/sounds/failMp3.mp3');
+    this.load.audio('right', 'assets/sounds/newJoin/right.mp3');
+    this.load.audio('wrong', 'assets/sounds/newJoin/wrong.mp3');
     SellingGold.loadImg(this);
     Particles.loadImg(this);
+    TipsParticlesEmitter.loadImg(this);
     this.assets.forEach((v) => {
       this.load.image(v.key, v.url);
     })

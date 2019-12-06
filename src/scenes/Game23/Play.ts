@@ -1,6 +1,6 @@
 import 'phaser';
 import { } from 'rxjs';
-import { cover, rotateTips, isHit, Vec2, CONSTANT ,arrDisorder} from '../../Public/jonny/core';
+import { cover, rotateTips, isHit, Vec2, CONSTANT, arrDisorder } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
 import { Game23Data, Assets } from '../../interface/Game23';
 import { Basin } from "../../Public/jonny/game23/Basin";
@@ -18,7 +18,7 @@ var goldValue: number = 3; //金币的值
 
 export default class Game23PlayScene extends Phaser.Scene {
     private ccData: Array<Game23Data> = [];
-    private rightTimes:number = 0; //正确的次数
+    private rightTimes: number = 0; //正确的次数
     private times: number = 0;  //次数
 
     //静态开始
@@ -31,9 +31,9 @@ export default class Game23PlayScene extends Phaser.Scene {
     //静态结束
 
     //动态开始
-    private toys:Array<Toy> = [];  //玩具
-    private basins:Array<Basin> = [];    //盆
-    private civa:Shooter;
+    private toys: Array<Toy> = [];  //玩具
+    private basins: Array<Basin> = [];    //盆
+    private civa: Shooter;
     private tipsParticlesEmitter: TipsParticlesEmitter;
     private sellingGold: SellingGold;
 
@@ -169,21 +169,22 @@ export default class Game23PlayScene extends Phaser.Scene {
         let offsetY = 337 - 145;
         let ccDataClone = this.ccData.concat(this.ccData);
         ccDataClone = arrDisorder(ccDataClone);
-        ccDataClone.forEach((v,i)=>{
+        ccDataClone.forEach((v, i) => {
             let initX = 136;
             let initY = 145;
-            let _ix = i%5;
-            let _iy = Math.floor(i/5);
-            let x = initX + offsetX*_ix;
-            let y = initY + offsetY*_iy;
-            let toy = new Toy(this,x,y,v.questionContent,v.questionContent).init();
+            let _ix = i % 5;
+            let _iy = Math.floor(i / 5);
+            let x = initX + offsetX * _ix;
+            let y = initY + offsetY * _iy;
+            let toy = new Toy(this, x, y, v.questionContent, v.questionContent).init();
             this.toys.push(toy);
             this.layer1.add(toy);
         });
 
         //创建盆
-        this.ccData.forEach((v,i)=>{
-            let basin = new Basin(this,v.questionContent).init();
+        console.log(index);
+        this.ccData.forEach((v, i) => {
+            let basin = new Basin(this, v.questionContent).init();
             this.basins.push(basin);
             this.layer2.add(basin);
         })
@@ -197,51 +198,102 @@ export default class Game23PlayScene extends Phaser.Scene {
      */
     private async gameStart() {
         let that = this;
-        let toyPointerDown = function (toy:Toy){
+        let toyPointerDown = function (toy: Toy) {
             this.checkoutResult(toy)
-            .then(async value => {    //正确
-                console.log(value);
-                that.rightTimes+=value;
-                if(value===1&&that.rightTimes===1){
-                  toy.disableInteractive(); 
-                  that.audioPlay("successMp3");
-                  await that.basins[index].move(toy.x);
-                  that.audioPlay(toy.name + "Sound");
-                  toy.isRight(that.rightTimes,that.basins[index]);
-                }else if(value===1&&that.rightTimes===2){
-                  toy.disableInteractive(); 
-                  that.audioPlay("successMp3");
-                  await that.basins[index].move(toy.x);
-                  that.audioPlay(toy.name + "Sound");
-                  toy.isRight(that.rightTimes,that.basins[index]);
-                }else if(value===0){
-                    toy.isWrong();
-                }
-            })
+                .then(async (value: number) => {    //正确
+                    console.log(value);
+                    that.rightTimes += value;
+                    that.disableToys(true);
+                    if (value === 1 && that.rightTimes === 1) {  //当回答正确，且射击次数为1
+                        //toy.disableInteractive();
+                        //that.disableToys(true);
+                        that.audioPlay("successMp3");
+                        await that.basins[index].move(toy.x);
+                        that.audioPlay(toy.name + "Sound");
+                        await toy.isRight(that.rightTimes, that.basins[index]);
+                        that.disableToys(false);
+                    } else if (value === 1 && that.rightTimes === 2) {   //当回答正确，且射击次数为2
+                        //that.disableToys(true);
+                        that.audioPlay("successMp3");
+                        await that.basins[index].move(toy.x);
+                        that.audioPlay(toy.name + "Sound");
+                        await toy.isRight(that.rightTimes, that.basins[index]);
+                        await that.basins[index].moveLeft();
+                        console.log(index);
+                        if (index === 2 || index === 3) {
+                            await that.basins[index].moveRight();
+                        } else if (index === 4) {
+                            await that.basins[index].moveCenter();
+                        }
+                        that.isRight();
+                    } else if (value === 0) {
+                        await toy.isWrong();
+                        that.isWrong();
+                    }
+                })
         }
 
-        let toyShow:Promise<number>[] = this.toys.map((toy,i)=>{
-            let delay = 300*i;
-            toy.on("pointerdown",toyPointerDown.bind(this,toy));
+        let toyShow: Promise<number>[] = this.toys.map((toy, i) => {
+            let delay = 300 * i;
+            toy.on("pointerdown", toyPointerDown.bind(this, toy));
             return toy.show(delay);
         })
 
         await Promise.all(toyShow);
         this.basins[index].show();
+        this.audioPlay(this.basins[index].name + "Sound");
+        //this.nextTopic();
+    }
 
-        
+    /**
+     * 激活或禁止所有玩具的输入事件
+     */
+    private disableToys(yes: boolean) {
+        if (yes) {
+            this.toys.forEach(toy => {
+                toy.disableInteractive();
+            });
+        } else if (!yes) {
+            this.toys.forEach(toy => {
+                toy.setInteractive();
+            });
+        }
+
+    }
+
+    /**
+     * 下一题
+     */
+    private nextTopic() {
+        console.log(index);
+        index += 1;
+        if (index > this.ccData.length - 1) {
+            window.location.href = CONSTANT.INDEX_URL;
+        }
+        this.rightTimes = 0;
+        this.disableToys(false)
+        this.basins[index].show();
+        this.audioPlay(this.basins[index].name + "Sound");
+    }
+
+    /**
+     * 换一道题
+     */
+    private async changeTopic() {
+        await this.basins[index].hide();
+        this.nextTopic();
     }
 
     /**
      * 判断做题结果是否正确
      */
-    private checkoutResult(toy:Toy): Promise<number> {
-        let answer:boolean = toy.name === this.basins[index].name;
-        console.log(toy.name,this.basins[index].name);
+    private checkoutResult(toy: Toy): Promise<number> {
+        let answer: boolean = toy.name === this.basins[index].name;
+        console.log(toy.name, this.basins[index].name);
         return new Promise(resolve => {
-            if(answer){
+            if (answer) {
                 resolve(1);
-            }else{
+            } else {
                 resolve(0);
             }
         });
@@ -286,10 +338,6 @@ export default class Game23PlayScene extends Phaser.Scene {
 
     }
 
-    
-
-   
-
     /**
      * 正确的结果处理
      */
@@ -299,7 +347,8 @@ export default class Game23PlayScene extends Phaser.Scene {
                 callback: () => {
                     this.sellingGold.golds.destroy();
                     this.setGoldValue(3);
-                    this.nextRound();
+                    ;
+                    this.nextTopic();
                 }
             });
             this.sellingGold.golds.setDepth(6);
@@ -307,6 +356,7 @@ export default class Game23PlayScene extends Phaser.Scene {
                 this.sellingGold.goodJob(3);
             })
         }
+        nextFuc();
     }
 
     /**
@@ -332,9 +382,7 @@ export default class Game23PlayScene extends Phaser.Scene {
      * 重置开始状态
      */
     private resetStart() {
-
-        this.successBtn.setAlpha(0);
-        this.successBtn.interactive = true;
+        this.disableToys(false);
     }
 
     /**
@@ -343,7 +391,7 @@ export default class Game23PlayScene extends Phaser.Scene {
     private ohNo() {
         this.setGoldValue(-1);
         this.tipsParticlesEmitter.error(
-            this.nextRound,
+            this.changeTopic,
             this.resetStart
         )
         if (goldValue === 0) {
@@ -358,7 +406,7 @@ export default class Game23PlayScene extends Phaser.Scene {
      * 下一道题
      */
     private nextRound(): void {
-        index += 1;
+        //index += 1;
         if (index > this.ccData.length - 1) {
             window.location.href = CONSTANT.INDEX_URL;
         }
@@ -369,14 +417,13 @@ export default class Game23PlayScene extends Phaser.Scene {
         });
     }
 
-    
+
 
     /**
      * 设置金币的动作
      */
     private setGoldValue(value: number) {
         goldValue += value;
-
         this.gold.setText(goldValue);
     }
 

@@ -18,7 +18,7 @@ export class Basin extends Phaser.GameObjects.Container {
     }
 
     /**
-     * 淡出
+     * 淡入
      */
     public show():Promise<number>{
         return new Promise(resolve=>{
@@ -27,45 +27,48 @@ export class Basin extends Phaser.GameObjects.Container {
                 alpha:1,
                 duration:500,
                 onComplete:()=>{
-                    this.audioPlay(this.name + "Sound");
                     resolve(1);
                 }
             })
         })
+    }
+
+    /**
+     * 淡出
+     */
+    public hide():Promise<number>{
+        return new Promise(resolve=>{
+            this.scene.add.tween({
+                targets:this,
+                alpha:0,
+                scale:0,
+                duration:500,
+                onComplete:()=>{
+                    resolve(1);
+                }
+            })
+        }) 
     }
 
     /**
      * 移动到左边
      */
     public moveLeft():Promise<number>{
-        return new Promise(resolve=>{
-            this.scene.add.tween({
-                targets:this,
-                x:91,
-                duration:500,
-                ease:"Sine.easeOut",
-                onComplete:()=>{
-                    resolve(1);
-                }
-            })
-        })
+        return this.move(91);
     }
 
     /**
      * 移动到右边
      */
     public moveRight():Promise<number>{
-        return new Promise(resolve=>{
-            this.scene.add.tween({
-                targets:this,
-                x:761,
-                duration:500,
-                ease:"Sine.easeOut",
-                onComplete:()=>{
-                    resolve(1);
-                }
-            })
-        })
+        return this.move(761);
+    }
+
+     /**
+     * 移动到中间
+     */
+    public moveCenter():Promise<number>{
+        return this.move(492);
     }
 
     /**
@@ -85,18 +88,6 @@ export class Basin extends Phaser.GameObjects.Container {
         })
     }
 
-    /**
-     * 单次播放的音频播放器
-     */
-    private audioPlay(key: string): Promise<number> {
-        return new Promise<number>(resolve => {
-            let _tempSound: Phaser.Sound.BaseSound = this.scene.sound.add(key);
-            _tempSound.on("complete", function (this: Phaser.Sound.BaseSound) {
-                this.destroy();
-                resolve(1);
-            });
-            _tempSound.play();
-        })
-    }
+   
 
 }
