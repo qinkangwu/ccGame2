@@ -6,6 +6,21 @@
 import "phaser";
 import { Vec2 } from '../core/';
 
+// var initPositions = [
+//     new Vec2(91+168*4,505),   //----+
+//     new Vec2(91+168*3,505),    //---+-
+//     new Vec2(91+168,505),   //-+---
+//     new Vec2(91,505), //+----
+//     new Vec2(91+168*2,505)  //--+--
+// ]
+var initPositions = [
+    new Vec2(91,505), //+----
+    new Vec2(91+168,505),   //-+---
+    new Vec2(91+168*3,505),    //---+-
+    new Vec2(91+168*4,505),   //----+
+    new Vec2(91+168*2,505)  //--+--
+]
+
 export class Basin extends Phaser.GameObjects.Container {
     bg: Phaser.GameObjects.Image;
     text: Phaser.GameObjects.Text;
@@ -13,7 +28,7 @@ export class Basin extends Phaser.GameObjects.Container {
     initPosition: Vec2;
     constructor(scene: Phaser.Scene, name: string, i: number) {
         super(scene, 496, 505);
-        this.initPosition = new Vec2(91 + i * 168, 505);
+        this.initPosition = initPositions[i];
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, "bg_basin");
         this.text = new Phaser.GameObjects.Text(scene, 0, 0 + 7, name, { align: "center", color: "#2c98e6", resolution: 2, fontFamily: "sans-serif", fontSize: "18px" }).setOrigin(0.5);
         this.name = name;

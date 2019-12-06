@@ -276,9 +276,18 @@ export default class Game23PlayScene extends Phaser.Scene {
     /**
      * 做题结束
      */
-    private topicEnd() {
+    private async topicEnd() {
         let allShow: Promise<number>[] = this.basins.map((basin, i) => basin.showWordToy(i * 800));
-        Promise.all(allShow);
+        await Promise.all(allShow);
+        // 验证跳转到游戏大厅
+        setTimeout(() => {
+            let confirm = window.confirm("你将跳转到游戏大厅去");
+            if (confirm === true) {
+                window.location.href = CONSTANT.INDEX_URL;
+            } else {
+                window.location.reload();
+            }
+        }, 1000)
     }
 
 
