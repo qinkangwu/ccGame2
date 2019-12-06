@@ -1,6 +1,6 @@
 /**
  * @author       Peng Jiang <jonny.peng@qq.com>
- * @copyright    2019 civaonline.cn
+ * @copyright    2019 civaonline.cn/guiyang
  */
 
 import 'phaser';
@@ -50,7 +50,7 @@ export default class Game16LoadScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.audio('bgm', 'assets/sounds/bgm-07.mp3');
+    this.load.audio('bgm','assets/sounds/bgm-07.mp3');
     this.load.audio('successMp3', 'assets/sounds/successMp3.mp3');
     this.load.audio('clickMp3', 'assets/sounds/clickMp3.mp3');
     this.load.audio('failMp3', 'assets/sounds/failMp3.mp3');

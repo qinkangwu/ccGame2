@@ -1,3 +1,9 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn/guiyang
+ */
+
+
 import 'phaser';
 import { } from 'rxjs';
 import { cover, rotateTips, isHit, Vec2, CONSTANT, arrDisorder } from '../../Public/jonny/core';
@@ -182,9 +188,8 @@ export default class Game23PlayScene extends Phaser.Scene {
         });
 
         //创建盆
-        console.log(index);
         this.ccData.forEach((v, i) => {
-            let basin = new Basin(this, v.questionContent).init();
+            let basin = new Basin(this, v.questionContent, i).init();
             this.basins.push(basin);
             this.layer2.add(basin);
         })
@@ -201,30 +206,21 @@ export default class Game23PlayScene extends Phaser.Scene {
         let toyPointerDown = function (toy: Toy) {
             this.checkoutResult(toy)
                 .then(async (value: number) => {    //正确
-                    console.log(value);
                     that.rightTimes += value;
                     that.disableToys(true);
                     if (value === 1 && that.rightTimes === 1) {  //当回答正确，且射击次数为1
-                        //toy.disableInteractive();
-                        //that.disableToys(true);
                         that.audioPlay("successMp3");
                         await that.basins[index].move(toy.x);
                         that.audioPlay(toy.name + "Sound");
                         await toy.isRight(that.rightTimes, that.basins[index]);
                         that.disableToys(false);
                     } else if (value === 1 && that.rightTimes === 2) {   //当回答正确，且射击次数为2
-                        //that.disableToys(true);
                         that.audioPlay("successMp3");
                         await that.basins[index].move(toy.x);
                         that.audioPlay(toy.name + "Sound");
                         await toy.isRight(that.rightTimes, that.basins[index]);
-                        await that.basins[index].moveLeft();
-                        console.log(index);
-                        if (index === 2 || index === 3) {
-                            await that.basins[index].moveRight();
-                        } else if (index === 4) {
-                            await that.basins[index].moveCenter();
-                        }
+                        await that.basins[index].leave();
+                        that.basins[index].admission();
                         that.isRight();
                     } else if (value === 0) {
                         await toy.isWrong();
@@ -242,7 +238,6 @@ export default class Game23PlayScene extends Phaser.Scene {
         await Promise.all(toyShow);
         this.basins[index].show();
         this.audioPlay(this.basins[index].name + "Sound");
-        //this.nextTopic();
     }
 
     /**
@@ -264,17 +259,28 @@ export default class Game23PlayScene extends Phaser.Scene {
     /**
      * 下一题
      */
-    private nextTopic() {
-        console.log(index);
+    private nextTopic(): boolean {
         index += 1;
         if (index > this.ccData.length - 1) {
-            window.location.href = CONSTANT.INDEX_URL;
+            //window.location.href = CONSTANT.INDEX_URL;
+            this.topicEnd();
+            return true;
         }
         this.rightTimes = 0;
         this.disableToys(false)
         this.basins[index].show();
         this.audioPlay(this.basins[index].name + "Sound");
+        return false;
     }
+
+    /**
+     * 做题结束
+     */
+    private topicEnd() {
+        let allShow: Promise<number>[] = this.basins.map((basin, i) => basin.showWordToy(i * 800));
+        Promise.all(allShow);
+    }
+
 
     /**
      * 换一道题
@@ -329,14 +335,6 @@ export default class Game23PlayScene extends Phaser.Scene {
         return _tween;
     }
 
-
-    /**
-     * 检查做题是否已经结束
-     */
-    private checkoutTestEnd() {
-
-
-    }
 
     /**
      * 正确的结果处理
