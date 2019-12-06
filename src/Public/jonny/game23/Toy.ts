@@ -1,3 +1,8 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn/guiyang
+ */
+
 import "phaser";
 import { Basin } from './Basin';
 
@@ -44,9 +49,11 @@ export class Toy extends Phaser.GameObjects.Container {
 
     /**
      * 正确的反馈
+     * @param {number} 正确的次数，正常不会超过2次
+     * @param {Basin} 该落入到的盆 
      */
     public isRight(rightTimes:number,basin: Basin): Promise<any> {
-        let props = rightTimes === 1 ? {x:-10,rotation:Phaser.Math.DegToRad(-10)} : {x:0,rotation:Phaser.Math.DegToRad(5)};
+        let props = rightTimes === 1 ? {x:-10,rotation:Phaser.Math.DegToRad(-10)} : {x:0,rotation:Phaser.Math.DegToRad(0)};
         let basinIndex = rightTimes === 1 ? 0 : 1;
         return new Promise(async resolve => {
             let _x = this.toyImg.getWorldTransformMatrix().tx - basin.x;
