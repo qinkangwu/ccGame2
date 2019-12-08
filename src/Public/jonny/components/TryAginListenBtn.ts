@@ -1,7 +1,18 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
 import "phaser";
 import { EASE } from "../core/Animate";
 import { Button } from "./Button";
 
+
+/**
+ * @param {Phaser.Scene}
+ * @param {number} 对象的x坐标
+ * @param {number} 对象的y坐标
+ */
 export class TryAginListenBtn extends Button {
   public sound: Phaser.Sound.BaseSound;
   public ableTips: Array<number>;  //是否提示再听一遍

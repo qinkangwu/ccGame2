@@ -5,6 +5,10 @@
 
 import 'phaser';
 
+/**
+ * @param {Phaser.Scene}
+ * @param {number} 初始化的金币数量
+ */
 export class Gold extends Phaser.GameObjects.Container{
     private goldImg:Phaser.GameObjects.Image;    
     private goldText:Phaser.GameObjects.Text;

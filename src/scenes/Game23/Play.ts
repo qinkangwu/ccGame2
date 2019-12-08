@@ -6,9 +6,9 @@
 
 import 'phaser';
 import { } from 'rxjs';
-import { cover, rotateTips, isHit, Vec2, CONSTANT, arrDisorder } from '../../Public/jonny/core';
-import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
-import { Game23Data, Assets } from '../../interface/Game23';
+import { cover, rotateTips, CONSTANT, arrDisorder } from '../../Public/jonny/core';
+import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn } from '../../Public/jonny/components';
+import { Game23Data} from '../../interface/Game23';
 import { Basin } from "../../Public/jonny/game23/Basin";
 import { Toy } from "../../Public/jonny/game23/Toy";
 import { Shooter } from "../../Public/jonny/game23/Shooter";

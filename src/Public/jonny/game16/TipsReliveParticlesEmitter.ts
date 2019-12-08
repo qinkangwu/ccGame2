@@ -1,3 +1,8 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
 import "phaser";
 import { config } from "../../../interface/TipsParticlesEmitter";
 const W = 1024;

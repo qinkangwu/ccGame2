@@ -1,7 +1,18 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
 import 'phaser';
 
 export class StaticAni {
-    public static alphaScaleFuc(obj, _scaleX: number, _scaleY: number, _alpha: number): void {
+    /**
+     * @param {any} 传入Phaser.GameObjects的子对象
+     * @param {number} 放大值
+     * @param {number} 缩小值
+     * @param {number} 透明值
+     */
+    public static alphaScaleFuc(obj:any, _scaleX: number, _scaleY: number, _alpha: number): void {
         obj.scaleX = _scaleX;
         obj.scaleY = _scaleY;
         obj.alpha = _alpha;
@@ -9,6 +20,13 @@ export class StaticAni {
 }
 
 export class TweenAni {
+    /**
+     * @param {Phaser.Scene}
+     * @param {Phaser.GameObjects.Image | Phaser.GameObjects.Container}
+     * @param {number} x轴的放大值
+     * @param {number} y轴的放大值
+     * @param {number} 透明值
+     */
     public static alphaScaleYoyoFunc(scene: Phaser.Scene, obj: Phaser.GameObjects.Image | Phaser.GameObjects.Container, scaleX: number, scaleY: number, alpha: number) {
         scene.tweens.add({
             targets: obj,

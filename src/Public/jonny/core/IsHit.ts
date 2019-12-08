@@ -1,3 +1,8 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
 export class Bounds{
     minX:number;
     maxX:number;

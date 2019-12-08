@@ -1,3 +1,7 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
 import "phaser";
 import { Vec2 } from "../core/Math";
 import { AnswerConfig } from "./../../../interface/SelectTopic";

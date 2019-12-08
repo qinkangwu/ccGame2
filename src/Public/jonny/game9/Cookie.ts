@@ -1,3 +1,8 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
 import {Bounds} from "../core";
 import { ButtonContainer} from "../components";
 import { NullCookie } from "./index";
