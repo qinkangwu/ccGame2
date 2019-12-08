@@ -7,7 +7,7 @@ import 'phaser';
 import { Game9DataItem, Game9PhoneticSymbol } from '../../interface/Game9';
 import { cover, rotateTips, isHit,CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
-import { EASE } from '../../Public/jonny/core/Animate';
+//import { EASE } from '../../Public/jonny/core/Animate';
 import PlanAnims from '../../Public/PlanAnims';
 import { CivaMen, Cookie, NullCookie, TrackCircle } from '../../Public/jonny/game9';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
