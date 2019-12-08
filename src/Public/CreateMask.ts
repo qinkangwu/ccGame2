@@ -1,4 +1,9 @@
 /**
+ * @author       Qin Kangwu 
+ * @copyright    2019 civaonline.cn
+ */
+
+/**
  * @class CreateMask 开始游戏遮罩层
  * @param scene 当前场景
  * @param cb 点击开始游戏回调

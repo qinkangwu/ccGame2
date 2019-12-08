@@ -1,5 +1,14 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
 import "phaser"
 
+/**
+ * @param {Phaser.Scene} 
+ * @param {string} 遮罩纹理 请先载入
+ */
 export class CoverDoublePlayer extends Phaser.GameObjects.Container {
     bg: Phaser.GameObjects.Graphics;
     image: Phaser.GameObjects.Image;

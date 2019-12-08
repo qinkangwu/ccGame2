@@ -1,5 +1,13 @@
+/**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
 import "phaser";
 
+/**
+ * @param {Pahser.Scene}
+ */
 export class Firework extends Phaser.GameObjects.Particles.ParticleEmitterManager{
     public emitter: Phaser.GameObjects.Particles.ParticleEmitter;
     constructor(scene: Phaser.Scene) {

@@ -1,5 +1,10 @@
 /**
- * 定义常量
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
+/**
+ * 菜单页面
  */
 export const CONSTANT = {
     /**

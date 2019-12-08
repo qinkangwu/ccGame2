@@ -4,7 +4,7 @@
  */
 
 import 'phaser';
-import apiPath from '../../lib/apiPath';
+//import apiPath from '../../lib/apiPath';
 import { get } from '../../lib/http';
 import { resize } from '../../Public/jonny/core';
 import { Game23Data,Assets } from '../../interface/Game23';

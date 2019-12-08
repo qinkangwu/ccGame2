@@ -1,4 +1,9 @@
 /**
+ * @author       Peng Jiang <jonny.peng@qq.com>
+ * @copyright    2019 civaonline.cn
+ */
+
+/**
  * 执行 rotateTips.init();
  */
 export var rotateTips = {

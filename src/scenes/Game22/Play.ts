@@ -6,7 +6,7 @@
 import 'phaser';
 import { Observable } from 'rxjs';
 import { TrueFalseInterface } from '../../interface/TrueFalseInterface';
-import { cover, rotateTips, isHit, Vec2, CONSTANT, EASE } from '../../Public/jonny/core';
+import { cover, rotateTips, CONSTANT } from '../../Public/jonny/core';
 import { Button, ButtonMusic, ButtonExit, SellingGold, Gold,Firework } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 import { CivaMen, Darts, TextDialog, Target } from '../../Public/jonny/trueFalse';
@@ -392,29 +392,32 @@ export default class Game22PlayScene extends Phaser.Scene {
     return goldValue < 0 ? true : false;
   }
 
-  private getGui() {
-    let guiData = {
-      resolution: 1,
-      fontFamily: "sans-serif"
-    }
+  /**
+   * UI测试
+   */
+  // private getGui() {
+  //   let guiData = {
+  //     resolution: 1,
+  //     fontFamily: "sans-serif"
+  //   }
 
-    this.datGui = new dat.GUI();
+  //   this.datGui = new dat.GUI();
 
-    this.datGui.add(guiData, "resolution", 1, 5, 1).onChange(value => {
-      // this.topic.question.setResolution(value);
-      // this.answers.forEach(answer => {
-      //   answer.answerContent.setResolution(value);
-      //   answer.serial.setResolution(value);
-      // })
-    })
+  //   this.datGui.add(guiData, "resolution", 1, 5, 1).onChange(value => {
+  //     // this.topic.question.setResolution(value);
+  //     // this.answers.forEach(answer => {
+  //     //   answer.answerContent.setResolution(value);
+  //     //   answer.serial.setResolution(value);
+  //     // })
+  //   })
 
-    this.datGui.add(guiData, "fontFamily", ["sans-serif", "monospace", "Helvetica"]).onChange(value => {
-      // this.topic.question.setFontFamily(value);
-      // this.answers.forEach(answer => {
-      //   answer.answerContent.setFontFamily(value);
-      //   answer.serial.setFontFamily(value);
-      // })
-    })
-  }
+  //   this.datGui.add(guiData, "fontFamily", ["sans-serif", "monospace", "Helvetica"]).onChange(value => {
+  //     // this.topic.question.setFontFamily(value);
+  //     // this.answers.forEach(answer => {
+  //     //   answer.answerContent.setFontFamily(value);
+  //     //   answer.serial.setFontFamily(value);
+  //     // })
+  //   })
+  // }
 
 }
