@@ -1,8 +1,3 @@
-/**
- * @author       Qin Kangwu 
- * @copyright    2019 civaonline.cn
- */
-
 import "phaser";
 import { config } from "../interface/TipsParticlesEmitter";
 const W = 1024;
