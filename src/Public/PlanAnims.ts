@@ -1,8 +1,3 @@
-/**
- * @author       Qin Kangwu 
- * @copyright    2019 civaonline.cn
- */
-
 import "phaser";
 const W = 1024;
 const H = 552;
