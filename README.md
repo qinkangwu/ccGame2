@@ -108,4 +108,4 @@ for(let i=3;i<24;i++){
 
 ### 后端接口[地址](https://219.151.9.161:8188/swagger-ui.html#/%E5%B0%8F%E6%B8%B8%E6%88%8F__controller%E7%B1%BB)
 
-### Game24对战平台的Game24对战平台的Node Socket Example[地址](https://ccgame.civaonline.cn:8081/snippets/18)
+### Game24对战平台的Node Socket Example[地址](https://ccgame.civaonline.cn:8081/snippets/18)
