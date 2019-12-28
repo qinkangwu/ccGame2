@@ -776,6 +776,7 @@ export default class Game6PlayScene extends Phaser.Scene {
    * 箭头旋转角度，位置重置，目标方向的改变
    */
   private arrowRotateAni(_nullballIndex: number, _nullball: Phaser.GameObjects.Image): void {
+    //console.log(arrowUpObj.x,arrowUpObj.y,_nullball.x,_nullball.y);
     arrowUpObj.setPosition(initPosition.x, initPosition.y);
     arrowUpObj.rotation = Phaser.Math.DegToRad(-45 + _nullballIndex * 45);
     arrowUpObj.alpha = 0.7;
@@ -786,7 +787,8 @@ export default class Game6PlayScene extends Phaser.Scene {
       alpha: 0,
       duration: 1000,
       repeat: -1,
-      ease: 'Sine.easeOut'
+      ease: 'Sine.easeOut',
+      paused:true
     }))
   }
 
