@@ -452,7 +452,7 @@ export default class Game5PlayScene extends Phaser.Scene {
 
     private backToListHandle() : void {
       //返回游戏列表
-      window.location.href = 'https://civagame.civaonline.cn:8888'
+      //window.location.href = 'https://civagame.civaonline.cn:8888';
     }
 
     private clearDrawHandle(clickBtn : boolean = true) : void {
@@ -476,7 +476,7 @@ export default class Game5PlayScene extends Phaser.Scene {
 
     private createBtn () : void {
       //创建按钮
-      this.backToListBtn = this.add.image(55,55,'icons','btn_exit.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);
+      this.backToListBtn = this.add.image(55,55,'icons','btn_exit.png').setOrigin(.5).setAlpha(0).setDisplaySize(60,60).setInteractive().setData('isBtn',true);//暂时隐藏关闭
       this.clearDrawBtn = this.add.image(55,H - 145,'icons','btn_shangyibu.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);
       this.playBtn = this.add.image(55,H - 55,'icons','btn_play.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);
       this.musicBtn = this.add.image(W - 60,55,'icons','btn_music.png').setOrigin(.5).setAlpha(.6).setDisplaySize(60,60).setInteractive().setData('isBtn',true);

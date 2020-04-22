@@ -22,9 +22,12 @@ export default class ButtonExit extends Button {
     constructor(scene: Phaser.Scene, x: number = 25 + 60 * 0.5, y:number = 25 + 60 * 0.5,texture: string = "btnExit", shape: any = new Phaser.Geom.Circle(60 * 0.5, 60 * 0.5, 60), callback: Phaser.Types.Input.HitAreaCallback = Phaser.Geom.Circle.Contains) {
       super(scene, x, y, texture, shape, callback)
       this.pointerdownFunc = this.exitGame;
+      this.alpha = 0;  //隐藏
     }
   
     exitGame(): void {
-        window.location.href = CONSTANT.INDEX_URL;
+        //window.location.href = CONSTANT.INDEX_URL;
+        //window.close();
+        //window.opener=null;window.open('','_self');window.close();
     }
   }

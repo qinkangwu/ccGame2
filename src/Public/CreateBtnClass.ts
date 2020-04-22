@@ -36,7 +36,7 @@ export default class CreateBtnClass {
         if(this.scene.musicBtn) return;
         this.scene.backToListBtn = this.scene.add.image(55, 55,'icons2','btn_exit.png')
         .setOrigin(.5)
-        .setAlpha(.6)
+        .setAlpha(0)  //暂时隐藏关闭按钮
         .setDisplaySize(60 ,60)
         .setInteractive()
         .setData('isBtn',true);
@@ -181,7 +181,7 @@ export default class CreateBtnClass {
 
     private backToListHandle() : void {
         //返回游戏列表
-        window.location.href = 'https://civagame.civaonline.cn:8888'
+        //window.location.href = 'https://civagame.civaonline.cn:8888'
     }
 
     private switchMusic () : void {
