@@ -18,7 +18,7 @@ module.exports = {
     mode: 'development',
     entry: {
         app: [
-            path.resolve(__dirname, 'src/main.ts')
+            path.resolve(__dirname, 'src/main.ts'),
         ],
         vendor: ['phaser']
     },
