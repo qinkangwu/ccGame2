@@ -31,7 +31,7 @@ export default class Game10PlayScene extends Phaser.Scene {
   private wordGraphics: Phaser.GameObjects.Graphics; //字符末尾
   private graphicsTweens: Phaser.Tweens.Tween; //字符末尾动画引用
   private planAnims: PlanAnims; //飞机过长动画引用
-  private currentIndex: number = 13; //当前的索引
+  private currentIndex: number = 0; //当前的索引
   private imgObj: Phaser.GameObjects.Sprite; //图片
   private curData: string[]; //当前的对象
   private tips: TipsParticlesEmitter; //tip组件
