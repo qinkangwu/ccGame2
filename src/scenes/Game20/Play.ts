@@ -7,7 +7,7 @@ import 'phaser';
 import { Observable } from 'rxjs';
 import { QueryTopic, AnswerConfig } from '../../interface/SelectTopic';
 import { cover, rotateTips, isHit, Vec2, CONSTANT,EASE} from '../../Public/jonny/core';
-import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
+import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, GameEnd } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 import { Topic, Answer,CivaWorker } from '../../Public/jonny/selectTopic';
 
@@ -319,7 +319,8 @@ export default class Game20PlayScene extends Phaser.Scene {
     //index = 7; //test
     this.prevAnswer = null;
     if (index > this.ccData.length - 1) {
-      window.location.href = CONSTANT.INDEX_URL;
+      //window.location.href = CONSTANT.INDEX_URL;
+      GameEnd.Show(this);
     }
     this.times = 0;
     this.scene.start('Game20PlayScene', {

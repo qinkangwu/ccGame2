@@ -3,8 +3,8 @@ import apiPath from '../../lib/apiPath';
 import CreateBtnClass from '../../Public/CreateBtnClass';
 import CreateMask from '../../Public/CreateMask';
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
-import { Gold } from "../../Public/jonny/components/Gold";
-import { SellingGold } from "../../Public/jonny/components/SellingGold";
+import { Gold ,SellingGold,GameEnd} from "../../Public/jonny/components";
+//import { SellingGold } from "../../Public/jonny/components/SellingGold";
 import { Item } from '../../interface/Game12';
 
 const W = 1024;
@@ -204,7 +204,13 @@ export default class Game12PlayScene extends Phaser.Scene {
 
     private clearInit() : void {
       //清空显示列表
-      this.currentIndex = this.currentIndex + 2 >= this.ccData.length ? 0 : this.currentIndex + 2;
+      //this.currentIndex = this.currentIndex + 2 >= this.ccData.length ? 0 : this.currentIndex + 2;
+      this.currentIndex += 2;
+      if (this.currentIndex >= this.ccData.length) {
+        GameEnd.Show(this);
+        return;
+      } 
+  
       this.leftContentText.setText(this.ccData[this.currentIndex].wordTypeName);
       this.rightContentText.setText(this.ccData[this.currentIndex + 1].wordTypeName);
       this.itemArr.map((r,i)=>{

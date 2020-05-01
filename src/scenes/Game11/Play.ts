@@ -6,7 +6,7 @@
 import 'phaser';
 import { Game11DataItem, } from '../../interface/Game11';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
-import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn, Particles } from '../../Public/jonny/components';
+import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn, Particles, GameEnd } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 import { Locomotive, TrainBox, NullTrainBox, SentenceUI } from '../../Public/jonny/game11/';
 
@@ -969,7 +969,8 @@ export default class Game11PlayScene extends Phaser.Scene {
   private nextRound(): void {
     index += 1;
     if (index > this.ccData.length - 1) {
-      window.location.href = CONSTANT.INDEX_URL;
+      //window.location.href = CONSTANT.INDEX_URL;
+      GameEnd.Show(this);
     }
     this.times = 0;
     this.oneWheel = false;

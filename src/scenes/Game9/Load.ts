@@ -69,7 +69,10 @@ export default class Game9LoadScene extends Phaser.Scene {
   private getData() {
     get(apiPath.getWordsData).then((res) => {
       if(res.code==='0000'){
-       this.ccData = res.result.map(v=>{
+       this.ccData = res.result
+       //.filter((v,i)=>i<12)  //测试状态
+       .map(v=>{
+        //let pl = v.phoneticSymbols.length; //正确音标的长度
         let pl = v.phoneticSymbols.length; //正确音标的长度
         v.uselessPhoneticSymbols.length = 8 - pl;
         return v;

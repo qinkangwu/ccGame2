@@ -7,7 +7,7 @@ import 'phaser';
 import { Observable } from 'rxjs';
 import { TrueFalseInterface } from '../../interface/TrueFalseInterface';
 import { cover, rotateTips, CONSTANT } from '../../Public/jonny/core';
-import { Button, ButtonMusic, ButtonExit, SellingGold, Gold,Firework } from '../../Public/jonny/components';
+import { Button, ButtonMusic, ButtonExit, SellingGold, Gold,Firework, GameEnd } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 import { CivaMen, Darts, TextDialog, Target } from '../../Public/jonny/trueFalse';
 import * as dat from 'dat.gui';
@@ -365,7 +365,8 @@ export default class Game22PlayScene extends Phaser.Scene {
     index += 1;
     //index = 7; //test
     if (index > this.ccData.length - 1) {
-      window.location.href = CONSTANT.INDEX_URL;
+      //window.location.href = CONSTANT.INDEX_URL;
+      GameEnd.Show(this);
     }
     this.times = 0;
     this.scene.start('Game22PlayScene', {

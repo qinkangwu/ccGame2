@@ -4,8 +4,7 @@ import apiPath from '../../lib/apiPath';
 import { game5DataItem } from "../../interface/Game5";
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 import { cover } from "../../Public/jonny/core";
-import { Gold } from "../../Public/jonny/components/Gold";
-import { SellingGold } from "../../Public/jonny/components/SellingGold";
+import { Gold,SellingGold,GameEnd } from "../../Public/jonny/components";
 
 const W = 1024;
 const H = 552;
@@ -180,7 +179,12 @@ export default class Game5PlayScene extends Phaser.Scene {
         this.tryTimes === 2 && this.tips.error(()=>{
           this.area.setDepth(899);
           this.onHandle();
-          this.dataIndex = this.dataIndex + 1 > this.ccData.length - 1 ? 0 : this.dataIndex + 1;
+          //this.dataIndex = this.dataIndex + 1 > this.ccData.length - 1 ? 0 : this.dataIndex + 1;
+          this.dataIndex += 1;
+          if (this.dataIndex > this.ccData.length - 1) {
+            GameEnd.Show(this);
+            return;
+          } 
           this.tweens.add({
             targets : [this.civa,this.wordsObj,this.wordsNumObj,this.playVideo],
             duration : 500,

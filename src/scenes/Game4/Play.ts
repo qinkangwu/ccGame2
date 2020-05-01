@@ -5,9 +5,9 @@ import { game4DataItem , game4PhoneticSymbol , game4WordItem} from '../../interf
 import PlanAnims from "../../Public/PlanAnims";
 import CreateBtnClass from "../../Public/CreateBtnClass";
 import { cover } from "../../Public/jonny/core/cover";
-import { Gold } from "../../Public/jonny/components/Gold";
+import { Gold,GameEnd,SellingGold } from "../../Public/jonny/components";
 import CreateGuideAnims from "../../Public/CreateGuideAnims";
-import { SellingGold } from "../../Public/jonny/components/SellingGold";
+//import { SellingGold } from "../../Public/jonny/components/SellingGold";
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 
 const W = 1024;
@@ -592,7 +592,9 @@ export default class Game4PlayScene extends Phaser.Scene {
         })
         this.shootLock = true;
         if(++this.index >= this.words.length){
-          this.index = 0 ;
+          //this.index = 0 ;
+          GameEnd.Show(this);
+      return;
         }
         this.civa.anims.play('shooting');
         this.time.addEvent({

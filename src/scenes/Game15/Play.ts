@@ -7,7 +7,7 @@ import 'phaser';
 import { Subject } from 'rxjs';
 import { Assets } from '../../interface/Game15';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
-import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
+import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, GameEnd } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 import { Bg, Carriage, Ship, Terminal, Path, PathBtn, WordPop } from '../../Public/jonny/game15/'
 
@@ -112,7 +112,8 @@ export default class Game15PlayScene extends Phaser.Scene {
         });
         let gameEnd: boolean = this.ccData.every(_data => _data[0] === null);
         if (gameEnd) {
-            window.location.href = CONSTANT.INDEX_URL;
+            //window.location.href = CONSTANT.INDEX_URL;
+            GameEnd.Show(this);
         }
     }
 

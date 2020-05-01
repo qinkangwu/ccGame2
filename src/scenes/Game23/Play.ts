@@ -7,7 +7,7 @@
 import 'phaser';
 import { } from 'rxjs';
 import { cover, rotateTips, CONSTANT, arrDisorder } from '../../Public/jonny/core';
-import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn } from '../../Public/jonny/components';
+import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, GameEnd } from '../../Public/jonny/components';
 import { Game23Data} from '../../interface/Game23';
 import { Basin } from "../../Public/jonny/game23/Basin";
 import { Toy } from "../../Public/jonny/game23/Toy";
@@ -263,7 +263,8 @@ export default class Game23PlayScene extends Phaser.Scene {
         index += 1;
         if (index > this.ccData.length - 1) {
             //window.location.href = CONSTANT.INDEX_URL;
-            this.topicEnd();
+            //this.topicEnd();
+            GameEnd.Show(this);
             return true;
         }
         this.rightTimes = 0;

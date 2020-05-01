@@ -9,7 +9,7 @@ import apiPath from '../../lib/apiPath';
 import { post } from '../../lib/http';
 import { EASE, StaticAni } from '../../Public/jonny/core/Animate';
 import { cover, rotateTips,CONSTANT } from '../../Public/jonny/core';
-import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
+import { Button, ButtonMusic, ButtonExit, SellingGold, Gold,GameEnd } from '../../Public/jonny/components';
 import { config } from '../../interface/TipsParticlesEmitter';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 import PlanAnims from '../../Public/PlanAnims';
@@ -756,7 +756,8 @@ export default class Game6PlayScene extends Phaser.Scene {
     ableStop = 0;
     index += 1;
     if (index > this.phoneticData.length - 1) {
-      window.location.href = CONSTANT.INDEX_URL;
+      //window.location.href = CONSTANT.INDEX_URL;
+      GameEnd.Show(this);
     }
     //index = index % this.phoneticData.length;
     if (keyword === "success") {

@@ -2,7 +2,7 @@ import {get} from '../../lib/http';
 import apiPath from '../../lib/apiPath';
 import CreateBtnClass from '../../Public/CreateBtnClass';
 import CreateMask from '../../Public/CreateMask';
-import { Gold } from "../../Public/jonny/components/Gold";
+import { Gold,GameEnd } from "../../Public/jonny/components";
 import { SellingGold } from "../../Public/jonny/components/SellingGold";
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
 import { item } from "../../interface/Game8";
@@ -173,7 +173,12 @@ export default class Game8PlayScene extends Phaser.Scene {
     }
 
     private nextWordHandle() : void { 
-      this.currentIndex = this.currentIndex + 1 > this.ccData.length - 1 ? 0 : this.currentIndex + 1 ;
+      //this.currentIndex = this.currentIndex + 1 > this.ccData.length - 1 ? 0 : this.currentIndex + 1 ;
+    this.currentIndex += 1;
+    if (this.currentIndex > this.ccData.length - 1) {
+      GameEnd.Show(this);
+      return;
+    } 
       this.previewHandle();
     }
 

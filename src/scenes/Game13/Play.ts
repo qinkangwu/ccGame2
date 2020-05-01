@@ -7,7 +7,7 @@ import 'phaser';
 import { Observable } from 'rxjs';
 import { QueryTopic } from '../../interface/Game13';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
-import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
+import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, GameEnd } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 import { ClearCar, DirtyCar, WaterGun, CarMask, OrderUI } from '../../Public/jonny/game13/';
 
@@ -324,7 +324,8 @@ export default class Game13PlayScene extends Phaser.Scene {
     //index = 7; //test
     this.prevAnswer = null;
     if (index > this.ccData.length - 1) {
-      window.location.href = CONSTANT.INDEX_URL;
+      //window.location.href = CONSTANT.INDEX_URL;
+      GameEnd.Show(this);
     }
     this.times = 0;
     this.scene.start('Game13PlayScene', {

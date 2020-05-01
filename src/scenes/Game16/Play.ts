@@ -7,7 +7,7 @@ import 'phaser';
 import { Subject } from 'rxjs';
 import { Assets, Topic } from '../../interface/Game16';
 import { cover, rotateTips, isHit, Vec2, CONSTANT } from '../../Public/jonny/core';
-import { Button, ButtonMusic, ButtonExit, SellingGold, Gold } from '../../Public/jonny/components';
+import { Button, ButtonMusic, ButtonExit, SellingGold, Gold, GameEnd } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 import { Door, IndexText, OrderUI, Blood, TipsReliveParticlesEmitter } from '../../Public/jonny/game16';
 
@@ -235,7 +235,8 @@ export default class Game16PlayScene extends Phaser.Scene {
                         this.blood8Index = 0;
                         this.blood.setBlood8(this.blood8Index);
                         if (index === this.ccData.length - 1) {
-                            window.location.href = CONSTANT.INDEX_URL;
+                            //window.location.href = CONSTANT.INDEX_URL;
+                            GameEnd.Show(this);
                         } else {
                             this.blood8frame = "blood80000";
                             this.blood2frame = this.blood.blood2.frame.name;

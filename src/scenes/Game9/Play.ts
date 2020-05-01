@@ -6,7 +6,7 @@
 import 'phaser';
 import { Game9DataItem, Game9PhoneticSymbol } from '../../interface/Game9';
 import { cover, rotateTips, isHit,CONSTANT } from '../../Public/jonny/core';
-import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn } from '../../Public/jonny/components';
+import { Button, ButtonContainer, ButtonMusic, ButtonExit, SellingGold, Gold, SuccessBtn, TryAginListenBtn ,GameEnd} from '../../Public/jonny/components';
 //import { EASE } from '../../Public/jonny/core/Animate';
 import PlanAnims from '../../Public/PlanAnims';
 import { CivaMen, Cookie, NullCookie, TrackCircle } from '../../Public/jonny/game9';
@@ -64,7 +64,7 @@ export default class Game9PlayScene extends Phaser.Scene {
 
   init(res: { data: any[], index: number }) {
     index = res.index;
-    //index = 2; //test
+    //index = 10; //test
     this.ccData = res.data;
 
     console.log(this.ccData);
@@ -652,7 +652,8 @@ export default class Game9PlayScene extends Phaser.Scene {
     this.layer3.destroy();
     index += 1;
     if (index > this.ccData.length - 1) {
-      window.location.href = CONSTANT.INDEX_URL;
+      //window.location.href = CONSTANT.INDEX_URL;
+      GameEnd.Show(this);
     }
     this.scene.start('Game9PlayScene', {
       data: this.ccData,

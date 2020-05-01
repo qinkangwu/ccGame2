@@ -1,8 +1,7 @@
 import 'phaser';
 import CreateBtnClass from '../../Public/CreateBtnClass';
 import TipsParticlesEmitter from "../../Public/TipsParticlesEmitter";
-import { Gold } from "../../Public/jonny/components/Gold";
-import { SellingGold } from "../../Public/jonny/components/SellingGold";
+import { Gold,SellingGold,GameEnd } from "../../Public/jonny/components";
 import { Item } from "../../interface/Game14";
 
 const W = 1024;
@@ -267,6 +266,10 @@ export default class Game14PlayScene extends Phaser.Scene {
               this.sholdGetGoldNum = 3;
               this.clearHandle();
               this.currentIndex = this.chooseMode === 'mode1' ? (this.currentIndex + 2 >= this.ccData.length ? 0 : this.currentIndex + 2) : (this.currentIndex + 4 >= this.ccData.length ? 0 : this.currentIndex + 4);
+              if (this.currentIndex === 0) {
+                GameEnd.Show(this);
+                return;
+              } 
               console.log(this.currentIndex);
               this.nextDataHandle(this.chooseMode);
               this.chooseMode === 'mode1' && this.createMode1();
