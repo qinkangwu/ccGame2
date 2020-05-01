@@ -13,6 +13,7 @@ import { TryAginListenBtn } from "./TryAginListenBtn";
 import { Particles } from "./Particles";
 import { Firework } from "./Firework";
 import { CoverDoublePlayer } from './CoverDoublePlayer';
+import { GameEnd } from './GameEnd';
 
 export {
     Button,
@@ -25,5 +26,6 @@ export {
     TryAginListenBtn,
     Particles,
     Firework,
-    CoverDoublePlayer
+    CoverDoublePlayer,
+    GameEnd
 }

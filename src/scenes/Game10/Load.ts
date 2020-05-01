@@ -44,6 +44,7 @@ export default class Game10LoadScene extends Phaser.Scene {
     this.load.image('bgi','assets/Game10/bgi.png');
     this.load.image('contentOuter','assets/Game10/contentOuter.png');
     this.load.image('contentOuter2','assets/Game10/contentOuter2.png');
+    //this.load.image("gameEnd", "assets/commonUI/gameEnd.png");
     this.load.audio('bgm','assets/Game7/bgm.mp3');
     this.load.audio('clickMp3','assets/Game5/click.mp3');
     this.load.multiatlas('game10icons2','assets/Game10/imgsJson2.json','assets/Game10');
