@@ -130,7 +130,7 @@ export default class Game10PlayScene extends Phaser.Scene {
     this.imgObj = this.add.sprite(411.5, 277.5, this.ccData[this.currentIndex].name)
       .setOrigin(1)
       .setDisplaySize(233, 191)
-      .setAngle(-6.5);
+      .setAngle(-8);
   }
 
   private initAnims(): void {
