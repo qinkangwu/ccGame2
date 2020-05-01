@@ -131,9 +131,9 @@ export default class Game10PlayScene extends Phaser.Scene {
     //   .setOrigin(1)
     //   .setDisplaySize(233, 191)
     //   .setAngle(-8);
-    this.imgObj = this.add.sprite(275, 190, this.ccData[this.currentIndex].name)
+    this.imgObj = this.add.sprite(275, 195, this.ccData[this.currentIndex].name)
       .setDisplaySize(233, 200)
-      .setAngle(-8.0);
+      .setAngle(-6.5);
   }
 
   private initAnims(): void {
@@ -376,7 +376,7 @@ export default class Game10PlayScene extends Phaser.Scene {
   private playContentOuterAnims(): void {
     this.contentOuter.rotation = 0;
     this.contentOuter2.rotation = 0;
-    this.imgObj.setAngle(-8.0);
+    this.imgObj.setAngle(-6.5);
     this.tweens.timeline({
       targets: [this.contentOuter, this.contentOuter2 , this.imgObj ],
       ease: 'Sine.easeInOut',
