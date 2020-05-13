@@ -2,14 +2,14 @@
     "code": "0000",
     "description": "oh yeah,通过了",
     "result": [
-        ["She","第三人称单数","does"],
+        ["She","第三人称单数","does"],   
         ["Lliy","第三人称单数","does"],
         ["Lucy","第三人称单数","does"],
         ["He","第三人称单数","does"],
         ["I","第一人称","do"],
-        ["Children of Mary","第三人称复数","does"],
+        ["Children of Mary","第三人称复数","do"],
         ["Father","第三人称单数","does"],
         ["you","第二人称","do"],
-        ["Miss.wu","第三人称单数","does"]
+        ["Miss.Wu","第三人称单数","does"]
     ]
 }
