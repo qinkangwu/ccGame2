@@ -1,43 +1,23 @@
 {
-   "code": "0000",
-   "description": "oh yeah,通过了",
-   "result": {
-     "questions": [
-       {
-         "questioncontent": "pen",
-         "answers": [
-           {
-             "answercontent": "铅笔",
-             "isright": "0"
-           },
-           {
-             "answercontent": "钢笔",
-             "isright": "1"
-           },
-           {
-             "answercontent": "文具盒",
-             "isright": "0"
-           }
-         ]
-       },
-       {
-         "questioncontent": "pen",
-         "answers": [
-           {
-             "answercontent": "铅笔",
-             "isright": "0"
-           },
-           {
-             "answercontent": "钢笔",
-             "isright": "1"
-           },
-           {
-             "answercontent": "文具盒",
-             "isright": "0"
-           }
-         ]
-       }
-     ]
-   },
-   "success": "true"
- }
+  "code": "0000",
+  "description": "oh yeah,通过了",
+  "result": {
+    "questions": [
+      {
+        "id": "1",
+        "grade": "primary_school",
+        "question": "pen的中文是?",
+        "answers": "铅笔,钢笔,文具盒",
+        "right": "钢笔"
+      },
+      {
+        "id": "2",
+        "grade": "middle_school",
+        "question": "__ is your name?",
+        "answers": "when,what,who",
+        "right": "what"
+      }
+    ]
+  },
+  "success": "true"
+}

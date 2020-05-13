@@ -8,7 +8,7 @@ import { QueryTopic } from '../../../interface/Game13';
 
 export class OrderUI extends Phaser.GameObjects.Container {
     public bg: Phaser.GameObjects.Image;
-    public topic: Phaser.GameObjects.BitmapText;
+    public topic: Phaser.GameObjects.Text;
     public answers: Phaser.GameObjects.Container[] = [];
     public topicIndexText:Phaser.GameObjects.BitmapText;
     private queryTopic: QueryTopic;
@@ -16,7 +16,11 @@ export class OrderUI extends Phaser.GameObjects.Container {
         super(scene, 510, 777);  //normal position is 510,290
         this.queryTopic = queryTopic;
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, "orderUI");
-        this.topic = new Phaser.GameObjects.BitmapText(scene, -335, -90, "ArialRoundedBold", queryTopic.questioncontent, 45, 0).setOrigin(0);
+        //this.topic = new Phaser.GameObjects.BitmapText(scene, -335, -90, "ArialRoundedBold", queryTopic.question, 45, 0).setOrigin(0);
+        let topicStyle:Phaser.Types.GameObjects.Text.TextStyle = {
+            color:"#ffffff", fontSize:"35px"
+        }
+        this.topic = new Phaser.GameObjects.Text(scene, -335, -90, queryTopic.question,topicStyle).setOrigin(0);
         this.topic.setTint(0xFF6E09);
         this.topicIndexText = new Phaser.GameObjects.BitmapText(this.scene,-324,-168.95,"ArialRoundedBold",topicIndex,30,1).setOrigin(0.5);
         this.topicIndexText.tint = 0xFF6E09;
@@ -26,17 +30,30 @@ export class OrderUI extends Phaser.GameObjects.Container {
     }
 
     private createAnswer() {
-        let answerIndex:string[] = ["A","B","C","D"];
+         let answerIndex:string[] = ["A","B","C"];
+         let rightAnswer = this.queryTopic.right;
         this.queryTopic.answers.forEach((answer, index) => {
             let _answer = new Phaser.GameObjects.Container(this.scene, -270 + index * 270, 132);
-            _answer.setData("isRight", answer.isright);
+            console.log(answer===rightAnswer);
+            if(answer===rightAnswer){
+                _answer.setData("isRight","1");
+            }else{
+                _answer.setData("isRight","0");
+            }
+            console.log(_answer.getData("isRight"));
             let _bg = new Phaser.GameObjects.Graphics(this.scene);
             _bg.fillStyle(0xFF6E09, 1);
             _bg.fillRoundedRect(0 - 166 * 0.5, 0 - 74.5 * 0.5, 166, 74.5, 10);
             _bg.visible = false;
-            let _textSize = answer.answercontent.length <= 11 ? 30 : 25; 
-            let _text = new Phaser.GameObjects.BitmapText(this.scene, 0, 7, "ArialRoundedBold", answerIndex[index] + "." + answer.answercontent,_textSize, 1).setOrigin(0.5);
-            _text.setTint(0xFF6E09);
+            let _textSize = answer.length <= 11 ? "30px" : "20px"; 
+            //let _text = new Phaser.GameObjects.BitmapText(this.scene, 0, 7, "ArialRoundedBold", answerIndex[index] + "." + answer,_textSize, 1).setOrigin(0.5);
+            let _textStyle:Phaser.Types.GameObjects.Text.TextStyle = {
+                align:"center",
+                color:"#ffffff",
+                fontSize:_textSize
+            };
+            let _text = new Phaser.GameObjects.Text(this.scene,0,7,`${answerIndex[index]}.${answer}`,_textStyle);
+            _text.setOrigin(0.5).setTint(0xFF6E09);
             _answer.add([_bg, _text]);
             _answer.setInteractive(new Phaser.Geom.Circle(0, 0, 74.5 * 0.7), Phaser.Geom.Circle.Contains);
             this.answers.push(_answer);
