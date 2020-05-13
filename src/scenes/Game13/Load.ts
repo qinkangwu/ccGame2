@@ -78,24 +78,26 @@ export default class Game13LoadScene extends Phaser.Scene {
     get("assets/game13/getExamList.json").then((res) => {
       if (res.code === '0000') {
         this.ccData = (<any>res.result.questions)
-          .filter(v => {
-            return v.questionkeyword === "选择正确答案";
-          })
+          // .filter(v => {
+          //   return v.questionkeyword === "选择正确答案";
+          // })
           .map(v => {
-            delete v.answerisright;
-            delete v.audiokey;
-            delete v.endtime;
-            delete v.id;
-            delete v.questionkeyword;
-            delete v.exammoduletype;
-            delete v.starttime;
-            delete v.studentanswer;
-            delete v.questiontype;
-            v.questioncontent = v.questioncontent.replace(/[\?\？]\s*/, "?\n").replace(/^[-—]+/,"").replace(/\s{2,}/," ").replace(/\?_+/,"?\n").replace(/\n$/,"").replace(/^\s/,"").replace(/\?\s*[—-]+/,"?\n").replace(/\n\s+/,"\n");
+            // delete v.answerisright;
+            // delete v.audiokey;
+            // delete v.endtime;
+            // delete v.id;
+            // delete v.questionkeyword;
+            // delete v.exammoduletype;
+            // delete v.starttime;
+            // delete v.studentanswer;
+            // delete v.questiontype;
+            // v.questioncontent = v.questioncontent.replace(/[\?\？]\s*/, "?\n").replace(/^[-—]+/,"").replace(/\s{2,}/," ").replace(/\?_+/,"?\n").replace(/\n$/,"").replace(/^\s/,"").replace(/\?\s*[—-]+/,"?\n").replace(/\n\s+/,"\n");
+            v.answers = v.answers.split(",");
             return v;
           })
       }
     }).then(() => {
+      //console.log(this.ccData);
       this.loadAudio();
     })
   }

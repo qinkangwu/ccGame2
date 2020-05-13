@@ -3,12 +3,15 @@ export interface Assets {
     url: string;
 }
 
-export interface Answer {
-    answercontent:string;
-    isright:string;
-}
+// export interface Answer {
+//     answercontent:string;
+//     isright:string;
+// }
 
 export interface QueryTopic {
-    questioncontent:string;
-    answers:Answer[];
+    id:string,
+    grade:string;
+    question:string;
+    answers:string[];
+    right:string;
 }

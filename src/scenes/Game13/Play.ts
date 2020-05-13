@@ -320,12 +320,14 @@ export default class Game13PlayScene extends Phaser.Scene {
    * 下一道题
    */
   private nextRound(): void {
+    console.log(this.ccData.length - 1);
     index += 1;
     //index = 7; //test
     this.prevAnswer = null;
     if (index > this.ccData.length - 1) {
       //window.location.href = CONSTANT.INDEX_URL;
       GameEnd.Show(this);
+      return;
     }
     this.times = 0;
     this.scene.start('Game13PlayScene', {
