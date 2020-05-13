@@ -114,6 +114,7 @@ export default class Game15PlayScene extends Phaser.Scene {
         if (gameEnd) {
             //window.location.href = CONSTANT.INDEX_URL;
             GameEnd.Show(this);
+            return;
         }
     }
 
