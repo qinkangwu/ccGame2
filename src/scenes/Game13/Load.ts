@@ -75,7 +75,7 @@ export default class Game13LoadScene extends Phaser.Scene {
    * 正式状态
    */
   private getData() {
-    get("assets/game13/getExamList1.json").then((res) => {
+    get("assets/Game13/getExamList1.json").then((res) => {
       if (res.code === '0000') {
         this.ccData = (<any>res.result.questions)
           // .filter(v => {
