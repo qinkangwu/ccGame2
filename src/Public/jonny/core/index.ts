@@ -11,6 +11,7 @@ import { Vec2 } from "./Math";
 import {CONSTANT} from "./constant";
 import {EASE,StaticAni,TweenAni} from "./Animate";
 import {arrDisorder} from "./arrDisorder";
+import {getSearch} from './getSearch';
 
 export {
     resize,
@@ -23,6 +24,7 @@ export {
     EASE,
     StaticAni,
     TweenAni,
-    arrDisorder 
+    arrDisorder,
+    getSearch 
 }
 

@@ -63,6 +63,7 @@ export default class Game13PlayScene extends Phaser.Scene {
 
   init(res: { data: any[], index: number }) {
     index = res.index;
+    //index = 9;
     this.ccData = res.data;
     console.log(this.ccData);
   }

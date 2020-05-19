@@ -18,7 +18,7 @@ export class OrderUI extends Phaser.GameObjects.Container {
         this.bg = new Phaser.GameObjects.Image(scene, 0, 0, "orderUI");
         //this.topic = new Phaser.GameObjects.BitmapText(scene, -335, -90, "ArialRoundedBold", queryTopic.question, 45, 0).setOrigin(0);
         let topicStyle:Phaser.Types.GameObjects.Text.TextStyle = {
-            color:"#ffffff", fontSize:"35px"
+            color:"#ffffff", fontSize:"35px",wordWrap:{width:770}
         }
         this.topic = new Phaser.GameObjects.Text(scene, -335, -90, queryTopic.question,topicStyle).setOrigin(0);
         this.topic.setTint(0xFF6E09);

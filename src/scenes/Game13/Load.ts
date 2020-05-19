@@ -7,7 +7,7 @@ import 'phaser';
 import apiPath from '../../lib/apiPath';
 import { get } from '../../lib/http';
 import { Assets, QueryTopic } from '../../interface/Game13';
-import { resize } from '../../Public/jonny/core';
+import { resize,getSearch } from '../../Public/jonny/core';
 import { SellingGold, TryAginListenBtn } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
@@ -15,6 +15,7 @@ const W = 1024;
 const H = 552;
 
 export default class Game13LoadScene extends Phaser.Scene {
+  private grade:string;
   private _loader: Phaser.Loader.LoaderPlugin;
   private ccData: Array<QueryTopic> = [];
   private centerText: Phaser.GameObjects.Text; //文本内容
@@ -36,6 +37,7 @@ export default class Game13LoadScene extends Phaser.Scene {
   }
 
   init(): void {
+    this.grade = getSearch("grade");
     resize.call(this, W, H);
     this.centerText = this.add.text(1024 * 0.5, 552 * 0.5, '0%', {
       fill: '#fff',
@@ -75,23 +77,13 @@ export default class Game13LoadScene extends Phaser.Scene {
    * 正式状态
    */
   private getData() {
-    get("assets/Game13/getExamList1.json").then((res) => {
+    get("assets/Game13/getExamList2.json").then((res) => {
       if (res.code === '0000') {
         this.ccData = (<any>res.result.questions)
-          // .filter(v => {
-          //   return v.questionkeyword === "选择正确答案";
-          // })
+          .filter(v => {
+            return v.grade===this.grade; 
+          })
           .map(v => {
-            // delete v.answerisright;
-            // delete v.audiokey;
-            // delete v.endtime;
-            // delete v.id;
-            // delete v.questionkeyword;
-            // delete v.exammoduletype;
-            // delete v.starttime;
-            // delete v.studentanswer;
-            // delete v.questiontype;
-            // v.questioncontent = v.questioncontent.replace(/[\?\？]\s*/, "?\n").replace(/^[-—]+/,"").replace(/\s{2,}/," ").replace(/\?_+/,"?\n").replace(/\n$/,"").replace(/^\s/,"").replace(/\?\s*[—-]+/,"?\n").replace(/\n\s+/,"\n");
             v.answers = v.answers.split(",");
             return v;
           })
