@@ -66,10 +66,10 @@ module.exports = {
             server: {
                 baseDir: ['./', './build']
             },
-            https: {
-                key: "./ssl/server.key",
-                cert: "./ssl/server.crt"
-            }
+            // https: {
+            //     key: "./ssl/server.key",
+            //     cert: "./ssl/server.crt"
+            // }
         }),
         new HardSourceWebpackPlugin()
     ],
