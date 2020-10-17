@@ -68,7 +68,8 @@ export default class Game11LoadScene extends Phaser.Scene {
    * 正式状态
    */
   private getData() {
-    get(apiPath.getSentenceData).then((res) => {
+    //get(apiPath.getSentenceData).then((res) => {
+    get("assets/jsonFile/getSentenceData.json").then((res) => {
       if (res.code === '0000') {
         this.ccData = (<GetSentenceData[]>res.result)
           .map(v => {

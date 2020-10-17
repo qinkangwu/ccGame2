@@ -79,7 +79,8 @@ export default class Game16LoadScene extends Phaser.Scene {
    * 正式状态
    */
   private getData() {
-    get(apiPath.getWordConfusionList).then((res) => {
+    //get(apiPath.getWordConfusionList).then((res) => {
+    get("assets/jsonFile/getWordConfusionList.json").then((res) => {
       if (res.code === '0000') {
         this.ccData = res.result.filter((v, i) => i <= 7);
         this.ccData = arrDisorder(this.ccData);

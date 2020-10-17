@@ -74,7 +74,7 @@ for(let i=3;i<24;i++){
 #### Game13
 - 4S店
 - 考察句子的构造 
-- https://localhost:8080/#/game13
+- https://localhost:8080/#/game13?grade=primary_school
 #### Game14
 - 卡牌
 - 训练单词的记忆 

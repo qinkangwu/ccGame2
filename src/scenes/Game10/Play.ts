@@ -53,6 +53,7 @@ export default class Game10PlayScene extends Phaser.Scene {
   preload(): void {
     PlanAnims.loadImg(this);
     this.ccData.map((r, i) => {
+      console.log(r.img);
       this.load.image(r.name, r.img);
     });
     TipsParticlesEmitter.loadImg(this);

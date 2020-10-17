@@ -71,6 +71,7 @@ export default class Game10LoadScene extends Phaser.Scene {
   private getData () : void {
     //获取数据
     get(apiPath.getGame10Data).then(res=>{
+    //get("assets/jsonFile/getGame10Data.json").then(res=>{
       res && res.code === '0000' && (this.ccData = res.result);
       this.dataLoadDone = true;
     })

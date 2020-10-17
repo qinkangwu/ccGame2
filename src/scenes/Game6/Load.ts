@@ -66,7 +66,7 @@ export default class Game6LoadScene extends Phaser.Scene {
    * 正式状态
    */
   private getData() {
-    get(apiPath.getWordsData).then((res) => {
+    get("assets/jsonFile/getSugarGourdWordByBookUnitId.json").then((res) => {
       res && res.code === '0000' && (this.ccData = res.result);
     }).then(() => {
       this.loadAudio();

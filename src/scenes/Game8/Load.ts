@@ -78,7 +78,7 @@ export default class Game8LoadScene extends Phaser.Scene {
 
   private getData () : void {
     //获取数据
-    get(apiPath.getGame8Data).then(res=>{
+    get("assets/jsonFile/getGame8Data.json").then(res=>{
       //res && res.code === '0000' && (this.ccData = res.result);
       res && res.code === '0000' && (this.ccData = res.result);
       this.dataLoadDone = true;

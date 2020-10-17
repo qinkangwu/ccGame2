@@ -7,7 +7,7 @@ import 'phaser';
 import apiPath from '../../lib/apiPath';
 import { get } from '../../lib/http';
 import { Assets, QueryTopic } from '../../interface/Game13';
-import { resize,getSearch } from '../../Public/jonny/core';
+import { resize, getSearch } from '../../Public/jonny/core';
 import { SellingGold, TryAginListenBtn } from '../../Public/jonny/components';
 import TipsParticlesEmitter from '../../Public/TipsParticlesEmitter';
 
@@ -15,7 +15,7 @@ const W = 1024;
 const H = 552;
 
 export default class Game13LoadScene extends Phaser.Scene {
-  private grade:string;
+  private grade: string;
   private _loader: Phaser.Loader.LoaderPlugin;
   private ccData: Array<QueryTopic> = [];
   private centerText: Phaser.GameObjects.Text; //文本内容
@@ -81,7 +81,7 @@ export default class Game13LoadScene extends Phaser.Scene {
       if (res.code === '0000') {
         this.ccData = (<any>res.result.questions)
           .filter(v => {
-            return v.grade===this.grade; 
+            return v.grade === this.grade;
           })
           .map(v => {
             v.answers = v.answers.split(",");
@@ -89,7 +89,6 @@ export default class Game13LoadScene extends Phaser.Scene {
           })
       }
     }).then(() => {
-      //console.log(this.ccData);
       this.loadAudio();
     })
   }
@@ -97,24 +96,24 @@ export default class Game13LoadScene extends Phaser.Scene {
   /**
    * 加载音频
    */
-  private loadAudio(){
+  private loadAudio() {
     // this.ccData.forEach(v => {
     //   this._loader.audio(v.name, v.audioKey);
     //   v.vocabularies.forEach(_v => {
     //     this._loader.audio(_v.name, _v.audioKey);
     //   })
     // })
-    // this._loader.on("progress", (e: any) => {
-    //   e = Math.floor(50 + e * 50);
-    //   this.centerText.setText(`${e}%`);
-    // })
-    //this._loader.on("complete", () => {
+    this._loader.on("progress", (e: any) => {
+      e = Math.floor(50 + e * 50);
+      this.centerText.setText(`${e}%`);
+    })
+    this._loader.on("complete", () => {
       this.scene.start('Game13PlayScene', {
         data: this.ccData,
         index: 0
       });
-    //});
-    //this._loader.start();
+    });
+    this._loader.start();
   }
 
 };

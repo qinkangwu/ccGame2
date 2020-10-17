@@ -69,7 +69,8 @@ export default class Game12LoadScene extends Phaser.Scene {
 
   private getData () : void {
     //获取数据
-    get(apiPath.getWordClass).then(res=>{
+    //get(apiPath.getWordClass).then(res=>{
+    get("assets/jsonFile/getWordClass.json").then(res=>{
       res && res.code === '0000' && (this.ccData = res.result);
       this.dataLoadDone = true;
     })

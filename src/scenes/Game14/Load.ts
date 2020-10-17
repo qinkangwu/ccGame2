@@ -71,7 +71,8 @@ export default class Game14LoadScene extends Phaser.Scene {
 
   private getData () : void {
     //获取数据
-    get(apiPath.getCardData).then((res)=>{
+    //get(apiPath.getCardData).then((res)=>{
+    get("assets/jsonFile/getCardDataGame14.json").then((res)=>{
       res && res.code === '0000' && (this.ccData = res.result.filter((v,i)=>i<14));
       this.dataLoadDone = true;
     })

@@ -74,7 +74,8 @@ export default class Game22LoadScene extends Phaser.Scene {
    * 正式状态
    */
   private getData() {
-    get(apiPath.getQuestionData("c737587a-34ce-47d5-b5c0-6db031712c07", "b1412200-0c03-11ea-a55e-0894ef25c6a1"))
+    //get(apiPath.getQuestionData("c737587a-34ce-47d5-b5c0-6db031712c07", "b1412200-0c03-11ea-a55e-0894ef25c6a1"))
+    get("assets/jsonFile/getQuestionData.json")
       .then((res) => {
         if (res.code === '0000') {
           this.ccData = res.result

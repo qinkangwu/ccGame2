@@ -1,0 +1,79 @@
+{
+  "code": "0000",
+  "description": "oh yeah,通过了",
+  "result": {
+    "questions": [
+      {
+        "id": "1",
+        "grade": "primary_school",
+        "question": "What's your name?\n____ name is Civa.",
+        "answers": "My,you,your",
+        "right": "My"
+      },
+      {
+        "id": "2",
+        "grade": "primary_school",
+        "question": "___ this?\nIt's an egg.",
+        "answers": "What,How,What's",
+        "right": "What's"
+      },
+      {
+        "id": "3",
+        "grade": "primary_school",
+        "question": "That is __ orange.",
+        "answers": "a,the,an",
+        "right": "an"
+      },
+      {
+        "id": "4",
+        "grade": "primary_school",
+        "question": "This is __ ruler.",
+        "answers": "a,the,an",
+        "right": "a"
+      },
+      {
+        "id": "5",
+        "grade": "primary_school",
+        "question": "___ sister is Mary.",
+        "answers": "She,He,Her",
+        "right": "Her"
+      },
+      {
+        "id": "6",
+        "grade": "primary_school",
+        "question": "Is it ____ cup?",
+        "answers": "My,you,your",
+        "right": "your"
+      },
+      {
+        "id": "7",
+        "grade": "primary_school",
+        "question": "翻译：他们是朋友。\nThey are _____.",
+        "answers": "a friend,friends,friend",
+        "right": "friends"
+      },
+      {
+        "id": "8",
+        "grade": "primary_school",
+        "question": "Tony and Nick ___ classmates.",
+        "answers": "are,is,am",
+        "right": "are"
+      },
+      {
+        "id": "9",
+        "grade": "primary_school",
+        "question": "Are these his book?\nYes, ___ are",
+        "answers": "these,those,they",
+        "right": "they"
+      },
+      {
+        "id": "10",
+        "grade": "primary_school",
+        "question": "They ___ my books.Mine are at school.",
+        "answers": "aren't,are,not",
+        "right": "aren't"
+      }
+    ]
+  },
+  "success": "true"
+}

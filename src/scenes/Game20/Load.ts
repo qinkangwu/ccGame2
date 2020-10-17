@@ -27,7 +27,7 @@ export default class Game20LoadScene extends Phaser.Scene {
     /**
      * game19 UI
      */
-    , { "url": "assets/Game20/bg_04.png", "key": "bg" }, { "url": "assets/Game20/daan04.png", "key": "daan" }, { "url": "assets/Game20/tigan04.png", "key": "tigan" },{"url":"assets/Game20/civa_04.png","key":"civa"}
+    , { "url": "assets/Game20/bg_04.png", "key": "bg" }, { "url": "assets/Game20/daan04.png", "key": "daan" }, { "url": "assets/Game20/tigan04.png", "key": "tigan" }, { "url": "assets/Game20/civa_04.png", "key": "civa" }
   ];
 
   constructor() {
@@ -76,14 +76,15 @@ export default class Game20LoadScene extends Phaser.Scene {
    * 正式状态
    */
   private getData() {
-    get(apiPath.getQuestionData("c737587a-34ce-47d5-b5c0-6db031712c07","aaeacf2b-bc61-4135-a976-aa1b6815eeaf")).then((res) => {
+    //get(apiPath.getQuestionData("c737587a-34ce-47d5-b5c0-6db031712c07","aaeacf2b-bc61-4135-a976-aa1b6815eeaf")).then((res) => {
+    get("assets/jsonFile/getQuestionData.json").then((res) => {
       if (res.code === '0000') {
         this.ccData = (<any>res.result)
           .filter((v, i) => i >= 20 && i < 30)
           .map(v => {
             delete v.audiokey;
             delete v.imgKey;
-            v.questionContent = v.questionContent.replace(/\d+\./, "").replace(/[\?\？]\s*/, "?\n").replace(/^[-—]+/, "").replace(/\s{2,}/, " ").replace(/\?_+/, "?\n").replace(/\n$/, "").replace(/^\s/, "").replace(/\?\s*[—-]+/, "?\n").replace(/\n\s+/, "\n").replace(/&nbsp;/, "").replace(/_+/, "___").replace(/’/, "'").replace(/<\/?\w>/g,"");
+            v.questionContent = v.questionContent.replace(/\d+\./, "").replace(/[\?\？]\s*/, "?\n").replace(/^[-—]+/, "").replace(/\s{2,}/, " ").replace(/\?_+/, "?\n").replace(/\n$/, "").replace(/^\s/, "").replace(/\?\s*[—-]+/, "?\n").replace(/\n\s+/, "\n").replace(/&nbsp;/, "").replace(/_+/, "___").replace(/’/, "'").replace(/<\/?\w>/g, "");
             v.answers.forEach((_v, _i) => {
               delete _v.audioKey;
               delete _v.imgKey;
