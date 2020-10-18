@@ -77,7 +77,8 @@ export default class Game0LoadScene extends Phaser.Scene {
    * 获取网络资源
    */
   private getData(): Promise<any> {
-    return get(apiPath.getQuestionData("c737587a-34ce-47d5-b5c0-6db031712c07", "aaeacf2b-bc61-4135-a976-aa1b6815eeaf"))
+    //return get(apiPath.getQuestionData("c737587a-34ce-47d5-b5c0-6db031712c07", "aaeacf2b-bc61-4135-a976-aa1b6815eeaf"))
+    return get("assets/jsonFile/getQuestionData.json")
       .then((res) => {
         if (res.code === '0000') {
           this.ccData = (<any>res.result);
